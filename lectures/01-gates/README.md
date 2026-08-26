@@ -18,7 +18,6 @@
 4. [**Circuit Analysis: Deriving Expressions and Truth Tables**](#3)
 5. [**Representing Numbers in Binary**](#4)
 6. [**Hexadecimal**](#5)
-7. [**Two's Complement**](#6)
 
 <br>
 
@@ -216,7 +215,7 @@ Three more gates appear often enough to have their own symbols. Two of them have
 > - The sum bit is exactly their `XOR`, and
 > - The carry-out 1 is their `AND`.
 
-We'll see this again when we build `~adders~`.
+We'll see this again when we build [**adders**](/lectures/02-adders).
 
 <a id="fg-4"></a>
 
@@ -523,7 +522,7 @@ In decimal, each digit position represents a power of 10. In binary, each bit po
 
 So `0b1010` is the binary number 1010 (= 10 in decimal), and `0xFF` is the hexadecimal number FF (= 255 in decimal). When you see a bare number in hardware documentation with no prefix, assume decimal—but when precision matters, always include the prefix.
 
-Note: if you feel comfortable with converting between these three number systems, you can safely skip to [**two's complement**](#6). Just take a quick look at [**these terms**](#4-3) before you do so.
+Note: if you feel comfortable with converting between these three number systems, you can safely skip to [**Hexadecimal**](#5). Just take a quick look at [**these terms**](#4-3) before you do so.
 
 <a id="4-1"></a> 
 
@@ -644,120 +643,8 @@ Result: **0b 1010 0111 1111 0001**
 
 Any time you see a memory address, a colour code (`#FF8800`), a network MAC address, or a register dump in a debugger, it's almost certainly in hex. The prefix `0x` is your signal. Being able to quickly read hex—and spot that `0xFF` is all ones, or that `0x80000000` has only the MSB set—is a skill you'll use constantly in systems work.
 
+Everything above has been non-negative. Negative numbers—and the encoding that makes ordinary addition work for them too—is where we pick up [**next lecture**](/lectures/02-adders), right before we need it to explain why adders work the way they do.
+
 <br>
 
-<a id="6"></a>
-
-## Two's Complement
-
-If you don't take anything else from this lecture, at least take this part, it's THAT important.
-
-Every aforementioned number has been non-negative. But real programs constantly subtract, negate, and compare _signed_ values—and the hardware needs to handle all of that using the same addition circuits we've already seen. So, how do you encode negative numbers in binary so that ordinary addition still works?
-
-_Ah_, you say, _easy_. Reserve one bit as a sign bit (0 = positive, 1 = negative) and use the remaining bits for the actual number. 
-
-
-_Ah_, I say, _this breaks in two ways_: it produces two representations of zero (`+0` and `−0`), and it requires the addition circuit to inspect the sign bit and change its behaviour (a simple `if`-statement in Python/C, but very complicated for your computer)—complexity that propagates into every piece of arithmetic hardware. 
-
-**Two's complement** is the most chef's-kiss solution to avoid both problems. It's what every modern processor uses.
-
-<a id="6-1"></a>
-
-### Fixed Bit-Width
-
-Two's complement only makes sense within a *fixed* number of bits. 
-
-The first thing you need to know is the **most significant bit (MSB)**: in two's complement, a 1 in the MSB means the number is negative. For a 4-bit system, the 16 available bit patterns are assigned values like this:
-
-| Bit pattern | Two's complement value |
-|-------------|----------------------|
-| 0000        | 0                    |
-| 0001        | 1                    |
-| ...         | ...                  |
-| 0111        | 7                    |
-| 1000        | −8                   |
-| 1001        | −7                   |
-| ...         | ...                  |
-| 1111        | −1                   |
-
-Notice the range is asymmetric: there are 8 non-negative values (0 through 7) but 8 negative values (−8 through −1). There is always one more negative number than positive ones, because zero takes one of the non-negative slots.
-
-**Bit-width warning:** If a number requires more bits than your field provides, the extra high-order bits are basically discarded—what we call **truncation**. 
-
-For example, 20 in binary is `0b10100` (5 bits). Stored in a 4-bit field, the leading 1 is dropped, leaving `0100` = 4. The value is now wrong, with no error or warning. Keep bit-width in mind whenever you're working with fixed-size integers.
-
-<a id="6-2"></a>
-
-### But why tho?
-
-The reason two's complement is universal is that **ordinary binary addition works correctly for both positive and negative numbers, with no special cases**. The addition circuit doesn't need to know whether its operands are signed or unsigned—it just adds bits and discards the carry out of the top position.
-
-For example, 3 + (−3) in 4-bit two's complement:
-
-```
-  0011   (3)
-+ 1101   (−3)
-──────
-  0000   (0, carry discarded)
-```
-
-The carry out is thrown away and the result is 0. The same adder circuit that adds 3 + 5 also correctly computes 3 + (−3), with zero additional logic. That simplicity is the entire point.
-
-<a id="6-3"></a>
-
-### Decimal to Two's Complement
-
-To convert a negative decimal number to its two's complement binary representation in *n* bits:
-
-1. Convert the absolute value to binary, padded to *n* bits.
-2. Invert every bit.
-3. Add 1.
-
-```
-Step 1. |−3| = 3 → 0011
-
-Step 2. Invert:  0011  →  1100
-
-Step 3. Add 1:   1100 + 0001 = 1101
-```
-
-Result: −3 = **1101** in 4-bit two's complement.
-
-<a id="6-4"></a>
-
-### Two's Complement to Decimal
-
-The decode procedure is symmetric—the same three steps in reverse:
-
-1. If the MSB is 0, the number is non-negative—convert normally and done.
-2. If the MSB is 1, invert all bits.
-3. Add 1.
-4. Convert to decimal and apply a minus sign.
-
-**Example:** Convert `1101` (4-bit two's complement) to decimal.
-
-```
-Step 1. MSB = 1 → negative.
-
-Step 2. Invert:  1101  →  0010
-
-Step 3. Add 1:   0010 + 0001 = 0011
-
-Step 4. 0011 = 3 → −3
-```
-
-Result: **1101₂ = −3**
-
-<a id="6-5"></a>
-
-### The Range of an n-Bit Two's Complement Number
-
-```
-−2^(n−1)  to  2^(n−1) − 1
-```
-
-For 4 bits: −8 to 7. For 8 bits: −128 to 127. For 32 bits: −2,147,483,648 to 2,147,483,647. This is why integer overflow is a real bug and not a theoretical curiosity: adding two large positive 32-bit integers can produce a result exceeding 2,147,483,647, which wraps around to a large negative number, silently and without error. Understanding two's complement is what lets you reason about *why* that happens and when to guard against it.
-
----
-
-<sub>**Next: [Verilog & Bitwise Operations](/lectures/02-verilog-and-bitwise)**</sub>
+<sub>**Next: [Adders](/lectures/02-adders)**</sub>
