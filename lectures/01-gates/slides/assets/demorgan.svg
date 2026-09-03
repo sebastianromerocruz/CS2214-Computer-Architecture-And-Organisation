@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 340" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="880" height="340" rx="28" fill="#f2f2ef"/>
+  <rect x="24" y="24" width="14" height="14" fill="#c1272d"/>
+  <circle cx="856" cy="316" r="7" fill="#8a1f24"/>
+
+  <!-- LEFT: NAND gate, Y = NOT(A . B) -->
+  <g transform="translate(20,10)">
+    <line x1="40" y1="95" x2="125" y2="95" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="40" cy="95" r="6" fill="#171715"/>
+    <text x="26" y="78" fill="#404040" font-size="22" font-weight="600">A</text>
+
+    <line x1="40" y1="145" x2="125" y2="145" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="40" cy="145" r="6" fill="#171715"/>
+    <text x="26" y="168" fill="#404040" font-size="22" font-weight="600">B</text>
+
+    <line x1="238" y1="120" x2="340" y2="120" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="340" cy="120" r="6" fill="#171715"/>
+    <text x="350" y="128" fill="#404040" font-size="22" font-weight="600">Y</text>
+
+    <path d="M120,70 L160,70 A50,50 0 0 1 160,170 L120,170 Z" fill="#ffffff" stroke="#171715" stroke-width="7" stroke-linejoin="round"/>
+    <circle cx="224" cy="120" r="14" fill="#ffffff" stroke="#c1272d" stroke-width="6"/>
+
+    <text x="200" y="222" fill="#171715" font-size="22" font-weight="700" text-anchor="middle" letter-spacing="3">NAND</text>
+    <text x="200" y="245" fill="#6d6d6d" font-size="15" text-anchor="middle" letter-spacing="0.5">Y = &#172;(A &#183; B)</text>
+  </g>
+
+  <!-- equivalence sign -->
+  <text x="440" y="148" fill="#171715" font-size="64" font-weight="700" text-anchor="middle" dominant-baseline="middle">&#8801;</text>
+
+  <!-- RIGHT: OR gate with both inputs pre-inverted, Y = NOT A + NOT B -->
+  <g transform="translate(460,10)">
+    <line x1="40" y1="95" x2="70" y2="95" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="40" cy="95" r="6" fill="#171715"/>
+    <text x="26" y="78" fill="#404040" font-size="22" font-weight="600">A</text>
+    <circle cx="84" cy="95" r="14" fill="#ffffff" stroke="#c1272d" stroke-width="6"/>
+    <line x1="98" y1="95" x2="135" y2="95" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+
+    <line x1="40" y1="145" x2="70" y2="145" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="40" cy="145" r="6" fill="#171715"/>
+    <text x="26" y="168" fill="#404040" font-size="22" font-weight="600">B</text>
+    <circle cx="84" cy="145" r="14" fill="#ffffff" stroke="#c1272d" stroke-width="6"/>
+    <line x1="98" y1="145" x2="135" y2="145" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+
+    <line x1="250" y1="120" x2="340" y2="120" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="340" cy="120" r="6" fill="#171715"/>
+    <text x="350" y="128" fill="#404040" font-size="22" font-weight="600">Y</text>
+
+    <path d="M120,70 Q150,120 120,170 C165,170 210,148 250,120 C210,92 165,70 120,70 Z"
+          fill="#ffffff" stroke="#171715" stroke-width="7" stroke-linejoin="round"/>
+
+    <text x="200" y="222" fill="#171715" font-size="22" font-weight="700" text-anchor="middle" letter-spacing="2">OR, INPUTS INVERTED</text>
+    <text x="200" y="245" fill="#6d6d6d" font-size="15" text-anchor="middle" letter-spacing="0.5">Y = &#172;A + &#172;B</text>
+  </g>
+
+  <!-- overall identity -->
+  <text x="440" y="305" fill="#171715" font-size="28" font-weight="700" text-anchor="middle">&#172;(A &#183; B) &#8801; &#172;A + &#172;B</text>
+  <text x="440" y="328" fill="#6d6d6d" font-size="15" font-style="italic" text-anchor="middle">De Morgan's Theorem: "bubble pushing"</text>
+</svg>

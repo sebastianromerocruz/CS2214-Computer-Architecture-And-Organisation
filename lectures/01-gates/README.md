@@ -9,15 +9,15 @@
 ## Sections
 
 1. [**How Does a Computer Work?**](#0)
-2. [**Gates, or: How I Started Worrying About What My Computer Does**](#1)
-    1. [**The `NOT` Gate**](#1-1)
-    2. [**The `AND` Gate**](#1-2)
-    3. [**The `OR` Gate**](#1-3)
-    4. [**`XOR`, `NAND`, and `NOR`**](#1-4)
-3. [**Boolean Algebraic Notation**](#2)
-4. [**Circuit Analysis: Deriving Expressions and Truth Tables**](#3)
-5. [**Representing Numbers in Binary**](#4)
-6. [**Hexadecimal**](#5)
+2. [**Representing Numbers in Binary**](#1)
+3. [**Hexadecimal**](#2)
+4. [**Gates, or: How I Started Worrying About What My Computer Does**](#3)
+    1. [**The `NOT` Gate**](#3-1)
+    2. [**The `AND` Gate**](#3-2)
+    3. [**The `OR` Gate**](#3-3)
+    4. [**`XOR`, `NAND`, and `NOR`**](#3-4)
+5. [**Boolean Algebraic Notation**](#4)
+6. [**Circuit Analysis: Deriving Expressions and Truth Tables**](#5)
 
 <br>
 
@@ -55,7 +55,156 @@ This course lives in the middle of this stack—**digital circuits**, **logic**,
 3. An **assembler** translates assembly into **machine language**—raw binary, the actual bytes the processor reads. This is not human readable.
 4. The **processor** executes those bytes by switching billions of tiny transistors on and off.
 
-### Gates, or: How I Started Worrying About What My Computer Does
+Everything from here on is about closing the gap between step 3 and step 4—between the raw bits and the physical switches that read them. Before we get to the switches themselves, though, it helps to get comfortable with what those bits actually mean as numbers, since that's the language everything downstream is written in.
+
+<br>
+
+<a id="1"></a>
+
+## Representing Numbers in Binary
+
+Computers don't speak English, or anything remotely resembling human language: for them, the only difference between a "yes" and a "no" is whether electricity is flowing through a wire or not. But the things a computer actually processes—integers, addresses, characters, instructions—aren't single bits. They're *numbers*, and we need a reliable way to encode those numbers as sequences of bits.
+
+The encoding is **positional notation**: the same idea underlying decimal, just in base 2, [**which you definitely know**](https://github.com/sebastianromerocruz/CS1114-Problem-Solving-And-Programming/tree/main/lectures/number_systems#part-1-number-systems). 
+
+In decimal, each digit position represents a power of 10. In binary, each bit position represents a power of 2, and each digit—called a **bit**—is either 0 or 1. Because different bases can represent the same number very differently (`11` in binary is 3, not 11), technical documents use prefixes to remove ambiguity:
+
+| Base | Name        | Allowed digits | Prefix       |
+|------|-------------|----------------|--------------|
+| 10   | Decimal     | 0–9            | none (or `0d`, optional) |
+| 2    | Binary      | 0, 1           | `0b` (required) |
+| 16   | Hexadecimal | 0–9, A–F       | `0x` or `0h` (required) |
+
+So `0b1010` is the binary number 1010 (= 10 in decimal), and `0xFF` is the hexadecimal number FF (= 255 in decimal). When you see a bare number in hardware documentation with no prefix, assume decimal—but when precision matters, always include the prefix.
+
+Note: if you feel comfortable with converting between these three number systems, you can safely skip to [**Hexadecimal**](#2). Just take a quick look at [**these terms**](#1-3) before you do so.
+
+<a id="1-1"></a> 
+
+### Binary to Decimal
+
+Multiply each bit by its positional power of 2 and sum the results.
+
+**Example:** Convert `0b11001` to decimal.
+
+```
+Position:  4    3    2    1    0
+Bit:       1    1    0    0    1
+
+1 × 2⁴ = 16
+1 × 2³ =  8
+0 × 2² =  0
+0 × 2¹ =  0
+1 × 2⁰ =  1
+         ───
+          25
+```
+
+So **0b11001 = 25₁₀**. The powers of 2 from right to left are 1, 2, 4, 8, 16, 32, 64, 128—just sum the positional values wherever a 1 bit appears.
+
+<a id="1-2"></a> 
+
+### Decimal to Binary
+
+Going the other direction requires **repeated division by 2**: divide the number by 2, record the remainder (always 0 or 1), then repeat on the quotient until you reach 0. The binary representation is the remainders read *bottom to top*—because each division strips off the least-significant bit first, reading bottom-to-top puts them back in order.
+
+**Example:** Convert 25 to binary.
+
+| Division | Quotient | Remainder |
+|----------|----------|-----------|
+| 25 ÷ 2   | 12       | **1**     |
+| 12 ÷ 2   | 6        | **0**     |
+| 6 ÷ 2    | 3        | **0**     |
+| 3 ÷ 2    | 1        | **1**     |
+| 1 ÷ 2    | 0        | **1**     |
+
+Reading remainders bottom to top: **11001**. So 25₁₀ = **0b11001**.
+
+<a id="1-3"></a> 
+
+### Terminology
+
+A few grouping names appear constantly in documentation and code:
+
+- A single binary digit is a **bit**
+- A group of 4 bits is, adorably, a **nibble**
+- A group of 8 bits is a **byte**
+- A **word** is a grouping whose size depends on the architecture—commonly 32 or 64 bits on modern systems. When a system call says it returns a 32-bit integer, or a register is described as a 64-bit value, these are the units being referred to.
+
+<br>
+
+<a id="2"></a> 
+
+## Hexadecimal
+
+Binary is the native language of hardware, but nobody is out there actually reading it aside from your computer. A 32-bit memory address written out in binary is 32 ones and zeros. Good luck! 
+
+This is literally the reason why we use **hexadecimal** (base 16, abbreviated *hex*) as the standard human-readable shorthand.
+
+The reason hex works so cleanly with binary is that 16 = 2⁴: each hex digit represents exactly 4 binary bits. This means converting between binary and hex requires no math at all—just a direct digit-for-digit substitution, four bits at a time. Hex uses the digits 0–9 for values zero through nine, then A–F for ten through fifteen:
+
+| Decimal | Binary | Hex |
+|---------|--------|-----|
+| 0       | 0000   | 0   |
+| 1       | 0001   | 1   |
+| 2       | 0010   | 2   |
+| 3       | 0011   | 3   |
+| 4       | 0100   | 4   |
+| 5       | 0101   | 5   |
+| 6       | 0110   | 6   |
+| 7       | 0111   | 7   |
+| 8       | 1000   | 8   |
+| 9       | 1001   | 9   |
+| 10      | 1010   | A   |
+| 11      | 1011   | B   |
+| 12      | 1100   | C   |
+| 13      | 1101   | D   |
+| 14      | 1110   | E   |
+| 15      | 1111   | F   |
+
+This table is worth memorising (at least, I did). Once you know it, converting between binary and hex is basically trivial.
+
+<a id="2-1"></a> 
+
+### Binary to Hexadecimal
+
+Split the binary number into groups of 4 bits (or a nibble) starting from the right, then convert each group independently. If the leftmost group has fewer than 4 bits, pad it with leading zeros.
+
+**Example:** Convert `0b1101 1001` to hexadecimal.
+
+```
+1101  →  13  →  D
+1001  →   9  →  9
+```
+
+Result: **0xD9**
+
+<a id="2-2"></a> 
+
+### Hexadecimal to Binary
+
+Go in reverse: replace each hex digit with its 4-bit binary equivalent, keeping the groups in order.
+
+**Example:** Convert `0xA7F1` to binary.
+
+```
+A  →  10  →  1010
+7  →   7  →  0111
+F  →  15  →  1111
+1  →   1  →  0001
+```
+
+Result: **0b 1010 0111 1111 0001**
+
+Any time you see a memory address, a colour code (`#FF8800`), a network MAC address, or a register dump in a debugger, it's almost certainly in hex. The prefix `0x` is your signal. Being able to quickly read hex—and spot that `0xFF` is all ones, or that `0x80000000` has only the MSB set—is a skill you'll use constantly in systems work.
+
+Now that numbers are out of the way, let's get to the actual switches that move them around.
+
+<br>
+
+<a id="3"></a>
+
+## Gates, or: How I Started Worrying About What My Computer Does
 
 A **transistor** is a semiconductor device that acts as an electrically controlled switch: apply enough voltage to the control terminal and current flows; remove it and current stops. That binary on/off behaviour is exactly what is represented by 1 and 0, `true` and `false`.
 
@@ -64,12 +213,6 @@ A **logic gate** is what you get when you wire a small number of transistors tog
 They are: `AND`, `OR`, `NOT`. That's it. And yet, everything your CPU does—running a video game, encrypting a file, rendering a webpage, depriving a small town of water by querying a data centre—is ultimately just those three operations, composed in very large numbers. A modern chip contains tens of _billions_ of these switches on a piece of silicon the size of a fingernail.
 
 That's the thing, the crux at the heart of this course: the gap between "flip a switch" and "run a program" is enormous, and crossing it is what this course is about. The gates are where we begin.
-
-<br>
-
-<a id="1"></a>
-
-## Logic Gates
 
 Every gate can be described in three different ways, and you'll encounter all three in the wild:
 
@@ -81,7 +224,7 @@ They contain exactly the same information, just expressed in different "dialects
 
 For each gate below, all three representations are given side by side. Try reading the truth table from the equation, and the equation from the diagram, until they feel like the same thing. You'll know the first three of these by heart.
 
-<a id="1-1"></a>
+<a id="3-1"></a>
 
 ### The `NOT` Gate
 
@@ -119,7 +262,7 @@ Y = Ā   (also written  Y = A',  Y = ¬A,  Y = ~A)
 
 <br>
 
-<a id="1-2"></a>
+<a id="3-2"></a>
 
 ### The `AND` Gate
 
@@ -161,7 +304,7 @@ The "juxtaposition notation" `AB` (no operator symbol) means AND, by direct anal
 
 <br>
 
-<a id="1-3"></a>
+<a id="3-3"></a>
 
 ### The `OR` Gate
 
@@ -203,7 +346,7 @@ The `+` symbol for `OR` is borrowed from arithmetic. The analogy holds in a clam
 
 <br>
 
-<a id="1-4"></a>
+<a id="3-4"></a>
 
 ### `XOR`, `NAND`, and `NOR`
 
@@ -307,9 +450,9 @@ So why are `NAND` and `NOR` so important? It's actually kind of hard to believe:
 
 <br>
 
-<a id="2"></a>
+<a id="4"></a>
 
-<a id="2-1"></a>
+<a id="4-1"></a>
 
 ## Boolean Algebraic Notation
 
@@ -330,7 +473,7 @@ Unfortunately, mathematicians, electrical engineers, and programmers all develop
 
 The `+` for `OR` and juxtaposition for `AND` come from George Boole's original mathematical framing. The `~`, `&`, and `|` come from C and most other programming languages. The `¬`, `∧`, and `∨` come from what is called formal logic. Knowing which tradition you're reading is usually obvious from context, but it's helpful to be able to read all of them.
 
-<a id="2-2"></a> 
+<a id="4-2"></a> 
 
 ### Operator Precedence
 
@@ -344,7 +487,7 @@ So `Ā · B + C` means `((NOT A) AND B) OR C`, _not_ `NOT(A AND (B OR C))`.
 
 When there's any potential ambiguity (or if you're paranoid like me), add parentheses. Over-parenthesising is literally free, and the cost of a precedence error is a wrong circuit.
 
-<a id="2-3"></a> 
+<a id="4-3"></a> 
 
 ### DeMorgan's Theorem
 
@@ -380,7 +523,7 @@ Why should you care about _that_? Because it means that these are two different 
 
 <br>
 
-<a id="3"></a> 
+<a id="5"></a> 
 
 ## Circuit Analysis: Deriving Expressions and Truth Tables
 
@@ -500,150 +643,7 @@ A good strategy is to count up in binary from 0000 to 1111, which guarantees eve
 
 The truth table is law—i.e. it exhaustively lists every _case_. The problem is that it doesn't scale very well; a circuit with 32 inputs would require over _four billion rows_. I ain't doing that, and neither are you.
 
-Luckily, you won't have to, but that is a story for next time. Since we talked about binary numbers, let's cover a couple of things you need to know about them.
-
-<br>
-
-<a id="4"></a>
-
-## Representing Numbers in Binary
-
-So these gates operate on 0s and 1s. But the things a computer actually processes—integers, addresses, characters, instructions—are not single bits. They're *numbers*, and we need a reliable way to encode those numbers as sequences of bits. This is where the math that we've been doing and the hardware connect.
-
-The encoding is **positional notation**: the same idea underlying decimal, just in base 2, [**which you definitely know**](https://github.com/sebastianromerocruz/CS1114-Problem-Solving-And-Programming/tree/main/lectures/number_systems#part-1-number-systems). 
-
-In decimal, each digit position represents a power of 10. In binary, each bit position represents a power of 2, and each digit—called a **bit**—is either 0 or 1. Because different bases can represent the same number very differently (`11` in binary is 3, not 11), technical documents use prefixes to remove ambiguity:
-
-| Base | Name        | Allowed digits | Prefix       |
-|------|-------------|----------------|--------------|
-| 10   | Decimal     | 0–9            | none (or `0d`, optional) |
-| 2    | Binary      | 0, 1           | `0b` (required) |
-| 16   | Hexadecimal | 0–9, A–F       | `0x` or `0h` (required) |
-
-So `0b1010` is the binary number 1010 (= 10 in decimal), and `0xFF` is the hexadecimal number FF (= 255 in decimal). When you see a bare number in hardware documentation with no prefix, assume decimal—but when precision matters, always include the prefix.
-
-Note: if you feel comfortable with converting between these three number systems, you can safely skip to [**Hexadecimal**](#5). Just take a quick look at [**these terms**](#4-3) before you do so.
-
-<a id="4-1"></a> 
-
-### Binary to Decimal
-
-Multiply each bit by its positional power of 2 and sum the results.
-
-**Example:** Convert `0b11001` to decimal.
-
-```
-Position:  4    3    2    1    0
-Bit:       1    1    0    0    1
-
-1 × 2⁴ = 16
-1 × 2³ =  8
-0 × 2² =  0
-0 × 2¹ =  0
-1 × 2⁰ =  1
-         ───
-          25
-```
-
-So **0b11001 = 25₁₀**. The powers of 2 from right to left are 1, 2, 4, 8, 16, 32, 64, 128—just sum the positional values wherever a 1 bit appears.
-
-<a id="4-2"></a> 
-
-### Decimal to Binary
-
-Going the other direction requires **repeated division by 2**: divide the number by 2, record the remainder (always 0 or 1), then repeat on the quotient until you reach 0. The binary representation is the remainders read *bottom to top*—because each division strips off the least-significant bit first, reading bottom-to-top puts them back in order.
-
-**Example:** Convert 25 to binary.
-
-| Division | Quotient | Remainder |
-|----------|----------|-----------|
-| 25 ÷ 2   | 12       | **1**     |
-| 12 ÷ 2   | 6        | **0**     |
-| 6 ÷ 2    | 3        | **0**     |
-| 3 ÷ 2    | 1        | **1**     |
-| 1 ÷ 2    | 0        | **1**     |
-
-Reading remainders bottom to top: **11001**. So 25₁₀ = **0b11001**.
-
-<a id="4-3"></a> 
-
-### Terminology
-
-A few grouping names appear constantly in documentation and code:
-
-- A single binary digit is a **bit**
-- A group of 4 bits is, adorably, a **nibble**
-- A group of 8 bits is a **byte**
-- A **word** is a grouping whose size depends on the architecture—commonly 32 or 64 bits on modern systems. When a system call says it returns a 32-bit integer, or a register is described as a 64-bit value, these are the units being referred to.
-
-<br>
-
-<a id="5"></a> 
-
-## Hexadecimal
-
-Binary is the native language of hardware, but nobody is out there actually reading it aside from your computer. A 32-bit memory address written out in binary is 32 ones and zeros. Good luck! 
-
-This is literally the reason why we use **hexadecimal** (base 16, abbreviated *hex*) as the standard human-readable shorthand.
-
-The reason hex works so cleanly with binary is that 16 = 2⁴: each hex digit represents exactly 4 binary bits. This means converting between binary and hex requires no math at all—just a direct digit-for-digit substitution, four bits at a time. Hex uses the digits 0–9 for values zero through nine, then A–F for ten through fifteen:
-
-| Decimal | Binary | Hex |
-|---------|--------|-----|
-| 0       | 0000   | 0   |
-| 1       | 0001   | 1   |
-| 2       | 0010   | 2   |
-| 3       | 0011   | 3   |
-| 4       | 0100   | 4   |
-| 5       | 0101   | 5   |
-| 6       | 0110   | 6   |
-| 7       | 0111   | 7   |
-| 8       | 1000   | 8   |
-| 9       | 1001   | 9   |
-| 10      | 1010   | A   |
-| 11      | 1011   | B   |
-| 12      | 1100   | C   |
-| 13      | 1101   | D   |
-| 14      | 1110   | E   |
-| 15      | 1111   | F   |
-
-This table is worth memorising (at least, I did). Once you know it, converting between binary and hex is basically trivial.
-
-<a id="5-1"></a> 
-
-### Binary to Hexadecimal
-
-Split the binary number into groups of 4 bits (or a nibble) starting from the right, then convert each group independently. If the leftmost group has fewer than 4 bits, pad it with leading zeros.
-
-**Example:** Convert `0b1101 1001` to hexadecimal.
-
-```
-1101  →  13  →  D
-1001  →   9  →  9
-```
-
-Result: **0xD9**
-
-<a id="5-2"></a> 
-
-### Hexadecimal to Binary
-
-Go in reverse: replace each hex digit with its 4-bit binary equivalent, keeping the groups in order.
-
-**Example:** Convert `0xA7F1` to binary.
-
-```
-A  →  10  →  1010
-7  →   7  →  0111
-F  →  15  →  1111
-1  →   1  →  0001
-```
-
-Result: **0b 1010 0111 1111 0001**
-
-Any time you see a memory address, a colour code (`#FF8800`), a network MAC address, or a register dump in a debugger, it's almost certainly in hex. The prefix `0x` is your signal. Being able to quickly read hex—and spot that `0xFF` is all ones, or that `0x80000000` has only the MSB set—is a skill you'll use constantly in systems work.
-
-Everything above has been non-negative. Negative numbers—and the encoding that makes ordinary addition work for them too—is where we pick up [**next lecture**](/lectures/02-adders), right before we need it to explain why adders work the way they do.
+Luckily, you won't have to, but that is a story for next time. Negative numbers—and the encoding that makes ordinary addition work for them too—is where we pick up [**next lecture**](/lectures/02-adders), right before we need it to explain why adders work the way they do.
 
 <br>
 

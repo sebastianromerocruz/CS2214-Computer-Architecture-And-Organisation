@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 480" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="900" height="480" rx="28" fill="#f2f2ef"/>
+  <rect x="20" y="20" width="14" height="14" fill="#c1272d"/>
+  <circle cx="876" cy="456" r="7" fill="#8a1f24"/>
+
+  <!-- A, B: inverted into AND1 -->
+  <line x1="34" y1="85" x2="70" y2="85" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="34" cy="85" r="6" fill="#171715"/>
+  <text x="14" y="68" fill="#404040" font-size="22" font-weight="600">A</text>
+  <circle cx="84" cy="85" r="14" fill="#ffffff" stroke="#c1272d" stroke-width="6"/>
+  <line x1="98" y1="85" x2="160" y2="85" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+
+  <line x1="34" y1="135" x2="70" y2="135" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="34" cy="135" r="6" fill="#171715"/>
+  <text x="14" y="158" fill="#404040" font-size="22" font-weight="600">B</text>
+  <circle cx="84" cy="135" r="14" fill="#ffffff" stroke="#c1272d" stroke-width="6"/>
+  <line x1="98" y1="135" x2="160" y2="135" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- AND1: W1 = NOT A AND NOT B -->
+  <path d="M160,60 L200,60 A50,50 0 0 1 200,160 L160,160 Z" fill="#ffffff" stroke="#171715" stroke-width="7" stroke-linejoin="round"/>
+
+  <!-- W1 -> jog down to AND2's top input -->
+  <line x1="250" y1="110" x2="330" y2="110" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <line x1="330" y1="110" x2="330" y2="205" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <line x1="330" y1="205" x2="380" y2="205" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <text x="262" y="98" fill="#6d6d6d" font-size="16" font-style="italic">W1</text>
+
+  <!-- C: straight into AND2, no inversion -->
+  <line x1="34" y1="255" x2="380" y2="255" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="34" cy="255" r="6" fill="#171715"/>
+  <text x="14" y="248" fill="#404040" font-size="22" font-weight="600">C</text>
+
+  <!-- AND2: W2 = W1 AND C -->
+  <path d="M380,180 L420,180 A50,50 0 0 1 420,280 L380,280 Z" fill="#ffffff" stroke="#171715" stroke-width="7" stroke-linejoin="round"/>
+
+  <!-- W2 -> jog down to NOR's top input -->
+  <line x1="470" y1="230" x2="560" y2="230" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <line x1="560" y1="230" x2="560" y2="325" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <line x1="560" y1="325" x2="600" y2="325" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <text x="482" y="218" fill="#6d6d6d" font-size="16" font-style="italic">W2</text>
+
+  <!-- D: straight into NOR, no inversion -->
+  <line x1="34" y1="375" x2="600" y2="375" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="34" cy="375" r="6" fill="#171715"/>
+  <text x="14" y="368" fill="#404040" font-size="22" font-weight="600">D</text>
+
+  <!-- NOR: Y = NOT (W2 OR D) -->
+  <path d="M600,300 Q630,350 600,400 C645,400 690,378 730,350 C690,322 645,300 600,300 Z"
+        fill="#ffffff" stroke="#171715" stroke-width="7" stroke-linejoin="round"/>
+  <circle cx="744" cy="350" r="14" fill="#ffffff" stroke="#c1272d" stroke-width="6"/>
+
+  <!-- output -->
+  <line x1="758" y1="350" x2="830" y2="350" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="830" cy="350" r="6" fill="#171715"/>
+  <text x="840" y="358" fill="#404040" font-size="22" font-weight="600">Y</text>
+
+  <!-- result -->
+  <text x="450" y="438" fill="#171715" font-size="22" font-weight="700" text-anchor="middle">Y = (A &#183; &#172;D) + (B &#183; &#172;D) + (&#172;C &#183; &#172;D)</text>
+  <text x="450" y="460" fill="#6d6d6d" font-size="14" font-style="italic" text-anchor="middle">Circuit analysis: tracing wires from inputs to output</text>
+</svg>

@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 640" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="700" height="640" rx="28" fill="#f2f2ef"/>
+  <rect x="24" y="24" width="14" height="14" fill="#c1272d"/>
+  <circle cx="676" cy="616" r="7" fill="#8a1f24"/>
+
+  <!-- direction labels -->
+  <text x="350" y="45" fill="#6d6d6d" font-size="14" font-style="italic" text-anchor="middle">&#9650; closer to the programmer</text>
+  <text x="350" y="605" fill="#6d6d6d" font-size="14" font-style="italic" text-anchor="middle">closer to the physics &#9660;</text>
+
+  <!-- row 0: Application Software (plain) -->
+  <rect x="100" y="70" width="520" height="52" rx="10" fill="#f4f0f9" stroke="#b9a3d1" stroke-width="2"/>
+  <line x1="370" y1="76" x2="370" y2="116" stroke="#b9a3d1" stroke-width="2"/>
+  <text x="120" y="103" fill="#6d6d6d" font-size="17" font-weight="700">Application Software</text>
+  <text x="390" y="102" fill="#9a8fae" font-size="15" font-style="italic">Programs</text>
+
+  <!-- row 1: Operating Systems (plain) -->
+  <rect x="100" y="130" width="520" height="52" rx="10" fill="#f4f0f9" stroke="#b9a3d1" stroke-width="2"/>
+  <line x1="370" y1="136" x2="370" y2="176" stroke="#b9a3d1" stroke-width="2"/>
+  <text x="120" y="163" fill="#6d6d6d" font-size="17" font-weight="700">Operating Systems</text>
+  <text x="390" y="162" fill="#9a8fae" font-size="15" font-style="italic">Device Drivers</text>
+
+  <!-- row 2: Architecture (highlighted, "this course") -->
+  <rect x="100" y="190" width="520" height="52" rx="10" fill="#ffffff" stroke="#171715" stroke-width="4"/>
+  <line x1="370" y1="196" x2="370" y2="236" stroke="#171715" stroke-width="2"/>
+  <text x="120" y="223" fill="#171715" font-size="17" font-weight="700">Architecture</text>
+  <text x="390" y="222" fill="#404040" font-size="15">Instructions, Registers</text>
+
+  <!-- row 3: Microarchitecture (highlighted) -->
+  <rect x="100" y="250" width="520" height="52" rx="10" fill="#ffffff" stroke="#171715" stroke-width="4"/>
+  <line x1="370" y1="256" x2="370" y2="296" stroke="#171715" stroke-width="2"/>
+  <text x="120" y="283" fill="#171715" font-size="17" font-weight="700">Microarchitecture</text>
+  <text x="390" y="282" fill="#404040" font-size="15">Datapaths, Controllers</text>
+
+  <!-- row 4: Logic (highlighted) -->
+  <rect x="100" y="310" width="520" height="52" rx="10" fill="#ffffff" stroke="#171715" stroke-width="4"/>
+  <line x1="370" y1="316" x2="370" y2="356" stroke="#171715" stroke-width="2"/>
+  <text x="120" y="343" fill="#171715" font-size="17" font-weight="700">Logic</text>
+  <text x="390" y="342" fill="#404040" font-size="15">Adders, Memories</text>
+
+  <!-- row 5: Digital Circuits (highlighted) -->
+  <rect x="100" y="370" width="520" height="52" rx="10" fill="#ffffff" stroke="#171715" stroke-width="4"/>
+  <line x1="370" y1="376" x2="370" y2="416" stroke="#171715" stroke-width="2"/>
+  <text x="120" y="403" fill="#171715" font-size="17" font-weight="700">Digital Circuits</text>
+  <text x="390" y="402" fill="#404040" font-size="15">AND Gates, NOT Gates</text>
+
+  <!-- row 6: Devices (plain) -->
+  <rect x="100" y="430" width="520" height="52" rx="10" fill="#f4f0f9" stroke="#b9a3d1" stroke-width="2"/>
+  <line x1="370" y1="436" x2="370" y2="476" stroke="#b9a3d1" stroke-width="2"/>
+  <text x="120" y="463" fill="#6d6d6d" font-size="17" font-weight="700">Devices</text>
+  <text x="390" y="462" fill="#9a8fae" font-size="15" font-style="italic">Transistors, Diodes</text>
+
+  <!-- row 7: Physics (plain) -->
+  <rect x="100" y="490" width="520" height="52" rx="10" fill="#f4f0f9" stroke="#b9a3d1" stroke-width="2"/>
+  <line x1="370" y1="496" x2="370" y2="536" stroke="#b9a3d1" stroke-width="2"/>
+  <text x="120" y="523" fill="#6d6d6d" font-size="17" font-weight="700">Physics</text>
+  <text x="390" y="522" fill="#9a8fae" font-size="15" font-style="italic">Electrons</text>
+
+  <!-- brace marking the four layers this course covers -->
+  <path d="M80,196 Q60,196 60,216 L60,326 Q60,336 45,336 Q60,336 60,346 L60,456 Q60,476 80,476"
+        fill="none" stroke="#171715" stroke-width="3" stroke-linecap="round"/>
+  <text x="25" y="336" fill="#171715" font-size="15" font-weight="700" text-anchor="middle" letter-spacing="1" transform="rotate(-90 25 336)">THIS COURSE</text>
+</svg>

@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CS-UY 2214 — Week I — Logic Gates</title>
+<link rel="stylesheet" href="../../_shared/reveal/dist/reset.css">
+<link rel="stylesheet" href="../../_shared/reveal/dist/reveal.css">
+<link rel="stylesheet" href="../../_shared/theme/house.css">
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+
+    <!-- 01: title -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week I</span><span class="page">01</span></div>
+      <div style="margin-top:180px;">
+        <div style="color:var(--red); font-weight:700; letter-spacing:0.08em; font-size:15px;">INTRODUCTION &amp; LOGIC GATES</div>
+        <h1 style="font-size:52px; margin:14px 0 0;">From Flipping a Switch to Running a Program</h1>
+        <p style="color:var(--mute); font-size:20px; margin-top:18px;">CS-UY 2214 | Computer Architecture and Organization<br>Week I | NYU Tandon School of Engineering</p>
+      </div>
+      <div class="slide-footer"><span>Introduction &amp; Logic Gates</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 02: How Does a Computer Work -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week I</span><span class="page">02</span></div>
+      <div class="slide-title"><span class="num">00</span><h1>How Does a Computer Work?</h1></div>
+      <div class="body">
+        <p class="fragment">Ask someone off the street and you'll hear "electricity" or "there's a chip in there." None of that explains the mechanism.</p>
+        <p class="fragment">The goal of this course: build the complete picture, from the physics of electrons up to the software you use every day.</p>
+        <div class="callout fragment"><strong>Abstraction</strong>: layers that hide their complexity behind a clean interface and trust that the layer beneath it works.</div>
+        <p class="fragment">A Python programmer doesn't need to know what a transistor is. A transistor doesn't need to know what Python is. They compose seamlessly anyway: each layer speaking a completely different language than the one above it.</p>
+      </div>
+      <div class="slide-footer"><span>Introduction &amp; Logic Gates</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 03: The Abstraction Stack -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week I</span><span class="page">03</span></div>
+      <div class="slide-title"><span class="num">00</span><h1>The Abstraction Stack</h1></div>
+      <div class="body">
+        <p>Tracing source code down to hardware:</p>
+        <div class="figure fragment">
+          <img src="assets/abstraction-stack.svg" alt="Abstraction stack diagram" style="max-height:340px;">
+          <figcaption>The abstraction stack: each layer hides its complexity from the ones above it. This course lives in the middle: digital circuits, logic, microarchitecture, architecture.</figcaption>
+        </div>
+      </div>
+      <div class="slide-footer"><span>Introduction &amp; Logic Gates</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 04: Representing Numbers in Binary -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week I</span><span class="page">04</span></div>
+      <div class="slide-title"><span class="num">01</span><h1>Representing Numbers in Binary</h1></div>
+      <div class="body">
+        <p class="fragment">Computers only know "yes" or "no": whether electricity is flowing through a wire. But they process numbers: integers, addresses, characters. The encoding is <strong>positional notation</strong>: the same idea as decimal, just base 2.</p>
+        <table class="fragment">
+          <tr><th>Base</th><th>Name</th><th>Digits</th><th>Prefix</th></tr>
+          <tr><td>10</td><td>Decimal</td><td>0&ndash;9</td><td>none</td></tr>
+          <tr><td>2</td><td>Binary</td><td>0, 1</td><td>0b</td></tr>
+          <tr><td>16</td><td>Hexadecimal</td><td>0&ndash;9, A&ndash;F</td><td>0x</td></tr>
+        </table>
+        <p class="fragment">0b1010 = 10 decimal. 0xFF = 255 decimal. Bare number, no prefix &rarr; assume decimal; when precision matters, always prefix.</p>
+      </div>
+      <div class="slide-footer"><span>Introduction &amp; Logic Gates</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 05: Binary <-> Decimal -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week I</span><span class="page">05</span></div>
+      <div class="slide-title"><span class="num">01</span><h1>Binary &harr; Decimal</h1></div>
+      <div class="body">
+        <div class="cols">
+          <div class="fragment">
+            <p><strong>Binary &rarr; Decimal</strong></p>
+            <p class="small">Multiply each bit by its positional power of 2, sum the results.</p>
+            <div class="eq small">0b11001<br>1&times;16 + 1&times;8 + 0 + 0 + 1&times;1 = 25</div>
+          </div>
+          <div class="fragment">
+            <p><strong>Decimal &rarr; Binary</strong></p>
+            <p class="small">Repeated division by 2; read remainders bottom to top.</p>
+            <div class="eq small">
+              25&divide;2=12 r1<br>12&divide;2=6 r0<br>6&divide;2=3 r0<br>3&divide;2=1 r1<br>1&divide;2=0 r1&nbsp;&rarr; 0b11001
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer"><span>Introduction &amp; Logic Gates</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 06: Terminology -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week I</span><span class="page">06</span></div>
+      <div class="slide-title"><span class="num">01</span><h1>Terminology</h1></div>
+      <div class="body">
+        <ul>
+          <li class="fragment">A single binary digit is a <strong>bit</strong>.</li>
+          <li class="fragment">A group of 4 bits is a <strong>nibble</strong>.</li>
+          <li class="fragment">A group of 8 bits is a <strong>byte</strong>.</li>
+          <li class="fragment">A <strong>word</strong> is a grouping whose size depends on the architecture: commonly 32 or 64 bits on modern systems.</li>
+        </ul>
+        <p class="fragment">When a system call returns "a 32-bit integer," or a register is described as "a 64-bit value": these are the units being referred to.</p>
+      </div>
+      <div class="slide-footer"><span>Introduction &amp; Logic Gates</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 07: Hexadecimal -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week I</span><span class="page">07</span></div>
+      <div class="slide-title"><span class="num">02</span><h1>Hexadecimal</h1></div>
+      <div class="body">
+        <div class="cols">
+          <div class="fragment">
+            <p>Binary is the native language of hardware, but nobody reads 32 ones and zeros. Hex (base 16) is the human-readable shorthand.</p>
+            <p>16 = 2&#8308;: each hex digit is exactly 4 binary bits: no arithmetic needed, just direct substitution.</p>
+          </div>
+          <table class="fragment small">
+            <tr><th>Dec</th><th>Bin</th><th>Hex</th></tr>
+            <tr><td>9</td><td>1001</td><td>9</td></tr>
+            <tr><td>10</td><td>1010</td><td>A</td></tr>
+            <tr><td>11</td><td>1011</td><td>B</td></tr>
+            <tr><td>12</td><td>1100</td><td>C</td></tr>
+            <tr><td>13</td><td>1101</td><td>D</td></tr>
+            <tr><td>14</td><td>1110</td><td>E</td></tr>
+            <tr><td>15</td><td>1111</td><td>F</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="slide-footer"><span>Introduction &amp; Logic Gates</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 08: Binary <-> Hexadecimal -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week I</span><span class="page">08</span></div>
+      <div class="slide-title"><span class="num">02</span><h1>Binary &harr; Hexadecimal</h1></div>
+      <div class="body">
+        <p class="fragment">Split into groups of 4 bits (nibbles) from the right; convert each independently.</p>
+        <div class="eq fragment">0b1101 1001<br>1101 &rarr; 13 &rarr; D<br>1001 &rarr; 9 &rarr; 9&nbsp;&nbsp;&rarr; 0xD9</div>
+        <p class="fragment">Reverse: each hex digit becomes its 4-bit binary equivalent.</p>
+        <div class="eq fragment">0xA7F1 &rarr; 1010 0111 1111 0001</div>
+        <p class="fragment">Memory addresses, colour codes, MAC addresses, register dumps: almost always hex. <code>0x</code> is your signal.</p>
+      </div>
+      <div class="slide-footer"><span>Introduction &amp; Logic Gates</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 09: What Is a Logic Gate -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week I</span><span class="page">09</span></div>
+      <div class="slide-title"><span class="num">03</span><h1>What Is a Logic Gate?</h1></div>
+      <div class="body">
+        <p class="fragment"><strong>Transistor</strong>: an electrically controlled switch. Enough voltage at the control terminal and current flows; remove it and current stops. That on/off behaviour is 1 and 0.</p>
+        <p class="fragment"><strong>Logic gate</strong>: a small number of transistors wired together into a circuit that takes binary inputs and produces a single binary output, according to a fixed rule.</p>
+        <div class="callout fragment">They are <strong>AND</strong>, <strong>OR</strong>, <strong>NOT</strong>. That's it. Everything your CPU does &mdash; games, encryption, rendering &mdash; is just those three operations, composed in very large numbers. A modern chip contains tens of billions of them.</div>
+        <p class="fragment">The gap between "flip a switch" and "run a program" is enormous. Crossing it is what this course is about. The gates are where we begin.</p>
+      </div>
+      <div class="slide-footer"><span>Introduction &amp; Logic Gates</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 10: Three Dialects, One Language -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week I</span><span class="page">10</span></div>
+      <div class="slide-title"><span class="num">03</span><h1>Three Dialects, One Language</h1></div>
+      <div class="body">
+        <p>Every gate can be described three ways, and you'll meet all three in the wild:</p>
+        <ul>
+          <li class="fragment"><strong>Circuit diagrams</strong>: datasheets and textbooks.</li>
+          <li class="fragment"><strong>Boolean equations</strong>: papers and design documents.</li>
+          <li class="fragment"><strong>Truth tables</strong>: verification and testing.</li>
+        </ul>
+        <p class="fragment">They carry exactly the same information. Being able to move between them fluidly (reading a truth table off an equation, an equation off a diagram) is a practiced skill, not a memorised one. For each gate that follows, all three are given side by side.</p>
+      </div>
+      <div class="slide-footer"><span>Introduction &amp; Logic Gates</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 11: NOT gate -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week I</span><span class="page">11</span></div>
+      <div class="slide-title"><span class="num">3.1</span><h1>The NOT Gate</h1></div>
+      <div class="body">
+        <p class="fragment">Also called an <strong>inverter</strong>. The only gate with a single input. The small circle on the output (the inversion bubble) is the negation; without it, the triangle just passes the signal through.</p>
+        <div class="figure fragment">
+          <img src="assets/gate-not.svg" alt="NOT gate diagram">
+          <figcaption>A triangle with an inversion bubble on the output.</figcaption>
+        </div>
+        <div class="eq fragment">Y = <span class="ob">A</span> &nbsp;(also A', &not;A, ~A)</div>
+        <table class="fragment">
+          <tr><th>A</th><th>Y</th></tr>
+          <tr><td>0</td><td>1</td></tr>
+          <tr><td>1</td><td>0</td></tr>
+        </table>
+      </div>
+      <div class="slide-footer"><span>Introduction &amp; Logic Gates</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 12: AND gate -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week I</span><span class="page">12</span></div>
+      <div class="slide-title"><span class="num">3.2</span><h1>The AND Gate</h1></div>
+      <div class="body">
+        <p class="fragment">Outputs 1 only when all inputs are 1. Think of it as an "enable" gate: <code>A AND B</code> passes <code>A</code> only when <code>B</code> is high.</p>
+        <div class="figure fragment">
+          <img src="assets/gate-and.svg" alt="AND gate diagram">
+          <figcaption>Flat back, rounded D-shaped front.</figcaption>
+        </div>
+        <div class="eq fragment">Y = AB &nbsp;(also A&middot;B, A&and;B)</div>
+        <table class="fragment">
+          <tr><th>A</th><th>B</th><th>Y</th></tr>
+          <tr><td>0</td><td>0</td><td>0</td></tr>
+          <tr><td>0</td><td>1</td><td>0</td></tr>
+          <tr><td>1</td><td>0</td><td>0</td></tr>
+          <tr><td>1</td><td>1</td><td>1</td></tr>
+        </table>
+      </div>
+      <div class="slide-footer"><span>Introduction &amp; Logic Gates</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 13: OR gate -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week I</span><span class="page">13</span></div>
+      <div class="slide-title"><span class="num">3.3</span><h1>The OR Gate</h1></div>
+      <div class="body">
+        <p class="fragment">Outputs 1 when at least one input is 1: <em>inclusive</em> or, unlike everyday "soup or salad." The "merge" primitive: if any condition holds, the output is active.</p>
+        <div class="figure fragment">
+          <img src="assets/gate-or.svg" alt="OR gate diagram">
+          <figcaption>Curved back, pointed front.</figcaption>
+        </div>
+        <div class="eq fragment">Y = A + B &nbsp;(also A&or;B)</div>
+        <table class="fragment">
+          <tr><th>A</th><th>B</th><th>Y</th></tr>
+          <tr><td>0</td><td>0</td><td>0</td></tr>
+          <tr><td>0</td><td>1</td><td>1</td></tr>
+          <tr><td>1</td><td>0</td><td>1</td></tr>
+          <tr><td>1</td><td>1</td><td>1</td></tr>
+        </table>
+      </div>
+      <div class="slide-footer"><span>Introduction &amp; Logic Gates</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 14: XOR gate -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week I</span><span class="page">14</span></div>
+      <div class="slide-title"><span class="num">3.4</span><h1>The XOR Gate</h1></div>
+      <div class="body">
+        <p class="fragment"><strong>"Exclusive OR"</strong>: outputs 1 when its two inputs differ. The addition primitive: when you add two bits, the sum bit is their <code>XOR</code>, and the carry-out is their <code>AND</code>.</p>
+        <div class="figure fragment">
+          <img src="assets/gate-xor.svg" alt="XOR gate diagram">
+          <figcaption>An OR body with an extra curved line at the back.</figcaption>
+        </div>
+        <div class="eq fragment">Y = A &oplus; B</div>
+        <table class="fragment">
+          <tr><th>A</th><th>B</th><th>Y</th></tr>
+          <tr><td>0</td><td>0</td><td>0</td></tr>
+          <tr><td>0</td><td>1</td><td>1</td></tr>
+          <tr><td>1</td><td>0</td><td>1</td></tr>
+          <tr><td>1</td><td>1</td><td>0</td></tr>
+        </table>
+      </div>
+      <div class="slide-footer"><span>Introduction &amp; Logic Gates</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 15: NAND and NOR -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week I</span><span class="page">15</span></div>
+      <div class="slide-title"><span class="num">3.4</span><h1>NAND and NOR</h1></div>
+      <div class="body">
+        <div class="cols">
+          <div class="fragment">
+            <p><strong>NAND</strong> (NOT AND)</p>
+            <div class="figure"><img src="assets/gate-nand.svg" alt="NAND gate diagram" style="max-height:130px;"></div>
+            <div class="eq">Y = <span class="ob">A &middot; B</span></div>
+            <p class="small">An AND gate with an inversion bubble. Output is 0 only when all inputs are 1. The overbar covers the entire expression.</p>
+          </div>
+          <div class="fragment">
+            <p><strong>NOR</strong> (NOT OR)</p>
+            <div class="figure"><img src="assets/gate-nor.svg" alt="NOR gate diagram" style="max-height:130px;"></div>
+            <div class="eq">Y = <span class="ob">A + B</span></div>
+            <p class="small">An OR gate with an inversion bubble. Output is 1 only when all inputs are 0.</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer"><span>Introduction &amp; Logic Gates</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 16: Universal Gates -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week I</span><span class="page">16</span></div>
+      <div class="slide-title"><span class="num">3.4</span><h1>Universal Gates</h1></div>
+      <div class="body">
+        <div class="callout fragment"><strong>NAND</strong> and <strong>NOR</strong> are universal. Any logic function, no matter how complex, can be built using only NAND gates, or alternatively, only NOR gates.</div>
+        <p class="fragment">One gate type is sufficient to express all of Boolean logic. That matters practically in chip fabrication: a design using only one cell type is simpler and cheaper to manufacture.</p>
+      </div>
+      <div class="slide-footer"><span>Introduction &amp; Logic Gates</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 17: Boolean Algebraic Notation -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week I</span><span class="page">17</span></div>
+      <div class="slide-title"><span class="num">04</span><h1>Boolean Algebraic Notation</h1></div>
+      <div class="body">
+        <div class="callout fragment"><strong>Boolean algebra</strong>: a system for writing logic functions as formulas over variables that can only take the values 0 and 1. Operators correspond directly to gates.</div>
+        <p class="fragment">Mathematicians, electrical engineers, and programmers each use different notation for the same operations. You'll see all of them:</p>
+        <table class="fragment">
+          <tr><th>Operation</th><th>Notations you will encounter</th></tr>
+          <tr><td>NOT A</td><td><span class="ob">A</span>, ~A, &not;A, A'</td></tr>
+          <tr><td>A AND B</td><td>A &amp; B, A &and; B, A&middot;B, AB</td></tr>
+          <tr><td>A OR B</td><td>A|B, A&or;B, A + B</td></tr>
+          <tr><td>A XOR B</td><td>A^B, A &oplus; B</td></tr>
+        </table>
+      </div>
+      <div class="slide-footer"><span>Introduction &amp; Logic Gates</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 18: Operator Precedence -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week I</span><span class="page">18</span></div>
+      <div class="slide-title"><span class="num">04</span><h1>Operator Precedence</h1></div>
+      <div class="body">
+        <p class="fragment">A misread expression is a misunderstood circuit. From tightest to loosest binding:</p>
+        <ol style="margin:0 0 16px 22px; padding:0;">
+          <li class="fragment"><strong>NOT</strong>: applied to its immediate operand first</li>
+          <li class="fragment"><strong>AND</strong></li>
+          <li class="fragment"><strong>OR</strong>: loosest binding</li>
+        </ol>
+        <div class="eq fragment">
+          <span class="ob">A</span> &middot; B + C &nbsp;means&nbsp; ((NOT A) AND B) OR C<br>
+          <span style="color:var(--mute); font-style:italic;">not NOT(A AND (B OR C))</span>
+        </div>
+        <p class="fragment">When there's any ambiguity, add parentheses. Over-parenthesising is free; a precedence error is a wrong circuit.</p>
+      </div>
+      <div class="slide-footer"><span>Introduction &amp; Logic Gates</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 19: DeMorgan's Theorem -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week I</span><span class="page">19</span></div>
+      <div class="slide-title"><span class="num">04</span><h1>DeMorgan's Theorem</h1></div>
+      <div class="body">
+        <p class="fragment">Negating an entire AND expression is the same as OR-ing the individual negations, and vice versa.</p>
+        <div class="eq fragment">
+          <span class="ob">A &middot; B</span> = <span class="ob">A</span> + <span class="ob">B</span><br>
+          <span class="ob">A + B</span> = <span class="ob">A</span> &middot; <span class="ob">B</span>
+        </div>
+        <div class="figure fragment">
+          <img src="assets/demorgan.svg" alt="DeMorgan bubble-pushing diagram" style="max-height:230px;">
+          <figcaption>NAND (left) and OR-with-inverted-inputs (right): the same circuit. &not;(A&middot;B) &equiv; &not;A + &not;B &mdash; "bubble pushing."</figcaption>
+        </div>
+        <p class="fragment">A NAND gate is identical to an OR gate with individually inverted inputs: two different physical implementations of the same function. Designers exploit this deliberately: <strong>bubble pushing</strong>.</p>
+      </div>
+      <div class="slide-footer"><span>Introduction &amp; Logic Gates</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 20: Circuit Analysis -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week I</span><span class="page">20</span></div>
+      <div class="slide-title"><span class="num">05</span><h1>Circuit Analysis</h1></div>
+      <div class="body">
+        <p class="fragment">Given a circuit diagram, how do you figure out what it computes? The method:</p>
+        <ol style="margin:0 0 16px 22px; padding:0;">
+          <li class="fragment">Start at the inputs, work towards the output, labelling each wire with the expression it carries.</li>
+          <li class="fragment">Every gate transforms its input expressions into an output expression. When you reach the output wire, you have the full expression.</li>
+        </ol>
+        <div class="figure fragment">
+          <img src="assets/circuit-analysis-example.svg" alt="Circuit analysis example diagram" style="max-height:230px;">
+          <figcaption>Circuit analysis: tracing wires from inputs to output. A and B inverted into the first AND, chained with C, then a NOR with D.</figcaption>
+        </div>
+        <div class="eq fragment">Y = (A &middot; <span class="ob">D</span>) + (B &middot; <span class="ob">D</span>) + (<span class="ob">C</span> &middot; <span class="ob">D</span>)</div>
+      </div>
+      <div class="slide-footer"><span>Introduction &amp; Logic Gates</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 21: Circuit Analysis: Solving -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week I</span><span class="page">21</span></div>
+      <div class="slide-title"><span class="num">05</span><h1>Circuit Analysis: Solving</h1></div>
+      <div class="body">
+        <p class="fragment"><strong>Step 1:</strong> the first AND takes NOT A and NOT B (bubbles on the inputs):</p>
+        <div class="eq fragment">W1 = (NOT A) AND (NOT B) = ~A &amp; ~B</div>
+        <p class="fragment"><strong>Step 2:</strong> the second AND takes W1 and C:</p>
+        <div class="eq fragment">W2 = W1 AND C = ~A &amp; ~B &amp; C</div>
+        <p class="fragment"><strong>Step 3:</strong> the NOR gives Y, then DeMorgan's pushes the negation inward:</p>
+        <div class="eq fragment">Y = ~((~A &amp; ~B &amp; C) + D) = (A + B + ~C) &amp; ~D</div>
+      </div>
+      <div class="slide-footer"><span>Introduction &amp; Logic Gates</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 22: Sum-of-Products (SOP) Form -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week I</span><span class="page">22</span></div>
+      <div class="slide-title"><span class="num">05</span><h1>Sum-of-Products (SOP) Form</h1></div>
+      <div class="body">
+        <p class="fragment">The same function can be written in many equivalent shapes. This course standardises on <strong>SOP</strong>: a list of AND-terms OR'd together.</p>
+        <p class="fragment">The distributive law from ordinary algebra, <code>x(y+z) = xy + xz</code>, applies the same way to Booleans:</p>
+        <div class="eq fragment">
+          Y = (A + B + ~C) &amp; ~D<br>
+          &nbsp;&nbsp;= (A &amp; ~D) | (B &amp; ~D) | (~C &amp; ~D)
+        </div>
+        <p class="fragment">Compact Boolean notation:</p>
+        <div class="eq fragment">Y = A<span class="ob">D</span> + B<span class="ob">D</span> + <span class="ob">C</span><span class="ob">D</span></div>
+        <p class="fragment">Read aloud: "Y is 1 whenever D is 0 and at least one of A, B, or ~C is 1."</p>
+      </div>
+      <div class="slide-footer"><span>Introduction &amp; Logic Gates</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 23: Building the Truth Table -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week I</span><span class="page">23</span></div>
+      <div class="slide-title"><span class="num">05</span><h1>Building the Truth Table</h1></div>
+      <div class="body">
+        <p class="fragment">Mechanical once you have the expression: enumerate every input combination and evaluate. Four inputs &rarr; 2&#8308; = 16 rows. Count up in binary, 0000 to 1111, to guarantee every combination appears once.</p>
+        <table class="fragment small">
+          <tr><th>A</th><th>B</th><th>C</th><th>D</th><th>Y</th></tr>
+          <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+          <tr><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+          <tr><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td></tr>
+          <tr><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+          <tr><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+          <tr><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+          <tr><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td></tr>
+          <tr><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+        </table>
+        <p class="fragment small">(Rows with D=1 all evaluate to 0: omitted here; full table in the lecture notes.) The truth table is exhaustive but doesn't scale: 32 inputs needs four billion rows. The Boolean expression is what makes large circuits tractable.</p>
+      </div>
+      <div class="slide-footer"><span>Introduction &amp; Logic Gates</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 24: closing -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week I</span><span class="page">24</span></div>
+      <div style="margin-top:220px; text-align:center;">
+        <div style="color:var(--red); font-weight:700; letter-spacing:0.08em; font-size:15px;">NEXT: ADDERS</div>
+        <h1 style="font-size:44px; margin:14px 0 0;">Week II | CS-UY 2214</h1>
+      </div>
+      <div class="slide-footer"><span>Introduction &amp; Logic Gates</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+  </div>
+</div>
+
+<script src="../../_shared/reveal/dist/reveal.js"></script>
+<script src="../../_shared/theme/keyboard-nav.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    width: 1333,
+    height: 750,
+    margin: 0,
+    controls: true,
+    progress: true,
+    center: false,
+    pdfSeparateFragments: false,
+    showNotes: false,
+    keyboard: CS2214_KEYBOARD_NAV
+  });
+</script>
+</body>
+</html>
