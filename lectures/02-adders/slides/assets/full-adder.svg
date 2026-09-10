@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 520" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="1000" height="520" rx="28" fill="#f2f2ef"/>
+  <rect x="20" y="20" width="14" height="14" fill="#c1272d"/>
+  <circle cx="976" cy="496" r="7" fill="#8a1f24"/>
+
+  <!-- stage labels -->
+  <text x="275" y="40" fill="#6d6d6d" font-size="15" font-style="italic" text-anchor="middle">half adder 1</text>
+  <text x="615" y="40" fill="#6d6d6d" font-size="15" font-style="italic" text-anchor="middle">half adder 2</text>
+  <text x="845" y="175" fill="#6d6d6d" font-size="15" font-style="italic" text-anchor="middle">combine the carries</text>
+
+  <!-- A, B into stage 1 -->
+  <line x1="30" y1="76" x2="220" y2="76" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <line x1="110" y1="76" x2="110" y2="246" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <line x1="110" y1="246" x2="220" y2="246" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="30" cy="76" r="6" fill="#171715"/>
+  <text x="14" y="60" fill="#404040" font-size="22" font-weight="600">A</text>
+
+  <line x1="30" y1="108" x2="220" y2="108" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <line x1="150" y1="108" x2="150" y2="278" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <line x1="150" y1="278" x2="220" y2="278" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="30" cy="108" r="6" fill="#171715"/>
+  <text x="14" y="128" fill="#404040" font-size="22" font-weight="600">B</text>
+
+  <!-- XOR1 / AND1 -->
+  <rect x="220" y="60" width="110" height="64" rx="14" fill="#ffffff" stroke="#171715" stroke-width="6"/>
+  <text x="275" y="100" fill="#171715" font-size="22" font-weight="700" text-anchor="middle" letter-spacing="1">XOR</text>
+
+  <rect x="220" y="230" width="110" height="64" rx="14" fill="#ffffff" stroke="#171715" stroke-width="6"/>
+  <text x="275" y="270" fill="#171715" font-size="22" font-weight="700" text-anchor="middle" letter-spacing="1">AND</text>
+
+  <!-- S1 (A xor B) fans out to both gates of stage 2 -->
+  <line x1="330" y1="92" x2="430" y2="92" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <text x="345" y="82" fill="#6d6d6d" font-size="14" font-style="italic">S1</text>
+  <line x1="430" y1="92" x2="430" y2="76" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <line x1="430" y1="76" x2="560" y2="76" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <line x1="430" y1="92" x2="430" y2="346" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <line x1="430" y1="346" x2="560" y2="346" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- C1 (A and B) travels right to the combining OR gate -->
+  <line x1="330" y1="262" x2="750" y2="262" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <text x="345" y="252" fill="#6d6d6d" font-size="14" font-style="italic">C1</text>
+  <line x1="750" y1="262" x2="750" y2="211" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <line x1="750" y1="211" x2="790" y2="211" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Cin, entering low and fanning up into stage 2 -->
+  <line x1="30" y1="450" x2="500" y2="450" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="30" cy="450" r="6" fill="#171715"/>
+  <text x="14" y="474" fill="#404040" font-size="22" font-weight="600">C<tspan font-size="14" dy="3">in</tspan></text>
+  <line x1="500" y1="450" x2="500" y2="108" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <line x1="500" y1="108" x2="560" y2="108" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <line x1="500" y1="450" x2="500" y2="378" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <line x1="500" y1="378" x2="560" y2="378" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- XOR2 / AND2 -->
+  <rect x="560" y="60" width="110" height="64" rx="14" fill="#ffffff" stroke="#171715" stroke-width="6"/>
+  <text x="615" y="100" fill="#171715" font-size="22" font-weight="700" text-anchor="middle" letter-spacing="1">XOR</text>
+
+  <rect x="560" y="330" width="110" height="64" rx="14" fill="#ffffff" stroke="#171715" stroke-width="6"/>
+  <text x="615" y="370" fill="#171715" font-size="22" font-weight="700" text-anchor="middle" letter-spacing="1">AND</text>
+
+  <!-- Sum output -->
+  <line x1="670" y1="92" x2="900" y2="92" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="900" cy="92" r="6" fill="#c1272d"/>
+  <text x="914" y="100" fill="#c1272d" font-size="26" font-weight="700">Sum</text>
+
+  <!-- C2 travels right to the combining OR gate -->
+  <line x1="670" y1="362" x2="760" y2="362" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <text x="678" y="352" fill="#6d6d6d" font-size="14" font-style="italic">C2</text>
+  <line x1="760" y1="362" x2="760" y2="243" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <line x1="760" y1="243" x2="790" y2="243" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- OR gate combining the two carries -->
+  <rect x="790" y="195" width="110" height="64" rx="14" fill="#ffffff" stroke="#171715" stroke-width="6"/>
+  <text x="845" y="235" fill="#171715" font-size="22" font-weight="700" text-anchor="middle" letter-spacing="1">OR</text>
+
+  <!-- Cout output -->
+  <line x1="900" y1="227" x2="960" y2="227" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="960" cy="227" r="6" fill="#c1272d"/>
+  <text x="914" y="270" fill="#c1272d" font-size="26" font-weight="700">C<tspan font-size="16" dy="3">out</tspan></text>
+
+  <text x="500" y="500" fill="#171715" font-size="17" font-weight="700" text-anchor="middle">Sum = A &#8853; B &#8853; C_in&#160;&#160;&#160;&#160;&#160;&#160;C_out = AB + C_in(A &#8853; B)</text>
+</svg>

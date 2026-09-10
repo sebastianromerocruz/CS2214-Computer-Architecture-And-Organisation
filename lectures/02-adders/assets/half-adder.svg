@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 420" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="820" height="420" rx="28" fill="#eee6f3"/>
+  <rect x="20" y="20" width="14" height="14" fill="#8900e1"/>
+  <circle cx="796" cy="396" r="7" fill="#7b5aa6"/>
+
+  <!-- A: straight into XOR's top pin, branches down into AND's top pin -->
+  <line x1="30" y1="95" x2="340" y2="95" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <line x1="110" y1="95" x2="110" y2="295" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <line x1="110" y1="295" x2="340" y2="295" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="30" cy="95" r="6" fill="#57068c"/>
+  <text x="14" y="78" fill="#404040" font-size="24" font-weight="600">A</text>
+
+  <!-- B: straight into XOR's bottom pin, branches down into AND's bottom pin -->
+  <line x1="30" y1="125" x2="340" y2="125" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <line x1="150" y1="125" x2="150" y2="325" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <line x1="150" y1="325" x2="340" y2="325" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="30" cy="125" r="6" fill="#57068c"/>
+  <text x="14" y="148" fill="#404040" font-size="24" font-weight="600">B</text>
+
+  <!-- XOR gate box -->
+  <rect x="340" y="70" width="140" height="80" rx="16" fill="#ffffff" stroke="#57068c" stroke-width="6"/>
+  <text x="410" y="118" fill="#57068c" font-size="26" font-weight="700" text-anchor="middle" letter-spacing="2">XOR</text>
+
+  <!-- AND gate box -->
+  <rect x="340" y="270" width="140" height="80" rx="16" fill="#ffffff" stroke="#57068c" stroke-width="6"/>
+  <text x="410" y="318" fill="#57068c" font-size="26" font-weight="700" text-anchor="middle" letter-spacing="2">AND</text>
+
+  <!-- S output (sum) -->
+  <line x1="480" y1="110" x2="600" y2="110" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="600" cy="110" r="6" fill="#8900e1"/>
+  <text x="614" y="118" fill="#8900e1" font-size="26" font-weight="700">S</text>
+  <text x="614" y="140" fill="#6d6d6d" font-size="14" font-style="italic">sum</text>
+
+  <!-- C output (carry) -->
+  <line x1="480" y1="310" x2="600" y2="310" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="600" cy="310" r="6" fill="#8900e1"/>
+  <text x="614" y="318" fill="#8900e1" font-size="26" font-weight="700">C</text>
+  <text x="614" y="340" fill="#6d6d6d" font-size="14" font-style="italic">carry</text>
+
+  <!-- equations under each gate -->
+  <text x="410" y="172" fill="#6d6d6d" font-size="15" text-anchor="middle">S = A &#8853; B</text>
+  <text x="410" y="372" fill="#6d6d6d" font-size="15" text-anchor="middle">C = A &#183; B</text>
+
+  <text x="410" y="405" fill="#57068c" font-size="15" font-style="italic" font-weight="600" text-anchor="middle">the half adder: one XOR for the sum, one AND for the carry, same A and B feeding both</text>
+</svg>

@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CS-UY 2214 — Week II — Adders</title>
+<link rel="stylesheet" href="../../_shared/reveal/dist/reset.css">
+<link rel="stylesheet" href="../../_shared/reveal/dist/reveal.css">
+<link rel="stylesheet" href="../../_shared/theme/house.css">
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+
+    <!-- 01: title -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">01</span></div>
+      <div style="margin-top:180px;">
+        <h1 style="font-size:52px; margin:0;">Adders</h1>
+        <p style="color:var(--mute); font-size:22px; font-style:italic; margin-top:10px;">Two's Complement, Multiplexers, and the ALU</p>
+        <div style="width:60px; border-top:3px solid var(--red); margin:18px 0;"></div>
+        <p style="color:var(--mute); font-size:18px;">CS-UY 2214 | Computer Architecture and Organization<br>Week II | NYU Tandon School of Engineering</p>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 02: Two's Complement -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">02</span></div>
+      <div class="slide-title"><span class="num">00</span><h1>Two's Complement</h1></div>
+      <div class="body">
+        <p class="fragment">Before we build an adder, we need to decide how negative numbers are encoded: the adder has to handle them with zero extra logic.</p>
+        <p class="fragment"><strong>Naive idea:</strong> reserve a sign bit (0 = positive, 1 = negative), use the rest for magnitude.</p>
+        <p class="fragment"><strong>Breaks two ways:</strong> two representations of zero (<span class="chip">+0</span>, <span class="chip">&minus;0</span>), and the adder needs a special case for the sign bit.</p>
+        <div class="callout-dark fragment"><strong>Two's complement</strong> avoids both problems. It's what every modern processor uses.</div>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 03: Fixed Bit-Width -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">03</span></div>
+      <div class="slide-title"><span class="num">0.1</span><h1>Fixed Bit-Width</h1></div>
+      <div class="body">
+        <p>The <strong>MSB</strong>: a 1 means negative. 4-bit example:</p>
+        <div class="two-col">
+          <table class="fragment">
+            <tr><th>Pattern</th><th>Value</th></tr>
+            <tr><td>0000</td><td>0</td></tr>
+            <tr><td>0111</td><td>7</td></tr>
+            <tr><td>1000</td><td>&minus;8</td></tr>
+            <tr><td>1111</td><td>&minus;1</td></tr>
+          </table>
+          <div>
+            <p class="fragment">Asymmetric range: 8 non-negative (0&ndash;7), 8 negative (&minus;8 to &minus;1): zero eats one non-negative slot.</p>
+            <div class="callout fragment">
+              <strong>Truncation warning</strong><br>
+              Extra high-order bits are silently discarded. 20 (<span class="chip">0b10100</span>) in 4 bits drops the leading 1, becoming 4: no error. This exact bug shape returns twice more this lecture.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 04: But Why Tho -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">04</span></div>
+      <div class="slide-title"><span class="num">0.2</span><h1>But Why Tho?</h1></div>
+      <div class="body">
+        <p class="fragment">Ordinary binary addition works correctly for both positive and negative numbers, with no special cases. The adder doesn't need to know if operands are signed: it just adds bits and discards the top carry.</p>
+        <div class="code-dark fragment">  0011   (3)
++ 1101   (&minus;3)
+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;
+  0000   (0, carry discarded)</div>
+        <p class="fragment">Same adder, 3+5 and 3+(&minus;3), zero additional logic. This is why this section comes before the adder: we need to know what it has to handle before we design it.</p>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 05: Decimal -> Two's Complement -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">05</span></div>
+      <div class="slide-title"><span class="num">0.3</span><h1>Decimal &rarr; Two's Complement</h1></div>
+      <div class="body">
+        <ol class="fragment" style="margin:0 0 16px 22px; padding:0;">
+          <li>Convert absolute value to binary, pad to <em>n</em> bits.</li>
+          <li>Invert every bit.</li>
+          <li>Add 1.</li>
+        </ol>
+        <div class="code-dark fragment">|&minus;3| = 0011
+invert   = 1100
++1       = 1101</div>
+        <p class="fragment">Result: &minus;3 = <span class="chip">1101</span> in 4-bit two's complement.</p>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 06: On Real Hardware: PONG.gb -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">06</span></div>
+      <div class="slide-title"><span class="num">0.3</span><h1>On Real Hardware: PONG.gb</h1></div>
+      <div class="body">
+        <p class="fragment">Invert-then-add-1 is a two-instruction idiom in Game Boy assembly. PONG.gb stores ball direction as a signed byte; bouncing means negating it.</p>
+        <div class="code-dark fragment">FlipY:
+    push af
+    ld a, [wYBallDir]
+    cpl        <span class="cm">; step 2: invert every bit</span>
+    inc a      <span class="cm">; step 3: add 1</span>
+    ld [wYBallDir], a
+    pop af
+    ret</div>
+        <p class="fragment"><span class="chip">cpl</span> is step 2, <span class="chip">inc a</span> is step 3: two SM83 instructions, the entire negation. Keep this in your back pocket; we meet its counterpart (the adder that consumes this) by the end of the lecture.</p>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 07: Two's Complement -> Decimal -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">07</span></div>
+      <div class="slide-title"><span class="num">0.4</span><h1>Two's Complement &rarr; Decimal</h1></div>
+      <div class="body">
+        <ol class="fragment" style="margin:0 0 16px 22px; padding:0;">
+          <li>MSB = 0? Non-negative, done.</li>
+          <li>MSB = 1: invert all bits.</li>
+          <li>Add 1, convert, apply a minus sign.</li>
+        </ol>
+        <div class="code-dark fragment">1101 &rarr; invert 0010
++1     = 0011 = 3
+       &rarr; &minus;3</div>
+        <p class="fragment">Same three steps, both directions: the encoding is its own inverse.</p>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 08: Range & Overflow -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">08</span></div>
+      <div class="slide-title"><span class="num">0.5</span><h1>Range &amp; Overflow</h1></div>
+      <div class="body">
+        <div class="eq fragment">&minus;2^(n&minus;1) &nbsp;to&nbsp; 2^(n&minus;1) &minus; 1</div>
+        <table class="fragment">
+          <tr><th>Bits</th><th>Range</th></tr>
+          <tr><td>4</td><td>&minus;8 to 7</td></tr>
+          <tr><td>8</td><td>&minus;128 to 127</td></tr>
+          <tr><td>32</td><td>&minus;2,147,483,648 to 2,147,483,647</td></tr>
+        </table>
+        <p class="fragment">Integer overflow is a real bug, not a theoretical curiosity: adding two large positive 32-bit integers can exceed the max, wrapping silently to a large negative number.</p>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 09: From XOR to Addition -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">09</span></div>
+      <div class="slide-title"><span class="num">01</span><h1>From <span class="chip">XOR</span> to Addition</h1></div>
+      <div class="body">
+        <p class="fragment">Week I's promise, cashed: "<span class="chip">XOR</span> turns out to be the addition primitive." Add two bits by hand:</p>
+        <table class="fragment">
+          <tr><th>A</th><th>B</th><th>Sum</th><th>Carry</th></tr>
+          <tr><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+          <tr><td>0</td><td>1</td><td>1</td><td>0</td></tr>
+          <tr><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+          <tr><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+        </table>
+        <p class="fragment"><strong>Sum = A XOR B. Carry = A AND B.</strong> Two gates you already know, wired to the same two inputs, <em>are</em> a 1-bit adder.</p>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 10: A Quick Note on Reading Verilog -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">10</span></div>
+      <div class="slide-title"><span class="num">02</span><h1>A Quick Note on Reading Verilog</h1></div>
+      <div class="body">
+        <p class="fragment">We use a lot of Verilog this lecture, two weeks before it's formally taught. Just enough syntax to read what follows: a decoder ring, not a substitute for Lecture 3.</p>
+        <p class="fragment" style="font-weight:700; letter-spacing:0.04em; font-size:14px; color:var(--mute); margin-bottom:6px;">THE MODULE</p>
+        <div class="code-dark fragment">module my_circuit(A, B, Y);
+    input A, B;
+    output Y;
+    <span class="cm">// the circuit goes here</span>
+endmodule</div>
+        <p class="fragment"><span class="chip">A</span> / <span class="chip">B</span> flow in, <span class="chip">Y</span> flows out. Nothing "runs" top to bottom: every line is a permanent physical connection, all existing simultaneously.</p>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 11: Continuous Assignment & Structural Style -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">11</span></div>
+      <div class="slide-title"><span class="num">02</span><h1>Continuous Assignment &amp; Structural Style</h1></div>
+      <div class="body">
+        <div class="two-col">
+          <div class="fragment">
+            <p style="font-weight:700; letter-spacing:0.04em; font-size:14px; color:var(--mute); margin-bottom:6px;">CONTINUOUS ASSIGNMENT</p>
+            <div class="code-dark">assign Y = A &amp; B;</div>
+            <p class="small">"<span class="chip">Y</span> is permanently wired to an AND gate fed by <span class="chip">A</span> and <span class="chip">B</span>," not "compute and store." <span class="chip">&amp;</span>=AND, <span class="chip">|</span>=OR, <span class="chip">^</span>=XOR, <span class="chip">~</span>=NOT.</p>
+          </div>
+          <div class="fragment">
+            <p style="font-weight:700; letter-spacing:0.04em; font-size:14px; color:var(--mute); margin-bottom:6px;">STRUCTURAL INSTANTIATION</p>
+            <div class="code-dark">and A1 (Y, A, B);</div>
+            <p class="small"><span class="chip">gate_type instance_name(output, in1, in2, ...)</span>: output always first. Both styles describe the exact same wire.</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 12: Buses & Internal Wires -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">12</span></div>
+      <div class="slide-title"><span class="num">02</span><h1>Buses &amp; Internal Wires</h1></div>
+      <div class="body">
+        <div class="two-col">
+          <div class="fragment">
+            <p style="font-weight:700; letter-spacing:0.04em; font-size:14px; color:var(--mute); margin-bottom:6px;">BUSES</p>
+            <div class="code-dark">input [2:0] A;  <span class="cm">// a 3-bit bus: A[2], A[1], A[0]</span></div>
+            <p class="small"><span class="chip">[2:0]</span> means "bits 2 down to 0," 3 bits, <span class="chip">A[2]</span> most significant. Use the whole bus (<span class="chip">A + B</span>) or one bit (<span class="chip">A[0]</span>).</p>
+          </div>
+          <div class="fragment">
+            <p style="font-weight:700; letter-spacing:0.04em; font-size:14px; color:var(--mute); margin-bottom:6px;">INTERNAL WIRES</p>
+            <div class="code-dark">wire W1;
+assign W1 = A &amp; B;
+assign Y  = W1 | C;</div>
+            <p class="small"><span class="chip">wire</span> declares a signal that exists only inside the module: connects gates, never touches the outside world.</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 13: The Half Adder -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">13</span></div>
+      <div class="slide-title"><span class="num">03</span><h1>The Half Adder</h1></div>
+      <div class="body">
+        <div class="two-col">
+          <div class="figure fragment"><img src="assets/half-adder.svg" alt="Half adder diagram"></div>
+          <div class="fragment">
+            <p>A circuit that adds two 1-bit numbers, no carry-in. "Half" because it can't accept a carry from a less-significant bit.</p>
+            <div class="code-dark">xor X1 (Sum,   A, B);
+and A1 (Carry, A, B);</div>
+            <p class="small">Two independent gates sharing inputs: no "flow" between them.</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 14: Half Adder: Continuous Assignment -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">14</span></div>
+      <div class="slide-title"><span class="num">03</span><h1>Half Adder: Continuous Assignment</h1></div>
+      <div class="body">
+        <div class="code-dark fragment">module half_adder(A, B, Sum, Carry);
+    input A, B;
+    output Sum, Carry;
+
+    assign Sum   = A ^ B;
+    assign Carry = A &amp; B;
+endmodule</div>
+        <p class="fragment">A direct transcription of the truth table. Prefer this style once you have the Boolean expression in hand: which, from here on, is most of the time.</p>
+        <div class="callout-dark fragment">The "half" problem: no carry-in. Fine for the rightmost bit; every other position needs one.</div>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 15: The Full Adder -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">15</span></div>
+      <div class="slide-title"><span class="num">04</span><h1>The Full Adder</h1></div>
+      <div class="body">
+        <p>Three inputs (<span class="chip">A</span>, <span class="chip">B</span>, <span class="chip">Cin</span>) and two outputs: <span class="chip">Sum</span>, <span class="chip">Cout</span>.</p>
+        <div class="two-col">
+          <table class="fragment small">
+            <tr><th>A</th><th>B</th><th>Cin</th><th>Sum</th><th>Cout</th></tr>
+            <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+            <tr><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+            <tr><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+            <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+          </table>
+          <div class="fragment">
+            <div class="code-dark">Sum  = A &oplus; B &oplus; Cin
+Cout = AB + Cin(A &oplus; B)</div>
+            <p class="small"><span class="chip">Cout</span>: a <strong>majority function</strong>: 1 whenever &ge;2 of 3 inputs are 1. <span class="chip">A&oplus;B</span> is a half adder's sum; <span class="chip">AB</span> is its carry. A full adder is <strong>two half adders and one OR gate</strong>.</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 16: Full Adder: Construction -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">16</span></div>
+      <div class="slide-title"><span class="num">04</span><h1>Full Adder: Construction</h1></div>
+      <div class="body">
+        <div class="two-col">
+          <div class="figure fragment"><img src="assets/full-adder.svg" alt="Full adder construction diagram"></div>
+          <div class="fragment">
+            <div class="code-dark">wire S1, C1, C2;
+<span class="cm">// half adder 1</span>
+assign S1 = A ^ B;
+assign C1 = A &amp; B;
+<span class="cm">// half adder 2</span>
+assign Sum = S1 ^ Cin;
+assign C2  = S1 &amp; Cin;
+<span class="cm">// combine carries</span>
+assign Cout = C1 | C2;</div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 17: Full Adder: Reading the Code -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">17</span></div>
+      <div class="slide-title"><span class="num">04</span><h1>Full Adder: Reading the Code</h1></div>
+      <div class="body">
+        <p class="fragment"><span class="chip">S1</span> is the first half adder's sum (<span class="chip">A&oplus;B</span>), immediately fed into the second half adder alongside <span class="chip">Cin</span>. <span class="chip">C1</span> / <span class="chip">C2</span> are the two carries: neither is the final answer alone, so they're OR'd into <span class="chip">Cout</span>. None of <span class="chip">S1</span> / <span class="chip">C1</span> / <span class="chip">C2</span> are ports: they're <span class="chip">wire</span>s, connecting components inside the module.</p>
+        <div class="callout fragment">You'll also see <span class="chip">Cout = AB + A&middot;Cin + B&middot;Cin</span>: the raw SOP form, without the half-adder factoring. Expand the factored form yourself and check it matches: both are correct, just different shapes.</div>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 18: Ripple-Carry Adders -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">18</span></div>
+      <div class="slide-title"><span class="num">05</span><h1>Ripple-Carry Adders</h1></div>
+      <div class="body">
+        <div class="two-col">
+          <div class="figure fragment"><img src="assets/ripple-carry.svg" alt="Ripple-carry adder diagram"></div>
+          <div class="fragment">
+            <p>Chain N full adders, each <span class="chip">Cout</span> into the next <span class="chip">Cin</span>. Bit 0's <span class="chip">Cin</span> = 0. Read the sum bits together for N-bit addition.</p>
+            <div class="callout-dark">Delay = N &times; one full adder's delay. Size = N &times; one full adder's size.<br><br>The carry must ripple through every stage before the last sum is valid: a real problem at 32/64 bits (seed for carry-lookahead adders, later course).</div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 19: Chaining Full Adders in Verilog -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">19</span></div>
+      <div class="slide-title"><span class="num">05</span><h1>Chaining Full Adders in Verilog</h1></div>
+      <div class="body">
+        <div class="code-dark fragment">module adder_3bit(A, B, Cin, S, Cout);
+    input  [2:0] A, B;
+    input  Cin;
+    output [2:0] S;
+    output Cout;
+    wire   c1, c2;
+
+    full_adder bit0(A[0], B[0], Cin, S[0], c1);
+    full_adder bit1(A[1], B[1], c1,  S[1], c2);
+    full_adder bit2(A[2], B[2], c2,  S[2], Cout);
+endmodule</div>
+        <p class="fragment">Trace it: <span class="chip">bit0</span>'s last argument is <span class="chip">c1</span> (its carry out); <span class="chip">bit1</span>'s third argument is that same <span class="chip">c1</span> (its carry in). That reused wire name is the ripple.</p>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 20: The High-Level Operator -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">20</span></div>
+      <div class="slide-title"><span class="num">05</span><h1>The High-Level Operator</h1></div>
+      <div class="body">
+        <div class="code-dark fragment">module adder_3bit_highlevel(A, B, S);
+    input  [2:0] A, B;
+    output [2:0] S;
+
+    assign S = A + B;
+endmodule</div>
+        <p class="fragment">Synthesises to the identical hardware: <span class="chip">+</span> isn't magic, it's shorthand the synthesis tool expands into exactly the full-adder chain. In practice, always write <span class="chip">A + B</span>.</p>
+        <div class="callout fragment">Some homework in this course requires building the adder from gates instead of using <span class="chip">+</span>: specifically to demonstrate you understand what the operator hides. Read the prompt carefully.</div>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 21: Multiplexers -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">21</span></div>
+      <div class="slide-title"><span class="num">06</span><h1>Multiplexers</h1></div>
+      <div class="body">
+        <div class="two-col">
+          <div class="figure fragment"><img src="assets/mux.svg" alt="2:1 mux diagram"></div>
+          <div class="fragment">
+            <p>Selects one of several inputs based on a selector signal. <span class="chip">Q=D0</span> if <span class="chip">S=0</span>, <span class="chip">Q=D1</span> if <span class="chip">S=1</span>.</p>
+            <table class="small">
+              <tr><th>S</th><th>D0</th><th>D1</th><th>Q</th></tr>
+              <tr><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+              <tr><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+              <tr><td>1</td><td>0</td><td>1</td><td>1</td></tr>
+              <tr><td>1</td><td>1</td><td>0</td><td>0</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 22: The Ternary Operator -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">22</span></div>
+      <div class="slide-title"><span class="num">06</span><h1>The Ternary Operator</h1></div>
+      <div class="body">
+        <div class="code-dark fragment">assign Q = (D0 &amp; ~S) | (D1 &amp; S);   <span class="cm">// SOP form</span>
+assign Q = S ? D1 : D0;              <span class="cm">// ternary: same thing</span></div>
+        <p class="fragment"><span class="chip">condition ? if_true : if_false</span>: the same ternary from C or Python's <span class="chip">x if cond else y</span>, just reordered. Read <span class="chip">S ? D1 : D0</span> as "if <span class="chip">S</span>, then <span class="chip">D1</span>, else <span class="chip">D0</span>": the mux's job description, word for word. This is the version you'll actually write.</p>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 23: The 4:1 Mux, and D[S] -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">23</span></div>
+      <div class="slide-title"><span class="num">06</span><h1>The 4:1 Mux, and <span class="chip">D[S]</span></h1></div>
+      <div class="body">
+        <div class="code-dark fragment">assign Q = (S==0) ? D0 : (S==1) ? D1 : (S==2) ? D2 : D3;
+<span class="cm">// or, if D is already a 4-bit bus:</span>
+assign Q = D[S];</div>
+        <p class="fragment">Each <span class="chip">?:</span> is a tiny 2:1 mux; chaining them builds a bigger mux from smaller ones. <span class="chip">Q = D[S]</span> is the entire 4:1 mux: the selector isn't choosing a branch anymore, it's indexing straight into the bus.</p>
+        <p class="fragment small">Fix <span class="chip">D = 4'b1011</span> for both cases below. <strong>Case A:</strong> <span class="chip">S=2'b10</span> (2) &rarr; <span class="chip">Q=D[2]=0</span>. <strong>Case B:</strong> <span class="chip">S=2'b11</span> (3) &rarr; <span class="chip">Q=D[3]=1</span>. Same <span class="chip">D</span>, different selector, different bit reaches <span class="chip">Q</span>.</p>
+        <div class="callout fragment">This exact pattern reappears as a register file's read port, an ALU's operation output, a datapath's next-PC value. All muxes.</div>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 24: Subtracters -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">24</span></div>
+      <div class="slide-title"><span class="num">07</span><h1>Subtracters</h1></div>
+      <div class="body">
+        <div class="two-col">
+          <div class="figure fragment"><img src="assets/subtracter.svg" alt="Subtracter diagram"></div>
+          <div class="fragment">
+            <p><span class="chip">A &minus; B = A + (&minus;B)</span>, and negation is invert-then-add-1 from the top of the lecture. Fold the "+1" into the adder's existing <span class="chip">Cin</span>:</p>
+            <div class="code-dark">A &minus; B = A + (~B) + 1</div>
+            <p class="small">Invert B through NOT gates, feed into the adder's B input, tie Cin to 1. Same adder, different wiring.</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 25: Subtracter: Worked Example -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">25</span></div>
+      <div class="slide-title"><span class="num">07</span><h1>Subtracter: Worked Example</h1></div>
+      <div class="body">
+        <div class="two-col">
+          <div class="code-dark fragment">A = 5   = 0101
+B = 3   = 0011
+~B      = 1100
+A + ~B + 1:
+    0101
+  + 1100
+  + 0001
+  ------
+    0010 = 2 &check;</div>
+          <div class="fragment">
+            <div class="code-dark">assign {Bout, Diff} = A + (~B) + 1;</div>
+            <p class="small"><span class="chip">{Bout, Diff}</span> uses <strong>concatenation</strong> (<span class="chip">{}</span>): glues signals into one wider bus. A 4-bit input can produce a 5-bit result; <span class="chip">Bout</span> catches the extra top bit, <span class="chip">Diff</span> the remaining 4.</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 26: Comparators: Equality -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">26</span></div>
+      <div class="slide-title"><span class="num">08</span><h1>Comparators: Equality</h1></div>
+      <div class="body">
+        <div class="code-dark fragment">assign Equal = ~(|(A ^ B));</div>
+        <p class="fragment">Read inside-out: <span class="chip">A^B</span> is bitwise XOR across the bus: "did this position differ?" per bit. The <span class="chip">|</span> here is a <strong>reduction operator</strong>, not bitwise OR: <span class="chip">|(bus)</span> ORs every bit into one: "is anything different?" Then <span class="chip">~</span> inverts: "is nothing different?" = equal.</p>
+        <p class="fragment small">Example: A=0101, B=0101 &rarr; A^B=0000 &rarr; reduction-OR 0 &rarr; invert 1 &rarr; Equal=1. A=0101, B=0100 &rarr; A^B=0001 &rarr; Equal=0.</p>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 27: Comparators: Less-Than -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">27</span></div>
+      <div class="slide-title"><span class="num">08</span><h1>Comparators: Less-Than</h1></div>
+      <div class="body">
+        <p class="fragment">Reuse the subtracter. <span class="chip">A &lt; B</span> exactly when <span class="chip">A &minus; B</span> is negative, i.e. the result's MSB is 1:</p>
+        <div class="code-dark fragment">wire [3:0] diff;
+assign diff     = A + (~B) + 1;
+assign LessThan = diff[3];   <span class="cm">// the sign bit of A - B</span></div>
+        <p class="fragment small">A fuller treatment also needs an overflow check on this sign bit: out of scope here, but the shortcut isn't bulletproof once you leave this course.</p>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 28: Shifters -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">28</span></div>
+      <div class="slide-title"><span class="num">09</span><h1>Shifters</h1></div>
+      <div class="body">
+        <p class="fragment">A <strong>shifter</strong> moves every bit of a value left or right by some number of positions&mdash;a fast way to multiply or divide by a power of two, among other uses.</p>
+        <p class="fragment"><strong>Logical shift</strong> fills vacated bits with 0, both directions. <strong>Arithmetic shift</strong> differs only on the right: fills with copies of the sign bit, preserving sign.</p>
+        <div class="code-dark fragment">1011 &gt;&gt; 1  (logical)     = 0101  (fills with 0)
+1011 &gt;&gt;&gt; 1 (arithmetic)  = 1101  (fills with the sign bit, &minus;5 &rarr; &minus;3)</div>
+        <p class="fragment">Get this backwards on a signed value and you silently corrupt its sign: the same bug shape as the truncation trap. <span class="chip">&gt;&gt;</span> is logical, <span class="chip">&gt;&gt;&gt;</span> is arithmetic in Verilog (operand must be <span class="chip">signed</span>).</p>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 29: Shifters: The Rounding Gotcha -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">29</span></div>
+      <div class="slide-title"><span class="num">09</span><h1>Shifters: The Rounding Gotcha</h1></div>
+      <div class="body">
+        <p class="fragment">Arithmetic right shift is fast division by a power of 2&mdash;but it rounds <strong>toward negative infinity</strong>, not toward zero. <span class="chip">&minus;5 &gt;&gt;&gt; 1 = &minus;3</span>, not &minus;2.</p>
+        <div class="code-dark fragment">&minus;5 in 4-bit two's complement = 1011
+1011 &gt;&gt;&gt; 1: sign bit copies in &rarr; 1101 = &minus;3</div>
+        <p class="fragment small"><span class="chip">&minus;5 &divide; 2 = &minus;2.5</span> exactly, and there are two equally reasonable roundings: <strong>toward zero</strong> (C's <span class="chip">/</span>, gives &minus;2) vs. <strong>toward negative infinity</strong> (what the shift mechanically does, gives &minus;3). They agree for positive numbers&mdash;only diverge once you cross zero, which is exactly why this bug hides in every positive-only test case.</p>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 31: Zero- and Sign-Extension -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">30</span></div>
+      <div class="slide-title"><span class="num">10</span><h1>Zero- and Sign-Extension</h1></div>
+      <div class="body">
+        <div class="two-col">
+          <div class="fragment">
+            <table class="small">
+              <tr><th>3-bit</th><th>Zero-ext</th><th>Sign-ext</th></tr>
+              <tr><td>011</td><td>00000011 (3)</td><td>00000011 (3)</td></tr>
+              <tr><td>111</td><td>00000111 (7)</td><td>11111111 (&minus;1)</td></tr>
+            </table>
+            <p class="small">They only disagree when the MSB is 1: zero-extending a negative value silently makes it a large positive one.</p>
+          </div>
+          <div class="fragment">
+            <div class="code-dark">assign b = {5'b0, a};        <span class="cm">// zero-extend</span>
+assign b = {{5{a[2]}}, a};   <span class="cm">// sign-extend</span></div>
+            <p class="small"><span class="chip">{5{a[2]}}</span> is <strong>replication</strong>: "repeat this bit 5 times." Sign-unknown? That uncertainty is itself the bug.</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 31: The ALU -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">31</span></div>
+      <div class="slide-title"><span class="num">11</span><h1>The ALU</h1></div>
+      <div class="body">
+        <div class="two-col">
+          <div class="figure fragment"><img src="assets/alu.svg" alt="ALU diagram"></div>
+          <div class="code-dark fragment">assign Y =
+  (Op==3'b000) ? (A&amp;B) : <span class="cm">// AND</span>
+  (Op==3'b001) ? (A|B) : <span class="cm">// OR</span>
+  (Op==3'b010) ? (A+B) : <span class="cm">// ADD</span>
+  (Op==3'b110) ? (A+(~B)+1) : <span class="cm">// SUB</span>
+  (Op==3'b111) ? {3'b0,(A+(~B)+1)&lt;0} : <span class="cm">// SLT</span>
+  4'b0;
+assign Zero = (Y == 0);</div>
+        </div>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 32: ALU: Worked Trace -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">32</span></div>
+      <div class="slide-title"><span class="num">11</span><h1>ALU: Worked Trace</h1></div>
+      <div class="body">
+        <p class="fragment">The 4:1-mux ternary chain, five branches, each an entire circuit from this lecture. <span class="chip">Op</span> is purely a selector.</p>
+        <p class="fragment">Trace: <span class="chip">Op=3'b010</span> (ADD), <span class="chip">A=4'b0011</span> (3), <span class="chip">B=4'b0001</span> (1). Walk the ternary chain until a condition matches: <span class="chip">Op==010</span>? Yes, so <span class="chip">Y = A+B = 4'b0100</span> (4) and <span class="chip">Zero = (Y==0) = 0</span>.</p>
+        <p class="fragment small"><span class="chip">Zero</span> is itself a small comparator ("is the output all 0s?"), used constantly in real processors to implement conditional branches: <span class="chip">if a == b</span> under the hood is usually "subtract, then check <span class="chip">Zero</span>," reusing the <span class="chip">SUB</span> branch instead of building a separate equality circuit.</p>
+        <div class="callout fragment">Don't memorise these Op bit patterns: illustrative, not canonical. The real E15/E20 encoding comes later and won't necessarily match. The shape is what matters: one selector, circuits you already understand, a mux choosing between them.</div>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 33: Adders on Real Hardware -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">33</span></div>
+      <div class="slide-title"><span class="num">12</span><h1>Adders on Real Hardware</h1></div>
+      <div class="body">
+        <p class="fragment">Every time PONG.gb's ball moves, an adder does the work. <span class="chip">UpdateBall</span>, every frame:</p>
+        <div class="code-dark fragment">ld a, [wYBallDir]
+ld b, a
+ld a, [wYBall]
+add a, b              <span class="cm">; wYBall = wYBall + wYBallDir</span>
+ld [wYBall], a</div>
+        <p class="fragment"><span class="chip">add a, b</span> is one instruction; underneath, an 8-bit ripple-carry adder. <span class="chip">wYBallDir</span> is 1 or &minus;1, in two's complement: nobody special-cased the subtraction.</p>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 34: Two Bookends, One Lecture -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">34</span></div>
+      <div class="slide-title"><span class="num">12</span><h1>Two Bookends, One Lecture</h1></div>
+      <div class="body">
+        <ul class="fragment">
+          <li><span class="chip">FlipY</span> encodes a negative number: invert, add 1.</li>
+          <li><span class="chip">UpdateBall</span> consumes one: feeds it into an adder that doesn't know or care that it's negative.</li>
+        </ul>
+        <p class="fragment">One circuit, built from gates you understood in Week I, doing every addition and subtraction sixty times a second on real hardware.</p>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+    <!-- 35: closing -->
+    <section>
+      <div class="slide-eyebrow"><span class="tag">CS-UY 2214&nbsp;<span class="sep">|</span>&nbsp;Week II</span><span class="page">35</span></div>
+      <div style="margin-top:220px; text-align:center;">
+        <div style="color:var(--red); font-weight:700; letter-spacing:0.08em; font-size:15px;">NEXT: VERILOG &amp; BITWISE OPERATIONS</div>
+        <h1 style="font-size:40px; margin:14px 0 0;">Week II (cont.) | CS-UY 2214</h1>
+      </div>
+      <div class="slide-footer"><span>Adders</span><span>NYU Tandon | Fall 2026</span></div>
+    </section>
+
+  </div>
+</div>
+
+<script src="../../_shared/reveal/dist/reveal.js"></script>
+<script src="../../_shared/theme/keyboard-nav.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    width: 1333,
+    height: 750,
+    margin: 0,
+    controls: true,
+    progress: true,
+    center: false,
+    pdfSeparateFragments: false,
+    showNotes: false,
+    keyboard: CS2214_KEYBOARD_NAV
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 480" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="700" height="480" rx="28" fill="#f2f2ef"/>
+  <rect x="20" y="20" width="14" height="14" fill="#c1272d"/>
+  <circle cx="676" cy="456" r="7" fill="#8a1f24"/>
+
+  <!-- D0 -->
+  <line x1="60" y1="70" x2="220" y2="70" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="60" cy="70" r="6" fill="#171715"/>
+  <text x="42" y="54" fill="#404040" font-size="22" font-weight="600">D0</text>
+  <text x="234" y="76" fill="#c1272d" font-size="15" font-weight="700">0</text>
+
+  <!-- D1 -->
+  <line x1="60" y1="150" x2="220" y2="150" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="60" cy="150" r="6" fill="#171715"/>
+  <text x="42" y="134" fill="#404040" font-size="22" font-weight="600">D1</text>
+  <text x="234" y="156" fill="#c1272d" font-size="15" font-weight="700">1</text>
+
+  <!-- D2 -->
+  <line x1="60" y1="250" x2="220" y2="250" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="60" cy="250" r="6" fill="#171715"/>
+  <text x="42" y="234" fill="#404040" font-size="22" font-weight="600">D2</text>
+  <text x="234" y="256" fill="#c1272d" font-size="15" font-weight="700">2</text>
+
+  <!-- D3 -->
+  <line x1="60" y1="330" x2="220" y2="330" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="60" cy="330" r="6" fill="#171715"/>
+  <text x="42" y="314" fill="#404040" font-size="22" font-weight="600">D3</text>
+  <text x="234" y="336" fill="#c1272d" font-size="15" font-weight="700">3</text>
+
+  <!-- trapezoid mux body: wide on the input side, narrow on the output side -->
+  <path d="M220,50 L380,175 L380,225 L220,350 Z" fill="#ffffff" stroke="#171715" stroke-width="7" stroke-linejoin="round"/>
+
+  <!-- output Q -->
+  <line x1="380" y1="200" x2="520" y2="200" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="520" cy="200" r="6" fill="#c1272d"/>
+  <text x="534" y="208" fill="#c1272d" font-size="26" font-weight="700">Q</text>
+
+  <!-- selector S[1:0], entering from below -->
+  <line x1="300" y1="440" x2="300" y2="210" stroke="#404040" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="300" cy="440" r="6" fill="#171715"/>
+  <text x="314" y="462" fill="#404040" font-size="22" font-weight="600">S[1:0]</text>
+  <text x="300" y="210" fill="#171715" font-size="15" text-anchor="middle">&#9660;</text>
+
+  <text x="350" y="410" fill="#171715" font-size="16" font-weight="700" text-anchor="middle">Q = D[S]</text>
+  <text x="350" y="30" fill="#6d6d6d" font-size="14" font-style="italic" text-anchor="middle">2 selector bits address 4 possibilities: 00, 01, 10, 11</text>
+</svg>
