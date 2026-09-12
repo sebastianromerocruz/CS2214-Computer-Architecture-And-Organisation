@@ -112,6 +112,12 @@ Temporary Items
 lectures/*
 !lectures/01-gates/
 !lectures/01-gates/*
+!lectures/02-adders
+
+# Raw PollEverywhere exports and the derived master CSV contain student
+# names -- keep them out of the (eventually public) repo entirely.
+lectures/*/polls/
+lectures/_shared/polls/
 
 # Personal scratch notes (not student-facing, not part of the published repo)
 concepts/
@@ -128,8 +134,13 @@ past-material/
 # Instructor prep briefs (private, not student-facing)
 **/brief.md
 **/brief.pdf
+**/.DS_Store
 
 **/bit_shifting.dSYM/
 
 # Practice exercises (working drafts, not part of the published course repo)
 exercises/
+.vscode/
+lectures/01-gates/assets/videos
+
+scripts

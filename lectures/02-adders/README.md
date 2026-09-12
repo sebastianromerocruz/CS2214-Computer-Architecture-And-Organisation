@@ -25,13 +25,8 @@
 10. [**Shifters**](#9)
 11. [**Zero- and Sign-Extension**](#10)
 12. [**The ALU**](#11)
-13. [**Bitwise Operations**](#12)
-    1. [**Bitwise AND**](#12-1)
-    2. [**Bitwise OR**](#12-2)
-    3. [**Bitwise XOR**](#12-3)
-    4. [**Bitwise NOT**](#12-4)
-14. [**Adders on Real Hardware**](#13)
-15. [**Appendix: Deriving the Two's Complement Trick**](#14)
+13. [**Adders on Real Hardware**](#12)
+14. [**Appendix: Deriving the Two's Complement Trick**](#13)
 
 <br>
 
@@ -91,7 +86,7 @@ For example, 3 + (−3) in 4-bit two's complement:
 
 The carry out is thrown away and the result is 0. The same adder circuit that adds 3 + 5 also correctly computes 3 + (−3), with zero additional logic. That simplicity is the entire point—and it's the reason this section comes *before* we build the adder, not after: we need to know what the adder has to handle before we design it.
 
-If you want to see exactly *why* that carry-discard trick is guaranteed to work, rather than just take it on faith, the full derivation is in the [Appendix](#14) at the end of this lecture.
+If you want to see exactly *why* that carry-discard trick is guaranteed to work, rather than just take it on faith, the full derivation is in the [Appendix](#13) at the end of this lecture.
 
 <a id="0-3"></a>
 
@@ -865,258 +860,6 @@ This exact idea—one ALU, selectable operations, a `Zero` flag—is what we'll 
 
 <a id="12"></a>
 
-## Bitwise Operations
-
-Thus far, we've been thinking about gates operating on individual 0s and 1s. But a real program works with _integers_—that is, 32-bit values, 64-bit values, bytes. How do the gate operations we've been studying apply to those?
-
-The answer is a super cute set of operations (and one of the biggest flexes you can pull during programming interviews): **bitwise operations**. That is, applying a Boolean gate independently to a pair of corresponding bits across two integers, with zero interaction between positions.
-
-The latter means that, unlike addition and subtraction, there's no carry, no propagation—each bit column is computed entirely on its own, exactly as if it were a separate single-bit gate. The result is that you can apply AND, OR, XOR, and NOT to whole integers in a single CPU instruction.
-
-This is also different from logical operations like `&&` and `||` in C, which treat any nonzero value as a single "true" and return either 0 or 1 (e.g. in Python, `1`, `True`, and `"Hello"` are all considered to be `True` statements). Bitwise operations work on the raw bit pattern of a value, position by position, giving you precise control over individual bits.
-
-In C: `&` is bitwise AND, `|` is bitwise OR, `^` is bitwise XOR, `~` is bitwise NOT. Do _not_ confuse these with `&&`, `||`, and `!`, please.
-
-<a id="12-1"></a>
-
-### Bitwise AND (`&`)
-
-Fairly straight forward here. For each bit position, the result is 1 if and only if **both** input bits at that position are 1.
-
-**Example: `10 & 6`**
-
-```
-  10  →  1 0 1 0
-   6  →  0 1 1 0
-         ───────
-  &      0 0 1 0  →  2
-```
-
-`10 & 6 == 2`. The only position where both inputs had a 1 was position 1 (the 2s place).
-
-<a id="fg-8"></a>
-
-<p align=center>
-    <img src="assets/bitwise-and.svg">
-    </img>
-</p>
-
-<p align=center>
-    <sub>
-        <strong>Figure VIII</strong>: Bitwise AND as four independent single-bit AND gates, one per column—the same gate from Lecture 01, just applied position by position with no interaction between columns.
-    </sub>
-</p>
-
-AND is the standard **masking** tool. If you want to isolate specific bits of a value and zero out everything else, AND the value against a pattern—called a **mask**—that has 1s exactly where you want to look and 0s everywhere else. The AND gate passes through the bits under the 1s and zeros out everything else.
-
-This was pretty relevant not too long ago. The Game Boy joypad register at `$FF00` (`rJOYP`) returns all four button states for the selected group at once, packed into the low nibble. To test just one button, real game code does `AND a, JOYP_DOWN`, masking away every bit except the one you care about. This is the exact same masking pattern I use in [PONG.gb](https://github.com/sebastianromerocruz/PONG.gb) to move the paddle—`AND a, JOYP_DOWN` and `AND a, JOYP_UP` are what actually drive it up and down—applied inside the game loop that runs sixty times a second.
-
-<a id="fg-9"></a>
-
-<p align=center>
-    <img src="assets/joypad-mask.svg">
-    </img>
-</p>
-
-<p align=center>
-    <sub>
-        <strong>Figure IX</strong>: Masking <code>rJOYP</code> against <code>JOYP_DOWN</code>—one AND gate per bit, same as any other bitwise AND, just with button names instead of place values.
-    </sub>
-</p>
-
-<a id="12-2"></a>
-
-### Bitwise OR (`|`)
-
-For each bit position, the result is 1 if **either** input bit at that position is 1.
-
-**Example: `10 | 6`**
-
-```
-  10  →  1 0 1 0
-   6  →  0 1 1 0
-         ───────
-  |      1 1 1 0  →  14
-```
-
-`10 | 6 == 14`. Where AND clears bits, OR **sets** them. OR-ing a value against a mask turns on every bit that is 1 in the mask while leaving all other bits unchanged. This is how you force specific bits on without touching the rest.
-
-<a id="fg-10"></a>
-
-<p align=center>
-    <img src="assets/bitwise-or.svg">
-    </img>
-</p>
-
-<p align=center>
-    <sub>
-        <strong>Figure X</strong>: Bitwise OR as four independent single-bit OR gates, one per column.
-    </sub>
-</p>
-
-<a id="12-3"></a>
-
-### Bitwise XOR (`^`)
-
-For each bit position, the result is 1 if the two input bits **differ**—one 1 and one 0, in either order. Two matching bits, whether `0, 0` or `1, 1`, produce 0.
-
-**Example: `10 ^ 6`**
-
-```
-  10  →  1 0 1 0
-   6  →  0 1 1 0
-         ───────
-  ^      1 1 0 0  →  12
-```
-
-`10 ^ 6 == 12`. Notice the gate itself is drawn just like OR, with one extra curved line at the inputs—that's not decoration, it's a reminder that XOR agrees with OR everywhere *except* the case where both inputs are 1, where OR says 1 and XOR says 0.
-
-<a id="fg-11"></a>
-
-<p align=center>
-    <img src="assets/bitwise-xor.svg">
-    </img>
-</p>
-
-<p align=center>
-    <sub>
-        <strong>Figure XI</strong>: Bitwise XOR as four independent single-bit XOR gates, one per column—identical to OR except where both inputs are 1.
-    </sub>
-</p>
-
-XOR has two properties that come up constantly enough to be worth stating outright:
-
-- **`x ^ x == 0`, always.** Anything XORed with itself cancels to zero, bit for bit, no matter what `x` is. This is the classic (if slightly overused) "swap two variables without a temp" trick, and it's also why `x ^ x` is sometimes used as a fast way to zero a register in assembly.
-- **XOR is its own inverse.** If `Y = A ^ B`, then `A = Y ^ B` and `B = Y ^ A`. XOR-ing twice with the same value gets you back where you started—`(x ^ mask) ^ mask == x`. This is what makes XOR the natural tool for *toggling* a bit: apply the same mask again, and you flip it right back.
-
-> **Game Boy:** Sprite-flipping on the Game Boy doesn't touch the tile data at all—it just flips the OAM attribute byte's bit 5 (X-flip) or bit 6 (Y-flip) with a `1`-mask XOR, `LD A, [attr] / XOR %00100000 / LD [attr], A`. The PPU reads that bit at draw time and mirrors the tile on the fly. Same idea as the toggle pattern below, just with the SM83's `XOR` instruction instead of C's `^`.
-
-<a id="12-4"></a>
-
-### Bitwise NOT (`~`)
-
-Flips every bit: 0 becomes 1, 1 becomes 0.
-
-**Example: `~6` as a 4-bit unsigned value**
-
-```
-   6  →  0 1 1 0
-         ───────
-  ~      1 0 0 1  →  9
-```
-
-There's an important caveat: `~` flips *all* bits in the integer, so the result depends entirely on the bit-width of the type. In C, `int` is typically 32 bits, so `~6` flips all 32 bits—and combined with two's complement, `~x == -(x+1)` for signed integers. `~6` in C is `-7`, not `9`. Keep bit-width in mind whenever you use `~`.
-
-<a id="fg-12"></a>
-
-<p align=center>
-    <img src="assets/bitwise-not.svg">
-    </img>
-</p>
-
-<p align=center>
-    <sub>
-        <strong>Figure XII</strong>: Bitwise NOT as four independent inverters, one per bit—flip every column and there is nowhere for a "narrower" result to hide, which is why the answer depends entirely on how many bits you started with.
-    </sub>
-</p>
-
----
-
-### Practical Applications
-
-These aren't just abstract exercises. The patterns below come up constantly in systems code—in memory allocators, device drivers, hardware register programming, network packet parsing. If you write C close to the hardware, you will write these patterns.
-
-Before the examples, here's the cheat sheet they all boil down to—one row per operator, read as "OP-ing a bit against 1 does *this*, OP-ing it against 0 does *that*":
-
-| Operator | Against `1` | Against `0` |
-|----------|--------------|--------------|
-| `&` (AND) | leaves the bit alone | **clears** it to 0 |
-| `\|` (OR)  | **sets** it to 1     | leaves the bit alone |
-| `^` (XOR) | **toggles** it       | leaves the bit alone |
-
-Read down a column and the pattern jumps out: AND and OR each have exactly one masking value (`0` for AND, `1` for OR) and one pass-through value; XOR has no "clear" or "set" value at all, only "flip" (`1`) or "pass-through" (`0`)—which is exactly why XOR is the tool for toggling and the other two aren't.
-
-**Is a number odd or even?**
-
-In binary, the least-significant bit (the 2⁰ place, also called the **LSB**) fully determines parity. An odd number always ends in 1; an even number always ends in 0—because "even" means divisible by 2, and the only bit that contributes the factor of 2¹ or higher is not the last one. We test the LSB by masking with `1`:
-
-```c
-bool is_odd(int x) {
-    return (x & 1) == 1;
-}
-```
-
-The parentheses around `x & 1` are essential. In C, `==` has *higher* precedence than `&`, so `x & 1 == 1` parses as `x & (1 == 1)`, which reduces to `x & 1`—accidentally correct here, but wrong in general and confusing always. Parenthesise bitwise sub-expressions explicitly.
-
-**Round down to the nearest multiple of four:**
-
-Any multiple of 4 in binary ends in `...00`—its two least-significant bits are always zero, because 4 = 100₂. To force any integer down to the nearest multiple of 4, we need to zero out its two LSBs while leaving everything else intact. The mask we want has 1s everywhere *except* the last two positions. Since 3 = `...000011`, its bitwise complement is `~3 = ...111100`, which is exactly that mask:
-
-```c
-int align_to_4(int x) {
-    return x & ~3;
-}
-```
-
-**Verification** (using 6 bits for clarity):
-
-```
-align_to_4(10):  001010 & ~(000011)  =  001010 & 111100  =  001000  =   8
-align_to_4(20):  010100 & ~(000011)  =  010100 & 111100  =  010100  =  20
-```
-
-For 10 (binary `001010`), the two LSBs `10` get zeroed, giving `001000` = 8. For 20 (binary `010100`), the two LSBs are already `00`, so the value is unchanged.
-
-<a id="fg-13"></a>
-
-<p align=center>
-    <img src="assets/mask-align4.svg">
-    </img>
-</p>
-
-<p align=center>
-    <sub>
-        <strong>Figure XIII</strong>: <code>align_to_4(10)</code> as a bit-lane AND against the mask <code>~3</code>—wherever the mask has a 0, the output is forced to 0 no matter what <code>x</code> was.
-    </sub>
-</p>
-
-The general pattern `x & ~(n-1)` aligns `x` down to the nearest multiple of any power-of-two `n`. You will see this in memory allocators, hardware register setup, and cache-line alignment—anywhere a structure needs to start on a boundary that the hardware requires.
-
-**Turn a specific bit on:**
-
-Say you want bit 2 (the 4s place—the *third* bit, counting the LSB as the first) forced to 1, no matter what it currently is, without disturbing any other bit. AND can only clear bits and leave others alone—it can never *set* one. OR is the tool for this: OR the value against a mask that has a 1 in exactly the position you want turned on, and 0s everywhere else. Wherever the mask is 0, OR leaves the original bit untouched; wherever the mask is 1, OR forces a 1.
-
-```c
-unsigned int flip_on_bit_2(unsigned int x) {
-    return x | (1 << 2);
-}
-```
-
-`flip_on_bit_2(90)` should give `94`, and `flip_on_bit_2(45)` should give back `45` unchanged, since bit 2 is already 1 there:
-
-```
-flip_on_bit_2(90):  01011010 | 00000100  =  01011110  =  94
-flip_on_bit_2(45):  00101101 | 00000100  =  00101101  =  45
-```
-
-The general pattern `x | (1 << k)` sets bit `k` and leaves every other bit exactly as it was.
-
-**Toggle a specific bit:**
-
-Now say you want bit `k` flipped—on if it was off, off if it was on—and you don't know or care which it currently is. Neither AND nor OR can do this: both have a value that always wins (`0` for AND, `1` for OR), which is precisely what makes them unsuitable for a flip. XOR against `1` is a flip regardless of the starting bit, which is exactly `x ^ x == 0` and its inverse property from [the XOR section](#12-3) put to work:
-
-```c
-unsigned int toggle_bit(unsigned int x, int k) {
-    return x ^ (1 << k);
-}
-```
-
-This is the same one-line idiom the Game Boy's `XOR` instruction uses for sprite-flipping, [mentioned above](#12-3)—just spelled `^` instead of `XOR`.
-
-<br>
-
-<a id="13"></a>
-
 ## Adders on Real Hardware
 
 Every time [PONG.gb](https://github.com/sebastianromerocruz/PONG.gb)'s ball moves, an adder—somewhere inside the SM83's ALU—does the work. `UpdateBall` does this every single frame:
@@ -1135,7 +878,7 @@ Put the two halves of this lecture side by side: `FlipY` *encodes* a negative nu
 
 <br>
 
-<a id="14"></a>
+<a id="13"></a>
 
 ## Appendix: Deriving the Two's Complement Trick
 
