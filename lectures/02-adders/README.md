@@ -25,8 +25,13 @@
 10. [**Shifters**](#9)
 11. [**Zero- and Sign-Extension**](#10)
 12. [**The ALU**](#11)
-13. [**Adders on Real Hardware**](#12)
-14. [**Appendix: Deriving the Two's Complement Trick**](#13)
+13. [**Bitwise Operations**](#12)
+    1. [**Bitwise AND**](#12-1)
+    2. [**Bitwise OR**](#12-2)
+    3. [**Bitwise XOR**](#12-3)
+    4. [**Bitwise NOT**](#12-4)
+14. [**Adders on Real Hardware**](#13)
+15. [**Appendix: Deriving the Two's Complement Trick**](#14)
 
 <br>
 
@@ -86,7 +91,7 @@ For example, 3 + (−3) in 4-bit two's complement:
 
 The carry out is thrown away and the result is 0. The same adder circuit that adds 3 + 5 also correctly computes 3 + (−3), with zero additional logic. That simplicity is the entire point—and it's the reason this section comes *before* we build the adder, not after: we need to know what the adder has to handle before we design it.
 
-If you want to see exactly *why* that carry-discard trick is guaranteed to work, rather than just take it on faith, the full derivation is in the [Appendix](#13) at the end of this lecture.
+If you want to see exactly *why* that carry-discard trick is guaranteed to work, rather than just take it on faith, the full derivation is in the [Appendix](#14) at the end of this lecture.
 
 <a id="0-3"></a>
 
@@ -192,7 +197,7 @@ The **Sum** column is exactly `A XOR B`. The **Carry** column is exactly `A AND 
 
 ## A Quick Note on Reading Verilog
 
-We're about to write a lot of Verilog this lecture, before Verilog is formally taught (that's [next lecture](/lectures/03-verilog-and-bitwise)). Rather than make you wait two weeks to read code that's genuinely useful *now*, here's just enough syntax to read everything below. Consider this a preview, not the full treatment—Lecture 3 covers structural vs. continuous assignment, synthesis, and the design philosophy properly. This is a decoder ring, not a substitute.
+We're about to write a lot of Verilog this lecture, before Verilog is formally taught (that's [next lecture](/lectures/03-verilog)). Rather than make you wait two weeks to read code that's genuinely useful *now*, here's just enough syntax to read everything below. Consider this a preview, not the full treatment—Lecture 3 covers structural vs. continuous assignment, synthesis, and the design philosophy properly. This is a decoder ring, not a substitute.
 
 **The module.** Every circuit is wrapped in a `module`, which lists its inputs and outputs by name:
 
@@ -341,7 +346,7 @@ All four land on 1, matching `Sum` exactly—and it's easy to check the other fo
 Sum = A ⊕ B ⊕ Cin
 ```
 
-<!--<br>
+<br>
 
 **`Cout`** is 1 on four different rows: `(0,1,1)`, `(1,0,1)`, `(1,1,0)`, `(1,1,1)`. Count the 1s in each: two, two, two, three—every single one of these rows has *at least two* of the three inputs set. Again, that's not a coincidence of these particular four rows: out of all eight rows, exactly four have two-or-more 1s, and those are precisely the four listed here. So `Cout` is answering one specific question: "were at least two of the three inputs 1?" That's called a **majority function**:
 
@@ -428,15 +433,21 @@ A full adder adds one bit position. To add two N-bit numbers, chain N full adder
 
 <p align=center>
     <sub>
-        <strong>Figure III</strong>: A 4-bit ripple-carry adder—four full adders chained, each one's <code>Cout</code> wired directly into the next one's <code>Cin</code>.
+        <strong>Figure III</strong>: A 3-bit ripple-carry adder—three full adders chained, each one's <code>Cout</code> wired directly into the next one's <code>Cin</code>, matching the <code>adder_3bit</code> Verilog below.
     </sub>
 </p>
 
-Bit 0's carry-in is hardwired to 0 (or you use a half adder there, since there's nothing to carry in from). Every bit after that takes its carry-in from the bit before it. Read the sum bits `S3 S2 S1 S0` together and you have 4-bit binary addition, built entirely out of the 1-bit adder we just derived.
+- **Bit 0** gets its `Cin` hardwired to 0 (or you use a half adder there instead—there's nothing to its right to carry in from).
+- **Every bit after that** takes its carry-in from the bit before it—that's the chain in the figure above.
+- **Read the sum bits together**—`S[2] S[1] S[0]`—and you have 3-bit binary addition, built entirely out of the 1-bit adder we just derived. The same idea scales to any width: more full adders, same chaining.
 
-It's called **ripple-carry** because that's exactly what happens: the carry has to physically propagate—ripple—through every full adder in the chain before the last one's sum is valid. **Delay scales as N times the delay of a single full adder; size scales as N times the size of a single full adder.** For a 4-bit adder that's fine. For the 32- or 64-bit adder inside a real CPU, that chain of propagation delay is a real problem—one of the reasons faster (carry-lookahead) adders exist, which is a rabbit hole for another course.
+It's called **ripple-carry** because that's exactly what happens: the carry has to physically propagate—ripple—through every full adder in the chain before the last one's sum is valid.
 
-Here's the chain in Verilog, built by instantiating `full_adder` three times for a 3-bit adder—this is **structural** instantiation again (from the [Verilog note](#2)), just with a module *you* wrote as the gate type instead of a built-in one like `xor`:
+**Delay scales as N times the delay of a single full adder; size scales as N times the size of a single full adder.**
+
+For a 3-bit adder, that's fine, but for the 32- or 64-bit adder inside a real CPU, that chain of propagation delay is a real problem—one of the reasons faster (carry-lookahead) adders exist, which is a rabbit hole for another course.
+
+Here's the chain in Verilog, built by instantiating `full_adder` three times for a 3-bit adder—this is **structural** instantiation again (from the [Verilog note](#2)), just with a module that we wrote as the gate type instead of a built-in one like `xor`:
 
 ```verilog
 module adder_3bit(A, B, Cin, S, Cout);
@@ -452,25 +463,15 @@ module adder_3bit(A, B, Cin, S, Cout);
 endmodule
 ```
 
-Worth breaking this down piece by piece rather than skimming past it—there's more bus notation packed in here than anywhere else so far.
+Let's break this one down—there's more bus notation packed in here than anywhere else so far:
 
-**The ports.** `input [2:0] A, B;` declares two 3-bit buses: `A` is really three wires bundled under one name, addressable as `A[2]` (most significant), `A[1]`, `A[0]` (least significant). Same for `B`, and for the 3-bit output `S`. `Cin` and `Cout`, by contrast, get no `[2:0]`—they stay single bits, on purpose. There's only ever *one* carry coming into the whole chain and *one* carry leaving it; a carry isn't a multi-bit number, so it doesn't get a bus.
-
-**The wires.** `wire c1, c2;` declares two ordinary single-bit wires—notice there are only two of them for three full adders. That's not an oversight: these are purely the internal connections *between* stages. Bit 0's carry-out needs a wire to reach bit 1's carry-in (that's `c1`), and bit 1's needs one to reach bit 2's (`c2`)—but bit 2's carry-out already has somewhere to go, straight out to the `Cout` port, so it doesn't need one.
-
-**The instantiations, where the bus gets torn apart one bit at a time:**
-
-```verilog
-full_adder bit0(A[0], B[0], Cin, S[0], c1);
-full_adder bit1(A[1], B[1], c1,  S[1], c2);
-full_adder bit2(A[2], B[2], c2,  S[2], Cout);
-```
-
-`A[0]` reaches into the bus and pulls out just bit 0—a single wire, which is exactly what `full_adder`'s `A` port expects (recall `full_adder` itself only ever takes single-bit `A`, `B`, `Cin`). Same story for `B[0]` and `S[0]`. Each line, then, instantiates one copy of the 1-bit full adder, wired to one specific bit-position slice of the wider buses declared above.
-
-Notice the two outputs, `S[0]` and `c1`, land in the *4th and 5th* argument positions here, not the 1st. That's not a mistake—`full_adder` is a module we wrote ourselves, back in [The Full Adder](#4), with the header `module full_adder(A, B, Cin, Sum, Cout);`. Its own port list puts inputs first and outputs last, so every instantiation of it—including these three—has to match that exact order. The "output goes first" rule from the [Verilog note](#2) only binds Verilog's six built-in primitive gates; it was never a rule for modules you define yourself.
-
-**The carry chain** is the interesting part: `bit0`'s last argument is `c1`—its carry *out*. `bit1`'s third argument (the `Cin` position) is that *same* `c1`—its carry *in*. That's not a coincidence: it's one physical wire, written twice because it plays two roles, output of stage 0 and input of stage 1. `c2` does the identical job between stages 1 and 2. That reused wire name, appearing in two different argument lists, *is* the ripple—the literal Verilog expression of "this stage's carry-out feeds that stage's carry-in."
+- **`input [2:0] A, B;`** declares two 3-bit buses: `A` is really three wires bundled under one name, addressable as `A[2]` (most significant), `A[1]`, `A[0]` (least significant). Same for `B`, and for the 3-bit output `S`.
+- **`input Cin; output Cout;`**, by contrast, get no `[2:0]`—they stay single bits, on purpose. There's only ever *one* carry coming into the whole chain and *one* carry leaving it; a carry isn't a multi-bit number, so it doesn't get a bus.
+- **`wire c1, c2;`** declares two ordinary single-bit wires—notice there are only two of them for three full adders. That's not an oversight: these are purely the internal connections *between* stages. Bit 0's carry-out needs a wire to reach bit 1's carry-in (that's `c1`), and bit 1's needs one to reach bit 2's (`c2`)—but bit 2's carry-out already has somewhere to go, straight out to the `Cout` port, so it doesn't need one.
+- **`full_adder bit0(A[0], B[0], Cin, S[0], c1);`** is where the bus actually gets torn apart, one bit at a time. `A[0]` reaches into the bus and pulls out just bit 0—a single wire, exactly what `full_adder`'s `A` port expects (recall `full_adder` itself only ever takes single-bit `A`, `B`, `Cin`). Same story for `B[0]` and `S[0]`.
+- **The argument order here is not output-first.** `S[0]` and `c1` land in the *4th and 5th* positions, not the 1st. That's not a mistake—`full_adder` is a module we wrote ourselves, back in [The Full Adder](#4), with the header `module full_adder(A, B, Cin, Sum, Cout);`. Its own port list puts inputs first and outputs last, so every instantiation of it has to match that exact order. The "output goes first" rule from the [Verilog note](#2) only binds Verilog's six built-in primitive gates; it was never a rule for modules you define yourself.
+- **The carry chain is the interesting part.** `bit0`'s last argument is `c1`—its carry *out*. `bit1`'s third argument (the `Cin` position) is that *same* `c1`—its carry *in*. That's not a coincidence: it's one physical wire, written twice because it plays two roles, output of stage 0 and input of stage 1. `c2` does the identical job between stages 1 and 2. That reused wire name, appearing in two different argument lists, *is* the ripple—the literal Verilog expression of "this stage's carry-out feeds that stage's carry-in."
+- **`bit1` and `bit2`** repeat the exact same pattern one position over, each peeling off the next slice of every bus and picking up the previous stage's carry.
 
 So reading the whole module top to bottom: declare two 3-bit buses in and one 3-bit bus out, declare two scratch single-bit wires for the internal handoffs, then three copies of the same 1-bit building block, each one peeling off a matching bit from every bus and stitching its carry to the next copy's carry-in.
 
@@ -822,7 +823,7 @@ We now have a small toolbox: adder, subtracter, comparator, shifter, plus the `A
 
 <p align=center>
     <sub>
-        <strong>Figure VII</strong>: An ALU as an opaque module (same convention as <a href="/lectures/03-verilog-and-bitwise#fg-1">the Verilog module figure</a>)—every circuit from this lecture becomes one selectable operation behind a single <code>Op</code> input.
+        <strong>Figure VII</strong>: An ALU as an opaque module (same convention as <a href="/lectures/03-verilog#fg-1">the Verilog module figure</a>)—every circuit from this lecture becomes one selectable operation behind a single <code>Op</code> input.
     </sub>
 </p>
 
@@ -864,6 +865,258 @@ This exact idea—one ALU, selectable operations, a `Zero` flag—is what we'll 
 
 <a id="12"></a>
 
+## Bitwise Operations
+
+Thus far, we've been thinking about gates operating on individual 0s and 1s. But a real program works with _integers_—that is, 32-bit values, 64-bit values, bytes. How do the gate operations we've been studying apply to those?
+
+The answer is a super cute set of operations (and one of the biggest flexes you can pull during programming interviews): **bitwise operations**. That is, applying a Boolean gate independently to a pair of corresponding bits across two integers, with zero interaction between positions.
+
+The latter means that, unlike addition and subtraction, there's no carry, no propagation—each bit column is computed entirely on its own, exactly as if it were a separate single-bit gate. The result is that you can apply AND, OR, XOR, and NOT to whole integers in a single CPU instruction.
+
+This is also different from logical operations like `&&` and `||` in C, which treat any nonzero value as a single "true" and return either 0 or 1 (e.g. in Python, `1`, `True`, and `"Hello"` are all considered to be `True` statements). Bitwise operations work on the raw bit pattern of a value, position by position, giving you precise control over individual bits.
+
+In C: `&` is bitwise AND, `|` is bitwise OR, `^` is bitwise XOR, `~` is bitwise NOT. Do _not_ confuse these with `&&`, `||`, and `!`, please.
+
+<a id="12-1"></a>
+
+### Bitwise AND (`&`)
+
+Fairly straight forward here. For each bit position, the result is 1 if and only if **both** input bits at that position are 1.
+
+**Example: `10 & 6`**
+
+```
+  10  →  1 0 1 0
+   6  →  0 1 1 0
+         ───────
+  &      0 0 1 0  →  2
+```
+
+`10 & 6 == 2`. The only position where both inputs had a 1 was position 1 (the 2s place).
+
+<a id="fg-8"></a>
+
+<p align=center>
+    <img src="assets/bitwise-and.svg">
+    </img>
+</p>
+
+<p align=center>
+    <sub>
+        <strong>Figure VIII</strong>: Bitwise AND as four independent single-bit AND gates, one per column—the same gate from Lecture 01, just applied position by position with no interaction between columns.
+    </sub>
+</p>
+
+AND is the standard **masking** tool. If you want to isolate specific bits of a value and zero out everything else, AND the value against a pattern—called a **mask**—that has 1s exactly where you want to look and 0s everywhere else. The AND gate passes through the bits under the 1s and zeros out everything else.
+
+This was pretty relevant not too long ago. The Game Boy joypad register at `$FF00` (`rJOYP`) returns all four button states for the selected group at once, packed into the low nibble. To test just one button, real game code does `AND a, JOYP_DOWN`, masking away every bit except the one you care about. This is the exact same masking pattern I use in [PONG.gb](https://github.com/sebastianromerocruz/PONG.gb) to move the paddle—`AND a, JOYP_DOWN` and `AND a, JOYP_UP` are what actually drive it up and down—applied inside the game loop that runs sixty times a second.
+
+<a id="fg-9"></a>
+
+<p align=center>
+    <img src="assets/joypad-mask.svg">
+    </img>
+</p>
+
+<p align=center>
+    <sub>
+        <strong>Figure IX</strong>: Masking <code>rJOYP</code> against <code>JOYP_DOWN</code>—one AND gate per bit, same as any other bitwise AND, just with button names instead of place values.
+    </sub>
+</p>
+
+<a id="12-2"></a>
+
+### Bitwise OR (`|`)
+
+For each bit position, the result is 1 if **either** input bit at that position is 1.
+
+**Example: `10 | 6`**
+
+```
+  10  →  1 0 1 0
+   6  →  0 1 1 0
+         ───────
+  |      1 1 1 0  →  14
+```
+
+`10 | 6 == 14`. Where AND clears bits, OR **sets** them. OR-ing a value against a mask turns on every bit that is 1 in the mask while leaving all other bits unchanged. This is how you force specific bits on without touching the rest.
+
+<a id="fg-10"></a>
+
+<p align=center>
+    <img src="assets/bitwise-or.svg">
+    </img>
+</p>
+
+<p align=center>
+    <sub>
+        <strong>Figure X</strong>: Bitwise OR as four independent single-bit OR gates, one per column.
+    </sub>
+</p>
+
+<a id="12-3"></a>
+
+### Bitwise XOR (`^`)
+
+For each bit position, the result is 1 if the two input bits **differ**—one 1 and one 0, in either order. Two matching bits, whether `0, 0` or `1, 1`, produce 0.
+
+**Example: `10 ^ 6`**
+
+```
+  10  →  1 0 1 0
+   6  →  0 1 1 0
+         ───────
+  ^      1 1 0 0  →  12
+```
+
+`10 ^ 6 == 12`. Notice the gate itself is drawn just like OR, with one extra curved line at the inputs—that's not decoration, it's a reminder that XOR agrees with OR everywhere *except* the case where both inputs are 1, where OR says 1 and XOR says 0.
+
+<a id="fg-11"></a>
+
+<p align=center>
+    <img src="assets/bitwise-xor.svg">
+    </img>
+</p>
+
+<p align=center>
+    <sub>
+        <strong>Figure XI</strong>: Bitwise XOR as four independent single-bit XOR gates, one per column—identical to OR except where both inputs are 1.
+    </sub>
+</p>
+
+XOR has two properties that come up constantly enough to be worth stating outright:
+
+- **`x ^ x == 0`, always.** Anything XORed with itself cancels to zero, bit for bit, no matter what `x` is. This is the classic (if slightly overused) "swap two variables without a temp" trick, and it's also why `x ^ x` is sometimes used as a fast way to zero a register in assembly.
+- **XOR is its own inverse.** If `Y = A ^ B`, then `A = Y ^ B` and `B = Y ^ A`. XOR-ing twice with the same value gets you back where you started—`(x ^ mask) ^ mask == x`. This is what makes XOR the natural tool for *toggling* a bit: apply the same mask again, and you flip it right back.
+
+> **Game Boy:** Sprite-flipping on the Game Boy doesn't touch the tile data at all—it just flips the OAM attribute byte's bit 5 (X-flip) or bit 6 (Y-flip) with a `1`-mask XOR, `LD A, [attr] / XOR %00100000 / LD [attr], A`. The PPU reads that bit at draw time and mirrors the tile on the fly. Same idea as the toggle pattern below, just with the SM83's `XOR` instruction instead of C's `^`.
+
+<a id="12-4"></a>
+
+### Bitwise NOT (`~`)
+
+Flips every bit: 0 becomes 1, 1 becomes 0.
+
+**Example: `~6` as a 4-bit unsigned value**
+
+```
+   6  →  0 1 1 0
+         ───────
+  ~      1 0 0 1  →  9
+```
+
+There's an important caveat: `~` flips *all* bits in the integer, so the result depends entirely on the bit-width of the type. In C, `int` is typically 32 bits, so `~6` flips all 32 bits—and combined with two's complement, `~x == -(x+1)` for signed integers. `~6` in C is `-7`, not `9`. Keep bit-width in mind whenever you use `~`.
+
+<a id="fg-12"></a>
+
+<p align=center>
+    <img src="assets/bitwise-not.svg">
+    </img>
+</p>
+
+<p align=center>
+    <sub>
+        <strong>Figure XII</strong>: Bitwise NOT as four independent inverters, one per bit—flip every column and there is nowhere for a "narrower" result to hide, which is why the answer depends entirely on how many bits you started with.
+    </sub>
+</p>
+
+---
+
+### Practical Applications
+
+These aren't just abstract exercises. The patterns below come up constantly in systems code—in memory allocators, device drivers, hardware register programming, network packet parsing. If you write C close to the hardware, you will write these patterns.
+
+Before the examples, here's the cheat sheet they all boil down to—one row per operator, read as "OP-ing a bit against 1 does *this*, OP-ing it against 0 does *that*":
+
+| Operator | Against `1` | Against `0` |
+|----------|--------------|--------------|
+| `&` (AND) | leaves the bit alone | **clears** it to 0 |
+| `\|` (OR)  | **sets** it to 1     | leaves the bit alone |
+| `^` (XOR) | **toggles** it       | leaves the bit alone |
+
+Read down a column and the pattern jumps out: AND and OR each have exactly one masking value (`0` for AND, `1` for OR) and one pass-through value; XOR has no "clear" or "set" value at all, only "flip" (`1`) or "pass-through" (`0`)—which is exactly why XOR is the tool for toggling and the other two aren't.
+
+**Is a number odd or even?**
+
+In binary, the least-significant bit (the 2⁰ place, also called the **LSB**) fully determines parity. An odd number always ends in 1; an even number always ends in 0—because "even" means divisible by 2, and the only bit that contributes the factor of 2¹ or higher is not the last one. We test the LSB by masking with `1`:
+
+```c
+bool is_odd(int x) {
+    return (x & 1) == 1;
+}
+```
+
+The parentheses around `x & 1` are essential. In C, `==` has *higher* precedence than `&`, so `x & 1 == 1` parses as `x & (1 == 1)`, which reduces to `x & 1`—accidentally correct here, but wrong in general and confusing always. Parenthesise bitwise sub-expressions explicitly.
+
+**Round down to the nearest multiple of four:**
+
+Any multiple of 4 in binary ends in `...00`—its two least-significant bits are always zero, because 4 = 100₂. To force any integer down to the nearest multiple of 4, we need to zero out its two LSBs while leaving everything else intact. The mask we want has 1s everywhere *except* the last two positions. Since 3 = `...000011`, its bitwise complement is `~3 = ...111100`, which is exactly that mask:
+
+```c
+int align_to_4(int x) {
+    return x & ~3;
+}
+```
+
+**Verification** (using 6 bits for clarity):
+
+```
+align_to_4(10):  001010 & ~(000011)  =  001010 & 111100  =  001000  =   8
+align_to_4(20):  010100 & ~(000011)  =  010100 & 111100  =  010100  =  20
+```
+
+For 10 (binary `001010`), the two LSBs `10` get zeroed, giving `001000` = 8. For 20 (binary `010100`), the two LSBs are already `00`, so the value is unchanged.
+
+<a id="fg-13"></a>
+
+<p align=center>
+    <img src="assets/mask-align4.svg">
+    </img>
+</p>
+
+<p align=center>
+    <sub>
+        <strong>Figure XIII</strong>: <code>align_to_4(10)</code> as a bit-lane AND against the mask <code>~3</code>—wherever the mask has a 0, the output is forced to 0 no matter what <code>x</code> was.
+    </sub>
+</p>
+
+The general pattern `x & ~(n-1)` aligns `x` down to the nearest multiple of any power-of-two `n`. You will see this in memory allocators, hardware register setup, and cache-line alignment—anywhere a structure needs to start on a boundary that the hardware requires.
+
+**Turn a specific bit on:**
+
+Say you want bit 2 (the 4s place—the *third* bit, counting the LSB as the first) forced to 1, no matter what it currently is, without disturbing any other bit. AND can only clear bits and leave others alone—it can never *set* one. OR is the tool for this: OR the value against a mask that has a 1 in exactly the position you want turned on, and 0s everywhere else. Wherever the mask is 0, OR leaves the original bit untouched; wherever the mask is 1, OR forces a 1.
+
+```c
+unsigned int flip_on_bit_2(unsigned int x) {
+    return x | (1 << 2);
+}
+```
+
+`flip_on_bit_2(90)` should give `94`, and `flip_on_bit_2(45)` should give back `45` unchanged, since bit 2 is already 1 there:
+
+```
+flip_on_bit_2(90):  01011010 | 00000100  =  01011110  =  94
+flip_on_bit_2(45):  00101101 | 00000100  =  00101101  =  45
+```
+
+The general pattern `x | (1 << k)` sets bit `k` and leaves every other bit exactly as it was.
+
+**Toggle a specific bit:**
+
+Now say you want bit `k` flipped—on if it was off, off if it was on—and you don't know or care which it currently is. Neither AND nor OR can do this: both have a value that always wins (`0` for AND, `1` for OR), which is precisely what makes them unsuitable for a flip. XOR against `1` is a flip regardless of the starting bit, which is exactly `x ^ x == 0` and its inverse property from [the XOR section](#12-3) put to work:
+
+```c
+unsigned int toggle_bit(unsigned int x, int k) {
+    return x ^ (1 << k);
+}
+```
+
+This is the same one-line idiom the Game Boy's `XOR` instruction uses for sprite-flipping, [mentioned above](#12-3)—just spelled `^` instead of `XOR`.
+
+<br>
+
+<a id="13"></a>
+
 ## Adders on Real Hardware
 
 Every time [PONG.gb](https://github.com/sebastianromerocruz/PONG.gb)'s ball moves, an adder—somewhere inside the SM83's ALU—does the work. `UpdateBall` does this every single frame:
@@ -882,7 +1135,7 @@ Put the two halves of this lecture side by side: `FlipY` *encodes* a negative nu
 
 <br>
 
-<a id="13"></a>
+<a id="14"></a>
 
 ## Appendix: Deriving the Two's Complement Trick
 
@@ -926,4 +1179,4 @@ Discard the overflow bit (i.e. work mod `2ⁿ`, exactly what a fixed-width adder
 
 <br>
 
-<sub>**Previous: [Introduction & Logic Gates](/lectures/01-gates)** || **Next: [Verilog & Bitwise Operations](/lectures/03-verilog-and-bitwise)**</sub>-->
+<sub>**Previous: [Introduction & Logic Gates](/lectures/01-gates)** || **Next: [Verilog](/lectures/03-verilog)**</sub>

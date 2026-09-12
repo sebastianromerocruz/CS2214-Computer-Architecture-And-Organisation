@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 480" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="560" height="480" rx="28" fill="#eee6f3"/>
+  <rect x="24" y="24" width="14" height="14" fill="#8900e1"/>
+  <circle cx="536" cy="456" r="7" fill="#7b5aa6"/>
+
+  <!-- legend, row 1 only -->
+  <text x="130" y="72" fill="#404040" font-size="14" font-weight="700" text-anchor="middle">A</text>
+  <text x="130" y="157" fill="#404040" font-size="14" font-weight="700" text-anchor="middle">B</text>
+  <text x="480" y="89" fill="#404040" font-size="14" font-weight="700" text-anchor="middle">Y</text>
+
+  <!-- row: weight 8, A=1 B=0 -> Y=1 -->
+  <text x="40" y="116" fill="#6d6d6d" font-size="16" font-weight="600">8s</text>
+  <line x1="143" y1="94" x2="294" y2="94" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <line x1="143" y1="126" x2="294" y2="126" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <rect x="117" y="81" width="26" height="26" rx="6" fill="#ffffff" stroke="#57068c" stroke-width="3"/>
+  <text x="130" y="99" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">1</text>
+  <rect x="117" y="113" width="26" height="26" rx="6" fill="#ffffff" stroke="#57068c" stroke-width="3"/>
+  <text x="130" y="131" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">0</text>
+  <path d="M294,90 Q309,110 294,130" fill="none" stroke="#57068c" stroke-width="5" stroke-linecap="round"/>
+  <path d="M300,90 Q315,110 300,130 C322,130 344,123 366,110 C344,97 322,90 300,90 Z" fill="#ffffff" stroke="#57068c" stroke-width="5" stroke-linejoin="round"/>
+  <line x1="366" y1="110" x2="467" y2="110" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <rect x="467" y="97" width="26" height="26" rx="6" fill="#f3e9ff" stroke="#8900e1" stroke-width="3"/>
+  <text x="480" y="115" fill="#8900e1" font-size="16" font-weight="700" text-anchor="middle">1</text>
+
+  <!-- row: weight 4, A=0 B=1 -> Y=1 -->
+  <text x="40" y="206" fill="#6d6d6d" font-size="16" font-weight="600">4s</text>
+  <line x1="143" y1="184" x2="294" y2="184" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <line x1="143" y1="216" x2="294" y2="216" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <rect x="117" y="171" width="26" height="26" rx="6" fill="#ffffff" stroke="#57068c" stroke-width="3"/>
+  <text x="130" y="189" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">0</text>
+  <rect x="117" y="203" width="26" height="26" rx="6" fill="#ffffff" stroke="#57068c" stroke-width="3"/>
+  <text x="130" y="221" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">1</text>
+  <path d="M294,180 Q309,200 294,220" fill="none" stroke="#57068c" stroke-width="5" stroke-linecap="round"/>
+  <path d="M300,180 Q315,200 300,220 C322,220 344,213 366,200 C344,187 322,180 300,180 Z" fill="#ffffff" stroke="#57068c" stroke-width="5" stroke-linejoin="round"/>
+  <line x1="366" y1="200" x2="467" y2="200" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <rect x="467" y="187" width="26" height="26" rx="6" fill="#f3e9ff" stroke="#8900e1" stroke-width="3"/>
+  <text x="480" y="205" fill="#8900e1" font-size="16" font-weight="700" text-anchor="middle">1</text>
+
+  <!-- row: weight 2, A=1 B=1 -> Y=0 -->
+  <text x="40" y="296" fill="#6d6d6d" font-size="16" font-weight="600">2s</text>
+  <line x1="143" y1="274" x2="294" y2="274" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <line x1="143" y1="306" x2="294" y2="306" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <rect x="117" y="261" width="26" height="26" rx="6" fill="#ffffff" stroke="#57068c" stroke-width="3"/>
+  <text x="130" y="279" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">1</text>
+  <rect x="117" y="293" width="26" height="26" rx="6" fill="#ffffff" stroke="#57068c" stroke-width="3"/>
+  <text x="130" y="311" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">1</text>
+  <path d="M294,270 Q309,290 294,310" fill="none" stroke="#57068c" stroke-width="5" stroke-linecap="round"/>
+  <path d="M300,270 Q315,290 300,310 C322,310 344,303 366,290 C344,277 322,270 300,270 Z" fill="#ffffff" stroke="#57068c" stroke-width="5" stroke-linejoin="round"/>
+  <line x1="366" y1="290" x2="467" y2="290" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <rect x="467" y="277" width="26" height="26" rx="6" fill="#ffffff" stroke="#57068c" stroke-width="3"/>
+  <text x="480" y="295" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">0</text>
+
+  <!-- row: weight 1, A=0 B=0 -> Y=0 -->
+  <text x="40" y="386" fill="#6d6d6d" font-size="16" font-weight="600">1s</text>
+  <line x1="143" y1="364" x2="294" y2="364" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <line x1="143" y1="396" x2="294" y2="396" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <rect x="117" y="351" width="26" height="26" rx="6" fill="#ffffff" stroke="#57068c" stroke-width="3"/>
+  <text x="130" y="369" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">0</text>
+  <rect x="117" y="383" width="26" height="26" rx="6" fill="#ffffff" stroke="#57068c" stroke-width="3"/>
+  <text x="130" y="401" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">0</text>
+  <path d="M294,360 Q309,380 294,400" fill="none" stroke="#57068c" stroke-width="5" stroke-linecap="round"/>
+  <path d="M300,360 Q315,380 300,400 C322,400 344,393 366,380 C344,367 322,360 300,360 Z" fill="#ffffff" stroke="#57068c" stroke-width="5" stroke-linejoin="round"/>
+  <line x1="366" y1="380" x2="467" y2="380" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <rect x="467" y="367" width="26" height="26" rx="6" fill="#ffffff" stroke="#57068c" stroke-width="3"/>
+  <text x="480" y="385" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">0</text>
+
+  <text x="280" y="443" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle">1010 ^ 0110 = 1100  &#8594;  10 ^ 6 = 12</text>
+  <text x="280" y="463" fill="#6d6d6d" font-size="13" font-style="italic" text-anchor="middle">one XOR gate per bit position, same as OR but for the extra curved input mark</text>
+</svg>

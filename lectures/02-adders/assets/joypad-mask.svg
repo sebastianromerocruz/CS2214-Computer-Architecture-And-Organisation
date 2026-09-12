@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 840" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="560" height="840" rx="28" fill="#eee6f3"/>
+  <rect x="24" y="24" width="14" height="14" fill="#8900e1"/>
+  <circle cx="536" cy="816" r="7" fill="#7b5aa6"/>
+
+  <!-- legend -->
+  <text x="130" y="44" fill="#404040" font-size="14" font-weight="700" text-anchor="middle">rJOYP</text>
+  <text x="130" y="63" fill="#404040" font-size="14" font-weight="700" text-anchor="middle">JOYP_DOWN</text>
+  <text x="480" y="69" fill="#404040" font-size="14" font-weight="700" text-anchor="middle">a</text>
+
+  <!-- row 0: b7, x=1 mask=0 -> y=0 -->
+  <text x="108" y="96" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="end">b7</text>
+  <line x1="143" y1="87" x2="300" y2="70" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <line x1="143" y1="119" x2="300" y2="110" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <rect x="117" y="74" width="26" height="26" rx="6" fill="#ffffff" stroke="#57068c" stroke-width="3"/>
+  <text x="130" y="92" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">1</text>
+  <rect x="117" y="106" width="26" height="26" rx="6" fill="#d9d9d9" stroke="#8c8c8c" stroke-width="3"/>
+  <text x="130" y="124" fill="#6d6d6d" font-size="16" font-weight="700" text-anchor="middle">0</text>
+  <path d="M300,70 L314,70 A20,20 0 0 1 314,110 L300,110 Z" fill="#ffffff" stroke="#57068c" stroke-width="5" stroke-linejoin="round"/>
+  <line x1="334" y1="90" x2="467" y2="90" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <rect x="467" y="77" width="26" height="26" rx="6" fill="#ffffff" stroke="#57068c" stroke-width="3"/>
+  <text x="480" y="95" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">0</text>
+
+  <!-- row 1: b6, x=1 mask=0 -> y=0 -->
+  <text x="108" y="176" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="end">b6</text>
+  <line x1="143" y1="167" x2="300" y2="150" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <line x1="143" y1="199" x2="300" y2="190" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <rect x="117" y="154" width="26" height="26" rx="6" fill="#ffffff" stroke="#57068c" stroke-width="3"/>
+  <text x="130" y="172" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">1</text>
+  <rect x="117" y="186" width="26" height="26" rx="6" fill="#d9d9d9" stroke="#8c8c8c" stroke-width="3"/>
+  <text x="130" y="204" fill="#6d6d6d" font-size="16" font-weight="700" text-anchor="middle">0</text>
+  <path d="M300,150 L314,150 A20,20 0 0 1 314,190 L300,190 Z" fill="#ffffff" stroke="#57068c" stroke-width="5" stroke-linejoin="round"/>
+  <line x1="334" y1="170" x2="467" y2="170" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <rect x="467" y="157" width="26" height="26" rx="6" fill="#ffffff" stroke="#57068c" stroke-width="3"/>
+  <text x="480" y="175" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">0</text>
+
+  <!-- row 2: b5, x=1 mask=0 -> y=0 -->
+  <text x="108" y="256" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="end">b5</text>
+  <line x1="143" y1="247" x2="300" y2="230" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <line x1="143" y1="279" x2="300" y2="270" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <rect x="117" y="234" width="26" height="26" rx="6" fill="#ffffff" stroke="#57068c" stroke-width="3"/>
+  <text x="130" y="252" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">1</text>
+  <rect x="117" y="266" width="26" height="26" rx="6" fill="#d9d9d9" stroke="#8c8c8c" stroke-width="3"/>
+  <text x="130" y="284" fill="#6d6d6d" font-size="16" font-weight="700" text-anchor="middle">0</text>
+  <path d="M300,230 L314,230 A20,20 0 0 1 314,270 L300,270 Z" fill="#ffffff" stroke="#57068c" stroke-width="5" stroke-linejoin="round"/>
+  <line x1="334" y1="250" x2="467" y2="250" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <rect x="467" y="237" width="26" height="26" rx="6" fill="#ffffff" stroke="#57068c" stroke-width="3"/>
+  <text x="480" y="255" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">0</text>
+
+  <!-- row 3: b4, x=1 mask=0 -> y=0 -->
+  <text x="108" y="336" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="end">b4</text>
+  <line x1="143" y1="327" x2="300" y2="310" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <line x1="143" y1="359" x2="300" y2="350" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <rect x="117" y="314" width="26" height="26" rx="6" fill="#ffffff" stroke="#57068c" stroke-width="3"/>
+  <text x="130" y="332" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">1</text>
+  <rect x="117" y="346" width="26" height="26" rx="6" fill="#d9d9d9" stroke="#8c8c8c" stroke-width="3"/>
+  <text x="130" y="364" fill="#6d6d6d" font-size="16" font-weight="700" text-anchor="middle">0</text>
+  <path d="M300,310 L314,310 A20,20 0 0 1 314,350 L300,350 Z" fill="#ffffff" stroke="#57068c" stroke-width="5" stroke-linejoin="round"/>
+  <line x1="334" y1="330" x2="467" y2="330" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <rect x="467" y="317" width="26" height="26" rx="6" fill="#ffffff" stroke="#57068c" stroke-width="3"/>
+  <text x="480" y="335" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">0</text>
+
+  <!-- row 4: DOWN (b3), x=1 mask=1 -> y=1 -->
+  <text x="108" y="416" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="end">DOWN (b3)</text>
+  <line x1="143" y1="407" x2="300" y2="390" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <line x1="143" y1="439" x2="300" y2="430" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <rect x="117" y="394" width="26" height="26" rx="6" fill="#ffffff" stroke="#57068c" stroke-width="3"/>
+  <text x="130" y="412" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">1</text>
+  <rect x="117" y="426" width="26" height="26" rx="6" fill="#ffffff" stroke="#57068c" stroke-width="3"/>
+  <text x="130" y="444" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">1</text>
+  <path d="M300,390 L314,390 A20,20 0 0 1 314,430 L300,430 Z" fill="#ffffff" stroke="#57068c" stroke-width="5" stroke-linejoin="round"/>
+  <line x1="334" y1="410" x2="467" y2="410" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <rect x="467" y="397" width="26" height="26" rx="6" fill="#f3e9ff" stroke="#8900e1" stroke-width="3"/>
+  <text x="480" y="415" fill="#8900e1" font-size="16" font-weight="700" text-anchor="middle">1</text>
+
+  <!-- row 5: UP (b2), x=1 mask=0 -> y=0 -->
+  <text x="108" y="496" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="end">UP (b2)</text>
+  <line x1="143" y1="487" x2="300" y2="470" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <line x1="143" y1="519" x2="300" y2="510" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <rect x="117" y="474" width="26" height="26" rx="6" fill="#ffffff" stroke="#57068c" stroke-width="3"/>
+  <text x="130" y="492" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">1</text>
+  <rect x="117" y="506" width="26" height="26" rx="6" fill="#d9d9d9" stroke="#8c8c8c" stroke-width="3"/>
+  <text x="130" y="524" fill="#6d6d6d" font-size="16" font-weight="700" text-anchor="middle">0</text>
+  <path d="M300,470 L314,470 A20,20 0 0 1 314,510 L300,510 Z" fill="#ffffff" stroke="#57068c" stroke-width="5" stroke-linejoin="round"/>
+  <line x1="334" y1="490" x2="467" y2="490" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <rect x="467" y="477" width="26" height="26" rx="6" fill="#ffffff" stroke="#57068c" stroke-width="3"/>
+  <text x="480" y="495" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">0</text>
+
+  <!-- row 6: LEFT (b1), x=0 mask=0 -> y=0 -->
+  <text x="108" y="576" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="end">LEFT (b1)</text>
+  <line x1="143" y1="567" x2="300" y2="550" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <line x1="143" y1="599" x2="300" y2="590" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <rect x="117" y="554" width="26" height="26" rx="6" fill="#ffffff" stroke="#57068c" stroke-width="3"/>
+  <text x="130" y="572" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">0</text>
+  <rect x="117" y="586" width="26" height="26" rx="6" fill="#d9d9d9" stroke="#8c8c8c" stroke-width="3"/>
+  <text x="130" y="604" fill="#6d6d6d" font-size="16" font-weight="700" text-anchor="middle">0</text>
+  <path d="M300,550 L314,550 A20,20 0 0 1 314,590 L300,590 Z" fill="#ffffff" stroke="#57068c" stroke-width="5" stroke-linejoin="round"/>
+  <line x1="334" y1="570" x2="467" y2="570" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <rect x="467" y="557" width="26" height="26" rx="6" fill="#ffffff" stroke="#57068c" stroke-width="3"/>
+  <text x="480" y="575" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">0</text>
+
+  <!-- row 7: RIGHT (b0), x=1 mask=0 -> y=0 -->
+  <text x="108" y="656" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="end">RIGHT (b0)</text>
+  <line x1="143" y1="647" x2="300" y2="630" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <line x1="143" y1="679" x2="300" y2="670" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <rect x="117" y="634" width="26" height="26" rx="6" fill="#ffffff" stroke="#57068c" stroke-width="3"/>
+  <text x="130" y="652" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">1</text>
+  <rect x="117" y="666" width="26" height="26" rx="6" fill="#d9d9d9" stroke="#8c8c8c" stroke-width="3"/>
+  <text x="130" y="684" fill="#6d6d6d" font-size="16" font-weight="700" text-anchor="middle">0</text>
+  <path d="M300,630 L314,630 A20,20 0 0 1 314,670 L300,670 Z" fill="#ffffff" stroke="#57068c" stroke-width="5" stroke-linejoin="round"/>
+  <line x1="334" y1="650" x2="467" y2="650" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+  <rect x="467" y="637" width="26" height="26" rx="6" fill="#ffffff" stroke="#57068c" stroke-width="3"/>
+  <text x="480" y="655" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">0</text>
+
+  <text x="280" y="715" fill="#57068c" font-size="14" font-style="italic" font-weight="600" text-anchor="middle">every bit but DOWN is masked to 0, regardless of what rJOYP returned there</text>
+
+  <text x="280" y="748" fill="#57068c" font-size="18" font-weight="700" text-anchor="middle">rJOYP &amp; JOYP_DOWN</text>
+  <text x="280" y="776" fill="#6d6d6d" font-size="13" font-style="italic" text-anchor="middle">%11111101 &amp; %00001000 = %00001000 &#8594; only the Down bit survives</text>
+</svg>
