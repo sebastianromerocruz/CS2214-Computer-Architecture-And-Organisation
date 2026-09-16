@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 470" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="900" height="470" rx="28" fill="#eee6f3"/>
+  <rect x="20" y="20" width="14" height="14" fill="#8900e1"/>
+  <circle cx="876" cy="446" r="7" fill="#7b5aa6"/>
+
+  <g transform="translate(120,0)">
+    <!-- register file body -->
+    <rect x="280" y="70" width="220" height="260" rx="18" fill="#ffffff" stroke="#57068c" stroke-width="7"/>
+    <text x="390" y="106" fill="#57068c" font-size="19" font-weight="700" text-anchor="middle">REGISTER FILE</text>
+    <text x="390" y="124" fill="#6d6d6d" font-size="11" font-style="italic" text-anchor="middle">N-bit address &#8658; 2&#8319; registers</text>
+
+    <!-- four register cells -->
+    <g>
+      <rect x="310" y="148" width="160" height="34" rx="6" fill="#eee6f3" stroke="#57068c" stroke-width="3"/>
+      <text x="390" y="170" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">R3</text>
+
+      <rect x="310" y="192" width="160" height="34" rx="6" fill="#eee6f3" stroke="#57068c" stroke-width="3"/>
+      <text x="390" y="214" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">R2</text>
+
+      <rect x="310" y="236" width="160" height="34" rx="6" fill="#eee6f3" stroke="#57068c" stroke-width="3"/>
+      <text x="390" y="258" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">R1</text>
+
+      <rect x="310" y="280" width="160" height="34" rx="6" fill="#eee6f3" stroke="#57068c" stroke-width="3"/>
+      <text x="390" y="302" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">R0</text>
+    </g>
+
+    <!-- write port, left side -->
+    <g>
+      <line x1="20" y1="165" x2="280" y2="165" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="20" cy="165" r="6" fill="#57068c"/>
+      <text x="12" y="160" fill="#404040" font-size="14" font-weight="600" text-anchor="end">WriteAddr[1:0]</text>
+
+      <line x1="20" y1="235" x2="280" y2="235" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="20" cy="235" r="6" fill="#57068c"/>
+      <text x="12" y="230" fill="#404040" font-size="14" font-weight="600" text-anchor="end">WriteData</text>
+
+      <line x1="20" y1="300" x2="280" y2="300" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="20" cy="300" r="6" fill="#57068c"/>
+      <text x="12" y="295" fill="#404040" font-size="14" font-weight="600" text-anchor="end">WE, Clk</text>
+      <!-- clock trigger marker -->
+      <polygon points="30,314 50,314 40,300" fill="#eee6f3" stroke="#57068c" stroke-width="3" stroke-linejoin="round"/>
+    </g>
+
+    <!-- read port, right side: four wires converge into a mux -->
+    <g>
+      <line x1="500" y1="165" x2="560" y2="140" stroke="#404040" stroke-width="4" stroke-linecap="round"/>
+      <line x1="500" y1="209" x2="560" y2="178" stroke="#404040" stroke-width="4" stroke-linecap="round"/>
+      <line x1="500" y1="253" x2="560" y2="262" stroke="#404040" stroke-width="4" stroke-linecap="round"/>
+      <line x1="500" y1="297" x2="560" y2="300" stroke="#404040" stroke-width="4" stroke-linecap="round"/>
+    </g>
+
+    <!-- mux trapezoid -->
+    <path d="M560,132 L560,308 L622,268 L622,172 Z" fill="#ffffff" stroke="#57068c" stroke-width="5" stroke-linejoin="round"/>
+    <text x="591" y="224" fill="#57068c" font-size="13" font-weight="700" text-anchor="middle">MUX</text>
+
+    <!-- selector: ReadAddr -->
+    <line x1="591" y1="308" x2="591" y2="350" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="591" cy="350" r="6" fill="#57068c"/>
+    <text x="591" y="368" fill="#404040" font-size="14" font-weight="600" text-anchor="middle">ReadAddr[1:0]</text>
+
+    <!-- Q output -->
+    <line x1="622" y1="220" x2="700" y2="220" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="700" cy="220" r="6" fill="#57068c"/>
+    <text x="712" y="225" fill="#404040" font-size="16" font-weight="700">Q</text>
+
+    <text x="330" y="410" fill="#57068c" font-size="18" font-weight="700" text-anchor="middle">read = mux by address; write = clocked, gated by WE</text>
+    <text x="330" y="430" fill="#6d6d6d" font-size="12" font-style="italic" text-anchor="middle">a real CPU's register file is the same idea, just wider and deeper &#8212; 32 or 64 registers, not 4</text>
+  </g>
+</svg>
