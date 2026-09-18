@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CS-UY 2214 | Why Computers Need Memory | Animated Summer</title>
+<link rel="stylesheet" href="../../_shared/theme/house.css">
+<style>
+  /* This is a standalone single "slide," not a Reveal.js deck: the
+     summer/register-file lecture's point is inherently sequential
+     (state, one tick at a time), so a hand-rolled step machine with
+     its own arrow-key handling is a better fit than fragment-based
+     Reveal.js slides. Visual chrome (cream/red) still comes from the
+     shared house theme so it drops straight into the real deck later
+     as an <iframe> or gets its markup folded in directly. The circuit
+     diagram itself uses the lavender palette the lecture's own SVG
+     figures use (register-flipflop.svg, d-flipflop.svg), so the
+     "live" circuit reads as the same object as the notes, not a new one. */
+
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: var(--cream);
+    overflow: hidden;
+  }
+
+  .slide {
+    position: relative;
+    width: 1333px;
+    height: 750px;
+    margin: 0 auto;
+    padding: 40px 64px 76px;
+    box-sizing: border-box;
+    overflow: hidden;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: var(--ink);
+  }
+
+  .stage {
+    position: relative;
+    margin-top: 18px;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 10px;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+
+  .stage .num { color: var(--red); font-weight: 700; font-size: 15px; letter-spacing: 0.04em; }
+  .stage h1 { margin: 0; font-size: 30px; font-weight: 700; }
+
+  .subtitle {
+    margin: 8px 0 0;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--mute);
+  }
+
+  /* ---- diagram canvas, lavender palette matching the lecture's own figures ---- */
+
+  .diagram-wrap {
+    margin-top: 16px;
+    background: #eee6f3;
+    border-radius: 24px;
+    padding: 10px 20px;
+    position: relative;
+  }
+
+  .diagram-wrap .mark { position: absolute; top: 20px; left: 20px; width: 14px; height: 14px; background: #8900e1; }
+  .diagram-wrap .dot { position: absolute; bottom: 20px; right: 20px; width: 14px; height: 14px; border-radius: 50%; background: #7b5aa6; }
+
+  svg text { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+
+  /* ---- history strip: the tick timeline ---- */
+
+  .ticks {
+    margin-top: 12px;
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+  }
+
+  .tick-chip {
+    min-width: 92px;
+    text-align: center;
+    padding: 6px 14px;
+    border: 2px solid #d9d9d3;
+    color: var(--mute);
+    font-size: 15px;
+    font-weight: 600;
+    transition: border-color 0.3s ease, color 0.3s ease, background 0.3s ease;
+  }
+
+  .tick-chip .v { display: block; font-size: 20px; font-family: "SF Mono", Menlo, Consolas, monospace; margin-top: 2px; }
+
+  .tick-chip.active {
+    border-color: var(--red);
+    color: var(--ink);
+    background: #fbeceb;
+  }
+
+  .tick-chip.done {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+
+  /* ---- narration line ---- */
+
+  .narration {
+    margin-top: 14px;
+    font-size: 19px;
+    line-height: 1.35;
+    min-height: 26px;
+  }
+
+  .narration strong { color: var(--red); }
+
+  /* ---- four questions panel, hidden until the animation completes ---- */
+
+  .questions {
+    position: absolute;
+    inset: 48px 64px 32px;
+    background: var(--cream);
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+  }
+
+  .questions.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .questions ol {
+    list-style: none;
+    margin: 28px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 40px;
+  }
+
+  .questions li {
+    border-left: 3px solid var(--red);
+    padding: 4px 0 4px 18px;
+    font-size: 21px;
+    line-height: 1.4;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+
+  .questions li.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .questions li .answer {
+    display: block;
+    margin-top: 6px;
+    font-size: 17px;
+    color: var(--mute);
+  }
+
+  .questions li .answer strong { color: var(--ink); font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 16px; }
+
+  .slide-footer {
+    position: absolute;
+    bottom: 24px;
+    left: 64px;
+    right: 64px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--faint);
+    border-top: 1px solid var(--rule);
+    padding-top: 10px;
+  }
+
+  .step-indicator {
+    position: absolute;
+    top: 20px;
+    right: 64px;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: var(--mute);
+  }
+
+  .step-indicator .n { color: var(--red); font-weight: 700; }
+
+  .hint {
+    position: absolute;
+    top: 20px;
+    left: 64px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: var(--mute);
+  }
+
+  .hint::before {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: var(--red);
+  }
+
+  kbd {
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px;
+    border: 1px solid var(--rule);
+    border-bottom-width: 2px;
+    border-radius: 3px;
+    padding: 1px 5px;
+    color: var(--ink);
+    background: #fff;
+  }
+</style>
+</head>
+<body>
+
+<div class="slide">
+  <div class="hint">&larr; / &rarr; to step, back and forth</div>
+  <div class="step-indicator">STEP <span class="n" id="step-n">1</span> / <span id="step-total">9</span></div>
+
+  <div class="stage">
+    <span class="num">2.2</span>
+    <h1>Why Computers Need Memory</h1>
+  </div>
+  <p class="subtitle">A running-sum accumulator, fed 5, then 25, then &minus;11: watch what it has to remember.</p>
+
+  <div class="diagram-wrap">
+    <div class="mark"></div>
+    <svg viewBox="0 0 1150 380" width="100%" height="270">
+      <!-- A input -->
+      <text x="60" y="120" fill="#404040" font-size="18" font-weight="600" text-anchor="middle">A</text>
+      <line x1="60" y1="135" x2="60" y2="180" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="60" cy="180" r="7" fill="#57068c"/>
+      <text id="a-value" x="60" y="90" fill="#8900e1" font-size="26" font-weight="700" text-anchor="middle">&mdash;</text>
+      <line id="a-wire" x1="60" y1="180" x2="220" y2="180" stroke="#8900e1" stroke-width="6" stroke-linecap="round" opacity="0.25"/>
+
+      <!-- feedback wire from Q back into adder -->
+      <path id="fb-wire" d="M 780 300 L 780 340 L 260 340 L 260 210" fill="none" stroke="#8900e1" stroke-width="5" stroke-linecap="round" opacity="0.25"/>
+      <text x="500" y="362" fill="#6d6d6d" font-size="13" font-style="italic" text-anchor="middle">what it remembers feeds back into the next computation</text>
+
+      <!-- adder box -->
+      <rect x="220" y="150" width="120" height="90" rx="14" fill="#ffffff" stroke="#57068c" stroke-width="6"/>
+      <text x="280" y="205" fill="#57068c" font-size="26" font-weight="700" text-anchor="middle">+</text>
+
+      <line x1="340" y1="195" x2="420" y2="195" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="420" cy="195" r="7" fill="#57068c"/>
+
+      <!-- register box, no flip-flop pin jargon yet: just "what it remembers" -->
+      <rect x="420" y="120" width="200" height="180" rx="16" fill="#ffffff" stroke="#57068c" stroke-width="7"/>
+      <text id="value-display" x="520" y="205" fill="#57068c" font-size="40" font-weight="700" text-anchor="middle">?</text>
+      <text x="520" y="240" fill="#6d6d6d" font-size="13" font-style="italic" text-anchor="middle">what it remembers</text>
+
+      <!-- output to display -->
+      <line x1="620" y1="195" x2="780" y2="195" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="780" cy="195" r="7" fill="#57068c"/>
+
+      <!-- big output readout -->
+      <rect x="850" y="130" width="240" height="140" rx="16" fill="#171715"/>
+      <text x="970" y="175" fill="#9f9f97" font-size="14" letter-spacing="1" text-anchor="middle">OUTPUT</text>
+      <text id="q-display" x="970" y="235" fill="#f7f7f4" font-size="46" font-weight="700" text-anchor="middle" font-family="SF Mono, Menlo, Consolas, monospace">?</text>
+    </svg>
+  </div>
+
+  <div class="ticks" id="ticks">
+    <div class="tick-chip" data-tick="reset">Reset<span class="v">0</span></div>
+    <div class="tick-chip" data-tick="1">Round 1, A=5<span class="v">&mdash;</span></div>
+    <div class="tick-chip" data-tick="2">Round 2, A=25<span class="v">&mdash;</span></div>
+    <div class="tick-chip" data-tick="3">Round 3, A=&minus;11<span class="v">&mdash;</span></div>
+  </div>
+
+  <div class="narration" id="narration"></div>
+
+  <div class="slide-footer"><span>Why Computers Need Memory</span><span>NYU Tandon | Fall 2026</span></div>
+
+  <div class="questions" id="questions">
+    <div class="stage">
+      <span class="num">2.2</span>
+      <h1>Four Questions Fall Out of This</h1>
+    </div>
+    <p class="subtitle">Answering all four is essentially the whole of sequential logic.</p>
+    <ol>
+      <li data-q="1">How do you set the running total's <strong>initial value</strong>?
+        <span class="answer">A <strong>Reset</strong> signal.</span>
+      </li>
+      <li data-q="2">How does the circuit know <em>when</em> a new input has arrived?
+        <span class="answer">A <strong>Clock</strong> signal.</span>
+      </li>
+      <li data-q="3">How does it physically <strong>hold</strong> the running total between inputs?
+        <span class="answer">A <strong>register</strong>.</span>
+      </li>
+      <li data-q="4">How do you write any of this down in Verilog?
+        <span class="answer">The <strong>always @(posedge clk)</strong> construct.</span>
+      </li>
+    </ol>
+    <div class="slide-footer"><span>Why Computers Need Memory</span><span>NYU Tandon | Fall 2026</span></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  // Each tick is two steps: input arrives (pre-edge) then the clock
+  // fires (post-edge) -- dramatizing "sample on the edge, hold
+  // otherwise" from the D-flip-flop figure earlier in this lecture,
+  // not just animating a value ticking up.
+  const steps = [
+    { phase: "idle",  tick: null, a: null, value: null, q: null,
+      narrate: "Before Reset, <strong>Value</strong> is undefined: not zero, just unknown." },
+    { phase: "reset", tick: "reset", a: null, value: 0, q: 0,
+      narrate: "<strong>Reset</strong>: the circuit is told to start remembering 0." },
+    { phase: "pre",   tick: "1", a: 5,  value: 0,  q: 0,  next: 5,
+      narrate: "Round 1: <strong>5</strong> arrives. It still remembers 0: nothing changes yet." },
+    { phase: "post",  tick: "1", a: 5,  value: 5,  q: 5,
+      narrate: "It updates: it adds the new number to what it remembered, <strong>0 + 5 = 5</strong>, and that becomes the new remembered value." },
+    { phase: "pre",   tick: "2", a: 25, value: 5,  q: 5,  next: 30,
+      narrate: "Round 2: <strong>25</strong> arrives. It still remembers 5: the result from before, held onto." },
+    { phase: "post",  tick: "2", a: 25, value: 30, q: 30,
+      narrate: "It updates: <strong>5 + 25 = 30</strong> becomes the new remembered value." },
+    { phase: "pre",   tick: "3", a: -11, value: 30, q: 30, next: 19,
+      narrate: "Round 3: <strong>&minus;11</strong> arrives. It still remembers 30." },
+    { phase: "post",  tick: "3", a: -11, value: 19, q: 19,
+      narrate: "It updates: <strong>30 + (&minus;11) = 19</strong> becomes the new remembered value." },
+    { phase: "done",  tick: "3", a: -11, value: 19, q: 19, qn: 0,
+      narrate: "Same circuit, three rounds, three different answers: <strong>it had to remember</strong> the last one to produce the next." },
+    { phase: "question", qn: 1, narrate: "How do you set the running total's initial value?" },
+    { phase: "question", qn: 2, narrate: "How does the circuit know when a new input has arrived?" },
+    { phase: "question", qn: 3, narrate: "How does it physically hold the running total between inputs?" },
+    { phase: "question", qn: 4, narrate: "How do you write any of this down in Verilog?" },
+  ];
+
+  let i = 0;
+  const $ = (id) => document.getElementById(id);
+  const aValue = $("a-value"), aWire = $("a-wire"), fbWire = $("fb-wire");
+  const valueDisplay = $("value-display"), qDisplay = $("q-display");
+  const narration = $("narration"), questions = $("questions");
+  const stepN = $("step-n");
+  $("step-total").textContent = steps.length;
+
+  function fmt(n) { return n === null || n === undefined ? "?" : (n > 0 && steps[i].phase !== "idle" && steps[i].phase !== "reset" ? String(n) : String(n)); }
+
+  const lastCircuitStep = steps.find((s) => s.phase === "done");
+
+  function render() {
+    const s = steps[i];
+    const d = s.phase === "question" ? lastCircuitStep : s;
+    stepN.textContent = i + 1;
+
+    // A input display
+    aValue.textContent = d.a === null ? "—" : d.a;
+    aWire.setAttribute("opacity", d.phase === "pre" ? "1" : "0.25");
+
+    // register + output
+    valueDisplay.textContent = d.value === null ? "?" : d.value;
+    qDisplay.textContent = d.q === null ? "?" : d.q;
+
+    // feedback wire highlight + register flash when the value updates
+    fbWire.setAttribute("opacity", d.phase === "post" ? "1" : "0.25");
+    valueDisplay.setAttribute("fill", d.phase === "post" ? "#8900e1" : "#57068c");
+
+    // tick chips
+    document.querySelectorAll(".tick-chip").forEach((chip) => {
+      const t = chip.dataset.tick;
+      chip.classList.remove("active", "done");
+      const vEl = chip.querySelector(".v");
+      if (t === "reset") {
+        if (d.tick === "reset" || (d.tick !== null && d.tick !== "reset")) {
+          chip.classList.add(d.tick === "reset" ? "active" : "done");
+          vEl.textContent = "0";
+        }
+      } else if (d.tick !== null && Number(t) < Number(d.tick)) {
+        chip.classList.add("done");
+      } else if (d.tick !== null && Number(t) === Number(d.tick)) {
+        chip.classList.add("active");
+        if (d.phase === "post" || d.phase === "done") vEl.textContent = d.value;
+      }
+    });
+
+    narration.innerHTML = s.narrate;
+
+    // the panel appears once the circuit's done, then each question
+    // fades in one at a time as the learner keeps stepping forward
+    questions.classList.toggle("visible", s.phase === "done" || s.phase === "question");
+    document.querySelectorAll(".questions li").forEach((li) => {
+      li.classList.toggle("show", Number(li.dataset.q) <= (s.qn || 0));
+    });
+  }
+
+  function go(delta) {
+    const next = i + delta;
+    if (next < 0 || next >= steps.length) return;
+    i = next;
+    render();
+  }
+
+  window.addEventListener("keydown", (e) => {
+    if (["ArrowRight", "ArrowDown", " ", "PageDown"].includes(e.key)) { go(1); e.preventDefault(); }
+    if (["ArrowLeft", "ArrowUp", "PageUp"].includes(e.key)) { go(-1); e.preventDefault(); }
+  });
+
+  render();
+})();
+</script>
+
+</body>
+</html>

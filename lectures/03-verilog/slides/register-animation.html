@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CS-UY 2214 | The Register | Animated</title>
+<link rel="stylesheet" href="../../_shared/theme/house.css">
+<style>
+  /* Same principle as summer-animation.html and clock-animation.html:
+     a standalone, hand-rolled step machine, not Reveal.js fragments.
+     The diagram mirrors assets/d-flipflop.svg and
+     assets/register-flipflop.svg's own geometry and lavender palette
+     so this reads as the same two figures, just given motion, with
+     one swapping in for the other partway through. */
+
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: var(--cream);
+    overflow: hidden;
+  }
+
+  .slide {
+    position: relative;
+    width: 1333px;
+    height: 750px;
+    margin: 0 auto;
+    padding: 40px 64px 76px;
+    box-sizing: border-box;
+    overflow: hidden;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: var(--ink);
+  }
+
+  .stage {
+    position: relative;
+    margin-top: 18px;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 10px;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+
+  .stage .num { color: var(--red); font-weight: 700; font-size: 15px; letter-spacing: 0.04em; }
+  .stage h1 { margin: 0; font-size: 30px; font-weight: 700; }
+
+  .subtitle {
+    margin: 8px 0 0;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--mute);
+  }
+
+  .diagram-wrap {
+    margin-top: 16px;
+    background: #eee6f3;
+    border-radius: 24px;
+    padding: 10px 20px;
+    position: relative;
+  }
+
+  .diagram-wrap .mark { position: absolute; top: 20px; left: 20px; width: 14px; height: 14px; background: #8900e1; }
+
+  svg text { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+
+  #single-ff, #multi-ff { transition: opacity 0.4s ease; }
+
+  .edges {
+    margin-top: 12px;
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+  }
+
+  .tick-chip {
+    min-width: 110px;
+    text-align: center;
+    padding: 6px 14px;
+    border: 2px solid #d9d9d3;
+    color: var(--mute);
+    font-size: 15px;
+    font-weight: 600;
+    transition: border-color 0.3s ease, color 0.3s ease, background 0.3s ease;
+  }
+
+  .tick-chip.active {
+    border-color: var(--red);
+    color: var(--ink);
+    background: #fbeceb;
+  }
+
+  .tick-chip.done {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+
+  .narration {
+    margin-top: 14px;
+    font-size: 19px;
+    line-height: 1.35;
+    min-height: 26px;
+  }
+
+  .narration strong { color: var(--red); }
+
+  .slide-footer {
+    position: absolute;
+    bottom: 24px;
+    left: 64px;
+    right: 64px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--faint);
+    border-top: 1px solid var(--rule);
+    padding-top: 10px;
+  }
+
+  .step-indicator {
+    position: absolute;
+    top: 20px;
+    right: 64px;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: var(--mute);
+  }
+
+  .step-indicator .n { color: var(--red); font-weight: 700; }
+
+  .hint {
+    position: absolute;
+    top: 20px;
+    left: 64px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: var(--mute);
+  }
+
+  .hint::before {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: var(--red);
+  }
+</style>
+</head>
+<body>
+
+<div class="slide">
+  <div class="hint">&larr; / &rarr; to step, back and forth</div>
+  <div class="step-indicator">STEP <span class="n" id="step-n">1</span> / <span id="step-total">9</span></div>
+
+  <div class="stage">
+    <span class="num">2.2</span>
+    <h1>The Register</h1>
+  </div>
+  <p class="subtitle">Sample on the edge, hold otherwise. Watch what one bit remembers, then four.</p>
+
+  <div class="diagram-wrap">
+    <div class="mark"></div>
+    <svg viewBox="0 0 1150 420" width="100%" height="360">
+
+      <!-- ============ single D flip-flop ============ -->
+      <g id="single-ff">
+        <text id="ff-d-value" x="140" y="150" fill="#8900e1" font-size="28" font-weight="700" text-anchor="middle">?</text>
+        <line x1="140" y1="190" x2="300" y2="190" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="140" cy="190" r="6" fill="#57068c"/>
+        <text x="125" y="185" fill="#404040" font-size="16" font-weight="600" text-anchor="end">D</text>
+
+        <rect x="300" y="110" width="200" height="160" rx="16" fill="#ffffff" stroke="#57068c" stroke-width="7"/>
+        <text x="325" y="150" fill="#404040" font-size="18" font-weight="700">D</text>
+        <text x="475" y="150" fill="#404040" font-size="18" font-weight="700" text-anchor="end">Q</text>
+        <text id="ff-q-value" x="400" y="215" fill="#57068c" font-size="40" font-weight="700" text-anchor="middle">?</text>
+
+        <line x1="500" y1="190" x2="640" y2="190" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="640" cy="190" r="6" fill="#57068c"/>
+        <text x="655" y="196" fill="#404040" font-size="18" font-weight="700">Q</text>
+
+        <!-- reset wire -->
+        <line id="reset-wire" x1="140" y1="250" x2="300" y2="250" stroke="#9f9f97" stroke-width="5" stroke-linecap="round"/>
+        <circle id="reset-dot" cx="140" cy="250" r="6" fill="#9f9f97"/>
+        <text id="reset-label" x="125" y="245" fill="#9f9f97" font-size="14" font-weight="700" text-anchor="end">RESET</text>
+
+        <!-- clock, edge-trigger marker -->
+        <polygon id="ff-clk-tri" points="385,270 415,270 400,252" fill="#eee6f3" stroke="#57068c" stroke-width="4" stroke-linejoin="round"/>
+        <line x1="400" y1="270" x2="400" y2="310" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+        <circle id="ff-clk-dot" cx="400" cy="310" r="6" fill="#57068c"/>
+        <text x="400" y="330" fill="#404040" font-size="16" font-weight="600" text-anchor="middle">CLK</text>
+
+        <text x="400" y="362" fill="#57068c" font-size="19" font-weight="700" text-anchor="middle">sample on the edge, hold otherwise</text>
+        <text x="400" y="380" fill="#6d6d6d" font-size="12" font-style="italic" text-anchor="middle">one bit in, one bit out&mdash;stack n of these, sharing CLK, for an n-bit register</text>
+      </g>
+
+      <!-- ============ 4-bit register, shared clock ============ -->
+      <g id="multi-ff" opacity="0">
+        <rect x="430" y="90" width="220" height="200" rx="18" fill="#ffffff" stroke="#57068c" stroke-width="7"/>
+        <text x="540" y="150" fill="#57068c" font-size="22" font-weight="700" text-anchor="middle">REGISTER</text>
+        <text x="540" y="172" fill="#6d6d6d" font-size="12" font-style="italic" text-anchor="middle">4 &#215; D flip-flops, one shared clock</text>
+
+        <g id="mff-d-wires">
+          <line x1="270" y1="125" x2="430" y2="125" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="270" cy="125" r="6" fill="#57068c"/>
+          <text x="250" y="131" fill="#404040" font-size="15" font-weight="600" text-anchor="end">D3</text>
+          <text id="mff-d3" x="330" y="113" fill="#8900e1" font-size="16" font-weight="700" text-anchor="middle">?</text>
+
+          <line x1="270" y1="165" x2="430" y2="165" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="270" cy="165" r="6" fill="#57068c"/>
+          <text x="250" y="171" fill="#404040" font-size="15" font-weight="600" text-anchor="end">D2</text>
+          <text id="mff-d2" x="330" y="153" fill="#8900e1" font-size="16" font-weight="700" text-anchor="middle">?</text>
+
+          <line x1="270" y1="205" x2="430" y2="205" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="270" cy="205" r="6" fill="#57068c"/>
+          <text x="250" y="211" fill="#404040" font-size="15" font-weight="600" text-anchor="end">D1</text>
+          <text id="mff-d1" x="330" y="193" fill="#8900e1" font-size="16" font-weight="700" text-anchor="middle">?</text>
+
+          <line x1="270" y1="245" x2="430" y2="245" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="270" cy="245" r="6" fill="#57068c"/>
+          <text x="250" y="251" fill="#404040" font-size="15" font-weight="600" text-anchor="end">D0</text>
+          <text id="mff-d0" x="330" y="233" fill="#8900e1" font-size="16" font-weight="700" text-anchor="middle">?</text>
+        </g>
+
+        <g id="mff-q-wires">
+          <line x1="650" y1="125" x2="810" y2="125" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="810" cy="125" r="6" fill="#57068c"/>
+          <text x="825" y="131" fill="#404040" font-size="15" font-weight="600">Q3</text>
+          <text id="mff-q3" x="750" y="113" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">?</text>
+
+          <line x1="650" y1="165" x2="810" y2="165" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="810" cy="165" r="6" fill="#57068c"/>
+          <text x="825" y="171" fill="#404040" font-size="15" font-weight="600">Q2</text>
+          <text id="mff-q2" x="750" y="153" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">?</text>
+
+          <line x1="650" y1="205" x2="810" y2="205" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="810" cy="205" r="6" fill="#57068c"/>
+          <text x="825" y="211" fill="#404040" font-size="15" font-weight="600">Q1</text>
+          <text id="mff-q1" x="750" y="193" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">?</text>
+
+          <line x1="650" y1="245" x2="810" y2="245" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="810" cy="245" r="6" fill="#57068c"/>
+          <text x="825" y="251" fill="#404040" font-size="15" font-weight="600">Q0</text>
+          <text id="mff-q0" x="750" y="233" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">?</text>
+        </g>
+
+        <polygon id="mff-clk-tri" points="525,290 555,290 540,272" fill="#eee6f3" stroke="#57068c" stroke-width="4" stroke-linejoin="round"/>
+        <line x1="540" y1="290" x2="540" y2="330" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+        <circle id="mff-clk-dot" cx="540" cy="330" r="6" fill="#57068c"/>
+        <text x="540" y="350" fill="#404040" font-size="16" font-weight="600" text-anchor="middle">CLK</text>
+
+        <!-- reset wire, same treatment as the single flip-flop's -->
+        <line id="mff-reset-wire" x1="440" y1="290" x2="440" y2="330" stroke="#9f9f97" stroke-width="5" stroke-linecap="round"/>
+        <circle id="mff-reset-dot" cx="440" cy="330" r="6" fill="#9f9f97"/>
+        <text id="mff-reset-label" x="440" y="350" fill="#9f9f97" font-size="14" font-weight="700" text-anchor="middle">RESET</text>
+
+        <text x="540" y="382" fill="#57068c" font-size="19" font-weight="700" text-anchor="middle">sample on the edge, hold otherwise</text>
+        <text x="540" y="400" fill="#6d6d6d" font-size="12" font-style="italic" text-anchor="middle">D3&ndash;D0 capture together; Q3&ndash;Q0 update together, on the same shared edge</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="edges" id="edges">
+    <div class="tick-chip" data-event="1">Edge 1</div>
+    <div class="tick-chip" data-event="2">Edge 2</div>
+    <div class="tick-chip" data-event="3">Reset</div>
+    <div class="tick-chip" data-event="4">Edge 3</div>
+    <div class="tick-chip" data-event="5">Edge 4</div>
+    <div class="tick-chip" data-event="6">Reset</div>
+  </div>
+
+  <div class="narration" id="narration"></div>
+
+  <div class="slide-footer"><span>The Register</span><span>NYU Tandon | Fall 2026</span></div>
+</div>
+
+<script>
+(function () {
+  const steps = [
+    { view: "single", d: null, q: null, reset: false, pulse: null, activeEvent: null,
+      narrate: "Before it's ever sampled, a register's contents are undefined: not zero, just unknown." },
+    { view: "single", d: 5, q: null, reset: false, pulse: null, activeEvent: 1,
+      narrate: "A value shows up on D. Nothing happens yet: only a clock edge can change what Q holds." },
+    { view: "single", d: 5, q: 5, reset: false, pulse: "ff", activeEvent: 1,
+      narrate: "At the edge, the register samples D. Q becomes 5, and holds it." },
+    { view: "single", d: 9, q: 5, reset: false, pulse: null, activeEvent: 1,
+      narrate: "D changes to 9, but Q is still 5. It holds steady until the next edge: that's the whole point of a register." },
+    { view: "single", d: 9, q: 9, reset: false, pulse: "ff", activeEvent: 2,
+      narrate: "Next edge: Q catches up to 9. Sample on the edge, hold otherwise." },
+    { view: "single", d: 9, q: 0, reset: true, pulse: "reset", activeEvent: 3,
+      narrate: "A <strong>Reset</strong> signal can force Q to a known value immediately, overriding whatever D says. Now it's 0: not undefined, not whatever D happens to be." },
+    { view: "multi", mffD: [1, 0, 1, 1], mffQ: [null, null, null, null], mffReset: false, pulse: null, activeEvent: 4,
+      narrate: "An n-bit register is just n of these, one per bit, all wired to the same clock line." },
+    { view: "multi", mffD: [1, 0, 1, 1], mffQ: [1, 0, 1, 1], mffReset: false, pulse: "mff", activeEvent: 4,
+      narrate: "One shared edge: every bit samples and updates at the exact same instant." },
+    { view: "multi", mffD: [0, 1, 0, 0], mffQ: [1, 0, 1, 1], mffReset: false, pulse: null, activeEvent: 4,
+      narrate: "D changes again, but Q holds 1011 across all four bits, exactly like before: still waiting on the next edge." },
+    { view: "multi", mffD: [0, 1, 0, 0], mffQ: [0, 1, 0, 0], mffReset: false, pulse: "mff", activeEvent: 5,
+      narrate: "Another shared edge: all four bits update together again, this time to 0100." },
+    { view: "multi", mffD: [0, 1, 0, 0], mffQ: [0, 0, 0, 0], mffReset: true, pulse: "mff-reset", activeEvent: 6,
+      narrate: "<strong>Reset</strong> works the same way here: one signal, and every bit snaps to 0 at once, regardless of D." },
+    { view: "multi", mffD: [0, 1, 0, 0], mffQ: [0, 0, 0, 0], mffReset: true, pulse: null, activeEvent: 6,
+      narrate: "Before it's reset or written, a register's contents are undefined, not zero. That's exactly why the running-sum machine needed a <strong>Reset</strong> signal." },
+  ];
+
+  let i = 0;
+  const $ = (id) => document.getElementById(id);
+  const singleFF = $("single-ff"), multiFF = $("multi-ff");
+  const ffDValue = $("ff-d-value"), ffQValue = $("ff-q-value");
+  const ffClkTri = $("ff-clk-tri"), ffClkDot = $("ff-clk-dot");
+  const resetLabel = $("reset-label"), resetWire = $("reset-wire"), resetDot = $("reset-dot");
+  const mffClkTri = $("mff-clk-tri"), mffClkDot = $("mff-clk-dot");
+  const mffResetLabel = $("mff-reset-label"), mffResetWire = $("mff-reset-wire"), mffResetDot = $("mff-reset-dot");
+  const narration = $("narration");
+  const stepN = $("step-n");
+  $("step-total").textContent = steps.length;
+
+  function fmtBit(v) { return v === null || v === undefined ? "?" : v; }
+
+  function render() {
+    const s = steps[i];
+    stepN.textContent = i + 1;
+
+    singleFF.style.opacity = s.view === "single" ? 1 : 0;
+    multiFF.style.opacity = s.view === "multi" ? 1 : 0;
+
+    if (s.view === "single") {
+      ffDValue.textContent = fmtBit(s.d);
+      ffQValue.textContent = fmtBit(s.q);
+      ffQValue.setAttribute("fill", s.pulse === "ff" || s.pulse === "reset" ? "#8900e1" : "#57068c");
+
+      const firingFF = s.pulse === "ff";
+      ffClkTri.setAttribute("fill", firingFF ? "#8900e1" : "#eee6f3");
+      ffClkDot.setAttribute("r", firingFF ? 9 : 6);
+
+      resetLabel.setAttribute("fill", s.reset ? "#c1272d" : "#9f9f97");
+      resetLabel.setAttribute("font-size", s.reset ? 15 : 14);
+      resetWire.setAttribute("stroke", s.reset ? "#c1272d" : "#9f9f97");
+      resetDot.setAttribute("fill", s.reset ? "#c1272d" : "#9f9f97");
+    } else {
+      ["d3", "d2", "d1", "d0"].forEach((id, idx) => {
+        $("mff-" + id).textContent = fmtBit(s.mffD[idx]);
+      });
+      ["q3", "q2", "q1", "q0"].forEach((id, idx) => {
+        const el = $("mff-" + id);
+        el.textContent = fmtBit(s.mffQ[idx]);
+        el.setAttribute("fill", s.pulse === "mff" || s.pulse === "mff-reset" ? "#8900e1" : "#57068c");
+      });
+      const firingMFF = s.pulse === "mff";
+      mffClkTri.setAttribute("fill", firingMFF ? "#8900e1" : "#eee6f3");
+      mffClkDot.setAttribute("r", firingMFF ? 9 : 6);
+
+      mffResetLabel.setAttribute("fill", s.mffReset ? "#c1272d" : "#9f9f97");
+      mffResetLabel.setAttribute("font-size", s.mffReset ? 15 : 14);
+      mffResetWire.setAttribute("stroke", s.mffReset ? "#c1272d" : "#9f9f97");
+      mffResetDot.setAttribute("fill", s.mffReset ? "#c1272d" : "#9f9f97");
+    }
+
+    document.querySelectorAll(".tick-chip").forEach((chip) => {
+      const n = Number(chip.dataset.event);
+      chip.classList.remove("active", "done");
+      if (s.activeEvent === n) chip.classList.add("active");
+      else if (s.activeEvent !== null && n < s.activeEvent) chip.classList.add("done");
+    });
+
+    narration.innerHTML = s.narrate;
+  }
+
+  function go(delta) {
+    const next = i + delta;
+    if (next < 0 || next >= steps.length) return;
+    i = next;
+    render();
+  }
+
+  window.addEventListener("keydown", (e) => {
+    if (["ArrowRight", "ArrowDown", " ", "PageDown"].includes(e.key)) { go(1); e.preventDefault(); }
+    if (["ArrowLeft", "ArrowUp", "PageUp"].includes(e.key)) { go(-1); e.preventDefault(); }
+  });
+
+  render();
+})();
+</script>
+
+</body>
+</html>

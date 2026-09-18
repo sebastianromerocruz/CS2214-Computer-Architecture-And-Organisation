@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CS-UY 2214 | The Clock | Animated</title>
+<link rel="stylesheet" href="../../_shared/theme/house.css">
+<style>
+  /* Same principle as summer-animation.html: a standalone, hand-rolled
+     step machine (not Reveal.js fragments) because the whole point is
+     discrete instants in time, stepped through one at a time. Chrome
+     matches house.css; the diagram reuses assets/clock-edges.svg's own
+     geometry and lavender palette so this reads as the same figure,
+     just given motion. */
+
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: var(--cream);
+    overflow: hidden;
+  }
+
+  .slide {
+    position: relative;
+    width: 1333px;
+    height: 750px;
+    margin: 0 auto;
+    padding: 40px 64px 76px;
+    box-sizing: border-box;
+    overflow: hidden;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: var(--ink);
+  }
+
+  .stage {
+    position: relative;
+    margin-top: 18px;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 10px;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+
+  .stage .num { color: var(--red); font-weight: 700; font-size: 15px; letter-spacing: 0.04em; }
+  .stage h1 { margin: 0; font-size: 30px; font-weight: 700; }
+
+  .subtitle {
+    margin: 8px 0 0;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--mute);
+  }
+
+  .diagram-wrap {
+    margin-top: 16px;
+    background: #eee6f3;
+    border-radius: 24px;
+    padding: 10px 20px;
+    position: relative;
+  }
+
+  .diagram-wrap .mark { position: absolute; top: 20px; left: 20px; width: 14px; height: 14px; background: #8900e1; }
+
+  svg text { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+
+  .edges {
+    margin-top: 12px;
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+  }
+
+  .tick-chip {
+    min-width: 140px;
+    text-align: center;
+    padding: 6px 14px;
+    border: 2px solid #d9d9d3;
+    color: var(--mute);
+    font-size: 15px;
+    font-weight: 600;
+    transition: border-color 0.3s ease, color 0.3s ease, background 0.3s ease;
+  }
+
+  .tick-chip.active {
+    border-color: var(--red);
+    color: var(--ink);
+    background: #fbeceb;
+  }
+
+  .tick-chip.done {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+
+  .narration {
+    margin-top: 14px;
+    font-size: 19px;
+    line-height: 1.35;
+    min-height: 26px;
+  }
+
+  .narration strong { color: var(--red); }
+  .narration code {
+    background: #171715;
+    color: #f7f7f4;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 17px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  .slide-footer {
+    position: absolute;
+    bottom: 24px;
+    left: 64px;
+    right: 64px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--faint);
+    border-top: 1px solid var(--rule);
+    padding-top: 10px;
+  }
+
+  .step-indicator {
+    position: absolute;
+    top: 20px;
+    right: 64px;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: var(--mute);
+  }
+
+  .step-indicator .n { color: var(--red); font-weight: 700; }
+
+  .hint {
+    position: absolute;
+    top: 20px;
+    left: 64px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: var(--mute);
+  }
+
+  .hint::before {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: var(--red);
+  }
+</style>
+</head>
+<body>
+
+<div class="slide">
+  <div class="hint">&larr; / &rarr; to step, back and forth</div>
+  <div class="step-indicator">STEP <span class="n" id="step-n">1</span> / <span id="step-total">7</span></div>
+
+  <div class="stage">
+    <span class="num">2.1</span>
+    <h1>The Clock</h1>
+  </div>
+  <p class="subtitle">A signal that flips between 0 and 1 at a steady rate. Watch exactly when a clocked circuit is allowed to act.</p>
+
+  <div class="diagram-wrap">
+    <div class="mark"></div>
+    <svg viewBox="0 0 1150 370" width="100%" height="320">
+      <!-- clk label -->
+      <text x="60" y="45" fill="#57068c" font-size="18" font-weight="700">clk</text>
+      <text x="44" y="98" fill="#404040" font-size="14" font-weight="600" text-anchor="end">1</text>
+      <text x="44" y="168" fill="#404040" font-size="14" font-weight="600" text-anchor="end">0</text>
+
+      <!-- full square wave, drawn from the start: we already know the
+           shape, the suspense is about which instant we're at -->
+      <path d="M60,160 L110,160 L110,90 L230,90 L230,160 L280,160 L280,90 L400,90 L400,160 L460,160"
+            fill="none" stroke="#404040" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="460" y1="160" x2="500" y2="160" stroke="#404040" stroke-width="3" stroke-linecap="round"/>
+      <path d="M500,160 L490,155 L490,165 Z" fill="#404040"/>
+      <text x="507" y="165" fill="#6d6d6d" font-size="13" font-style="italic">t</text>
+
+      <!-- playhead: current instant -->
+      <line id="playhead" x1="60" y1="70" x2="60" y2="185" stroke="#8900e1" stroke-width="3" stroke-dasharray="5 4"/>
+      <circle id="playhead-dot" cx="60" cy="160" r="7" fill="#8900e1"/>
+
+      <!-- rising edge 1 marker -->
+      <g id="pos1-marker" opacity="0">
+        <circle cx="110" cy="90" r="6" fill="#57068c"/>
+        <text x="110" y="30" fill="#57068c" font-size="12" font-weight="700" text-anchor="middle">posedge</text>
+      </g>
+
+      <!-- falling edge 1 marker, subtler: this edge never triggers anything -->
+      <g id="neg1-marker" opacity="0">
+        <circle cx="230" cy="160" r="5" fill="#9f9f97"/>
+        <text x="230" y="200" fill="#9f9f97" font-size="11" font-style="italic" text-anchor="middle">falling edge</text>
+      </g>
+
+      <!-- rising edge 2 marker -->
+      <g id="pos2-marker" opacity="0">
+        <circle cx="280" cy="90" r="6" fill="#57068c"/>
+        <text x="280" y="30" fill="#57068c" font-size="12" font-weight="700" text-anchor="middle">posedge</text>
+      </g>
+
+      <!-- period bracket -->
+      <g id="bracket" opacity="0">
+        <line x1="110" y1="205" x2="280" y2="205" stroke="#57068c" stroke-width="3"/>
+        <line x1="110" y1="198" x2="110" y2="212" stroke="#57068c" stroke-width="3"/>
+        <line x1="280" y1="198" x2="280" y2="212" stroke="#57068c" stroke-width="3"/>
+        <text x="195" y="226" fill="#6d6d6d" font-size="13" font-style="italic" text-anchor="middle">clock period</text>
+      </g>
+
+      <!-- counter: the one thing that's actually clocked -->
+      <text x="880" y="70" fill="#404040" font-size="14" font-weight="600">rising edges seen so far:</text>
+      <rect x="850" y="85" width="240" height="110" rx="16" fill="#171715"/>
+      <text x="970" y="120" fill="#9f9f97" font-size="13" letter-spacing="1" text-anchor="middle">COUNTER</text>
+      <text id="counter-display" x="970" y="170" fill="#f7f7f4" font-size="40" font-weight="700" text-anchor="middle" font-family="SF Mono, Menlo, Consolas, monospace">0</text>
+
+      <!-- code callout, lights up exactly on a posedge -->
+      <text x="600" y="200" fill="#404040" font-size="13" font-weight="600">clocked: only active on a posedge</text>
+      <rect id="code-box" x="600" y="215" width="490" height="56" rx="12" fill="#171715" stroke="#171715" stroke-width="3"/>
+      <text x="622" y="250" fill="#f7f7f4" font-size="19" font-weight="700" font-family="SF Mono, Menlo, Consolas, monospace">always @(posedge clk)</text>
+
+      <!-- contrast: code with no clock in it at all, permanently "on" -->
+      <text x="60" y="280" fill="#404040" font-size="13" font-weight="600">no clock, no edge: always active</text>
+      <rect x="60" y="295" width="430" height="56" rx="12" fill="#171715" stroke="#8900e1" stroke-width="3"/>
+      <text x="82" y="330" fill="#f7f7f4" font-size="19" font-weight="700" font-family="SF Mono, Menlo, Consolas, monospace">assign y = a &amp; b;</text>
+    </svg>
+  </div>
+
+  <div class="edges" id="edges">
+    <div class="tick-chip" data-edge="1">Rising edge 1</div>
+    <div class="tick-chip" data-edge="2">Rising edge 2</div>
+  </div>
+
+  <div class="narration" id="narration"></div>
+
+  <div class="slide-footer"><span>The Clock</span><span>NYU Tandon | Fall 2026</span></div>
+</div>
+
+<script>
+(function () {
+  const steps = [
+    { x: 60,  clk: 0, edges: {}, counter: 0, bracket: false, code: false, activeEdge: null, pulse: null,
+      narrate: "The clock alternates between 0 and 1, forever, at a steady rate." },
+    { x: 110, clk: 1, edges: { pos1: true }, counter: 1, bracket: false, code: true, activeEdge: 1, pulse: "pos1",
+      narrate: "The instant it flips from 0 to 1 is the <strong>rising edge</strong>, or <strong>posedge</strong>. Anything clocked fires exactly here." },
+    { x: 170, clk: 1, edges: { pos1: true }, counter: 1, bracket: false, code: false, activeEdge: 1, pulse: null,
+      narrate: "Between edges, nothing happens. The clock is high, but nothing clocked reacts, no matter how long it stays there." },
+    { x: 230, clk: 0, edges: { pos1: true, neg1: true }, counter: 1, bracket: false, code: false, activeEdge: 1, pulse: null,
+      narrate: "1 to 0 is the <strong>falling edge</strong>. Nothing in this course ever triggers on it. It just happens." },
+    { x: 255, clk: 0, edges: { pos1: true, neg1: true }, counter: 1, bracket: false, code: false, activeEdge: 1, pulse: null,
+      narrate: "Still nothing. The clock is low, still no posedge, so still no action." },
+    { x: 280, clk: 1, edges: { pos1: true, neg1: true, pos2: true }, counter: 2, bracket: true, code: true, activeEdge: 2, pulse: "pos2",
+      narrate: "The second rising edge, exactly one clock period after the first. The counter only ever moves at these instants." },
+    { x: 400, clk: 1, edges: { pos1: true, neg1: true, pos2: true }, counter: 2, bracket: true, code: true, activeEdge: 2, pulse: null,
+      narrate: "<code>always @(posedge clk)</code> means: run this block exactly once, at each of these instants, and nowhere else." },
+  ];
+
+  let i = 0;
+  const $ = (id) => document.getElementById(id);
+  const playhead = $("playhead"), playheadDot = $("playhead-dot");
+  const pos1Marker = $("pos1-marker"), neg1Marker = $("neg1-marker"), pos2Marker = $("pos2-marker");
+  const bracket = $("bracket"), codeBox = $("code-box");
+  const counterDisplay = $("counter-display");
+  const narration = $("narration");
+  const stepN = $("step-n");
+  $("step-total").textContent = steps.length;
+
+  function render() {
+    const s = steps[i];
+    stepN.textContent = i + 1;
+
+    playhead.setAttribute("x1", s.x);
+    playhead.setAttribute("x2", s.x);
+    playheadDot.setAttribute("cx", s.x);
+    playheadDot.setAttribute("cy", s.clk === 1 ? 90 : 160);
+
+    pos1Marker.setAttribute("opacity", s.edges.pos1 ? 1 : 0);
+    neg1Marker.setAttribute("opacity", s.edges.neg1 ? 1 : 0);
+    pos2Marker.setAttribute("opacity", s.edges.pos2 ? 1 : 0);
+    bracket.setAttribute("opacity", s.bracket ? 1 : 0);
+
+    // pulse: the edge circle currently firing gets bigger and brighter
+    [["pos1", pos1Marker], ["pos2", pos2Marker]].forEach(([name, marker]) => {
+      const circle = marker.querySelector("circle");
+      const firing = s.pulse === name;
+      circle.setAttribute("r", firing ? 10 : 6);
+      circle.setAttribute("fill", firing ? "#8900e1" : "#57068c");
+    });
+
+    counterDisplay.textContent = s.counter;
+
+    codeBox.setAttribute("stroke", s.code ? "#c1272d" : "#171715");
+
+    document.querySelectorAll(".tick-chip").forEach((chip) => {
+      const edgeNum = Number(chip.dataset.edge);
+      chip.classList.remove("active", "done");
+      if (s.activeEdge === edgeNum) chip.classList.add("active");
+      else if (s.activeEdge !== null && edgeNum < s.activeEdge) chip.classList.add("done");
+    });
+
+    narration.innerHTML = s.narrate;
+  }
+
+  function go(delta) {
+    const next = i + delta;
+    if (next < 0 || next >= steps.length) return;
+    i = next;
+    render();
+  }
+
+  window.addEventListener("keydown", (e) => {
+    if (["ArrowRight", "ArrowDown", " ", "PageDown"].includes(e.key)) { go(1); e.preventDefault(); }
+    if (["ArrowLeft", "ArrowUp", "PageUp"].includes(e.key)) { go(-1); e.preventDefault(); }
+  });
+
+  render();
+})();
+</script>
+
+</body>
+</html>
