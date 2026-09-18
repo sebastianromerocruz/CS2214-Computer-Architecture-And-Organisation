@@ -1,4 +1,4 @@
-<h2 align=center>Week II</h2>
+<h2 align=center>Week II & III</h2>
 
 <h1 align=center>Verilog</h1>
 
@@ -155,6 +155,17 @@ Both versions of `MyCircuit` describe the same exact circuit and produce equival
 | `AB`    | `A & B` |
 | `A + B` | `A \| B`|
 | `A ⊕ B` | `A ^ B` |
+
+One more thing about these operators: they aren't limited to single wires. Applied to multi-bit values, each one works **bit by bit**, pairing up the bits in the same position:
+
+```
+  4'b1100          4'b1100          4'b1100
+& 4'b1010        | 4'b1010        ^ 4'b1010        ~ 4'b1010
+---------        ---------        ---------        ---------
+  4'b1000          4'b1110          4'b0110          4'b0101
+```
+
+So `state | A` on two 4-bit values is four separate OR gates side by side, one per bit position, and `~` flips every bit. You'll see this constantly whenever a register needs to be combined with a mask or a constant.
 
 Operator precedence in Verilog follows C and Python: `~` binds tightest, then `&`, then `^`, then `|`. This matches Boolean precedence (NOT > AND > OR), so expressions translate directly—but, as always, I'd parenthesise explicitly anyway. Silent precedence errors are a pain to find.
 

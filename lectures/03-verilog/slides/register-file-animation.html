@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CS-UY 2214 | The Register File | Animated</title>
+<link rel="stylesheet" href="../../_shared/theme/house.css">
+<style>
+  /* Same principle as summer-animation.html, clock-animation.html, and
+     register-animation.html: a standalone, hand-rolled step machine.
+     The main diagram mirrors assets/register-file.svg's own geometry
+     and lavender palette; two short motivating vignettes run before it
+     (named registers don't scale, tie back to the mux from 02-adders),
+     per brief.md's explicit note not to skip that framing. */
+
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: var(--cream);
+    overflow: hidden;
+  }
+
+  .slide {
+    position: relative;
+    width: 1333px;
+    height: 750px;
+    margin: 0 auto;
+    padding: 40px 64px 76px;
+    box-sizing: border-box;
+    overflow: hidden;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: var(--ink);
+  }
+
+  .stage {
+    position: relative;
+    margin-top: 18px;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 10px;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+
+  .stage .num { color: var(--red); font-weight: 700; font-size: 15px; letter-spacing: 0.04em; }
+  .stage h1 { margin: 0; font-size: 30px; font-weight: 700; }
+
+  .subtitle {
+    margin: 8px 0 0;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--mute);
+  }
+
+  .diagram-wrap {
+    margin-top: 16px;
+    background: #eee6f3;
+    border-radius: 24px;
+    padding: 10px 20px;
+    position: relative;
+  }
+
+  .diagram-wrap .mark { position: absolute; top: 20px; left: 20px; width: 14px; height: 14px; background: #8900e1; }
+
+  svg text { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+
+  #motivate-fail, #motivate-mux, #regfile { transition: opacity 0.4s ease; }
+
+  .edges {
+    margin-top: 12px;
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+  }
+
+  .tick-chip {
+    min-width: 130px;
+    text-align: center;
+    padding: 6px 14px;
+    border: 2px solid #d9d9d3;
+    color: var(--mute);
+    font-size: 15px;
+    font-weight: 600;
+    transition: border-color 0.3s ease, color 0.3s ease, background 0.3s ease;
+  }
+
+  .tick-chip.active {
+    border-color: var(--red);
+    color: var(--ink);
+    background: #fbeceb;
+  }
+
+  .tick-chip.done {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+
+  .narration {
+    margin-top: 14px;
+    font-size: 19px;
+    line-height: 1.35;
+    min-height: 26px;
+  }
+
+  .narration strong { color: var(--red); }
+
+  .slide-footer {
+    position: absolute;
+    bottom: 24px;
+    left: 64px;
+    right: 64px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--faint);
+    border-top: 1px solid var(--rule);
+    padding-top: 10px;
+  }
+
+  .step-indicator {
+    position: absolute;
+    top: 20px;
+    right: 64px;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: var(--mute);
+  }
+
+  .step-indicator .n { color: var(--red); font-weight: 700; }
+
+  .hint {
+    position: absolute;
+    top: 20px;
+    left: 64px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: var(--mute);
+  }
+
+  .hint::before {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: var(--red);
+  }
+</style>
+</head>
+<body>
+
+<div class="slide">
+  <div class="hint">&larr; / &rarr; to step, back and forth</div>
+  <div class="step-indicator">STEP <span class="n" id="step-n">1</span> / <span id="step-total">10</span></div>
+
+  <div class="stage">
+    <span class="num">3.3</span>
+    <h1>The Register File</h1>
+  </div>
+  <p class="subtitle">Registers you pick by number, not by name. Read is a mux; write is gated by an edge and an enable.</p>
+
+  <div class="diagram-wrap">
+    <div class="mark"></div>
+    <svg viewBox="0 0 1150 400" width="100%" height="340">
+
+      <!-- ============ motivation 1: named registers don't scale ============ -->
+      <g id="motivate-fail">
+        <text x="575" y="70" fill="#404040" font-size="17" font-weight="600" text-anchor="middle">instruction wants: "register #2"</text>
+        <line x1="575" y1="85" x2="575" y2="130" stroke="#c1272d" stroke-width="3" stroke-dasharray="6 5"/>
+
+        <rect x="255" y="150" width="150" height="70" rx="14" fill="#ffffff" stroke="#57068c" stroke-width="6"/>
+        <text x="330" y="192" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle">Value</text>
+
+        <rect x="500" y="150" width="150" height="70" rx="14" fill="#ffffff" stroke="#57068c" stroke-width="6"/>
+        <text x="575" y="192" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle">A</text>
+
+        <rect x="745" y="150" width="150" height="70" rx="14" fill="#ffffff" stroke="#57068c" stroke-width="6"/>
+        <text x="820" y="192" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle">B</text>
+
+        <!-- red X: there's no way to wire "whichever one" to named boxes -->
+        <g transform="translate(575,140)">
+          <line x1="-14" y1="-14" x2="14" y2="14" stroke="#c1272d" stroke-width="6" stroke-linecap="round"/>
+          <line x1="14" y1="-14" x2="-14" y2="14" stroke="#c1272d" stroke-width="6" stroke-linecap="round"/>
+        </g>
+
+        <text x="575" y="270" fill="#c1272d" font-size="18" font-weight="700" text-anchor="middle">each wired in by hand, at design time, by name</text>
+        <text x="575" y="292" fill="#6d6d6d" font-size="13" font-style="italic" text-anchor="middle">there's no way to wire "whichever one the instruction says" to three separate names</text>
+      </g>
+
+      <!-- ============ motivation 2: tie back to the mux ============ -->
+      <!-- same layout convention as the real register-file diagram below:
+           registers stacked vertically, straight horizontal wires into
+           the mux, so this visually foreshadows what's coming next -->
+      <g id="motivate-mux" opacity="0">
+        <text x="575" y="35" fill="#57068c" font-size="18" font-weight="700" text-anchor="middle">we've already solved this</text>
+
+        <rect x="330" y="70" width="150" height="60" rx="14" fill="#ffffff" stroke="#57068c" stroke-width="6"/>
+        <text x="405" y="106" fill="#57068c" font-size="19" font-weight="700" text-anchor="middle">R2</text>
+
+        <rect x="330" y="170" width="150" height="60" rx="14" fill="#ffffff" stroke="#57068c" stroke-width="6"/>
+        <text x="405" y="206" fill="#57068c" font-size="19" font-weight="700" text-anchor="middle">R1</text>
+
+        <rect x="330" y="270" width="150" height="60" rx="14" fill="#ffffff" stroke="#57068c" stroke-width="6"/>
+        <text x="405" y="306" fill="#57068c" font-size="19" font-weight="700" text-anchor="middle">R0</text>
+
+        <!-- straight, level wires: one per register, no diagonals -->
+        <line x1="480" y1="100" x2="600" y2="100" stroke="#8900e1" stroke-width="4" stroke-linecap="round"/>
+        <line x1="480" y1="200" x2="600" y2="200" stroke="#404040" stroke-width="4" stroke-linecap="round"/>
+        <line x1="480" y1="300" x2="600" y2="300" stroke="#404040" stroke-width="4" stroke-linecap="round"/>
+
+        <path d="M600,60 L600,340 L680,270 L680,130 Z" fill="#ffffff" stroke="#57068c" stroke-width="5" stroke-linejoin="round"/>
+        <text x="635" y="205" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">MUX</text>
+
+        <line x1="640" y1="340" x2="640" y2="372" stroke="#8900e1" stroke-width="4" stroke-linecap="round"/>
+        <text x="640" y="390" fill="#8900e1" font-size="15" font-weight="700" text-anchor="middle">addr = 2</text>
+
+        <line x1="680" y1="200" x2="760" y2="200" stroke="#8900e1" stroke-width="5" stroke-linecap="round"/>
+        <text x="775" y="180" fill="#404040" font-size="14" font-weight="700">out</text>
+        <text x="775" y="215" fill="#8900e1" font-size="20" font-weight="700">R2's value</text>
+
+        <text x="405" y="365" fill="#6d6d6d" font-size="13" font-style="italic" text-anchor="middle">registers, plus mux-style addressed selection, is a register file</text>
+      </g>
+
+      <!-- ============ the register file itself ============ -->
+      <g id="regfile" opacity="0">
+        <g transform="translate(180,0)">
+          <rect x="280" y="40" width="220" height="260" rx="18" fill="#ffffff" stroke="#57068c" stroke-width="7"/>
+          <text x="390" y="76" fill="#57068c" font-size="18" font-weight="700" text-anchor="middle">REGISTER FILE</text>
+          <text x="390" y="94" fill="#6d6d6d" font-size="11" font-style="italic" text-anchor="middle">2-bit address &#8658; 4 registers</text>
+
+          <rect id="rf-rect-3" x="310" y="118" width="160" height="34" rx="6" fill="#eee6f3" stroke="#57068c" stroke-width="3"/>
+          <text id="rf-cell-3" x="390" y="140" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">R3: ?</text>
+
+          <rect id="rf-rect-2" x="310" y="162" width="160" height="34" rx="6" fill="#eee6f3" stroke="#57068c" stroke-width="3"/>
+          <text id="rf-cell-2" x="390" y="184" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">R2: ?</text>
+
+          <rect id="rf-rect-1" x="310" y="206" width="160" height="34" rx="6" fill="#eee6f3" stroke="#57068c" stroke-width="3"/>
+          <text id="rf-cell-1" x="390" y="228" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">R1: ?</text>
+
+          <rect id="rf-rect-0" x="310" y="250" width="160" height="34" rx="6" fill="#eee6f3" stroke="#57068c" stroke-width="3"/>
+          <text id="rf-cell-0" x="390" y="272" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">R0: ?</text>
+
+          <!-- write port, left -->
+          <line id="wr-addr-wire" x1="20" y1="135" x2="280" y2="135" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="20" cy="135" r="6" fill="#57068c"/>
+          <text x="12" y="130" fill="#404040" font-size="13" font-weight="600" text-anchor="end">WriteAddr</text>
+          <text id="wr-addr-value" x="150" y="122" fill="#8900e1" font-size="18" font-weight="700" text-anchor="middle">?</text>
+
+          <line id="wr-data-wire" x1="20" y1="205" x2="280" y2="205" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="20" cy="205" r="6" fill="#57068c"/>
+          <text x="12" y="200" fill="#404040" font-size="13" font-weight="600" text-anchor="end">WriteData</text>
+          <text id="wr-data-value" x="150" y="192" fill="#8900e1" font-size="18" font-weight="700" text-anchor="middle">?</text>
+
+          <line x1="20" y1="270" x2="280" y2="270" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="20" cy="270" r="6" fill="#57068c"/>
+          <text x="12" y="265" fill="#404040" font-size="13" font-weight="600" text-anchor="end">WE</text>
+          <text id="we-value" x="150" y="257" fill="#9f9f97" font-size="18" font-weight="700" text-anchor="middle">?</text>
+
+          <polygon id="rf-clk-tri" points="130,284 150,284 140,270" fill="#eee6f3" stroke="#57068c" stroke-width="3" stroke-linejoin="round"/>
+          <text x="140" y="304" fill="#404040" font-size="13" font-weight="600" text-anchor="middle">CLK</text>
+
+          <!-- read port, right: four wires converge into a mux -->
+          <line x1="500" y1="135" x2="560" y2="110" stroke="#404040" stroke-width="4" stroke-linecap="round"/>
+          <line x1="500" y1="179" x2="560" y2="148" stroke="#404040" stroke-width="4" stroke-linecap="round"/>
+          <line x1="500" y1="223" x2="560" y2="232" stroke="#404040" stroke-width="4" stroke-linecap="round"/>
+          <line x1="500" y1="267" x2="560" y2="270" stroke="#404040" stroke-width="4" stroke-linecap="round"/>
+
+          <path d="M560,102 L560,278 L622,238 L622,142 Z" fill="#ffffff" stroke="#57068c" stroke-width="5" stroke-linejoin="round"/>
+          <text x="591" y="194" fill="#57068c" font-size="13" font-weight="700" text-anchor="middle">MUX</text>
+
+          <line x1="591" y1="278" x2="591" y2="320" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="591" cy="320" r="6" fill="#57068c"/>
+          <text x="591" y="338" fill="#404040" font-size="13" font-weight="600" text-anchor="middle">ReadAddr</text>
+          <text id="rd-addr-value" x="591" y="360" fill="#8900e1" font-size="18" font-weight="700" text-anchor="middle">?</text>
+
+          <line id="rf-q-wire" x1="622" y1="190" x2="700" y2="190" stroke="#404040" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="700" cy="190" r="6" fill="#57068c"/>
+          <text x="712" y="176" fill="#404040" font-size="14" font-weight="700">Q</text>
+          <text id="rf-q-value" x="712" y="210" fill="#57068c" font-size="24" font-weight="700">?</text>
+        </g>
+
+        <text x="575" y="386" fill="#57068c" font-size="17" font-weight="700" text-anchor="middle">read = mux by address; write = clocked, gated by WE</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="edges" id="edges">
+    <div class="tick-chip" data-event="1">Write (R2)</div>
+    <div class="tick-chip" data-event="2">No Write</div>
+    <div class="tick-chip" data-event="3">Read (R2)</div>
+    <div class="tick-chip" data-event="4">Read (R0)</div>
+  </div>
+
+  <div class="narration" id="narration"></div>
+
+  <div class="slide-footer"><span>The Register File</span><span>NYU Tandon | Fall 2026</span></div>
+</div>
+
+<script>
+(function () {
+  const steps = [
+    { view: "fail", activeEvent: null,
+      narrate: "Every register so far has its own name, wired in by hand: Value, A, B. That breaks the moment something needs to pick ONE of many registers at runtime, by number." },
+    { view: "mux", activeEvent: null,
+      narrate: "We've already solved 'pick one signal by address': that's exactly a mux. Registers plus mux-style selection is a <strong>register file</strong>." },
+    { view: "regfile", r: [null, null, null, null], wrAddr: null, wrData: null, we: null, rdAddr: null, q: null, pulse: null, activeEvent: null,
+      narrate: "A register file: a small array of registers, each reachable by address, with a write port and a read port." },
+    { view: "regfile", r: [null, null, null, null], wrAddr: 2, wrData: 7, we: 1, rdAddr: null, q: null, pulse: null, activeEvent: 1,
+      narrate: "To write: put a destination address, the data, and write-enable on the bus. Nothing happens yet, still waiting on the edge." },
+    { view: "regfile", r: [null, null, 7, null], wrAddr: 2, wrData: 7, we: 1, rdAddr: null, q: null, pulse: "r2", activeEvent: 1,
+      narrate: "At the edge, only the addressed register captures the data. R2 becomes 7. R0, R1, R3 are untouched." },
+    { view: "regfile", r: [null, null, 7, null], wrAddr: 1, wrData: 9, we: 0, rdAddr: null, q: null, pulse: null, activeEvent: 2,
+      narrate: "Without write-enable, every register would try to grab the data bus every cycle. Here WE is 0, even though an address and data are sitting right there." },
+    { view: "regfile", r: [null, null, 7, null], wrAddr: 1, wrData: 9, we: 0, rdAddr: null, q: null, pulse: "no-write", activeEvent: 2,
+      narrate: "Edge fires, but WE was 0: nothing happens. That's exactly write-enable's job: turn 'write the data bus' into 'write only if asked.'" },
+    { view: "regfile", r: [null, null, 7, null], wrAddr: 1, wrData: 9, we: 0, rdAddr: 2, q: 7, pulse: "read", activeEvent: 3,
+      narrate: "Reading is simpler, no clock needed: ReadAddr selects a register through the mux, and Q follows immediately. R2 is 7, so Q is 7." },
+    { view: "regfile", r: [null, null, 7, null], wrAddr: 1, wrData: 9, we: 0, rdAddr: 0, q: null, pulse: "read", activeEvent: 4,
+      narrate: "Change ReadAddr to 0, and Q follows immediately: R0 was never written, so it's still undefined too." },
+    { view: "regfile", r: [null, null, 7, null], wrAddr: 1, wrData: 9, we: 0, rdAddr: 0, q: null, pulse: null, activeEvent: 4,
+      narrate: "A 2-bit address reaches 4 registers: <strong>2&sup2; = 4</strong>, the same reasoning as an n-bit mux selector or ROM address. Scale the address, scale the register file." },
+  ];
+
+  let i = 0;
+  const $ = (id) => document.getElementById(id);
+  const motivateFail = $("motivate-fail"), motivateMux = $("motivate-mux"), regfile = $("regfile");
+  const wrAddrValue = $("wr-addr-value"), wrDataValue = $("wr-data-value"), weValue = $("we-value");
+  const rdAddrValue = $("rd-addr-value"), qValue = $("rf-q-value");
+  const rfClkTri = $("rf-clk-tri");
+  const narration = $("narration");
+  const stepN = $("step-n");
+  $("step-total").textContent = steps.length;
+
+  const cells = [0, 1, 2, 3].map((n) => ({ text: $("rf-cell-" + n), rect: $("rf-rect-" + n) }));
+
+  function fmt(v) { return v === null || v === undefined ? "?" : v; }
+
+  function render() {
+    const s = steps[i];
+    stepN.textContent = i + 1;
+
+    motivateFail.style.opacity = s.view === "fail" ? 1 : 0;
+    motivateMux.style.opacity = s.view === "mux" ? 1 : 0;
+    regfile.style.opacity = s.view === "regfile" ? 1 : 0;
+
+    if (s.view === "regfile") {
+      [3, 2, 1, 0].forEach((n) => {
+        cells[n].text.textContent = "R" + n + ": " + fmt(s.r[n]);
+      });
+
+      wrAddrValue.textContent = fmt(s.wrAddr);
+      wrDataValue.textContent = fmt(s.wrData);
+      weValue.textContent = fmt(s.we);
+      weValue.setAttribute("fill", s.we === 1 ? "#8900e1" : s.we === 0 ? "#c1272d" : "#9f9f97");
+      rdAddrValue.textContent = fmt(s.rdAddr);
+      qValue.textContent = fmt(s.q);
+
+      const writing = s.pulse && s.pulse.startsWith("r");
+      rfClkTri.setAttribute("fill", writing || s.pulse === "no-write" ? "#8900e1" : "#eee6f3");
+
+      cells.forEach((c, n) => {
+        const flashing = s.pulse === "r" + n;
+        c.rect.setAttribute("stroke", flashing ? "#8900e1" : "#57068c");
+        c.rect.setAttribute("stroke-width", flashing ? 5 : 3);
+        c.text.setAttribute("fill", flashing ? "#8900e1" : "#57068c");
+      });
+
+      qValue.setAttribute("fill", s.pulse === "read" ? "#8900e1" : "#57068c");
+    }
+
+    document.querySelectorAll(".tick-chip").forEach((chip) => {
+      const n = Number(chip.dataset.event);
+      chip.classList.remove("active", "done");
+      if (s.activeEvent === n) chip.classList.add("active");
+      else if (s.activeEvent !== null && n < s.activeEvent) chip.classList.add("done");
+    });
+
+    narration.innerHTML = s.narrate;
+  }
+
+  function go(delta) {
+    const next = i + delta;
+    if (next < 0 || next >= steps.length) return;
+    i = next;
+    render();
+  }
+
+  window.addEventListener("keydown", (e) => {
+    if (["ArrowRight", "ArrowDown", " ", "PageDown"].includes(e.key)) { go(1); e.preventDefault(); }
+    if (["ArrowLeft", "ArrowUp", "PageUp"].includes(e.key)) { go(-1); e.preventDefault(); }
+  });
+
+  render();
+})();
+</script>
+
+</body>
+</html>
