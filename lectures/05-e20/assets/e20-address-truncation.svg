@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 270" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="760" height="270" rx="28" fill="#eee6f3"/>
+  <rect x="20" y="20" width="14" height="14" fill="#8900e1"/>
+  <circle cx="736" cy="246" r="7" fill="#7b5aa6"/>
+  <text x="174" y="87" fill="#57068c" font-size="20" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">43222</text>
+  <rect x="190" y="60" width="90" height="40" fill="#e2cdf2" stroke="#57068c" stroke-width="4"/>
+  <rect x="280" y="60" width="390" height="40" fill="#f7f0ff" stroke="#57068c" stroke-width="4"/>
+  <text x="205.0" y="87" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+  <text x="235.0" y="87" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+  <text x="265.0" y="87" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+  <text x="295.0" y="87" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+  <text x="325.0" y="87" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+  <text x="355.0" y="87" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+  <text x="385.0" y="87" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+  <text x="415.0" y="87" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+  <text x="445.0" y="87" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+  <text x="475.0" y="87" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+  <text x="505.0" y="87" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+  <text x="535.0" y="87" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+  <text x="565.0" y="87" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+  <text x="595.0" y="87" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+  <text x="625.0" y="87" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+  <text x="655.0" y="87" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+  <text x="174" y="157" fill="#57068c" font-size="20" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">2262</text>
+  <rect x="190" y="130" width="90" height="40" fill="#e2cdf2" stroke="#57068c" stroke-width="4"/>
+  <rect x="280" y="130" width="390" height="40" fill="#f7f0ff" stroke="#57068c" stroke-width="4"/>
+  <text x="205.0" y="157" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+  <text x="235.0" y="157" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+  <text x="265.0" y="157" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+  <text x="295.0" y="157" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+  <text x="325.0" y="157" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+  <text x="355.0" y="157" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+  <text x="385.0" y="157" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+  <text x="415.0" y="157" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+  <text x="445.0" y="157" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+  <text x="475.0" y="157" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+  <text x="505.0" y="157" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+  <text x="535.0" y="157" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+  <text x="565.0" y="157" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+  <text x="595.0" y="157" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+  <text x="625.0" y="157" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+  <text x="655.0" y="157" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+  <g stroke="#57068c" stroke-width="3" fill="none"><path d="M190 112 v8 h90 v-8"/><path d="M280 182 v8 h390 v-8"/></g>
+  <text x="235.0" y="140" fill="none"/>
+  <text x="235.0" y="215" fill="#57068c" font-size="14" font-weight="700" text-anchor="middle">dropped</text>
+  <text x="235.0" y="231" fill="#6d6d6d" font-size="11" font-style="italic" text-anchor="middle">top 3 bits</text>
+  <text x="475.0" y="215" fill="#57068c" font-size="14" font-weight="700" text-anchor="middle">same 13 bits: same cell</text>
+  <text x="475.0" y="231" fill="#6d6d6d" font-size="11" font-style="italic" text-anchor="middle">address 2262</text>
+  <text x="190" y="44" fill="#404040" font-size="14" font-weight="700">Two different 16-bit values, one memory cell</text>
+</svg>

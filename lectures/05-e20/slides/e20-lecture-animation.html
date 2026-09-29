@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CS-UY 2214 | The E20 Processor | Animated</title>
+<link rel="stylesheet" href="../../_shared/theme/house.css">
+<style>
+  /* One deck for the whole E20 lecture, built on the E15 deck (same step engine).
+     Same principle as the 03-verilog animations: a hand-rolled step machine
+     driven by the arrow keys, one small change per step, plain language
+     before jargon. Each section is a "scene" with its own diagram; the arrow
+     keys run straight through all of them. Shift + arrow jumps a section.
+     Question-and-answer form: at key beats the slide first asks a question
+     (the diagram stays as the previous step left it) and the next key press
+     reveals the diagram and the answer. Open with #3.5 to start at section 3,
+     step 5 (answered), or #3.5q for the same step with the question showing. */
+
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: var(--cream);
+    overflow: hidden;
+  }
+
+  .slide {
+    position: relative;
+    width: 1333px;
+    height: 750px;
+    margin: 0 auto;
+    padding: 40px 64px 76px;
+    box-sizing: border-box;
+    overflow: hidden;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: var(--ink);
+  }
+
+  .stage {
+    position: relative;
+    margin-top: 18px;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 10px;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+
+  .stage .num { color: var(--red); font-weight: 700; font-size: 15px; letter-spacing: 0.04em; }
+  .stage h1 { margin: 0; font-size: 30px; font-weight: 700; }
+
+  .subtitle {
+    margin: 8px 0 0;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--mute);
+  }
+
+  .diagram-wrap {
+    margin-top: 16px;
+    background: #eee6f3;
+    border-radius: 24px;
+    padding: 10px 20px;
+    position: relative;
+  }
+
+  .diagram-wrap .mark { position: absolute; top: 20px; left: 20px; width: 14px; height: 14px; background: #8900e1; }
+
+  svg text { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+  svg * { transition: opacity 0.35s ease, fill 0.3s ease, stroke 0.3s ease; }
+
+  svg .mv { transition: transform 0.6s ease; }
+
+  .stps {
+    margin-top: 12px;
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    min-height: 38px;
+  }
+
+  .stp {
+    min-width: 120px;
+    text-align: center;
+    padding: 6px 14px;
+    border: 2px solid #d9d9d3;
+    color: var(--mute);
+    font-size: 15px;
+    font-weight: 600;
+    transition: border-color 0.3s ease, color 0.3s ease, background 0.3s ease;
+  }
+
+  .stp.active { border-color: var(--red); color: var(--ink); background: #fbeceb; }
+  .stp.done { border-color: var(--ink); color: var(--ink); }
+
+  .narration {
+    margin-top: 14px;
+    font-size: 19px;
+    line-height: 1.35;
+    min-height: 52px;
+  }
+
+  .narration strong { color: var(--red); }
+  .narration code {
+    background: #171715;
+    color: #f7f7f4;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 16px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  .q { font-weight: 700; color: var(--ink); }
+  .q .qm {
+    display: inline-block;
+    background: var(--red);
+    color: #fff;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    padding: 2px 9px;
+    margin-right: 12px;
+    vertical-align: middle;
+  }
+  .q.big { font-size: 26px; line-height: 1.3; }
+  .q.small { font-size: 15px; color: var(--mute); margin-bottom: 8px; font-weight: 600; }
+  .q.small .qm { font-size: 11px; padding: 1px 7px; margin-right: 9px; }
+  .q code { font-size: 0.85em; }
+  .q.small code { background: #e2ded0; color: var(--ink); }
+
+  .slide-footer {
+    position: absolute;
+    bottom: 24px;
+    left: 64px;
+    right: 64px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--faint);
+    border-top: 1px solid var(--rule);
+    padding-top: 10px;
+  }
+
+  .step-indicator {
+    position: absolute;
+    top: 20px;
+    right: 64px;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: var(--mute);
+  }
+
+  .step-indicator .n { color: var(--red); font-weight: 700; }
+
+  .hint {
+    position: absolute;
+    top: 20px;
+    left: 64px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: var(--mute);
+  }
+
+  .hint::before {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: var(--red);
+  }
+</style>
+</head>
+<body>
+
+<div class="slide">
+  <div class="hint">&larr; / &rarr; step &nbsp;&middot;&nbsp; shift + &larr; / &rarr; section</div>
+  <div class="step-indicator"><span id="sec-wrap">SECTION <span class="n" id="sec-n">1</span> / <span id="sec-total">9</span> &nbsp;&middot;&nbsp; </span>STEP <span class="n" id="step-n">1</span> / <span id="step-total">2</span></div>
+
+  <div class="stage">
+    <span class="num" id="num"></span>
+    <h1 id="title">The E20 Processor</h1>
+  </div>
+  <p class="subtitle" id="subtitle"></p>
+
+  <div class="diagram-wrap">
+    <div class="mark"></div>
+    <svg id="stage" viewBox="0 0 1150 400" width="100%" height="340"></svg>
+  </div>
+
+  <div class="stps" id="chips"></div>
+
+  <div class="narration" id="narration"></div>
+
+  <div class="slide-footer"><span id="foot-left">The E20 Processor</span><span>NYU Tandon | Fall 2026</span></div>
+</div>
+
+<script>
+(function () {
+  const NS = "http://www.w3.org/2000/svg";
+  const MONO = "'SF Mono', Menlo, Consolas, monospace";
+  const C = {
+    purple: "#57068c", accent: "#8900e1", dot: "#7b5aa6", ink: "#404040", grey: "#6d6d6d",
+    lgrey: "#9f9f97", red: "#c1272d", bg: "#eee6f3", white: "#ffffff",
+    t1: "#e9d9f5", t2: "#fbeceb", t3: "#e4e3db", t4: "#f3e9ff", t5: "#e2cdf2", t6: "#f7f0ff", t7: "#efe9dc",
+  };
+
+  function E(tag, attrs, parent, text) {
+    const e = document.createElementNS(NS, tag);
+    if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (text !== undefined) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function grp(p, op) { const g = E("g", {}, p); g.style.opacity = op === undefined ? 1 : op; return g; }
+  function rect(p, x, y, w, h, o) {
+    o = o || {};
+    const e = E("rect", { x, y, width: w, height: h, rx: o.rx || 0, fill: o.fill || "none", stroke: o.stroke || "none", "stroke-width": o.sw || 0 }, p);
+    if (o.dash) e.setAttribute("stroke-dasharray", o.dash);
+    return e;
+  }
+  function txt(p, x, y, s, o) {
+    o = o || {};
+    const t = E("text", { x, y, fill: o.fill || C.ink, "font-size": o.size || 16, "font-weight": o.weight || 400, "text-anchor": o.anchor || "start" }, p, s);
+    if (o.mono) t.style.fontFamily = MONO;
+    if (o.italic) t.setAttribute("font-style", "italic");
+    if (o.ls) t.setAttribute("letter-spacing", o.ls);
+    if (o.pre) t.style.whiteSpace = "pre";
+    return t;
+  }
+  function ln(p, x1, y1, x2, y2, o) {
+    o = o || {};
+    const e = E("line", { x1, y1, x2, y2, stroke: o.stroke || C.ink, "stroke-width": o.sw || 4, "stroke-linecap": "round" }, p);
+    if (o.dash) e.setAttribute("stroke-dasharray", o.dash);
+    return e;
+  }
+  function path(p, d, o) {
+    o = o || {};
+    return E("path", { d, fill: o.fill || "none", stroke: o.stroke || "none", "stroke-width": o.sw || 0, "stroke-linecap": "round", "stroke-linejoin": "round" }, p);
+  }
+  function circ(p, cx, cy, r, o) {
+    o = o || {};
+    return E("circle", { cx, cy, r, fill: o.fill || "none", stroke: o.stroke || "none", "stroke-width": o.sw || 0 }, p);
+  }
+  function poly(p, pts, o) {
+    o = o || {};
+    return E("polygon", { points: pts, fill: o.fill || "none", stroke: o.stroke || "none", "stroke-width": o.sw || 0, "stroke-linejoin": "round" }, p);
+  }
+  function vis(el, on) { el.style.opacity = on ? 1 : 0; }
+  function arrowhead(p, x, y, dir, fill) {
+    // dir: "r","l","d","u"
+    const pts = { r: [x, y, x - 12, y - 7, x - 12, y + 7], l: [x, y, x + 12, y - 7, x + 12, y + 7],
+                  d: [x, y, x - 7, y - 12, x + 7, y - 12], u: [x, y, x - 7, y + 12, x + 7, y + 12] }[dir];
+    return poly(p, pts.join(","), { fill: fill || C.ink });
+  }
+
+  const scenes = [];
+  function scene(def) { scenes.push(def); }
+  // ---------- shared helpers for the E20 scenes ----------
+  function codeRows(g, x, y0, dy, w, lines, o) {
+    o = o || {};
+    const rows = [], texts = [], addrs = [];
+    lines.forEach((ln, i) => {
+      const y = y0 + i * dy;
+      rows.push(rect(g, x, y - dy + 8, w, dy - 2, { rx: 6 }));
+      addrs.push(txt(g, x + 26, y, ln.a === undefined ? "" : String(ln.a), { size: 15, mono: true, fill: C.lgrey, anchor: "middle" }));
+      texts.push(txt(g, x + 56, y, ln.t, { size: o.size || 17, weight: 600, mono: true, pre: true, fill: ln.dim ? C.lgrey : C.ink }));
+    });
+    return { rows, texts, addrs };
+  }
+  function regBoxes(g, x0, y0, w, h, dx, dy, vals) {
+    const boxes = [], vs = [];
+    for (let i = 0; i < 8; i++) {
+      const x = x0 + (i % 4) * dx, y = y0 + Math.floor(i / 4) * dy;
+      boxes.push(rect(g, x, y, w, h, { rx: 10, fill: i === 0 ? "#dcd2e6" : C.white, stroke: C.purple, sw: 4 }));
+      txt(g, x + 10, y + 20, "$" + i, { size: 14, weight: 700, mono: true, fill: C.purple });
+      vs.push(txt(g, x + w / 2, y + h - 14, String(vals[i]), { size: 24, weight: 700, mono: true, anchor: "middle", fill: i === 0 ? C.grey : C.ink }));
+    }
+    return { boxes, vs };
+  }
+
+  // ---------- generic trace scene: code on the left, registers (and memory) on the right ----------
+  function traceScene(cfg) {
+    const rowH = cfg.rowH || 32, Y0 = 92;
+    return {
+      num: cfg.num, title: cfg.title, subtitle: cfg.subtitle, chips: cfg.chips || [],
+      steps: cfg.steps,
+      build(g) {
+        const r = {};
+        rect(g, 30, 52, 560, 320, { rx: 16, fill: C.white, stroke: C.purple, sw: 5 });
+        txt(g, 58, 80, "ADDR", { size: 11, weight: 700, fill: C.grey, ls: 1 });
+        txt(g, 100, 80, "E20 ASSEMBLY", { size: 13, weight: 700, fill: C.purple, ls: 1 });
+        r.code = codeRows(g, 44, Y0 + 12, rowH, 536, cfg.lines, { size: cfg.size });
+        r.chev = txt(g, 20, 0, "▶", { size: 15, fill: C.red });
+        r.tags = [];
+        (cfg.labels || []).forEach(([li, name]) => {
+          const t = txt(g, 570, Y0 + 12 + li * rowH, name, { size: 13, weight: 700, mono: true, fill: C.accent, anchor: "end" });
+          t.style.opacity = 0; r.tags.push(t);
+        });
+        r.reg = regBoxes(g, 620, 60, 118, 66, 128, 82, [0, 0, 0, 0, 0, 0, 0, 0]);
+        txt(g, 620, 236, "PC", { size: 12, weight: 700, fill: C.grey, ls: 1 });
+        rect(g, 620, 244, 130, 52, { rx: 10, fill: C.white, stroke: C.purple, sw: 4 });
+        r.pc = txt(g, 685, 279, "0", { size: 24, weight: 700, mono: true, anchor: "middle", fill: C.purple });
+        r.mem = [];
+        if (cfg.mem) {
+          txt(g, 790, 236, "MEMORY", { size: 12, weight: 700, fill: C.grey, ls: 1 });
+          cfg.mem.forEach((a, i) => {
+            const x = 790 + i * 92;
+            const b = rect(g, x, 244, 84, 52, { rx: 10, fill: C.white, stroke: C.purple, sw: 4 });
+            txt(g, x + 8, 262, "[" + a + "]", { size: 12, weight: 700, mono: true, fill: C.lgrey });
+            const v = txt(g, x + 42, 288, "", { size: 20, weight: 700, mono: true, anchor: "middle" });
+            r.mem.push({ a, b, v });
+          });
+        }
+        r.note = txt(g, 620, 340, "", { size: 15, italic: true, fill: C.grey });
+        return r;
+      },
+      render(s, r) {
+        r.code.rows.forEach((el) => { el.setAttribute("fill", "none"); el.setAttribute("stroke", "none"); });
+        if (s.ex !== null && s.ex !== undefined) { r.code.rows[s.ex].setAttribute("fill", C.t2); r.code.rows[s.ex].setAttribute("stroke", C.red); r.code.rows[s.ex].setAttribute("stroke-width", 3); }
+        r.chev.setAttribute("y", Y0 + 12 + s.pc * rowH);
+        r.pc.textContent = s.pcv !== undefined ? s.pcv : s.pc;
+        r.reg.vs.forEach((v, i) => { v.textContent = s.regs[i]; });
+        r.reg.boxes.forEach((b, i) => {
+          const ch = s.changed === "r" + i;
+          b.setAttribute("fill", ch ? C.t2 : (i === 0 ? "#dcd2e6" : C.white));
+          b.setAttribute("stroke", ch ? C.red : C.purple);
+        });
+        r.mem.forEach((m) => {
+          const v = s.mem ? s.mem[m.a] : undefined;
+          m.v.textContent = v === undefined ? "0" : v;
+          const ch = s.changed === "m" + m.a, rd = s.read === "m" + m.a;
+          m.b.setAttribute("fill", ch ? C.t2 : (rd ? C.t4 : C.white));
+          m.b.setAttribute("stroke", ch ? C.red : (rd ? C.accent : C.purple));
+        });
+        r.tags.forEach((t) => vis(t, !!s.labels));
+        r.note.textContent = s.note || "";
+      },
+    };
+  }
+
+  // ================= Title slide =================
+  (function () {
+    const ROUTE = ["Why E15 Isn't Enough", "What's Inside the E20", "The Instruction Set", "Pseudo-Instructions", "Labels",
+                   "Reading Programs", "Memory: lw and sw", "Wraparound", "Machine Code"];
+    scene({
+      front: true,
+      num: "", title: "The E20 Processor", subtitle: "",
+      chips: [],
+      steps: [
+        { view: "title", foot: "",
+          narrate: "Today: the <strong>E20</strong>. Same fetch-execute skeleton as the E15, with enough room to write a program you'd actually call a program." },
+        { view: "route", foot: "nine sections, one bigger processor",
+          narrate: "Almost every feature of the E20 exists because of one specific problem. Each section starts with the problem, then shows the E20's answer." },
+      ],
+      build(g) {
+        const r = {};
+        r.title = grp(g, 1);
+        rect(r.title, 130, 40, 890, 300, { rx: 24, fill: C.white, stroke: C.purple, sw: 7 });
+        txt(r.title, 575, 104, "CS-UY 2214  |  WEEK V", { size: 15, weight: 700, fill: C.red, anchor: "middle", ls: 2 });
+        txt(r.title, 575, 190, "The E20 Processor", { size: 66, weight: 700, fill: "#171715", anchor: "middle" });
+        rect(r.title, 535, 214, 80, 6, { rx: 3, fill: C.accent });
+        txt(r.title, 575, 258, "Assembly language and machine code", { size: 24, italic: true, fill: C.grey, anchor: "middle" });
+        txt(r.title, 575, 312, "Computer Architecture and Organization", { size: 14, fill: C.lgrey, anchor: "middle", ls: 1 });
+
+        r.route = grp(g, 0);
+        txt(r.route, 575, 46, "TODAY'S ROUTE", { size: 13, weight: 700, fill: C.purple, anchor: "middle", ls: 2 });
+        ROUTE.forEach((name, i) => {
+          const col = i < 5 ? 0 : 1, row = col === 0 ? i : i - 5;
+          const x = 150 + col * 460, y = 70 + row * 58;
+          rect(r.route, x, y, 420, 48, { rx: 12, fill: C.white, stroke: C.purple, sw: 4 });
+          circ(r.route, x + 30, y + 24, 15, { fill: C.purple });
+          txt(r.route, x + 30, y + 30, String(i + 1), { size: 16, weight: 700, fill: C.white, anchor: "middle" });
+          txt(r.route, x + 60, y + 31, name, { size: 19, weight: 700, fill: C.ink });
+        });
+        txt(r.route, 575, 372, "1 to 2: the machine   |   3 to 5: the vocabulary   |   6 to 8: running programs   |   9: the bits", { size: 13, italic: true, fill: C.grey, anchor: "middle" });
+        return r;
+      },
+      render(s, r) { vis(r.title, s.view === "title"); vis(r.route, s.view === "route"); },
+    });
+  })();
+
+  // ================= 1 Why E15 isn't enough =================
+  (function () {
+    const bad = [["4 registers", "constant shuffling: nowhere to park values"], ["16 words of ROM", "a loop and its surroundings barely fit"], ["no data memory", "no variables, arrays, or results"]];
+    const good = [["8 registers, 16 bits each", "and $0 is hardwired to zero"], ["8192 cells, one memory", "code and data live together"], ["three instruction layouts", "spend the 16 bits where each needs them"]];
+    scene({
+      num: "1", title: "Why E15 Isn't Enough", subtitle: "Three things make the E15 a toy.",
+      chips: ["Problems", "Answers", "Constraints"],
+      steps: [
+        { n: 0, chip: 1, foot: "the E15, one more time", narrate: "The E15 was deliberately tiny, so we could see the whole fetch-execute loop at once. But a toy that small can't do much." },
+        { n: 1, chip: 1, foot: "problem 1", narrate: "Four registers means you're constantly shuffling values in and out of the only storage you have." },
+        { n: 2, chip: 1, foot: "problem 2", narrate: "Sixteen words of ROM means a loop and the code around it barely fit together." },
+        { n: 3, chip: 1, foot: "problem 3", narrate: "And there's <strong>nowhere to put data</strong>. The ROM holds instructions and can never be written." },
+        { n: 4, chip: 2, foot: "fix 1", q: "If you could redesign it: what would you change first?",
+          narrate: "More registers, and wider ones: <strong>eight 16-bit registers</strong>. One of them is special, and we'll see why in a minute." },
+        { n: 5, chip: 2, foot: "fix 2", narrate: "One shared memory of <strong>8192 cells</strong> that both the program and its data live in." },
+        { n: 6, chip: 2, foot: "fix 3", narrate: "And instead of one rigid instruction layout, <strong>three</strong>, each spending its bits differently." },
+        { n: 7, chip: 3, foot: "the constraints behind everything today",
+          narrate: "Here's how to read the rest of the lecture. Almost every feature exists because of a constraint: <strong>16 bits per instruction</strong>, only <strong>8 opcodes</strong>, <strong>no flags</strong>, and no way to name a place in memory. If a design looks odd, look for the bit budget." },
+      ],
+      build(g) {
+        const r = { bad: [], good: [], arr: [] };
+        txt(g, 270, 46, "E15", { size: 16, weight: 700, fill: C.red, anchor: "middle", ls: 2 });
+        txt(g, 880, 46, "E20", { size: 16, weight: 700, fill: C.accent, anchor: "middle", ls: 2 });
+        bad.forEach(([a, b], i) => {
+          const y = 66 + i * 86, e = grp(g, 0);
+          rect(e, 40, y, 460, 72, { rx: 14, fill: C.t2, stroke: C.red, sw: 4 });
+          txt(e, 64, y + 32, a, { size: 22, weight: 700 });
+          txt(e, 64, y + 56, b, { size: 15, italic: true, fill: C.grey });
+          r.bad.push(e);
+          const ar = grp(g, 0);
+          ln(ar, 520, y + 36, 640, y + 36, { stroke: C.accent, sw: 4 }); arrowhead(ar, 650, y + 36, "r", C.accent);
+          r.arr.push(ar);
+          const f = grp(g, 0);
+          rect(f, 660, y, 460, 72, { rx: 14, fill: C.t1, stroke: C.purple, sw: 4 });
+          txt(f, 684, y + 32, good[i][0], { size: 22, weight: 700, fill: C.purple });
+          txt(f, 684, y + 56, good[i][1], { size: 15, italic: true, fill: C.grey });
+          r.good.push(f);
+        });
+        r.ban = grp(g, 0);
+        rect(r.ban, 40, 328, 1080, 52, { rx: 14, fill: C.white, stroke: C.purple, sw: 5 });
+        txt(r.ban, 580, 361, "16 bits per instruction   |   8 opcodes   |   no flags   |   no way to name a place", { size: 21, weight: 700, mono: true, fill: C.purple, anchor: "middle" });
+        return r;
+      },
+      render(s, r) {
+        r.bad.forEach((e, i) => vis(e, s.n > i));
+        r.good.forEach((e, i) => vis(e, s.n > 3 + i));
+        r.arr.forEach((e, i) => vis(e, s.n > 3 + i));
+        vis(r.ban, s.n >= 7);
+      },
+    });
+  })();
+
+  // ================= 2 What's inside the E20 =================
+  (function () {
+    const B = (n) => n.split("").map((c) => c);
+    scene({
+      num: "2", title: "What's Inside the E20", subtitle: "Registers, a program counter, and one memory.",
+      chips: ["Registers", "Program counter", "Memory"],
+      steps: [
+        { n: 0, view: "main", chip: 1, foot: "an empty E20", narrate: "Same idea as the E15's box: everything the machine remembers, and nothing else." },
+        { n: 1, view: "main", chip: 1, foot: "eight registers, 16 bits each", narrate: "Eight <strong>16-bit registers</strong>, <code>$0</code> through <code>$7</code>." },
+        { n: 2, view: "main", chip: 1, foot: "$0 is hardwired to zero", q: "One of these can only ever be zero. Why would you build that?",
+          narrate: "Because a permanent zero replaces instructions we can't afford: load a constant (<code>$0 + 34</code>), copy a register (<code>$2 + $0</code>), test for zero. Writes to <code>$0</code> are quietly thrown away." },
+        { n: 3, view: "main", chip: 2, foot: "the program counter", narrate: "A 16-bit <strong>program counter</strong>, exactly like E15's: no instruction can name it, and it only moves by incrementing or being overwritten by a jump." },
+        { n: 4, view: "main", chip: 3, foot: "8192 cells, 16 bits each", narrate: "One memory of <strong>8192 cells</strong>, each 16 bits wide. That's 2<sup>13</sup>, so an address needs exactly 13 bits." },
+        { n: 5, view: "main", chip: 3, foot: "the program is loaded at address 0", narrate: "The program itself is loaded into that memory, starting at address 0. Code and data share one array: a cell is an instruction only because the <code>pc</code> fetches it." },
+        { n: 6, view: "trunc", chip: 3, foot: "registers are wider than addresses", q: "A register holds 16 bits, but an address needs 13. What happens to the extra 3?",
+          narrate: "They're <strong>ignored</strong>. 43222 and 2262 differ only in their top three bits, so they are the same cell. It's the cheapest possible fix for the mismatch." },
+      ],
+      build(g) {
+        const r = {};
+        r.main = grp(g, 1);
+        rect(r.main, 40, 34, 1070, 330, { rx: 20, fill: C.white, stroke: C.purple, sw: 7 });
+        txt(r.main, 575, 68, "E20", { size: 22, weight: 700, fill: C.purple, anchor: "middle" });
+        r.regG = grp(r.main, 0);
+        txt(r.regG, 90, 112, "8 registers, 16 bits each", { size: 14, weight: 700, fill: C.ink });
+        r.regs = [];
+        for (let i = 0; i < 8; i++) {
+          const b = rect(r.regG, 90 + i * 66, 128, 60, 44, { rx: 8, fill: i === 0 ? C.purple : C.t3, stroke: C.purple, sw: 3 });
+          txt(r.regG, 120 + i * 66, 157, "$" + i, { size: 15, weight: 700, mono: true, fill: i === 0 ? C.white : C.purple, anchor: "middle" });
+          r.regs.push(b);
+        }
+        r.zNote = txt(r.main, 90, 196, "$0 is read-only: always 0", { size: 14, italic: true, fill: C.red });
+        r.pcG = grp(r.main, 0);
+        txt(r.pcG, 90, 246, "program counter", { size: 14, weight: 700 });
+        rect(r.pcG, 90, 258, 150, 44, { rx: 8, fill: C.t3, stroke: C.purple, sw: 3 });
+        txt(r.pcG, 165, 288, "pc  (16 bits)", { size: 15, weight: 700, mono: true, fill: C.purple, anchor: "middle" });
+        r.memG = grp(r.main, 0);
+        txt(r.memG, 700, 112, "one memory: 8192 cells x 16 bits", { size: 14, weight: 700 });
+        r.cells = [];
+        ["0", "1", "2", "3", "...", "8191"].forEach((a, i) => {
+          const y = 124 + i * 36;
+          txt(r.memG, 690, y + 22, a, { size: 13, mono: true, fill: C.lgrey, anchor: "end" });
+          const b = rect(r.memG, 700, y, 240, 30, { rx: 6, fill: C.t3, stroke: C.purple, sw: 3 });
+          const t = txt(r.memG, 820, y + 21, "", { size: 15, weight: 600, mono: true, anchor: "middle" });
+          r.cells.push({ b, t });
+        });
+        r.pcArrow = txt(r.main, 956, 148, "◀ pc", { size: 15, weight: 700, mono: true, fill: C.red });
+
+        r.trunc = grp(g, 0);
+        txt(r.trunc, 575, 56, "TWO DIFFERENT 16-BIT VALUES, ONE MEMORY CELL", { size: 13, weight: 700, fill: C.purple, anchor: "middle", ls: 2 });
+        const rows = [["43222", "1010100011010110"], ["2262", "0000100011010110"]];
+        rows.forEach(([lab, bits], k) => {
+          const y = 110 + k * 90, x0 = 300, bw = 32;
+          txt(r.trunc, x0 - 16, y + 28, lab, { size: 22, weight: 700, mono: true, fill: C.purple, anchor: "end" });
+          rect(r.trunc, x0, y, 3 * bw, 42, { rx: 0, fill: C.t5, stroke: C.purple, sw: 4 });
+          rect(r.trunc, x0 + 3 * bw, y, 13 * bw, 42, { rx: 0, fill: C.t6, stroke: C.purple, sw: 4 });
+          bits.split("").forEach((c, i) => txt(r.trunc, x0 + i * bw + bw / 2, y + 29, c, { size: 22, weight: 700, mono: true, fill: C.purple, anchor: "middle" }));
+        });
+        ln(r.trunc, 300, 156, 396, 156, { stroke: C.red, sw: 3 });
+        txt(r.trunc, 348, 180, "dropped", { size: 14, weight: 700, fill: C.red, anchor: "middle" });
+        ln(r.trunc, 396, 246, 812, 246, { stroke: C.purple, sw: 3 });
+        txt(r.trunc, 604, 272, "same 13 bits: same cell (address 2262)", { size: 14, weight: 700, fill: C.purple, anchor: "middle" });
+        return r;
+      },
+      render(s, r) {
+        vis(r.main, s.view === "main"); vis(r.trunc, s.view === "trunc");
+        vis(r.regG, s.n >= 1); vis(r.zNote, s.n >= 2); vis(r.pcG, s.n >= 3); vis(r.memG, s.n >= 4);
+        r.cells.forEach((c, i) => {
+          c.t.textContent = s.n >= 5 ? (i === 0 ? "lw $2, 4($0)" : i === 1 ? "halt" : "") : "";
+          c.b.setAttribute("fill", s.n >= 5 && i < 2 ? C.t1 : C.t3);
+        });
+        vis(r.pcArrow, s.n >= 5);
+      },
+    });
+  })();
+
+  // ================= 3 The Instruction Set =================
+  (function () {
+    const cols = [
+      { h: "three registers", sub: "add, sub, and, or, slt, jr", fill: C.t1, lines: ["add $d, $a, $b", "sub $d, $a, $b", "and $d, $a, $b", "or  $d, $a, $b", "slt $d, $a, $b", "jr  $reg"] },
+      { h: "two registers", sub: "addi, slti, lw, sw, jeq", fill: C.t4, lines: ["addi $d, $s, imm", "slti $d, $s, imm", "lw   $d, imm($a)", "sw   $s, imm($a)", "jeq  $a, $b, imm"] },
+      { h: "no registers", sub: "j, jal", fill: C.t5, lines: ["j   imm", "jal imm"] },
+    ];
+    // One example per instruction, walked through one at a time after the
+    // overview. header = the starting values shown at the top of the panel;
+    // instr = the line being demonstrated; ans = the revealed result;
+    // note = a short aside (optional). q, when present, makes this step a
+    // question first (engine handles the reveal timing).
+    const examples = [
+      { group: "three registers", header: "$1 = 6 (0110)    $2 = 3 (0011)", instr: "add $3, $1, $2", ans: "$3 = 9",
+        narrate: "That bit budget from a second ago pays off directly here: three whole register fields, nothing wasted. <code>$3 = 9</code>: <code>6 + 3</code>. Plain addition, destination first." },
+      { group: "three registers", header: "$1 = 6 (0110)    $2 = 3 (0011)", instr: "sub $3, $1, $2", ans: "$3 = 3",
+        narrate: "<code>$3 = 3</code>: <code>6 - 3</code>. Same shape as add, just the other operation." },
+      { group: "three registers", header: "$1 = 6 (0110)    $2 = 3 (0011)", instr: "and $3, $1, $2", ans: "$3 = 2 (0010)",
+        narrate: "<code>$3 = 2</code>, bit by bit: <code>0110 &amp; 0011 = 0010</code>." },
+      { group: "three registers", header: "$1 = 6 (0110)    $2 = 3 (0011)", instr: "or  $3, $1, $2", ans: "$3 = 7 (0111)",
+        narrate: "<code>$3 = 7</code>, bit by bit: <code>0110 | 0011 = 0111</code>. That's all four arithmetic and logic instructions, four different jobs, same three-register shape." },
+      { group: "three registers", header: "$2 = 5    $3 = 9", instr: "slt $1, $2, $3", ans: "$1 = 1",
+        q: "If <code>$2</code> = 5 and <code>$3</code> = 9, what ends up in <code>$1</code> after <code>slt $1, $2, $3</code>?",
+        narrate: "<code>$1 = 1</code>, because <code>5 &lt; 9</code>. Here's the problem <code>slt</code> is actually solving: E15 remembered a comparison in a hidden flag that the very next instruction could silently overwrite. E20 has no flags at all. The comparison's answer just becomes an ordinary value, sitting in whichever register you chose, lasting exactly as long as you need it to." },
+      { group: "three registers", header: "$1 = 1  (from the slt above)    $0 = 0", instr: "jeq $1, $0, target", ans: "no jump",
+        q: "Given that <code>$1</code> is now 1, would <code>jeq $1, $0, target</code> jump?",
+        narrate: "No. <code>jeq</code> only jumps when its two registers are <em>equal</em>, and <code>$1 = 1</code> while <code>$0 = 0</code> always. Execution just falls through, exactly as if nothing happened. And notice what just happened across these two steps: <code>slt</code> plus <code>jeq</code> together just built a full comparison out of two tiny primitives. That composing-from-primitives move is going to happen constantly." },
+      { group: "three registers", header: "$7 = 12", instr: "jr $7", ans: "pc = 12",
+        narrate: "Different problem: <code>j</code>'s target is baked right into the instruction, so a given <code>j</code> always lands in the same place. No good for returning from a helper routine that got called from ten different spots. <code>jr</code> fixes that by reading its target from a register instead: <code>pc = 12</code> here, but change what's in <code>$7</code> and the exact same instruction goes somewhere else entirely." },
+      { group: "two registers", header: "$1 = 5", instr: "addi $2, $1, 10", ans: "$2 = 15",
+        narrate: "Now the two-register family, where one operand is a plain number instead of a second register. <code>$2 = 15</code>: <code>5 + 10</code>. A negative immediate subtracts instead: <code>addi $2, $1, -2</code> would set <code>$2 = 3</code>." },
+      { group: "two registers", header: "$4 = 6", instr: "slti $5, $4, 10", ans: "$5 = 1",
+        narrate: "<code>slti</code> is exactly <code>slt</code>'s trick, against a constant instead of a register: <code>$5 = 1</code>, since <code>6 &lt; 10</code>. With <code>$4 = 12</code> instead, the exact same instruction would set <code>$5 = 0</code>." },
+      { group: "two registers", header: "memory[4] = 30    $3 = 6", instr: "lw $2, 4($0)", ans: "$2 = 30",
+        narrate: "Here's the bit-budget answer from a moment ago, in action: <code>$2 = 30</code>. Address is <code>4 + $0 = 4</code>, and <code>memory[4] = 30</code>." },
+      { group: "two registers", header: "memory[4] = 30    $3 = 6", instr: "lw $2, 4($3)", ans: "$2 = memory[10]",
+        narrate: "Swap <code>$0</code> for a real register and the address itself changes: <code>4 + $3 = 10</code>, a totally different cell. Whatever's sitting in <code>memory[10]</code> is what <code>$2</code> gets. That's the whole trick behind walking an array later: keep the address in a register, and just change the register." },
+      { group: "no registers", header: "(no registers involved)", instr: "j 5", ans: "pc = 5",
+        narrate: "<code>pc = 5</code>, immediately. Unconditional, absolute: it doesn't matter what's in any register." },
+      { group: "no registers", header: "jal helper sits at address 2", instr: "jal helper", ans: "$7 = 3, then pc = helper",
+        narrate: "One more problem to close the loop: <code>j</code> gets you *there*, but it forgets where *here* was. <code>jal</code> is <code>j</code> plus a bookmark: <code>$7 = 3</code>, the address right after itself, then <code>pc = helper</code>. <code>$7</code> now holds exactly the spot a later <code>jr $7</code> would return to — <code>jal</code> to go, <code>jr</code> to come back." },
+    ];
+    scene({
+      num: "3", title: "The Instruction Set", subtitle: "Thirteen real instructions, grouped by how many registers they name.",
+      chips: ["Three", "Two", "None", "Why", "Examples"],
+      steps: [
+        { view: "cols", n: 0, chip: 1, foot: "the bit budget", narrate: "Thirteen instructions. They fall into groups by <strong>how many registers each one names</strong>, and that isn't an accident: it's exactly how the 16 bits get carved up later. Keep the grouping in mind." },
+        { view: "cols", n: 1, chip: 1, foot: "destination first, like an assignment", narrate: "Three registers: the arithmetic and logic ones, plus <code>slt</code> and <code>jr</code>. <code>slt</code> writes a 1 or a 0 into a register: no hidden flags. <code>jr</code> jumps to the address <em>in</em> a register." },
+        { view: "cols", n: 2, chip: 2, foot: "a small signed immediate", narrate: "Two registers and a number: <code>addi</code>, <code>slti</code>, and the memory pair <code>lw</code> and <code>sw</code>. And <code>jeq</code>, the E20's only conditional branch: jump if two registers are equal." },
+        { view: "cols", n: 3, chip: 3, foot: "a big immediate", narrate: "No registers at all: <code>j</code> and <code>jal</code>. With nothing to spend bits on except the target, they get a huge immediate. <code>jal</code> is <code>j</code> plus a bookmark in <code>$7</code>." },
+        { view: "cols", n: 4, chip: 4, foot: "why only lw and sw touch memory", q: "Why do only <code>lw</code> and <code>sw</code> touch memory? Why can't <code>add</code> read its operands straight from memory?",
+          narrate: "Bit budget. A register costs 3 bits to name; a memory address costs 13. An <code>add</code> with three memory operands would need 3 x 13 = 39 bits before the opcode, and the whole instruction has 16. So: load into registers, compute, store back." },
+      ].concat(examples.map((e, i) => ({
+        view: "ex", exIdx: i, chip: 5,
+        foot: e.group + ": " + e.instr,
+        q: e.q,
+        narrate: e.narrate,
+      }))),
+      build(g) {
+        const r = { cols: [], bud: null };
+        cols.forEach((c, i) => {
+          const x = 30 + i * 370, e = grp(g, 0);
+          rect(e, x, 50, 350, 250, { rx: 16, fill: c.fill, stroke: C.purple, sw: 5 });
+          txt(e, x + 20, 86, c.h.toUpperCase(), { size: 15, weight: 700, fill: C.purple, ls: 1 });
+          txt(e, x + 20, 106, c.sub, { size: 12, italic: true, fill: C.grey });
+          c.lines.forEach((l, k) => txt(e, x + 24, 142 + k * 26, l, { size: 17, weight: 600, mono: true, pre: true }));
+          r.cols.push(e);
+        });
+        r.bud = grp(g, 0);
+        rect(r.bud, 30, 314, 1090, 66, { rx: 14, fill: C.white, stroke: C.red, sw: 5 });
+        txt(r.bud, 60, 344, "register name = 3 bits", { size: 20, weight: 700, mono: true, fill: C.purple });
+        txt(r.bud, 60, 370, "memory address = 13 bits", { size: 20, weight: 700, mono: true, fill: C.red });
+        txt(r.bud, 1090, 344, "add with three addresses", { size: 15, italic: true, fill: C.grey, anchor: "end" });
+        txt(r.bud, 1090, 370, "3 x 13 = 39 bits > 16", { size: 20, weight: 700, mono: true, fill: C.red, anchor: "end" });
+
+        r.ex = grp(g, 0);
+        rect(r.ex, 260, 74, 630, 240, { rx: 18, fill: C.white, stroke: C.purple, sw: 6 });
+        r.exGroup = txt(r.ex, 575, 106, "", { size: 13, weight: 700, fill: C.purple, anchor: "middle", ls: 2 });
+        r.exHeader = txt(r.ex, 575, 146, "", { size: 21, weight: 700, mono: true, anchor: "middle" });
+        r.exInstr = txt(r.ex, 575, 190, "", { size: 27, weight: 700, mono: true, fill: C.accent, anchor: "middle" });
+        r.exAns = txt(r.ex, 575, 232, "", { size: 24, weight: 700, mono: true, fill: C.red, anchor: "middle" });
+        return r;
+      },
+      render(s, r) {
+        vis(r.bud, s.view === "cols" && s.n === 4);
+        vis(r.ex, s.view === "ex");
+        r.cols.forEach((e, i) => { e.style.opacity = s.view === "cols" && s.n > i ? 1 : 0; });
+        if (s.view === "ex") {
+          const e = examples[s.exIdx];
+          r.exGroup.textContent = e.group.toUpperCase();
+          r.exHeader.textContent = e.header;
+          r.exInstr.textContent = e.instr;
+          r.exAns.textContent = e.ans;
+        }
+      },
+    });
+  })();
+
+  // ================= 4 Pseudo-instructions and directives =================
+  (function () {
+    const slots = [["000", "6 instructions"], ["001", "addi"], ["010", "j"], ["011", "jal"], ["100", "lw"], ["101", "sw"], ["110", "jeq"], ["111", "slti"]];
+    const rows = [["movi $1, 34", "addi $1, $0, 34", "$0 + 34 is just 34"], ["nop", "add $0, $0, $0", "the write to $0 is ignored"], ["halt", "j (own address)", "parks the pc on one instruction"]];
+    scene({
+      num: "4", title: "Pseudo-Instructions and Directives", subtitle: "Two problems: too few opcodes, and no way to preload data.",
+      chips: ["Opcodes", "Spellings", "Practice", "Data", "Danger"],
+      steps: [
+        { view: "p", n: 0, chip: 1, foot: "eight opcodes, all spoken for", narrate: "Problem one: the processor has only <strong>eight opcodes</strong>, and every one is already taken. Load a constant? Do nothing? Stop? Each deserves an instruction, and there's no room." },
+        { view: "p", n: 1, chip: 2, foot: "movi", narrate: "So the <strong>assembler</strong> covers the gap with spellings. <code>movi</code> is really <code>addi</code> against the zero register. The processor has never heard of <code>movi</code>." },
+        { view: "p", n: 2, chip: 2, foot: "nop", narrate: "<code>nop</code> is an <code>add</code> that writes into <code>$0</code>, which throws the write away. Does nothing, costs no opcode." },
+        { view: "p", n: 3, chip: 2, foot: "halt", q: "A processor never stops fetching. How do you 'stop' one anyway?",
+          narrate: "You can't, so you <strong>park</strong> it: <code>halt</code> is a jump to its own address. The <code>pc</code> keeps running, but goes nowhere." },
+        { view: "p", n: 6, chip: 3, foot: "your turn: movi", q: "What does <code>movi $3, 7</code> expand to?",
+          narrate: "<code>addi $3, $0, 7</code>: same pattern as before, just a different register and a different constant. Whenever you see <code>movi</code>, mentally replace it with <code>addi ..., $0, ...</code>: that's literally what the assembler does to it." },
+        { view: "f", n: 4, chip: 4, foot: "problem two: preloading data", q: "Your program needs a variable that starts as 30. How do you get it into memory before the program runs?",
+          narrate: "You could spend <code>movi</code> and <code>sw</code> at the top of the program for every cell. Or the number could just <em>already be there</em>." },
+        { view: "f", n: 5, chip: 4, foot: ".fill is for the assembler, not the processor", narrate: "That's what the directive <code>.fill</code> does: the assembler drops <code>30</code> into that cell as the program is loaded. Nothing ever <em>executes</em> a <code>.fill</code>, which is why <code>halt</code> goes before your data." },
+        { view: "f", n: 7, chip: 5, foot: "what if pc reaches it anyway?", q: "What happens if the <code>pc</code> reaches that <code>.fill</code> cell instead of stopping at <code>halt</code> first?",
+          narrate: "The processor doesn't know it's looking at data: it just fetches whatever's at that address and tries to decode it <em>as an instruction</em>. Cell 2 holds the number 30, so the processor would try to execute \"30\" as a bit pattern: garbage, not a crash, just silently wrong behaviour. This is exactly why <code>halt</code> (or some other jump that skips over the data) always goes first." },
+      ],
+      build(g) {
+        const r = {};
+        r.p = grp(g, 1);
+        slots.forEach(([b, n], i) => {
+          const x = 24 + i * 138;
+          rect(r.p, x, 40, 130, 70, { rx: 10, fill: i === 0 ? C.t5 : C.t1, stroke: C.purple, sw: 4 });
+          txt(r.p, x + 65, 66, b, { size: 20, weight: 700, mono: true, fill: C.purple, anchor: "middle" });
+          txt(r.p, x + 65, 92, n, { size: i === 0 ? 11 : 15, weight: 600, mono: true, anchor: "middle" });
+        });
+        txt(r.p, 575, 132, "all eight opcodes in use", { size: 13, italic: true, fill: C.red, anchor: "middle" });
+        r.hdr = grp(r.p, 0);
+        txt(r.hdr, 60, 172, "YOU WRITE", { size: 12, weight: 700, fill: C.grey, ls: 1 });
+        txt(r.hdr, 400, 172, "THE ASSEMBLER EMITS", { size: 12, weight: 700, fill: C.grey, ls: 1 });
+        txt(r.hdr, 740, 172, "WHY IT WORKS", { size: 12, weight: 700, fill: C.grey, ls: 1 });
+        r.rowRects = [];
+        r.rows = rows.map(([a, b, c], i) => {
+          const y = 190 + i * 62, e = grp(r.p, 0);
+          const rr = rect(e, 40, y, 1070, 52, { rx: 10, fill: C.white, stroke: C.purple, sw: 4 });
+          r.rowRects.push(rr);
+          txt(e, 60, y + 34, a, { size: 22, weight: 700, mono: true, fill: C.accent });
+          txt(e, 400, y + 34, b, { size: 22, weight: 700, mono: true });
+          txt(e, 740, y + 34, c, { size: 16, italic: true, fill: C.grey });
+          return e;
+        });
+        r.f = grp(g, 0);
+        rect(r.f, 60, 60, 460, 270, { rx: 16, fill: C.white, stroke: C.purple, sw: 5 });
+        txt(r.f, 84, 92, "PROGRAM TEXT", { size: 12, weight: 700, fill: C.purple, ls: 1 });
+        [["lw  $1, var1($0)", 0], ["halt", 0], ["var1:", 1], ["    .fill 30", 1]].forEach(([t, d], i) => txt(r.f, 84, 136 + i * 40, t, { size: 21, weight: 600, mono: true, pre: true, fill: d ? C.accent : C.ink }));
+        txt(r.f, 84, 300, "the assembler reads this once, up front", { size: 14, italic: true, fill: C.grey });
+        rect(r.f, 640, 60, 440, 270, { rx: 16, fill: C.white, stroke: C.purple, sw: 5 });
+        txt(r.f, 664, 92, "MEMORY, BEFORE THE PROGRAM RUNS", { size: 12, weight: 700, fill: C.purple, ls: 1 });
+        [["0", "lw $1, var1($0)"], ["1", "halt"], ["2", "var1 (cell 2)"]].forEach(([a, t], i) => {
+          const y = 116 + i * 52;
+          txt(r.f, 690, y + 32, a, { size: 15, mono: true, fill: C.lgrey, anchor: "end" });
+          rect(r.f, 700, y, 350, 42, { rx: 8, fill: i === 2 ? C.t3 : C.t1, stroke: C.purple, sw: 3 });
+          if (i < 2) txt(r.f, 720, y + 28, t, { size: 18, weight: 600, mono: true });
+        });
+        r.cell = txt(r.f, 875, 250, "", { size: 22, weight: 700, mono: true, fill: C.red, anchor: "middle" });
+        r.cellLab = txt(r.f, 720, 250, "", { size: 15, weight: 700, mono: true, fill: C.lgrey });
+        return r;
+      },
+      render(s, r) {
+        vis(r.p, s.view === "p"); vis(r.f, s.view === "f");
+        r.rows.forEach((e, i) => vis(e, s.view === "p" && s.n >= 1 + i));
+        vis(r.hdr, s.n >= 1);
+        r.rowRects[0].setAttribute("stroke", s.n === 6 ? C.red : C.purple);
+        r.rowRects[0].setAttribute("stroke-width", s.n === 6 ? 6 : 4);
+        r.cell.textContent = s.n >= 5 ? "30" : "";
+        r.cellLab.textContent = s.n >= 5 ? "[2]" : "";
+      },
+    });
+  })();
+
+  // ================= 5 Labels =================
+  (function () {
+    const orig = ["movi $1, 10", "jeq  $1, $0, 4", "addi $1, $1, -1", "j    1", "halt"];
+    const shifted = ["movi $2, 0", "movi $1, 10", "jeq  $1, $0, 4", "addi $1, $1, -1", "j    1", "halt"];
+    const lab = [["movi $2, 0", ""], ["movi $1, 10", ""], ["beginning:", ""], ["jeq  $1, $0, done", ""], ["addi $1, $1, -1", ""], ["j    beginning", ""], ["done: halt", ""]];
+    scene({
+      num: "5", title: "Labels", subtitle: "Every jump needs an address, and addresses move every time you edit.",
+      chips: ["Numbers", "An edit", "Names", "Your turn"],
+      steps: [
+        { n: 0, chip: 1, foot: "counting by hand", narrate: "Every jump needs a target address, and you get it by counting instructions. Here <code>jeq</code> should land on <code>halt</code> at 4, and <code>j</code> should return to the <code>jeq</code> at 1. Tedious, but it works." },
+        { n: 1, chip: 2, foot: "one inserted line breaks everything", narrate: "Now insert a single instruction at the top. Every address below it shifts by one, so <strong>every jump is now wrong</strong>. The <code>j 1</code> now lands on <code>movi $1, 10</code>, resetting the counter forever, and the <code>jeq</code> lands on the <code>j</code> instead of the <code>halt</code>." },
+        { n: 2, chip: 3, foot: "a label is a name for an address", q: "What would you have to fix after the same edit if the jumps used names instead of numbers?",
+          narrate: "Nothing. A <strong>label</strong> is a name for an address; the assembler does the counting, and recounts every time you edit. Here <code>beginning</code> is 2 and <code>done</code> is 5." },
+        { n: 3, chip: 3, foot: "labels name data too", narrate: "They're not only for jumps: a label on a <code>.fill</code> names a <em>cell of data</em>, the closest thing assembly has to a variable name. A label's value is always an <strong>address</strong>." },
+        { n: 4, chip: 4, foot: "your turn: a fresh program", narrate: "One to try yourself: same idea, different program. Three labels this time: <code>start</code>, <code>loop</code>, and <code>done</code>." },
+        { n: 5, chip: 4, foot: "your turn: count the addresses", q: "<code>start</code>, <code>loop</code>, and <code>done</code>: what are their three values?",
+          narrate: "Count top to bottom: <code>movi</code> is 0, so <strong>start = 0</strong>. <code>addi</code> is 1, so <strong>loop = 1</strong>. <code>jeq</code> is 2, <code>j</code> is 3, and <code>halt</code> is 4, so <strong>done = 4</strong>. Same rule as always: a label's value is the address of whatever comes right after it." },
+      ],
+      build(g) {
+        const r = {};
+        r.left = grp(g, 1);
+        rect(r.left, 30, 44, 520, 330, { rx: 16, fill: C.white, stroke: C.purple, sw: 5 });
+        txt(r.left, 56, 76, "WITH NUMBERS", { size: 13, weight: 700, fill: C.purple, ls: 1 });
+        r.lo = orig.map((t, i) => {
+          const e = grp(r.left, 1);
+          txt(e, 70, 122 + i * 40, String(i), { size: 16, mono: true, fill: C.lgrey, anchor: "middle" });
+          txt(e, 96, 122 + i * 40, t, { size: 20, weight: 600, mono: true, pre: true });
+          return e;
+        });
+        r.ls = shifted.map((t, i) => {
+          const e = grp(r.left, 0);
+          txt(e, 70, 122 + i * 40, String(i), { size: 16, mono: true, fill: C.lgrey, anchor: "middle" });
+          txt(e, 96, 122 + i * 40, t, { size: 20, weight: 600, mono: true, pre: true, fill: (i === 2 || i === 4) ? C.red : (i === 0 ? C.accent : C.ink) });
+          return e;
+        });
+        r.bad = txt(r.left, 290, 360, "", { size: 14, weight: 700, fill: C.red, anchor: "middle" });
+        r.right = grp(g, 0);
+        rect(r.right, 590, 44, 540, 330, { rx: 16, fill: C.white, stroke: C.purple, sw: 5 });
+        txt(r.right, 616, 76, "WITH LABELS", { size: 13, weight: 700, fill: C.purple, ls: 1 });
+        const addrs = [0, 1, null, 2, 3, 4, 5];
+        lab.forEach(([t], i) => {
+          if (addrs[i] !== null) txt(r.right, 656, 122 + i * 40, String(addrs[i] + (i === 6 ? 0 : 0)), { size: 16, mono: true, fill: C.lgrey, anchor: "middle" });
+          txt(r.right, 682, 122 + i * 40, t, { size: 20, weight: 600, mono: true, pre: true, fill: (i === 0) ? C.accent : C.ink });
+        });
+        r.tagB = txt(r.right, 1100, 202, "beginning = 2", { size: 14, weight: 700, mono: true, fill: C.accent, anchor: "end" });
+        r.tagD = txt(r.right, 1100, 362, "done = 5", { size: 14, weight: 700, mono: true, fill: C.accent, anchor: "end" });
+        r.data = grp(r.right, 0);
+        rect(r.data, 850, 100, 250, 80, { rx: 10, fill: C.t1, stroke: C.purple, sw: 3 });
+        txt(r.data, 866, 130, "var1:", { size: 18, weight: 600, mono: true, fill: C.accent });
+        txt(r.data, 866, 160, "    .fill 30", { size: 18, weight: 600, mono: true, pre: true });
+
+        r.pr = grp(g, 0);
+        rect(r.pr, 340, 44, 460, 320, { rx: 16, fill: C.white, stroke: C.purple, sw: 6 });
+        txt(r.pr, 570, 78, "YOUR TURN", { size: 13, weight: 700, fill: C.purple, anchor: "middle", ls: 2 });
+        const prLines = [["start:", null], ["    movi $1, 5", 0], ["loop:", null], ["    addi $1, $1, -1", 1], ["    jeq  $1, $0, done", 2], ["    j    loop", 3], ["done:", null], ["    halt", 4]];
+        r.prTags = {};
+        prLines.forEach(([t, a], i) => {
+          const y = 112 + i * 30;
+          txt(r.pr, 366, y, t, { size: 18, weight: 600, mono: true, pre: true, fill: a === null ? C.accent : C.ink });
+          if (a !== null) txt(r.pr, 700, y, String(a), { size: 15, mono: true, fill: C.lgrey, anchor: "end" });
+        });
+        r.prAns = txt(r.pr, 570, 350, "", { size: 18, weight: 700, mono: true, fill: C.red, anchor: "middle" });
+        return r;
+      },
+      render(s, r) {
+        r.lo.forEach((e) => vis(e, s.n === 0));
+        r.ls.forEach((e) => vis(e, s.n >= 1));
+        r.bad.textContent = s.n === 1 ? "every jump target is now wrong" : "";
+        vis(r.left, s.n < 4);
+        vis(r.right, s.n >= 2 && s.n < 4);
+        vis(r.data, s.n >= 3 && s.n < 4);
+        vis(r.pr, s.n >= 4);
+        r.prAns.textContent = s.n === 5 ? "start = 0    loop = 1    done = 4" : "";
+      },
+    });
+  })();
+
+  // ================= 6.1 Reading programs: math =================
+  const RZ = [0, 0, 0, 0, 0, 0, 0, 0];
+  const withReg = (base, i, v) => { const a = base.slice(); a[i] = v; return a; };
+  (function () {
+    const lines = [
+      { a: 0, t: "addi $1, $0, 5" }, { a: 1, t: "addi $2, $1, -2" }, { a: 2, t: "add  $3, $1, $2" },
+      { a: 3, t: "addi $4, $0, 55" }, { a: 4, t: "sub  $5, $4, $1" }, { a: 5, t: "sub  $4, $5, $4" },
+      { a: 6, t: "or   $6, $2, $5" }, { a: 7, t: "and  $7, $2, $5" }, { a: 8, t: "halt" },
+    ];
+    const res = [[1, 5], [2, 3], [3, 8], [4, 55], [5, 50], [4, 65531], [6, 51], [7, 2]];
+    const txts = [
+      "<code>$1 = $0 + 5</code>. Adding the zero register is how we load a constant.",
+      "<code>$2 = $1 + (-2) = 3</code>. The immediate is a signed number.",
+      "<code>$3 = $1 + $2 = 8</code>. Three registers, destination first.",
+      "Another load-a-constant: <code>$4 = 55</code>.",
+      "<code>$5 = $4 - $1 = 55 - 5 = 50</code>.",
+      "<code>$4 = $5 - $4 = 50 - 55 = -5</code>, which we display as <strong>65531</strong>. Wraparound, in section 8.",
+      "<code>$6 = 3 | 50</code>. In binary, 000011 or 110010 is 110011: <strong>51</strong>.",
+      "<code>$7 = 3 &amp; 50</code>. 000011 and 110010 is 000010: <strong>2</strong>.",
+      "<code>halt</code> is a jump to itself: the <code>pc</code> stays at 8 forever.",
+    ];
+    const steps = [{ ex: null, pc: 0, regs: RZ, note: "", chip: 0, foot: "before anything runs", narrate: "Nine instructions, straight-line arithmetic. Registers all start at 0. Follow the <code>pc</code> down the left." }];
+    let regs = RZ;
+    txts.forEach((t, i) => {
+      let changed = null;
+      if (res[i]) { regs = withReg(regs, res[i][0], res[i][1]); changed = "r" + res[i][0]; }
+      const st = { ex: i, pc: i === 8 ? 8 : i + 1, regs, changed, chip: 0, foot: lines[i].t.trim(), narrate: t };
+      if (i === 5) st.q = "$5 is 50 and $4 is 55. What does sub $4, $5, $4 leave in $4?";
+      steps.push(st);
+    });
+    scene(traceScene({ num: "6.1", title: "Reading Programs: Arithmetic", subtitle: "Trace one instruction at a time.", lines, steps }));
+  })();
+
+  // ================= 6.2 Reading programs: countdown =================
+  (function () {
+    const lines = [
+      { a: 0, t: "movi $1, 10" }, { a: 1, t: "jeq  $1, $0, done" }, { a: 2, t: "addi $1, $1, -1" },
+      { a: 3, t: "j    beginning" }, { a: 4, t: "halt" },
+    ];
+    const R = (v) => withReg(RZ, 1, v);
+    const S = (o) => Object.assign({ chip: 0, labels: true }, o);
+    const steps = [
+      { ex: null, pc: 0, regs: RZ, labels: false, foot: "a loop that counts down from 10", narrate: "A loop. It sets <code>$1</code> to 10, then keeps checking whether it has reached zero." },
+      S({ ex: null, pc: 0, regs: RZ, foot: "labels are addresses", q: "What are the values of the labels <code>beginning</code> and <code>done</code>?",
+          narrate: "Count addresses: <code>movi</code> is 0, <code>jeq</code> is 1, <code>addi</code> is 2, <code>j</code> is 3, <code>halt</code> is 4. So <strong>beginning = 1</strong> and <strong>done = 4</strong>." }),
+      S({ ex: 0, pc: 1, regs: R(10), changed: "r1", foot: "movi", narrate: "<code>movi</code> loads 10 into <code>$1</code>." }),
+      S({ ex: 1, pc: 2, regs: R(10), foot: "jeq: not equal, fall through", narrate: "<code>jeq</code> asks: is <code>$1</code> equal to <code>$0</code>? 10 is not 0, so the <code>pc</code> just moves to the next instruction." }),
+      S({ ex: 2, pc: 3, regs: R(9), changed: "r1", foot: "addi", narrate: "Decrement: <code>$1 = 9</code>." }),
+      S({ ex: 3, pc: 1, regs: R(9), foot: "j: back to the top", narrate: "<code>j beginning</code> sends the <code>pc</code> back to address 1. That's a loop." }),
+      S({ ex: 3, pc: 1, regs: R(1), foot: "eight more laps later", note: "(eight more laps skipped)", narrate: "The same three instructions repeat. Skip ahead: after eight more laps, <code>$1 = 1</code>." }),
+      S({ ex: 2, pc: 3, regs: R(0), changed: "r1", foot: "the last decrement", narrate: "One more decrement and <code>$1</code> reaches 0." }),
+      S({ ex: 3, pc: 1, regs: R(0), foot: "j: one last lap", narrate: "<code>j</code> sends us back to <code>jeq</code>, for the last time." }),
+      S({ ex: 1, pc: 4, regs: R(0), foot: "jeq: equal, jump to done", narrate: "Now <code>$1 == $0</code>, so <code>jeq</code> <strong>jumps</strong> to <code>done</code> (address 4)." }),
+      S({ ex: 4, pc: 4, regs: R(0), foot: "halt", narrate: "<code>halt</code> parks the <code>pc</code> at 4. Final state: <code>$1 = 0</code>, <code>pc = 4</code>, everything else untouched." }),
+    ];
+    scene(traceScene({ num: "6.2", title: "Reading Programs: A Loop", subtitle: "Where labels earn their keep.", lines, steps, labels: [[1, "beginning"], [4, "done"]] }));
+  })();
+
+  // ================= 7 Memory: lw and sw =================
+  (function () {
+    const lines = [
+      { a: 0, t: "lw   $1, var1($0)" }, { a: 1, t: "lw   $2, var2($0)" }, { a: 2, t: "and  $3, $1, $2" },
+      { a: 3, t: "or   $4, $1, $2" }, { a: 4, t: "sw   $3, var3($0)" }, { a: 5, t: "movi $5, var3" },
+      { a: 6, t: "addi $6, $5, var4" }, { a: 7, t: "halt" }, { a: 8, t: "var1: .fill 30", dim: true },
+      { a: 9, t: "var2: .fill 5", dim: true }, { a: 10, t: "var3: .fill 0", dim: true }, { a: 11, t: "var4:", dim: true },
+    ];
+    const M0 = { 8: 30, 9: 5, 10: 0 };
+    const mem2 = Object.assign({}, M0, { 10: 4 });
+    const S = (o) => Object.assign({ chip: 0 }, o);
+    const steps = [
+      S({ ex: null, pc: 0, regs: RZ, mem: M0, foot: "code first, data after", narrate: "Now memory. The code takes addresses 0 to 7, so the data starts at 8: <strong>var1 = 8</strong>, <strong>var2 = 9</strong>, <strong>var3 = 10</strong>, and var4, which precedes nothing, takes the next free address, 11." }),
+      S({ ex: 0, pc: 1, regs: withReg(RZ, 1, 30), mem: M0, changed: "r1", read: "m8", foot: "lw reads a cell", narrate: "<code>lw</code> copies <code>memory[8]</code> into <code>$1</code>: <code>$1 = 30</code>." }),
+      S({ ex: 1, pc: 2, regs: withReg(withReg(RZ, 1, 30), 2, 5), mem: M0, changed: "r2", read: "m9", foot: "another lw", narrate: "<code>$2 = memory[9] = 5</code>." }),
+      S({ ex: 2, pc: 3, regs: [0, 30, 5, 4, 0, 0, 0, 0], mem: M0, changed: "r3", foot: "and", narrate: "<code>30 &amp; 5</code>: 11110 and 00101 is 00100, so <code>$3 = 4</code>." }),
+      S({ ex: 3, pc: 4, regs: [0, 30, 5, 4, 31, 0, 0, 0], mem: M0, changed: "r4", foot: "or", narrate: "<code>30 | 5</code>: 11110 or 00101 is 11111, so <code>$4 = 31</code>." }),
+      S({ ex: 4, pc: 5, regs: [0, 30, 5, 4, 31, 0, 0, 0], mem: mem2, changed: "m10", foot: "sw writes a cell", narrate: "<code>sw</code> is the only way to <em>write</em> memory: <code>memory[10] = $3 = 4</code>." }),
+      S({ ex: 5, pc: 6, regs: [0, 30, 5, 4, 31, 10, 0, 0], mem: mem2, changed: "r5", foot: "movi loads the address, not the value",
+          q: "<code>movi $5, var3</code>: does <code>$5</code> end up as 4 (the stored value) or 10?",
+          narrate: "<strong>10.</strong> A label's value is always an address. To get what's stored there you'd need an <code>lw</code>." }),
+      S({ ex: 6, pc: 7, regs: [0, 30, 5, 4, 31, 10, 21, 0], mem: mem2, changed: "r6", foot: "addi with a label", narrate: "<code>$6 = 10 + var4 = 10 + 11 = 21</code>. A label works anywhere an immediate does." }),
+      S({ ex: 7, pc: 7, regs: [0, 30, 5, 4, 31, 10, 21, 0], mem: mem2, foot: "halt", narrate: "<code>halt</code>. Final state: <code>$1..$7 = 30, 5, 4, 31, 10, 21, 0</code>, and <code>memory[10]</code> now holds 4." }),
+    ];
+    scene(traceScene({ num: "7", title: "Memory: lw and sw", subtitle: "Load into registers, compute, store back.", rowH: 23, size: 15, lines, mem: [8, 9, 10], steps }));
+  })();
+
+  // ================= 8 Wraparound =================
+  (function () {
+    scene({
+      num: "8", title: "Signed, Unsigned, and Wraparound", subtitle: "A register holds 16 bits and nothing else.",
+      chips: ["The bits", "The display", "The ring", "Practice", "slt"],
+      steps: [
+        { n: 0, chip: 1, foot: "$1 = 3", narrate: "Start with <code>$1 = 3</code>, then run <code>addi $1, $1, -5</code>. Here's <code>$1</code> in binary." },
+        { n: 1, chip: 1, foot: "-5 in two's complement", narrate: "-5 in two's complement: write 5, <strong>flip every bit, add 1</strong>. That gives <code>1111111111111011</code>." },
+        { n: 2, chip: 1, foot: "just add the bit patterns", narrate: "Add the two patterns as ordinary binary: <code>1111111111111110</code>. That's the right <em>bit pattern</em> for -2." },
+        { n: 3, chip: 2, foot: "the processor doesn't care; the screen does", q: "The register holds <code>1111111111111110</code>. What number should the simulator print?",
+          narrate: "A bit pattern isn't inherently signed or unsigned: display is a choice. Three readings of the same bits, side by side." },
+        { n: 4, chip: 2, foot: "we print unsigned", narrate: "By convention, E20 registers are <strong>always displayed as unsigned decimal</strong>. So <code>$1</code> shows <strong>65534</strong>." },
+        { n: 5, chip: 3, foot: "a clock with 65536 positions", narrate: "This is <strong>wraparound</strong>. Picture the register as a clock face with 65536 positions: count below 0 and you land at 65535. Three steps back from 3 reaches 0, two more land on 65534. Every result is taken <strong>mod 65536</strong>." },
+        { n: 6, chip: 4, ex: 1, foot: "your turn: another wraparound", q: "<code>$2</code> = 2, then run <code>addi $2, $2, -10</code>. What does <code>$2</code> show?",
+          narrate: "<strong>65528</strong>. <code>2 - 10 = -8</code>, and <code>-8 mod 65536 = 65528</code>. Same clock, just a bigger step backwards: past 0, all the way around to 65536 - 8." },
+        { n: 7, chip: 5, ex: 2, foot: "the slt gotcha", q: "<code>$4</code> = 65535 (bit pattern of -1), <code>$5</code> = 0. Does <code>slt $6, $4, $5</code> set <code>$6</code> to 1?",
+          narrate: "No: <code>$6 = 0</code>. <code>slt</code> always compares <strong>unsigned</strong>, and as an unsigned number, 65535 is <em>not</em> less than 0: it's the largest value a register can hold. If you meant $4 as -1, <code>slt</code> doesn't know that, and will not treat it that way." },
+      ],
+      build(g) {
+        const r = {};
+        r.bits = grp(g, 1);
+        const rowsB = [["3", "0000000000000011"], ["-5", "1111111111111011"], ["sum", "1111111111111110"]];
+        rowsB.forEach(([l, b], i) => {
+          const e = grp(r.bits, 0);
+          txt(e, 240, 118 + i * 70, l, { size: 24, weight: 700, mono: true, fill: C.purple, anchor: "end" });
+          rect(e, 270, 86 + i * 70, 570, 46, { rx: 10, fill: i === 2 ? C.t2 : C.white, stroke: C.purple, sw: 4 });
+          txt(e, 300, 118 + i * 70, b.replace(/(.{4})/g, "$1 ").trim(), { size: 26, weight: 700, mono: true, pre: true });
+          if (i === 1) txt(e, 870, 118 + i * 70, "flip 00000101, add 1", { size: 14, italic: true, fill: C.grey });
+          r.bits.rows = (r.bits.rows || []).concat([e]);
+        });
+        r.tab = grp(g, 0);
+        txt(r.tab, 200, 66, "DECIMAL (UNSIGNED)", { size: 12, weight: 700, fill: C.grey, anchor: "middle", ls: 1 });
+        txt(r.tab, 470, 66, "DECIMAL (SIGNED)", { size: 12, weight: 700, fill: C.grey, anchor: "middle", ls: 1 });
+        txt(r.tab, 830, 66, "BINARY (TWO'S COMPLEMENT)", { size: 12, weight: 700, fill: C.grey, anchor: "middle", ls: 1 });
+        r.cell = [];
+        [["3", "3", "0000000000000011"], ["65531", "-5", "1111111111111011"], ["65534", "-2", "1111111111111110"]].forEach((row, i) => {
+          const y = 84 + i * 62;
+          const hi = rect(r.tab, 80, y, 990, 50, { rx: 10, fill: C.white, stroke: C.purple, sw: 4 });
+          txt(r.tab, 200, y + 34, row[0], { size: 26, weight: 700, mono: true, anchor: "middle", fill: C.accent });
+          txt(r.tab, 470, y + 34, row[1], { size: 26, weight: 700, mono: true, anchor: "middle" });
+          txt(r.tab, 830, y + 34, row[2], { size: 24, weight: 700, mono: true, anchor: "middle", fill: C.purple });
+          r.cell.push(hi);
+        });
+        r.tabNote = txt(r.tab, 575, 300, "", { size: 18, weight: 700, fill: C.red, anchor: "middle" });
+        r.ring = grp(g, 0);
+        circ(r.ring, 575, 214, 130, { stroke: C.purple, sw: 6, fill: C.white });
+        [["16384", 90], ["32768", 180], ["49152", 270]].forEach(([l, a]) => {
+          const rad = (a - 90) * Math.PI / 180, x = 575 + Math.cos(rad) * 158, y = 214 + Math.sin(rad) * 158 + 5;
+          txt(r.ring, x, y, l, { size: 14, mono: true, fill: C.grey, anchor: "middle" });
+        });
+        const pt = (deg, label, col, out) => {
+          const rad = deg * Math.PI / 180, x = 575 + Math.sin(rad) * 130, y = 214 - Math.cos(rad) * 130;
+          circ(r.ring, x, y, 9, { fill: col });
+          txt(r.ring, 575 + Math.sin(rad) * out, 214 - Math.cos(rad) * out + 6, label, { size: 19, weight: 700, mono: true, fill: col, anchor: "middle" });
+        };
+        pt(32, "3", C.purple, 166);
+        pt(0, "0", C.accent, 166);
+        pt(-32, "65535", C.grey, 178);
+        pt(-64, "65534", C.red, 186);
+        path(r.ring, "M 643 104 A 130 130 0 0 0 465.4 143.2", { stroke: C.red, sw: 5 });
+        txt(r.ring, 575, 214, "3 - 5", { size: 26, weight: 700, mono: true, fill: C.red, anchor: "middle" });
+        txt(r.ring, 575, 244, "mod 65536", { size: 15, italic: true, fill: C.grey, anchor: "middle" });
+
+        r.p2 = grp(g, 0);
+        rect(r.p2, 300, 90, 550, 200, { rx: 18, fill: C.white, stroke: C.purple, sw: 6 });
+        txt(r.p2, 575, 128, "YOUR TURN", { size: 13, weight: 700, fill: C.purple, anchor: "middle", ls: 2 });
+        txt(r.p2, 575, 166, "$2 = 2", { size: 24, weight: 700, mono: true, anchor: "middle" });
+        txt(r.p2, 575, 204, "addi $2, $2, -10", { size: 26, weight: 700, mono: true, fill: C.accent, anchor: "middle" });
+        r.p2Ans = txt(r.p2, 575, 250, "", { size: 26, weight: 700, mono: true, fill: C.red, anchor: "middle" });
+
+        r.p3 = grp(g, 0);
+        rect(r.p3, 260, 74, 630, 240, { rx: 18, fill: C.white, stroke: C.purple, sw: 6 });
+        txt(r.p3, 575, 110, "THE slt GOTCHA", { size: 13, weight: 700, fill: C.purple, anchor: "middle", ls: 2 });
+        txt(r.p3, 575, 148, "$4 = 65535    $5 = 0", { size: 22, weight: 700, mono: true, anchor: "middle" });
+        txt(r.p3, 575, 188, "slt $6, $4, $5", { size: 26, weight: 700, mono: true, fill: C.accent, anchor: "middle" });
+        r.p3Ans = txt(r.p3, 575, 228, "", { size: 22, weight: 700, mono: true, fill: C.red, anchor: "middle" });
+        r.p3Note = txt(r.p3, 575, 262, "", { size: 15, italic: true, fill: C.grey, anchor: "middle" });
+        return r;
+      },
+      render(s, r) {
+        vis(r.bits, s.n <= 2); vis(r.tab, s.n === 3 || s.n === 4); vis(r.ring, s.n === 5);
+        vis(r.p2, s.n === 6); vis(r.p3, s.n === 7);
+        r.bits.rows.forEach((e, i) => vis(e, s.n >= i && s.n <= 5));
+        r.cell.forEach((c, i) => { c.setAttribute("fill", s.n === 4 && i === 2 ? C.t2 : C.white); c.setAttribute("stroke", s.n === 4 && i === 2 ? C.red : C.purple); });
+        r.tabNote.textContent = s.n === 4 ? "$1 shows 65534" : "";
+        r.p2Ans.textContent = s.n === 6 ? "$2 = 65528" : "";
+        r.p3Ans.textContent = s.n === 7 ? "$6 = 0" : "";
+        r.p3Note.textContent = s.n === 7 ? "unsigned: 65535 is the largest value, not -1" : "";
+      },
+    });
+  })();
+
+  // ================= 9.1 Three formats and the opcode table =================
+  (function () {
+    const BW = 40, X0 = 60;
+    const fmts = [
+      { name: "three registers: add sub or and slt jr", f: [["opcode 000", 3], ["regSrcA", 3], ["regSrcB", 3], ["regDst", 3], ["sub-opcode", 4]] },
+      { name: "two registers: addi slti lw sw jeq", f: [["opcode", 3], ["regA", 3], ["regB", 3], ["imm (7, signed)", 7]] },
+      { name: "no registers: j jal", f: [["opcode", 3], ["imm (13 bits, absolute)", 13]] },
+    ];
+    const ops = [["000", "three-register family"], ["001", "addi"], ["010", "j"], ["011", "jal"], ["100", "lw"], ["101", "sw"], ["110", "jeq"], ["111", "slti"]];
+    const subs = [["0000", "add"], ["0001", "sub"], ["0010", "or"], ["0011", "and"], ["0100", "slt"], ["1000", "jr"]];
+    scene({
+      num: "9.1", title: "Machine Code: The Three Formats", subtitle: "Every instruction must fit in 16 bits, but they need very different things.",
+      chips: ["The problem", "Three layouts", "Opcodes", "j vs. jal"],
+      steps: [
+        { view: "need", n: 0, chip: 1, foot: "one layout can't do it", narrate: "<code>add</code> needs three registers (9 bits). <code>addi</code> needs two registers and a constant. <code>j</code> needs one huge address (13 bits). One layout with room for all of that would need more than 22 bits, and we have 16. Shrink it and you cripple either <code>j</code> or <code>addi</code>." },
+        { view: "fmt", n: 1, chip: 2, foot: "three registers", narrate: "So don't use one layout: <strong>use three, and let the opcode say which</strong>. Three-register instructions: three 3-bit register fields, plus 4 bits left over." },
+        { view: "fmt", n: 2, chip: 2, foot: "two registers", narrate: "Two registers: the two fields leave <strong>7 bits</strong> for a signed immediate (-64 to 63)." },
+        { view: "fmt", n: 3, chip: 2, foot: "no registers", narrate: "No registers: all 13 leftover bits go to the target, enough to reach every cell of memory. The fewer registers you name, the more bits the immediate gets." },
+        { view: "ops", n: 4, chip: 3, foot: "eight opcodes", q: "The opcode is 3 bits: only 8 values. But there are 13 instructions. How do they fit?",
+          narrate: "The six three-register instructions all share <strong>opcode 000</strong>, and the spare 4 bits, the <strong>sub-opcode</strong>, say which one. The other seven opcodes go to one instruction each." },
+        { view: "ops", n: 5, chip: 4, foot: "j and jal share a layout, not an opcode", q: "<code>j</code> and <code>jal</code> use the exact same no-register layout. So how does the processor tell them apart?",
+          narrate: "By the opcode, same as always: <code>j</code> is <strong>010</strong>, <code>jal</code> is <strong>011</strong>. Sharing a <em>layout</em> just means both spend their 16 bits the same way (3-bit opcode, 13-bit target); it doesn't mean they share an opcode value. Only the three-register family actually shares one opcode, which is exactly why <em>it</em> needs the extra sub-opcode field and these two don't." },
+      ],
+      build(g) {
+        const r = {};
+        r.need = grp(g, 1);
+        [["add", "9 bits of registers"], ["addi", "6 bits + a constant"], ["j", "13 bits of address"]].forEach(([a, b], i) => {
+          const x = 60 + i * 350;
+          rect(r.need, x, 90, 320, 130, { rx: 16, fill: [C.t1, C.t4, C.t5][i], stroke: C.purple, sw: 5 });
+          txt(r.need, x + 160, 144, a, { size: 40, weight: 700, mono: true, fill: C.purple, anchor: "middle" });
+          txt(r.need, x + 160, 190, b, { size: 18, italic: true, anchor: "middle" });
+        });
+        txt(r.need, 575, 290, "one layout for all three: 22+ bits", { size: 26, weight: 700, mono: true, fill: C.red, anchor: "middle" });
+        txt(r.need, 575, 330, "available: 16", { size: 22, weight: 700, mono: true, fill: C.purple, anchor: "middle" });
+        r.fmt = grp(g, 0);
+        for (let i = 0; i < 16; i++) txt(r.fmt, X0 + i * BW + BW / 2, 44, String(15 - i), { size: 11, fill: C.lgrey, anchor: "middle" });
+        r.rows = fmts.map((F, k) => {
+          const e = grp(r.fmt, 0), y = 84 + k * 96;
+          txt(e, X0, y - 8, F.name, { size: 15, weight: 700, fill: C.ink });
+          let pos = 0;
+          F.f.forEach(([nm, w], j) => {
+            rect(e, X0 + pos * BW, y, w * BW, 42, { rx: 0, fill: [C.t1, C.t4, C.t5, C.t6, C.t7][j % 5], stroke: C.purple, sw: 4 });
+            txt(e, X0 + (pos + w / 2) * BW, y + 27, nm, { size: 13, weight: 700, fill: C.purple, anchor: "middle" });
+            txt(e, X0 + (pos + w / 2) * BW, y + 62, w + " bits", { size: 11, italic: true, fill: C.grey, anchor: "middle" });
+            pos += w;
+          });
+          return e;
+        });
+        r.ops = grp(g, 0);
+        ops.forEach(([b, n], i) => {
+          const y = 40 + i * 42;
+          rect(r.ops, 60, y, 480, 36, { rx: 8, fill: i === 0 ? C.t5 : C.t1, stroke: C.purple, sw: 3 });
+          txt(r.ops, 84, y + 25, b, { size: 20, weight: 700, mono: true, fill: C.purple });
+          txt(r.ops, 170, y + 25, n, { size: 18, weight: 600, mono: true });
+        });
+        txt(r.ops, 660, 60, "SUB-OPCODE (last 4 bits, when opcode = 000)", { size: 12, weight: 700, fill: C.grey, ls: 1 });
+        subs.forEach(([b, n], i) => {
+          const y = 76 + i * 42;
+          rect(r.ops, 660, y, 400, 36, { rx: 8, fill: C.t4, stroke: C.purple, sw: 3 });
+          txt(r.ops, 684, y + 25, b, { size: 20, weight: 700, mono: true, fill: C.purple });
+          txt(r.ops, 790, y + 25, n, { size: 18, weight: 600, mono: true });
+        });
+        return r;
+      },
+      render(s, r) {
+        vis(r.need, s.view === "need"); vis(r.fmt, s.view === "fmt"); vis(r.ops, s.view === "ops");
+        r.rows.forEach((e, i) => vis(e, s.n >= 1 + i));
+      },
+    });
+  })();
+
+  // ================= 9.2 Translating =================
+  (function () {
+    const BW = 62, X0 = (1150 - 16 * BW) / 2 + 0;
+    // encode addi $1,$1,-1 -> 001 001 001 1111111 ; decode 101 001 011 0000010
+    const enc = [["001", 3, "addi"], ["001", 3, "$1 (src)"], ["001", 3, "$1 (dst)"], ["1111111", 7, "-1"]];
+    const dec = [["101", 3, "sw"], ["001", 3, "$1 (address)"], ["011", 3, "$3 (stored)"], ["0000010", 7, "2"]];
+    const cols = [C.t1, C.t4, C.t5, C.t6];
+    scene({
+      num: "9.2", title: "Translating, Step by Step", subtitle: "A lookup-and-fill-in-the-boxes procedure.",
+      chips: ["Assembly to bits", "Bits to assembly"],
+      steps: [
+        { mode: "enc", k: 0, chip: 1, foot: "1. find the format", narrate: "To translate <code>addi $1, $1, -1</code>: <strong>count the registers</strong> (two), which tells you the layout: 3 + 3 + 3 + 7." },
+        { mode: "enc", k: 1, chip: 1, foot: "2. look up the opcode", narrate: "Look up the opcode in the table: <code>addi</code> is <code>001</code>." },
+        { mode: "enc", k: 2, chip: 1, foot: "3. registers, 3 bits each", narrate: "Registers are 3 bits each. Field order in the <em>bits</em> puts the source first: <code>$1</code> is <code>001</code>." },
+        { mode: "enc", k: 3, chip: 1, foot: "the destination is $1 too", narrate: "The destination, also <code>$1</code>: <code>001</code>." },
+        { mode: "enc", k: 4, chip: 1, foot: "4. the immediate, in two's complement", q: "What is <code>-1</code> in 7-bit two's complement?",
+          narrate: "Write 1 as <code>0000001</code>, flip the bits (<code>1111110</code>), add 1: <strong><code>1111111</code></strong>." },
+        { mode: "enc", k: 5, chip: 1, foot: "5. concatenate: exactly 16 bits", narrate: "Concatenate, and check you have exactly 16 bits: <code>0010010011111111</code>, which is <strong>9471</strong> in decimal." },
+        { mode: "dec", k: 0, chip: 2, foot: "the other direction", q: "Decode <code>1010010110000010</code>. Where do you start?",
+          narrate: "Start with the top three bits: <code>101</code>. The <strong>opcode alone tells you the whole layout</strong>: <code>101</code> is <code>sw</code>, so two registers and a 7-bit immediate." },
+        { mode: "dec", k: 1, chip: 2, foot: "slice: 3 / 3 / 3 / 7", narrate: "Slice it 3 / 3 / 3 / 7. The first register field, <code>001</code>, is the address register: <code>$1</code>." },
+        { mode: "dec", k: 2, chip: 2, foot: "the second is the stored register", narrate: "The second, <code>011</code>, is the register being stored: <code>$3</code>." },
+        { mode: "dec", k: 3, chip: 2, foot: "sw $3, 2($1)", narrate: "The immediate <code>0000010</code> is 2. So: <code>sw $3, 2($1)</code>, store <code>$3</code> into the cell at <code>$1 + 2</code>." },
+      ],
+      build(g) {
+        const r = {};
+        r.title = txt(g, 575, 64, "", { size: 34, weight: 700, mono: true, fill: C.accent, anchor: "middle" });
+        r.f = [];
+        for (let i = 0; i < 4; i++) {
+          const e = grp(g, 0);
+          r.f.push(e);
+        }
+        r.data = { enc: enc, dec: dec };
+        r.fx = []; r.fb = []; r.fl = [];
+        // 4 fields at fixed slots
+        const widths = [3, 3, 3, 7];
+        let pos = 0;
+        widths.forEach((w, i) => {
+          const x = X0 + pos * BW;
+          rect(r.f[i], x, 130, w * BW, 74, { rx: 0, fill: cols[i], stroke: C.purple, sw: 5 });
+          r.fb.push(txt(r.f[i], x + (w * BW) / 2, 180, "", { size: 34, weight: 700, mono: true, fill: C.purple, anchor: "middle" }));
+          r.fl.push(txt(r.f[i], x + (w * BW) / 2, 236, "", { size: 17, weight: 700, anchor: "middle" }));
+          pos += w;
+        });
+        for (let i = 0; i < 16; i++) txt(g, X0 + i * BW + BW / 2, 118, String(15 - i), { size: 11, fill: C.lgrey, anchor: "middle" });
+        r.dec = txt(g, 575, 300, "", { size: 26, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+        r.sub = txt(g, 575, 340, "", { size: 18, italic: true, fill: C.grey, anchor: "middle" });
+        return r;
+      },
+      render(s, r) {
+        const D = s.mode === "enc" ? enc : dec;
+        r.title.textContent = s.mode === "enc" ? "addi $1, $1, -1" : "1010010110000010";
+        r.f.forEach((e, i) => {
+          vis(e, s.mode === "enc" ? i < Math.min(s.k, 4) : i <= s.k);
+          r.fb[i].textContent = D[i][0];
+          r.fl[i].textContent = D[i][2];
+        });
+        if (s.mode === "enc") r.dec.textContent = s.k >= 5 ? "0010010011111111  =  9471" : (s.k === 0 ? "3 + 3 + 3 + 7 bits" : "");
+        else r.dec.textContent = s.k >= 3 ? "sw $3, 2($1)" : "";
+        r.sub.textContent = s.mode === "enc" && s.k >= 3 ? "(in the bits, the source register comes before the destination: the reverse of how you write it)" : "";
+      },
+    });
+  })();
+
+  // ================= 9.3 jeq is the odd one out =================
+  (function () {
+    const lines = [
+      { a: 0, t: "movi $1, 10" }, { a: 1, t: "jeq  $1, $0, done" }, { a: 2, t: "addi $1, $1, -1" },
+      { a: 3, t: "j    beginning" }, { a: 4, t: "halt   (done)" },
+    ];
+    scene({
+      num: "9.3", title: "jeq Is the Odd One Out", subtitle: "Its immediate is not the target: it's an offset from where you are.",
+      chips: ["Problem", "Offset", "Encode", "Backward"],
+      steps: [
+        { n: 0, chip: 1, foot: "the bits don't fit", narrate: "Every other instruction encodes its immediate as written. <code>jeq</code> can't: it names two registers, leaving 7 bits, but an address takes 13. A 7-bit <em>absolute</em> address could only reach the first 128 cells." },
+        { n: 1, chip: 1, foot: "branches go short distances", narrate: "The rescue: conditional jumps almost always go a <strong>short distance</strong>. An <code>if</code> skips a few instructions; a loop goes back a few. So encode <em>how far to go from here</em>, and a small signed number is plenty." },
+        { n: 2, chip: 2, foot: "counted from the NEXT instruction", narrate: "By the time <code>jeq</code> executes, the <code>pc</code> has already planned to move on, so the offset is counted from the <strong>next</strong> instruction: <code>pc &larr; pc + 1 + rel_imm</code>." },
+        { n: 3, chip: 2, foot: "how far is done?", q: "The <code>jeq</code> is at address 1 and <code>done</code> is address 4. What offset should it hold?",
+          narrate: "From the next instruction (2), the target (4) is <strong>two</strong> instructions away. So <code>rel_imm = 2</code>." },
+        { n: 4, chip: 3, foot: "the formula", narrate: "That's the general rule: <code>rel_imm = target &minus; pc &minus; 1</code>, where <code>pc</code> is the address of the <code>jeq</code> itself. Here: 4 &minus; 1 &minus; 1 = 2." },
+        { n: 5, chip: 3, foot: "110 001 000 0000010", narrate: "Encode it: opcode <code>110</code>, <code>$1</code> is <code>001</code>, <code>$0</code> is <code>000</code>, <code>rel_imm</code> 2 is <code>0000010</code>. Together: <code>1100010000000010</code>, which is <strong>50178</strong>." },
+        { n: 6, chip: 4, foot: "a negative offset goes backward", narrate: "Backward jumps are just negative offsets. Suppose the loop ended with <code>jeq $0, $0, beginning</code> at address 3: <code>rel_imm = 1 &minus; 3 &minus; 1 = &minus;3</code>, or <code>1111101</code>. Check by running it forwards: <code>3 + 1 &minus; 3 = 1</code>. It lands on <code>beginning</code>." },
+      ],
+      build(g) {
+        const r = {};
+        rect(g, 30, 52, 520, 320, { rx: 16, fill: C.white, stroke: C.purple, sw: 5 });
+        txt(g, 58, 82, "ADDR", { size: 11, weight: 700, fill: C.grey, ls: 1 });
+        txt(g, 100, 82, "E20 ASSEMBLY", { size: 13, weight: 700, fill: C.purple, ls: 1 });
+        r.hlJ = rect(g, 44, 128 + 44 - 28, 496, 38, { rx: 6, fill: C.t2, stroke: C.red, sw: 3 });
+        r.hlJ.style.opacity = 0;
+        r.hlT = rect(g, 44, 128 + 4 * 44 - 28, 496, 38, { rx: 6, fill: C.t4, stroke: C.accent, sw: 3 });
+        r.hlT.style.opacity = 0;
+        r.code = codeRows(g, 44, 128, 44, 496, lines, { size: 18 });
+        r.next = txt(g, 20, 128 + 2 * 44, "▶", { size: 15, fill: C.red });
+        r.next.style.opacity = 0;
+        r.arc = path(g, "M 560 128 C 600 130 600 230 560 306", { stroke: C.red, sw: 4 });
+        r.arcHead = poly(g, "552,306 566,296 566,314", { fill: C.red });
+        r.arc.style.opacity = 0; r.arcHead.style.opacity = 0;
+        r.p = grp(g, 0);
+        rect(r.p, 640, 52, 480, 320, { rx: 16, fill: C.white, stroke: C.purple, sw: 5 });
+        r.pt = txt(r.p, 664, 92, "", { size: 15, weight: 700, fill: C.purple, ls: 1 });
+        r.l1 = txt(r.p, 664, 150, "", { size: 22, weight: 700, mono: true, pre: true });
+        r.l2 = txt(r.p, 664, 200, "", { size: 22, weight: 700, mono: true, pre: true, fill: C.red });
+        r.l3 = txt(r.p, 664, 250, "", { size: 22, weight: 700, mono: true, pre: true, fill: C.purple });
+        r.l4 = txt(r.p, 664, 300, "", { size: 22, weight: 700, mono: true, pre: true, fill: C.accent });
+        r.l5 = txt(r.p, 664, 346, "", { size: 15, italic: true, fill: C.grey });
+        return r;
+      },
+      render(s, r) {
+        vis(r.p, s.n >= 0);
+        const n = s.n;
+        vis(r.hlJ, n >= 2); vis(r.hlT, n >= 3 && n <= 5); vis(r.next, n >= 2 && n <= 4);
+        vis(r.arc, n >= 3 && n <= 5); vis(r.arcHead, n >= 3 && n <= 5);
+        const set = (a, b, c, d, e, f) => { r.pt.textContent = a; r.l1.textContent = b; r.l2.textContent = c; r.l3.textContent = d; r.l4.textContent = e; r.l5.textContent = f; };
+        if (n === 0) set("THE BIT BUDGET", "3 opcode + 3 regA + 3 regB", "= 9 bits", "7 bits left for the target", "an address needs 13 bits", "7 bits absolute: only cells 0 to 127");
+        else if (n === 1) set("THE OBSERVATION", "if:   skip a few", "loop: back a few", "", "", "so encode the distance, not the address");
+        else if (n === 2) set("AT RUNTIME", "pc = 1  (the jeq)", "pc + 1 = 2  (next)", "pc = pc + 1 + rel_imm", "", "the offset is counted from pc + 1");
+        else if (n === 3) set("HOW FAR?", "next = 2", "target = 4", "4 - 2 = 2 instructions", "", "so rel_imm = 2");
+        else if (n === 4) set("THE FORMULA", "rel_imm = target - pc - 1", "         = 4 - 1 - 1", "         = 2", "", "");
+        else if (n === 5) set("ENCODING", "110  001  000  0000010", "jeq  $1   $0   rel_imm=2", "= 1100010000000010", "= 50178", "");
+        else set("BACKWARD", "jeq $0, $0, beginning   (at 3)", "rel_imm = 1 - 3 - 1 = -3", "-3 = 1111101", "3 + 1 + (-3) = 1", "it lands on beginning");
+        r.l1.style.fontSize = n === 4 || n === 5 || n === 6 ? "20px" : "22px";
+      },
+    });
+  })();
+
+  // ---------------- engine ----------------
+  const $ = (id) => document.getElementById(id);
+  const svg = $("stage");
+  const foot = txt(svg, 575, 392, "", { size: 13, italic: true, fill: C.grey, anchor: "middle" });
+
+  scenes.forEach((sc) => {
+    sc.g = E("g", {}, svg);
+    sc.g.style.display = "none";
+    sc.r = sc.build(sc.g) || {};
+    foot.parentNode.appendChild(foot);
+  });
+  $("sec-total").textContent = scenes.length - scenes.filter((x) => x.front).length;
+
+  // si: section, ti: step, ph: 0 = question showing (diagram as before), 1 = answered
+  const off = scenes.filter((x) => x.front).length;   // title slides don't count as sections
+  let si = 0, ti = 0, ph = 1, shownScene = -1;
+  const asks = (i, k) => !!scenes[i].steps[k].q;
+  const startPh = (i, k) => (asks(i, k) && k > 0 ? 0 : 1);
+
+  function readHash() {
+    const m = location.hash.match(/^#(\d+)\.(\d+)(q?)$/);
+    if (!m) { ph = startPh(si, ti); return; }
+    const a = Number(m[1]) - 1 + off, b = Number(m[2]) - 1;
+    if (a >= 0 && a < scenes.length) { si = a; ti = Math.max(0, Math.min(scenes[a].steps.length - 1, b)); }
+    ph = m[3] && asks(si, ti) && ti > 0 ? 0 : 1;
+  }
+
+  function buildChips(sc) {
+    const box = $("chips");
+    box.innerHTML = "";
+    sc.chips.forEach((label) => {
+      const d = document.createElement("div");
+      d.className = "stp";
+      d.textContent = label;
+      box.appendChild(d);
+    });
+  }
+
+  function render() {
+    const sc = scenes[si], s = sc.steps[ti];
+    if (shownScene !== si) {
+      scenes.forEach((x, k) => { x.g.style.display = k === si ? "inline" : "none"; });
+      $("num").textContent = sc.num;
+      $("title").textContent = sc.title;
+      $("subtitle").textContent = sc.subtitle;
+      document.querySelector(".stage").style.visibility = sc.front ? "hidden" : "";
+      $("subtitle").style.visibility = sc.front ? "hidden" : "";
+      $("sec-wrap").style.display = sc.front ? "none" : "";
+      $("foot-left").textContent = sc.title;
+      buildChips(sc);
+      shownScene = si;
+    }
+    const asking = ph === 0 && !!s.q && ti > 0;
+    // while a question is showing, the diagram stays exactly as the previous step left it
+    sc.render(asking ? sc.steps[ti - 1] : s, sc.r, ti);
+    foot.textContent = asking ? "" : (s.foot || "");
+    const qm = '<span class="qm">Q</span>';
+    $("narration").innerHTML = asking ? '<div class="q big">' + qm + s.q + '</div>'
+      : (s.q ? '<div class="q small">' + qm + s.q + '</div>' : "") + s.narrate;
+    $("sec-n").textContent = si - off + 1;
+    $("step-n").textContent = ti + 1;
+    $("step-total").textContent = sc.steps.length;
+    document.querySelectorAll(".stp").forEach((chip, k) => {
+      const n = k + 1;
+      chip.classList.remove("active", "done");
+      if (!s.chip) return;
+      if (s.chip === n) chip.classList.add("active");
+      else if (n < s.chip) chip.classList.add("done");
+    });
+    history.replaceState(null, "", "#" + (si - off + 1) + "." + (ti + 1) + (asking ? "q" : ""));
+  }
+
+  function go(d) {
+    const sc = scenes[si];
+    if (d > 0) {
+      if (ph === 0) ph = 1;
+      else if (ti < sc.steps.length - 1) { ti++; ph = startPh(si, ti); }
+      else if (si < scenes.length - 1) { si++; ti = 0; ph = startPh(si, 0); }
+    } else {
+      if (ph === 1 && asks(si, ti) && ti > 0) ph = 0;
+      else if (ti > 0) { ti--; ph = 1; }
+      else if (si > 0) { si--; ti = scenes[si].steps.length - 1; ph = 1; }
+    }
+    render();
+  }
+
+  function jumpScene(d) {
+    if (d < 0 && ti > 0) ti = 0;
+    else si = Math.max(0, Math.min(scenes.length - 1, si + d)), ti = 0;
+    ph = startPh(si, 0);
+    render();
+  }
+
+  window.addEventListener("keydown", (e) => {
+    const fwd = ["ArrowRight", "ArrowDown", " ", "PageDown"].includes(e.key);
+    const back = ["ArrowLeft", "ArrowUp", "PageUp"].includes(e.key);
+    if (!fwd && !back) return;
+    e.preventDefault();
+    if (e.shiftKey) jumpScene(fwd ? 1 : -1);
+    else go(fwd ? 1 : -1);
+  });
+
+  window.addEventListener("hashchange", () => { readHash(); render(); });
+
+  readHash();
+  render();
+})();
+</script>
+
+</body>
+</html>

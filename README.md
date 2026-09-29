@@ -18,9 +18,7 @@ resource, send me an [**email**](mailto:sebastian.romerocruz@nyu.edu) about it w
 2. [**Adders**](lectures/02-adders)
 3. [**Verilog**](lectures/03-verilog)
 4. [**The E15 Processor**](lectures/04-e15)
-
-<!-- 
-5. [**The E20 Processor & Assembly Language**](lectures/05-e20) -->
+5. [**The E20 Processor & Assembly Language**](lectures/05-e20)
 
 ---
 
