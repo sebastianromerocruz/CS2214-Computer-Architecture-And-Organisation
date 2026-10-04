@@ -1071,7 +1071,7 @@
   // ================= 9.3 jeq is the odd one out =================
   (function () {
     const lines = [
-      { a: 0, t: "movi $1, 10" }, { a: 1, t: "jeq  $1, $0, done" }, { a: 2, t: "addi $1, $1, -1" },
+      { a: 0, t: "movi $1, 10" }, { a: 1, t: "jeq  $1, $0, done   (beginning)" }, { a: 2, t: "addi $1, $1, -1" },
       { a: 3, t: "j    beginning" }, { a: 4, t: "halt   (done)" },
     ];
     scene({

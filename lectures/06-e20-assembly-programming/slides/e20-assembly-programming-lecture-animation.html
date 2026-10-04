@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CS-UY 2214 | E20 Assembly Programming | Animated</title>
+<link rel="stylesheet" href="../../_shared/theme/house.css">
+<style>
+  /* One deck for the whole E20 Assembly Programming lecture, built on the 05-e20 deck (same step engine).
+     Same principle as the 03-verilog animations: a hand-rolled step machine
+     driven by the arrow keys, one small change per step, plain language
+     before jargon. Each section is a "scene" with its own diagram; the arrow
+     keys run straight through all of them. Shift + arrow jumps a section.
+     Question-and-answer form: at key beats the slide first asks a question
+     (the diagram stays as the previous step left it) and the next key press
+     reveals the diagram and the answer. Open with #3.5 to start at section 3,
+     step 5 (answered), or #3.5q for the same step with the question showing. */
+
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: var(--cream);
+    overflow: hidden;
+  }
+
+  .slide {
+    position: relative;
+    width: 1333px;
+    height: 750px;
+    margin: 0 auto;
+    padding: 40px 64px 76px;
+    box-sizing: border-box;
+    overflow: hidden;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: var(--ink);
+  }
+
+  .stage {
+    position: relative;
+    margin-top: 18px;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 10px;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+
+  .stage .num { color: var(--red); font-weight: 700; font-size: 15px; letter-spacing: 0.04em; }
+  .stage h1 { margin: 0; font-size: 30px; font-weight: 700; }
+
+  .subtitle {
+    margin: 8px 0 0;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--mute);
+  }
+
+  .diagram-wrap {
+    margin-top: 16px;
+    background: #eee6f3;
+    border-radius: 24px;
+    padding: 10px 20px;
+    position: relative;
+  }
+
+  .diagram-wrap .mark { position: absolute; top: 20px; left: 20px; width: 14px; height: 14px; background: #8900e1; }
+
+  svg text { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+  svg * { transition: opacity 0.35s ease, fill 0.3s ease, stroke 0.3s ease; }
+
+  svg .mv { transition: transform 0.6s ease; }
+
+  .stps {
+    margin-top: 12px;
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    min-height: 38px;
+  }
+
+  .stp {
+    min-width: 120px;
+    text-align: center;
+    padding: 6px 14px;
+    border: 2px solid #d9d9d3;
+    color: var(--mute);
+    font-size: 15px;
+    font-weight: 600;
+    transition: border-color 0.3s ease, color 0.3s ease, background 0.3s ease;
+  }
+
+  .stp.active { border-color: var(--red); color: var(--ink); background: #fbeceb; }
+  .stp.done { border-color: var(--ink); color: var(--ink); }
+
+  .narration {
+    margin-top: 14px;
+    font-size: 19px;
+    line-height: 1.35;
+    min-height: 52px;
+  }
+
+  .narration strong { color: var(--red); }
+  .narration code {
+    background: #171715;
+    color: #f7f7f4;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 16px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  .q { font-weight: 700; color: var(--ink); }
+  .q .qm {
+    display: inline-block;
+    background: var(--red);
+    color: #fff;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    padding: 2px 9px;
+    margin-right: 12px;
+    vertical-align: middle;
+  }
+  .q.big { font-size: 26px; line-height: 1.3; }
+  .q.small { font-size: 15px; color: var(--mute); margin-bottom: 8px; font-weight: 600; }
+  .q.small .qm { font-size: 11px; padding: 1px 7px; margin-right: 9px; }
+  .q code { font-size: 0.85em; }
+  .q.small code { background: #e2ded0; color: var(--ink); }
+
+  .slide-footer {
+    position: absolute;
+    bottom: 24px;
+    left: 64px;
+    right: 64px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--faint);
+    border-top: 1px solid var(--rule);
+    padding-top: 10px;
+  }
+
+  .step-indicator {
+    position: absolute;
+    top: 20px;
+    right: 64px;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: var(--mute);
+  }
+
+  .step-indicator .n { color: var(--red); font-weight: 700; }
+
+  .hint {
+    position: absolute;
+    top: 20px;
+    left: 64px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: var(--mute);
+  }
+
+  .hint::before {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: var(--red);
+  }
+</style>
+</head>
+<body>
+
+<div class="slide">
+  <div class="hint">&larr; / &rarr; step &nbsp;&middot;&nbsp; shift + &larr; / &rarr; section</div>
+  <div class="step-indicator"><span id="sec-wrap">SECTION <span class="n" id="sec-n">1</span> / <span id="sec-total">9</span> &nbsp;&middot;&nbsp; </span>STEP <span class="n" id="step-n">1</span> / <span id="step-total">2</span></div>
+
+  <div class="stage">
+    <span class="num" id="num"></span>
+    <h1 id="title">E20 Assembly Programming</h1>
+  </div>
+  <p class="subtitle" id="subtitle"></p>
+
+  <div class="diagram-wrap">
+    <div class="mark"></div>
+    <svg id="stage" viewBox="0 0 1150 400" width="100%" height="340"></svg>
+  </div>
+
+  <div class="stps" id="chips"></div>
+
+  <div class="narration" id="narration"></div>
+
+  <div class="slide-footer"><span id="foot-left">E20 Assembly Programming</span><span>NYU Tandon | Fall 2026</span></div>
+</div>
+
+<script>
+(function () {
+  const NS = "http://www.w3.org/2000/svg";
+  const MONO = "'SF Mono', Menlo, Consolas, monospace";
+  const C = {
+    purple: "#57068c", accent: "#8900e1", dot: "#7b5aa6", ink: "#404040", grey: "#6d6d6d",
+    lgrey: "#9f9f97", red: "#c1272d", bg: "#eee6f3", white: "#ffffff",
+    t1: "#e9d9f5", t2: "#fbeceb", t3: "#e4e3db", t4: "#f3e9ff", t5: "#e2cdf2", t6: "#f7f0ff", t7: "#efe9dc",
+  };
+
+  function E(tag, attrs, parent, text) {
+    const e = document.createElementNS(NS, tag);
+    if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (text !== undefined) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function grp(p, op) { const g = E("g", {}, p); g.style.opacity = op === undefined ? 1 : op; return g; }
+  function rect(p, x, y, w, h, o) {
+    o = o || {};
+    const e = E("rect", { x, y, width: w, height: h, rx: o.rx || 0, fill: o.fill || "none", stroke: o.stroke || "none", "stroke-width": o.sw || 0 }, p);
+    if (o.dash) e.setAttribute("stroke-dasharray", o.dash);
+    return e;
+  }
+  function txt(p, x, y, s, o) {
+    o = o || {};
+    const t = E("text", { x, y, fill: o.fill || C.ink, "font-size": o.size || 16, "font-weight": o.weight || 400, "text-anchor": o.anchor || "start" }, p, s);
+    if (o.mono) t.style.fontFamily = MONO;
+    if (o.italic) t.setAttribute("font-style", "italic");
+    if (o.ls) t.setAttribute("letter-spacing", o.ls);
+    if (o.pre) t.style.whiteSpace = "pre";
+    return t;
+  }
+  function ln(p, x1, y1, x2, y2, o) {
+    o = o || {};
+    const e = E("line", { x1, y1, x2, y2, stroke: o.stroke || C.ink, "stroke-width": o.sw || 4, "stroke-linecap": "round" }, p);
+    if (o.dash) e.setAttribute("stroke-dasharray", o.dash);
+    return e;
+  }
+  function path(p, d, o) {
+    o = o || {};
+    return E("path", { d, fill: o.fill || "none", stroke: o.stroke || "none", "stroke-width": o.sw || 0, "stroke-linecap": "round", "stroke-linejoin": "round" }, p);
+  }
+  function circ(p, cx, cy, r, o) {
+    o = o || {};
+    return E("circle", { cx, cy, r, fill: o.fill || "none", stroke: o.stroke || "none", "stroke-width": o.sw || 0 }, p);
+  }
+  function poly(p, pts, o) {
+    o = o || {};
+    return E("polygon", { points: pts, fill: o.fill || "none", stroke: o.stroke || "none", "stroke-width": o.sw || 0, "stroke-linejoin": "round" }, p);
+  }
+  function vis(el, on) { el.style.opacity = on ? 1 : 0; }
+  function arrowhead(p, x, y, dir, fill) {
+    // dir: "r","l","d","u"
+    const pts = { r: [x, y, x - 12, y - 7, x - 12, y + 7], l: [x, y, x + 12, y - 7, x + 12, y + 7],
+                  d: [x, y, x - 7, y - 12, x + 7, y - 12], u: [x, y, x - 7, y + 12, x + 7, y + 12] }[dir];
+    return poly(p, pts.join(","), { fill: fill || C.ink });
+  }
+
+  const scenes = [];
+  function scene(def) { scenes.push(def); }
+  // ---------- shared helpers for the E20 scenes ----------
+  function codeRows(g, x, y0, dy, w, lines, o) {
+    o = o || {};
+    const rows = [], texts = [], addrs = [];
+    lines.forEach((ln, i) => {
+      const y = y0 + i * dy;
+      const sz = o.size || 17, tight = dy < 22;
+      rows.push(rect(g, x, tight ? y - sz * 0.95 - 1 : y - dy + 8, w, tight ? sz * 0.95 + 6 : dy - 2, { rx: 6 }));
+      addrs.push(txt(g, x + 26, y, ln.a === undefined ? "" : String(ln.a), { size: tight ? Math.min(15, sz + 1) : 15, mono: true, fill: C.lgrey, anchor: "middle" }));
+      texts.push(txt(g, x + 56, y, ln.t, { size: o.size || 17, weight: 600, mono: true, pre: true, fill: ln.dim ? C.lgrey : C.ink }));
+    });
+    return { rows, texts, addrs };
+  }
+  function regBoxes(g, x0, y0, w, h, dx, dy, vals) {
+    const boxes = [], vs = [];
+    for (let i = 0; i < 8; i++) {
+      const x = x0 + (i % 4) * dx, y = y0 + Math.floor(i / 4) * dy;
+      boxes.push(rect(g, x, y, w, h, { rx: 10, fill: i === 0 ? "#dcd2e6" : C.white, stroke: C.purple, sw: 4 }));
+      txt(g, x + 10, y + 20, "$" + i, { size: 14, weight: 700, mono: true, fill: C.purple });
+      vs.push(txt(g, x + w / 2, y + h - 14, String(vals[i]), { size: 24, weight: 700, mono: true, anchor: "middle", fill: i === 0 ? C.grey : C.ink }));
+    }
+    return { boxes, vs };
+  }
+
+  // ---------- generic trace scene: code on the left, registers (and memory) on the right ----------
+  function traceScene(cfg) {
+    const rowH = cfg.rowH || 32, Y0 = 92;
+    return {
+      num: cfg.num, title: cfg.title, subtitle: cfg.subtitle, chips: cfg.chips || [],
+      steps: cfg.steps,
+      build(g) {
+        const r = {};
+        rect(g, 30, 52, 560, 320, { rx: 16, fill: C.white, stroke: C.purple, sw: 5 });
+        txt(g, 58, 80, "ADDR", { size: 11, weight: 700, fill: C.grey, ls: 1 });
+        txt(g, 100, 80, "E20 ASSEMBLY", { size: 13, weight: 700, fill: C.purple, ls: 1 });
+        r.code = codeRows(g, 44, Y0 + 12, rowH, 536, cfg.lines, { size: cfg.size });
+        r.chev = txt(g, 20, 0, "▶", { size: 15, fill: C.red });
+        r.tags = [];
+        (cfg.labels || []).forEach(([li, name]) => {
+          const t = txt(g, 570, Y0 + 12 + li * rowH, name, { size: 13, weight: 700, mono: true, fill: C.accent, anchor: "end" });
+          t.style.opacity = 0; r.tags.push(t);
+        });
+        r.reg = regBoxes(g, 620, 60, 118, 66, 128, 82, [0, 0, 0, 0, 0, 0, 0, 0]);
+        txt(g, 620, 236, "PC", { size: 12, weight: 700, fill: C.grey, ls: 1 });
+        rect(g, 620, 244, 130, 52, { rx: 10, fill: C.white, stroke: C.purple, sw: 4 });
+        r.pc = txt(g, 685, 279, "0", { size: 24, weight: 700, mono: true, anchor: "middle", fill: C.purple });
+        r.mem = [];
+        if (cfg.mem) {
+          txt(g, 790, 236, "MEMORY", { size: 12, weight: 700, fill: C.grey, ls: 1 });
+          cfg.mem.forEach((a, i) => {
+            const x = 790 + i * 92;
+            const b = rect(g, x, 244, 84, 52, { rx: 10, fill: C.white, stroke: C.purple, sw: 4 });
+            txt(g, x + 8, 262, "[" + a + "]", { size: 12, weight: 700, mono: true, fill: C.lgrey });
+            const v = txt(g, x + 42, 288, "", { size: 20, weight: 700, mono: true, anchor: "middle" });
+            r.mem.push({ a, b, v });
+          });
+        }
+        r.note = txt(g, 620, 340, "", { size: 15, italic: true, fill: C.grey });
+        return r;
+      },
+      render(s, r) {
+        r.code.rows.forEach((el) => { el.setAttribute("fill", "none"); el.setAttribute("stroke", "none"); });
+        if (s.ex !== null && s.ex !== undefined) { r.code.rows[s.ex].setAttribute("fill", C.t2); r.code.rows[s.ex].setAttribute("stroke", C.red); r.code.rows[s.ex].setAttribute("stroke-width", 3); }
+        r.chev.setAttribute("y", Y0 + 12 + s.pc * rowH);
+        r.pc.textContent = s.pcv !== undefined ? s.pcv : s.pc;
+        r.reg.vs.forEach((v, i) => { v.textContent = s.regs[i]; });
+        r.reg.boxes.forEach((b, i) => {
+          const ch = s.changed === "r" + i;
+          b.setAttribute("fill", ch ? C.t2 : (i === 0 ? "#dcd2e6" : C.white));
+          b.setAttribute("stroke", ch ? C.red : C.purple);
+        });
+        r.mem.forEach((m) => {
+          const v = s.mem ? s.mem[m.a] : undefined;
+          m.v.textContent = v === undefined ? "0" : v;
+          const ch = s.changed === "m" + m.a, rd = s.read === "m" + m.a;
+          m.b.setAttribute("fill", ch ? C.t2 : (rd ? C.t4 : C.white));
+          m.b.setAttribute("stroke", ch ? C.red : (rd ? C.accent : C.purple));
+        });
+        r.tags.forEach((t) => vis(t, !!s.labels));
+        r.note.textContent = s.note || "";
+      },
+    };
+  }
+
+  // ================= Title slide =================
+  (function () {
+    const ROUTE = ["From Instructions to Programs", "Conditionals: If/Else", "Loops: For and While",
+                   "Arrays", "Palindrome: Two Pointers", "Subroutines: jal and jr",
+                   "The Return-Address Problem", "Recursion and the Case for a Stack", "Tracing a Complete Program"];
+    scene({
+      front: true,
+      num: "", title: "E20 Assembly Programming", subtitle: "",
+      chips: [],
+      steps: [
+        { view: "title", foot: "",
+          narrate: "Last week: the E20's vocabulary, registers, memory, the raw mechanics of jumping. Today: the grammar. We take those primitives and assemble them into <strong>if</strong>/<strong>else</strong>, <strong>for</strong>, <strong>while</strong>, arrays, and function calls." },
+        { view: "route", foot: "nine sections, one small toolkit",
+          narrate: "E20 has no <code>if</code>, no <code>for</code>, no <code>while</code>, no <code>function</code>. Everything on this list compiles down to some arrangement of four primitives: <code>jeq</code>, <code>j</code>, <code>jr</code>, <code>jal</code>. Here's the route." },
+      ],
+      build(g) {
+        const r = {};
+        r.title = grp(g, 1);
+        rect(r.title, 130, 40, 890, 300, { rx: 24, fill: C.white, stroke: C.purple, sw: 7 });
+        txt(r.title, 575, 104, "CS-UY 2214  |  WEEK V", { size: 15, weight: 700, fill: C.red, anchor: "middle", ls: 2 });
+        txt(r.title, 575, 190, "E20 Assembly Programming", { size: 54, weight: 700, fill: "#171715", anchor: "middle" });
+        rect(r.title, 505, 214, 140, 6, { rx: 3, fill: C.accent });
+        txt(r.title, 575, 258, "Four primitives, every control-flow pattern you know", { size: 22, italic: true, fill: C.grey, anchor: "middle" });
+        txt(r.title, 575, 312, "Computer Architecture and Organization", { size: 14, fill: C.lgrey, anchor: "middle", ls: 1 });
+
+        r.route = grp(g, 0);
+        txt(r.route, 575, 46, "TODAY'S ROUTE", { size: 13, weight: 700, fill: C.purple, anchor: "middle", ls: 2 });
+        ROUTE.forEach((name, i) => {
+          const col = i < 5 ? 0 : 1, row = col === 0 ? i : i - 5;
+          const x = 150 + col * 460, y = 70 + row * 58;
+          rect(r.route, x, y, 420, 48, { rx: 12, fill: C.white, stroke: C.purple, sw: 4 });
+          circ(r.route, x + 30, y + 24, 15, { fill: C.purple });
+          txt(r.route, x + 30, y + 30, String(i + 1), { size: 15, weight: 700, fill: C.white, anchor: "middle" });
+          txt(r.route, x + 60, y + 31, name, { size: 17, weight: 700, fill: C.ink });
+        });
+        txt(r.route, 575, 366, "1 to 4.1: control flow and data   |   5 to 7: subroutines and their one real limitation   |   8: it all comes together", { size: 13, italic: true, fill: C.grey, anchor: "middle" });
+        return r;
+      },
+      render(s, r) { vis(r.title, s.view === "title"); vis(r.route, s.view === "route"); },
+    });
+  })();
+
+  // ================= 1 From Instructions to Programs =================
+  (function () {
+    const cards = [
+      { name: "jeq", sub: "conditional", desc: "changes flow based on a condition", fill: C.t1 },
+      { name: "j", sub: "unconditional", desc: "changes flow, no questions asked", fill: C.t4 },
+      { name: "jr", sub: "register", desc: "changes flow through a register", fill: C.t5 },
+      { name: "jal", sub: "remembers", desc: "changes flow AND remembers where it came from", fill: C.t6 },
+    ];
+    scene({
+      num: "1", title: "From Instructions to Programs", subtitle: "E20 has no if, no for, no while, no function.",
+      chips: ["The primitives", "jeq", "j and jr", "jal", "The upshot"],
+      steps: [
+        { n: 0, chip: 1, foot: "vocabulary vs. grammar", narrate: "Every structured pattern you'll write this semester, no matter how it reads in a higher-level language, is built from exactly <strong>four</strong> primitives. That's it. Four." },
+        { n: 1, chip: 2, foot: "the only conditional", narrate: "<code>jeq</code>: the only thing that changes control flow <em>based on a condition</em>. Compare two registers, jump if they're equal, fall through otherwise." },
+        { n: 2, chip: 3, foot: "unconditional, and through a register", narrate: "<code>j</code>: changes flow unconditionally, no questions asked. <code>jr</code>: changes flow through whatever address is sitting in a register: the destination can change at runtime." },
+        { n: 3, chip: 4, foot: "the one that remembers", narrate: "<code>jal</code>: changes flow <em>and</em> remembers where it came from, by stashing a return address in <code>$7</code> before it jumps." },
+        { n: 4, chip: 5, foot: "the upshot", narrate: "Every <code>if</code>/<code>else</code>, every <code>for</code>, every <code>while</code>, every function call you'll write in E20 compiles down to some arrangement of these four. This isn't an E20 limitation: it's true of every processor you'll ever program close to the metal, including the one in your laptop. A compiler's whole job, in the control-flow department, is exactly this translation: <code>if (x &lt; y) { ... } else { ... }</code> becomes a comparison plus a couple of jumps. Once you've done it by hand a few times, you'll never see an <code>if</code> statement the same way again." },
+      ],
+      build(g) {
+        const r = { cards: [] };
+        cards.forEach((c, i) => {
+          const x = 60 + i * 260, e = grp(g, 0);
+          rect(e, x, 90, 230, 200, { rx: 18, fill: c.fill, stroke: C.purple, sw: 6 });
+          txt(e, x + 115, 140, c.name, { size: 34, weight: 700, mono: true, fill: C.purple, anchor: "middle" });
+          txt(e, x + 115, 164, c.sub.toUpperCase(), { size: 12, weight: 700, fill: C.grey, anchor: "middle", ls: 1 });
+          const words = c.desc.split(" ");
+          let line = "", ylines = [];
+          words.forEach((w) => { if ((line + w).length > 22) { ylines.push(line.trim()); line = ""; } line += w + " "; });
+          ylines.push(line.trim());
+          ylines.forEach((l, k) => txt(e, x + 115, 200 + k * 20, l, { size: 15, weight: 600, anchor: "middle" }));
+          r.cards.push(e);
+        });
+        r.closing = grp(g, 0);
+        rect(r.closing, 60, 320, 1030, 60, { rx: 14, fill: C.white, stroke: C.red, sw: 5 });
+        txt(r.closing, 575, 356, "if / for / while / function  ->  jeq + j + jr + jal, composed", { size: 22, weight: 700, mono: true, fill: C.red, anchor: "middle" });
+        return r;
+      },
+      render(s, r) {
+        r.cards[0].style.opacity = s.n >= 1 ? 1 : 0;
+        r.cards[1].style.opacity = s.n >= 2 ? 1 : 0;
+        r.cards[2].style.opacity = s.n >= 2 ? 1 : 0;
+        r.cards[3].style.opacity = s.n >= 3 ? 1 : 0;
+        vis(r.closing, s.n === 4);
+      },
+    });
+  })();
+
+  // ================= 2 Conditionals: If/Else in E20 =================
+  (function () {
+    const linesIf = [
+      { a: 0, t: "movi $1, 5" }, { a: 1, t: "jeq  $1, $0, they_are_equal" }, { a: 2, t: "addi $1, $1, 1" },
+      { a: 3, t: "j    done" }, { t: "they_are_equal:", dim: true }, { a: 4, t: "    addi $1, $1, 2" },
+      { t: "done:", dim: true }, { a: 5, t: "    halt" },
+    ];
+    const linesRel = [
+      { a: 0, t: "movi $2, 3" }, { a: 1, t: "movi $3, 8" }, { a: 2, t: "slt  $1, $2, $3" },
+      { a: 3, t: "jeq  $1, $0, not_less" }, { a: 4, t: "addi $2, $2, 1" }, { a: 5, t: "j    done" },
+      { t: "not_less:", dim: true }, { a: 6, t: "    addi $2, $2, 2" }, { t: "done:", dim: true }, { a: 7, t: "    halt" },
+    ];
+    const RZ8 = [0, 0, 0, 0, 0, 0, 0, 0];
+    const wr = (base, i, v) => { const a = base.slice(); a[i] = v; return a; };
+    const S = (view, o) => Object.assign({ view, chip: 0 }, o);
+    const steps = [
+      S("if", { ex: null, pc: 0, regs: RZ8, foot: "the else problem", narrate: "<code>jeq</code> gives you the 'then' branch for free. The subtlety is the 'else' branch: E20 doesn't jump on failure, the <code>pc</code> just moves to the next line as if the comparison never happened." }),
+      S("if", { ex: 0, pc: 1, regs: wr(RZ8, 1, 5), changed: "r1", foot: "start with $1 = 5", narrate: "<code>$1 = 5</code>, our starting value." }),
+      S("if", { ex: 1, pc: 2, regs: wr(RZ8, 1, 5), foot: "jeq: falls through", narrate: "<code>jeq $1, $0, they_are_equal</code>: is <code>$1</code> zero? No, <code>5 != 0</code>, so it does <strong>not</strong> jump. Straight to the next line." }),
+      S("if", { ex: 2, pc: 3, regs: wr(RZ8, 1, 6), changed: "r1", foot: "the else arm runs", narrate: "The 'else' arm: <code>$1 += 1</code>, giving <code>$1 = 6</code>." }),
+      S("if", { ex: 3, pc: 7, regs: wr(RZ8, 1, 6), foot: "j done: the IMPORTANT line", q: "What would go wrong if this j done line were deleted?",
+          narrate: "Execution would fall straight into <code>they_are_equal:</code> and run <em>its</em> <code>addi</code> too, both arms would fire. This unconditional jump is the entire difference between if/else and if-then-always." }),
+      S("if", { ex: 7, pc: 7, regs: wr(RZ8, 1, 6), foot: "halt", narrate: "<code>halt</code>. Final: <code>$1 = 6</code>. If we'd started with <code>$1 = 0</code> instead, the <code>jeq</code> back on step 2 would have fired immediately, landing on <code>they_are_equal</code> and giving <code>$1 = 2</code>, and this <code>j done</code> would never even be reached." }),
+      S("rel", { ex: null, pc: 0, regs: RZ8, foot: "beyond equality", narrate: "<code>jeq</code> only tests equality. Anything else (less-than, greater-than) needs <code>slt</code> first, to compute a boolean <code>jeq</code> can then branch on." }),
+      S("rel", { ex: 0, pc: 1, regs: wr(RZ8, 2, 3), changed: "r2", foot: "$2 = 3", narrate: "<code>$2 = 3</code>." }),
+      S("rel", { ex: 1, pc: 2, regs: [0, 0, 3, 8, 0, 0, 0, 0], changed: "r3", foot: "$3 = 8", narrate: "<code>$3 = 8</code>." }),
+      S("rel", { ex: 2, pc: 3, regs: [0, 1, 3, 8, 0, 0, 0, 0], changed: "r1", foot: "slt computes the boolean", narrate: "<code>slt $1, $2, $3</code>: is <code>$2 &lt; $3</code>? <code>3 &lt; 8</code>, yes, so <code>$1 = 1</code>." }),
+      S("rel", { ex: 3, pc: 4, regs: [0, 1, 3, 8, 0, 0, 0, 0], foot: "jeq: falls through again", narrate: "<code>jeq $1, $0, not_less</code>: <code>$1</code> is 1, not 0, so it doesn't jump. We fall into the 'less' arm." }),
+      S("rel", { ex: 4, pc: 5, regs: [0, 1, 4, 8, 0, 0, 0, 0], changed: "r2", foot: "the less-than arm runs", narrate: "<code>$2 += 1</code>, giving <code>$2 = 4</code>." }),
+      S("rel", { ex: 9, pc: 9, regs: [0, 1, 4, 8, 0, 0, 0, 0], foot: "halt", narrate: "<code>halt</code>. Final: <code>$2 = 4</code>: correctly the less-than case ran. Greater-than-or-equal falls out for free, it's just 'not less'; less-or-equal takes one more step: check equality first, and only fall through to this same <code>slt</code> check if the values differ." }),
+    ];
+    scene({
+      num: "2", title: "Conditionals: If/Else in E20", subtitle: "jeq gives you the 'then' branch for free. The 'else' branch is the whole trick.",
+      chips: ["If/else", "Trace", "Relational", "Trace"],
+      steps,
+      build(g) {
+        const r = {};
+        rect(g, 30, 52, 560, 320, { rx: 16, fill: C.white, stroke: C.purple, sw: 5 });
+        txt(g, 58, 80, "ADDR", { size: 11, weight: 700, fill: C.grey, ls: 1 });
+        r.head = txt(g, 100, 80, "E20 ASSEMBLY", { size: 13, weight: 700, fill: C.purple, ls: 1 });
+        r.codeIf = codeRows(g, 44, 104, 26, 536, linesIf, { size: 16 });
+        r.codeRel = codeRows(g, 44, 104, 26, 536, linesRel, { size: 16 });
+        r.chev = txt(g, 20, 0, "▶", { size: 15, fill: C.red });
+        r.reg = regBoxes(g, 620, 60, 118, 66, 128, 82, [0, 0, 0, 0, 0, 0, 0, 0]);
+        txt(g, 620, 236, "PC", { size: 12, weight: 700, fill: C.grey, ls: 1 });
+        rect(g, 620, 244, 130, 52, { rx: 10, fill: C.white, stroke: C.purple, sw: 4 });
+        r.pc = txt(g, 685, 279, "0", { size: 24, weight: 700, mono: true, anchor: "middle", fill: C.purple });
+        return r;
+      },
+      render(s, r) {
+        const active = s.view === "if" ? r.codeIf : r.codeRel;
+        [r.codeIf, r.codeRel].forEach((cr, i) => {
+          const on = (i === 0) === (s.view === "if");
+          cr.rows.forEach((el) => { el.style.opacity = on ? 1 : 0; });
+          cr.texts.forEach((el) => { el.style.opacity = on ? 1 : 0; });
+          cr.addrs.forEach((el) => { el.style.opacity = on ? 1 : 0; });
+        });
+        active.rows.forEach((el) => { el.setAttribute("fill", "none"); el.setAttribute("stroke", "none"); });
+        if (s.ex !== null && s.ex !== undefined) { active.rows[s.ex].setAttribute("fill", C.t2); active.rows[s.ex].setAttribute("stroke", C.red); active.rows[s.ex].setAttribute("stroke-width", 3); }
+        r.chev.setAttribute("y", 104 + s.pc * 26);
+        const src = s.view === "if" ? linesIf : linesRel;
+        let k = s.pc;
+        while (k < src.length && src[k].a === undefined) k++;
+        r.pc.textContent = k < src.length ? src[k].a : s.pc;
+        r.reg.vs.forEach((v, i) => { v.textContent = s.regs[i]; });
+        r.reg.boxes.forEach((b, i) => {
+          const ch = s.changed === "r" + i;
+          b.setAttribute("fill", ch ? C.t2 : (i === 0 ? "#dcd2e6" : C.white));
+          b.setAttribute("stroke", ch ? C.red : C.purple);
+        });
+      },
+    });
+  })();
+
+  // ================= 3 Loops: For and While Patterns =================
+  (function () {
+    const linesCount = [
+      { a: 0, t: "movi $1, 2" }, { a: 1, t: "movi $2, 0" }, { t: "loop:", dim: true },
+      { a: 2, t: "    jeq  $1, $0, done" }, { a: 3, t: "    addi $2, $2, 5" }, { a: 4, t: "    addi $1, $1, -1" },
+      { a: 5, t: "    j loop" }, { t: "done:", dim: true }, { a: 6, t: "    halt" },
+    ];
+    const linesSent = [
+      { a: 0, t: "movi $1, 0" }, { t: "loop:", dim: true }, { a: 1, t: "    lw   $2, myarray($1)" },
+      { a: 2, t: "    jeq  $2, $0, done" }, { a: 3, t: "    addi $1, $1, 1" }, { a: 4, t: "    j loop" },
+      { t: "done:", dim: true }, { a: 5, t: "    halt" }, { t: "myarray:", dim: true }, { t: "    .fill 7, 4, 0", dim: true },
+    ];
+    const steps = [
+      { view: "count", chip: 1, ex: null, pc: 0, regs: [0, 0, 0, 0, 0, 0, 0, 0], foot: "backwards, not forwards", narrate: "A loop is a conditional that jumps <em>backwards</em> instead of forward. That's the whole idea: everything else is bookkeeping. First shape: the <strong>counted loop</strong>. You know the number of iterations in advance, so a counter decides when to stop: test it, run the body, decrement it, jump back." },
+      { view: "count", chip: 2, ex: 0, pc: 1, regs: [0, 2, 0, 0, 0, 0, 0, 0], changed: "r1", foot: "setup: the counter", narrate: "<code>$1 = 2</code> is the counter: two laps, to keep this short." },
+      { view: "count", chip: 2, ex: 1, pc: 3, regs: [0, 2, 0, 0, 0, 0, 0, 0], foot: "setup: a running total", narrate: "<code>$2 = 0</code> is a running total. The body will add 5 to it each lap." },
+      { view: "count", chip: 2, ex: 3, pc: 4, regs: [0, 2, 0, 0, 0, 0, 0, 0], foot: "test first", narrate: "The loop's label is the top. <code>jeq $1, $0, done</code> tests <em>before</em> the body: is the counter 0? No, it's 2, so we fall into the body." },
+      { view: "count", chip: 2, ex: 4, pc: 5, regs: [0, 2, 5, 0, 0, 0, 0, 0], changed: "r2", foot: "the body", narrate: "The body: <code>$2 = 5</code>." },
+      { view: "count", chip: 2, ex: 5, pc: 6, regs: [0, 1, 5, 0, 0, 0, 0, 0], changed: "r1", foot: "decrement the counter", narrate: "<code>$1 = 1</code>: one lap done." },
+      { view: "count", chip: 2, ex: 6, pc: 3, regs: [0, 1, 5, 0, 0, 0, 0, 0], foot: "j loop: the backward jump", narrate: "<code>j loop</code> jumps <em>backwards</em> to the label. That backward jump is the loop." },
+      { view: "count", chip: 2, ex: 3, pc: 4, regs: [0, 1, 5, 0, 0, 0, 0, 0], foot: "lap two: test first", narrate: "Lap two starts with the same test: is the counter 0? It's 1, so we fall into the body again." },
+      { view: "count", chip: 2, ex: 4, pc: 5, regs: [0, 1, 10, 0, 0, 0, 0, 0], changed: "r2", foot: "lap two: the body", narrate: "The body: <code>$2 = 10</code>." },
+      { view: "count", chip: 2, ex: 5, pc: 6, regs: [0, 0, 10, 0, 0, 0, 0, 0], changed: "r1", foot: "lap two: decrement the counter", narrate: "<code>$1 = 0</code>: the counter has reached zero." },
+      { view: "count", chip: 2, ex: 6, pc: 3, regs: [0, 0, 10, 0, 0, 0, 0, 0], foot: "lap two: j loop", narrate: "Back to the top one more time." },
+      { view: "count", chip: 2, ex: 3, pc: 8, regs: [0, 0, 10, 0, 0, 0, 0, 0], foot: "the test now succeeds", narrate: "Back at the test: <code>$1 == $0</code> this time, so <code>jeq</code> jumps <em>forward</em> to <code>done</code> and leaves the loop." },
+      { view: "count", chip: 2, ex: 8, pc: 8, regs: [0, 0, 10, 0, 0, 0, 0, 0], foot: "halt", narrate: "<code>halt</code>. Final: <code>$2 = 10</code>, because the body ran exactly twice." },
+      { view: "sent", chip: 3, ex: null, pc: 0, regs: [0, 0, 0, 0, 0, 0, 0, 0], foot: "loop until a stop value", narrate: "Second shape: the <strong>sentinel loop</strong>. You don't know how many iterations in advance, so you loop until you read a specific stop value, usually 0 at the end of an array. Same skeleton, different exit test. This one counts the elements before the 0." },
+      { view: "sent", chip: 4, ex: 0, pc: 2, regs: [0, 0, 0, 0, 0, 0, 0, 0], foot: "setup: the index", narrate: "<code>$1 = 0</code>: the index into <code>myarray</code>, which holds 7, 4, 0. The 0 is the sentinel." },
+      { view: "sent", chip: 4, ex: 2, pc: 3, regs: [0, 0, 7, 0, 0, 0, 0, 0], changed: "r2", foot: "read the current element", narrate: "<code>lw $2, myarray($1)</code>: <code>$2 = 7</code>." },
+      { view: "sent", chip: 4, ex: 3, pc: 4, regs: [0, 0, 7, 0, 0, 0, 0, 0], foot: "test: is it the sentinel?", narrate: "<code>jeq $2, $0, done</code>: 7 isn't 0, so keep going." },
+      { view: "sent", chip: 4, ex: 4, pc: 5, regs: [0, 1, 7, 0, 0, 0, 0, 0], changed: "r1", foot: "advance the index", narrate: "<code>$1 = 1</code>: the loop's own count of elements seen so far." },
+      { view: "sent", chip: 4, ex: 5, pc: 2, regs: [0, 1, 7, 0, 0, 0, 0, 0], foot: "j loop", narrate: "Back to the top." },
+      { view: "sent", chip: 4, ex: 2, pc: 3, regs: [0, 1, 4, 0, 0, 0, 0, 0], changed: "r2", foot: "lap two: read the current element", narrate: "<code>lw $2, myarray($1)</code>: <code>$2 = 4</code>." },
+      { view: "sent", chip: 4, ex: 3, pc: 4, regs: [0, 1, 4, 0, 0, 0, 0, 0], foot: "lap two: test: is it the sentinel?", narrate: "<code>jeq $2, $0, done</code>: 4 isn't 0, so keep going." },
+      { view: "sent", chip: 4, ex: 4, pc: 5, regs: [0, 2, 4, 0, 0, 0, 0, 0], changed: "r1", foot: "lap two: advance the index", narrate: "<code>$1 = 2</code>." },
+      { view: "sent", chip: 4, ex: 5, pc: 2, regs: [0, 2, 4, 0, 0, 0, 0, 0], foot: "lap two: j loop", narrate: "Back to the top." },
+      { view: "sent", chip: 4, ex: 2, pc: 3, regs: [0, 2, 0, 0, 0, 0, 0, 0], changed: "r2", foot: "the sentinel", narrate: "<code>$2 = myarray[2] = 0</code>: the sentinel." },
+      { view: "sent", chip: 4, ex: 3, pc: 7, regs: [0, 2, 0, 0, 0, 0, 0, 0], foot: "the test succeeds", narrate: "<code>$2 == $0</code>, so <code>jeq</code> jumps forward to <code>done</code>." },
+      { view: "sent", chip: 4, ex: 7, pc: 7, regs: [0, 2, 0, 0, 0, 0, 0, 0], foot: "halt", narrate: "<code>halt</code>. Final: <code>$1 = 2</code>: the loop counted two elements before it hit the sentinel." },
+      { view: "count", chip: 5, ex: null, pc: 0, regs: [0, 0, 0, 0, 0, 0, 0, 0], order: true, foot: "test, then body, then jump back", q: "What happens if you put the test AFTER the body instead of before?", narrate: "You've written a <code>do</code>/<code>while</code>: it runs at least once even when the condition is false from the very start, usually not what you meant. Both shapes above test <strong>first</strong>, on purpose: a label at the top, a test that can exit, the body, an unconditional jump back. Type this skeleton enough times that it's automatic." },
+    ];
+    scene({
+      num: "3", title: "Loops: For and While Patterns", subtitle: "A loop is a conditional that jumps backwards instead of forward.",
+      chips: ["Counted", "Trace", "Sentinel", "Trace", "The order matters"],
+      steps,
+      build(g) {
+        const r = {};
+        rect(g, 30, 52, 560, 320, { rx: 16, fill: C.white, stroke: C.purple, sw: 5 });
+        txt(g, 58, 80, "ADDR", { size: 11, weight: 700, fill: C.grey, ls: 1 });
+        txt(g, 100, 80, "E20 ASSEMBLY", { size: 13, weight: 700, fill: C.purple, ls: 1 });
+        r.codeCount = codeRows(g, 44, 104, 26, 536, linesCount, { size: 16 });
+        r.codeSent = codeRows(g, 44, 104, 26, 536, linesSent, { size: 16 });
+        r.chev = txt(g, 20, 0, "▶", { size: 15, fill: C.red });
+        r.reg = regBoxes(g, 620, 60, 118, 66, 128, 82, [0, 0, 0, 0, 0, 0, 0, 0]);
+        txt(g, 620, 236, "PC", { size: 12, weight: 700, fill: C.grey, ls: 1 });
+        rect(g, 620, 244, 130, 52, { rx: 10, fill: C.white, stroke: C.purple, sw: 4 });
+        r.pc = txt(g, 685, 279, "0", { size: 24, weight: 700, mono: true, anchor: "middle", fill: C.purple });
+        r.note = txt(g, 620, 320, "", { size: 15, italic: true, fill: C.grey });
+        r.order = grp(g, 0);
+        rect(r.order, 620, 318, 500, 44, { rx: 12, fill: C.white, stroke: C.red, sw: 5 });
+        txt(r.order, 870, 346, "label -> test -> body -> jump back", { size: 18, weight: 700, mono: true, fill: C.red, anchor: "middle" });
+        return r;
+      },
+      render(s, r) {
+        const isCount = s.view === "count";
+        const active = isCount ? r.codeCount : r.codeSent;
+        [r.codeCount, r.codeSent].forEach((cr, i) => {
+          const on = (i === 0) === isCount;
+          cr.rows.forEach((el) => { el.style.opacity = on ? 1 : 0; });
+          cr.texts.forEach((el) => { el.style.opacity = on ? 1 : 0; });
+          cr.addrs.forEach((el) => { el.style.opacity = on ? 1 : 0; });
+        });
+        active.rows.forEach((el) => { el.setAttribute("fill", "none"); el.setAttribute("stroke", "none"); });
+        if (s.ex !== null && s.ex !== undefined) { active.rows[s.ex].setAttribute("fill", C.t2); active.rows[s.ex].setAttribute("stroke", C.red); active.rows[s.ex].setAttribute("stroke-width", 3); }
+        r.chev.setAttribute("y", 104 + s.pc * 26);
+        const src = isCount ? linesCount : linesSent;
+        let k = s.pc;
+        while (k < src.length && src[k].a === undefined) k++;
+        r.pc.textContent = k < src.length ? src[k].a : s.pc;
+        r.reg.vs.forEach((v, i) => { v.textContent = s.regs[i]; });
+        r.reg.boxes.forEach((b, i) => {
+          const ch = s.changed === "r" + i;
+          b.setAttribute("fill", ch ? C.t2 : (i === 0 ? "#dcd2e6" : C.white));
+          b.setAttribute("stroke", ch ? C.red : C.purple);
+        });
+        r.note.textContent = s.note || "";
+        vis(r.order, !!s.order);
+      },
+    });
+  })();
+
+  // ================= 4 Arrays: Reading, Writing, and Iterating =================
+  (function () {
+    const lines = [
+      { a: 0, t: "movi $1, 0" }, { t: "loop:", dim: true },
+      { a: 1, t: "    lw   $2, src($1)" }, { a: 2, t: "    sw   $2, dst($1)" }, { a: 3, t: "    jeq  $2, $0, done" },
+      { a: 4, t: "    addi $1, $1, 1" }, { a: 5, t: "    j loop" }, { t: "done:", dim: true },
+      { a: 6, t: "    halt" }, { t: "src: .fill 8, 6, 0", dim: true }, { t: "dst: .fill 9, 9, 9", dim: true },
+    ];
+    const S = (o) => Object.assign({ chip: 0 }, o);
+    const steps = [
+      S({ ex: null, pc: 0, pcv: 0, regs: [0, 0, 0, 0, 0, 0, 0, 0], mem: {"10": 9, "11": 9, "12": 9}, foot: "base + offset", narrate: "An array is nothing but adjacent memory cells and a label marking where it starts. <code>lw $2, src($1)</code> means: address = <code>src</code> plus whatever's in <code>$1</code>. As <code>$1</code> counts 0, 1, 2, ..., the address walks the array one cell at a time. Here we <strong>copy</strong> <code>src</code> into <code>dst</code> until the zero sentinel, so the loop both reads (<code>lw</code>) and writes (<code>sw</code>) with the same index. The panel shows all three cells of <code>dst</code>." }),
+      S({ ex: 0, pc: 2, pcv: 1, regs: [0, 0, 0, 0, 0, 0, 0, 0], mem: {"10": 9, "11": 9, "12": 9}, foot: "$1 := index", narrate: "<code>$1 = 0</code>: the index, starting at the front of both arrays." }),
+      S({ ex: 2, pc: 3, pcv: 2, regs: [0, 0, 8, 0, 0, 0, 0, 0], changed: "r2", mem: {"10": 9, "11": 9, "12": 9}, foot: "lw src($1): a read", narrate: "<code>lw</code> reads the cell at <code>src + $1</code>: <code>$2 = src[0] = 8</code>." }),
+      S({ ex: 3, pc: 4, pcv: 3, regs: [0, 0, 8, 0, 0, 0, 0, 0], changed: "m10", mem: {"10": 8, "11": 9, "12": 9}, foot: "sw dst($1): a write", narrate: "<code>sw</code> writes <code>$2</code> into the cell at <code>dst + $1</code>: <code>dst[0] = 8</code>. Same index, different base label, so the two arrays move in lockstep." }),
+      S({ ex: 4, pc: 5, pcv: 4, regs: [0, 0, 8, 0, 0, 0, 0, 0], mem: {"10": 8, "11": 9, "12": 9}, foot: "not the sentinel yet", narrate: "<code>jeq</code> asks whether the value just copied was the sentinel. <code>$2</code> is 8, not 0, so it doesn't jump." }),
+      S({ ex: 5, pc: 6, pcv: 5, regs: [0, 1, 8, 0, 0, 0, 0, 0], changed: "r1", mem: {"10": 8, "11": 9, "12": 9}, foot: "advance index", narrate: "<code>$1 = 1</code>: the next lap handles the next element." }),
+      S({ ex: 6, pc: 2, pcv: 1, regs: [0, 1, 8, 0, 0, 0, 0, 0], mem: {"10": 8, "11": 9, "12": 9}, foot: "j loop", narrate: "<code>j loop</code> jumps back to the top of the loop." }),
+      S({ ex: 2, pc: 3, pcv: 2, regs: [0, 1, 6, 0, 0, 0, 0, 0], changed: "r2", mem: {"10": 8, "11": 9, "12": 9}, foot: "lap two: read", narrate: "<code>$2 = src[1] = 6</code>." }),
+      S({ ex: 3, pc: 4, pcv: 3, regs: [0, 1, 6, 0, 0, 0, 0, 0], changed: "m11", mem: {"10": 8, "11": 6, "12": 9}, foot: "lap two: write", narrate: "<code>dst[1] = 6</code>." }),
+      S({ ex: 4, pc: 5, pcv: 4, regs: [0, 1, 6, 0, 0, 0, 0, 0], mem: {"10": 8, "11": 6, "12": 9}, foot: "lap two: not the sentinel", narrate: "6 isn't 0, so <code>jeq</code> doesn't jump." }),
+      S({ ex: 5, pc: 6, pcv: 5, regs: [0, 2, 6, 0, 0, 0, 0, 0], changed: "r1", mem: {"10": 8, "11": 6, "12": 9}, foot: "lap two: advance", narrate: "<code>$1 = 2</code>." }),
+      S({ ex: 6, pc: 2, pcv: 1, regs: [0, 2, 6, 0, 0, 0, 0, 0], mem: {"10": 8, "11": 6, "12": 9}, foot: "lap two: j loop", narrate: "Back to the top once more." }),
+      S({ ex: 2, pc: 3, pcv: 2, regs: [0, 2, 0, 0, 0, 0, 0, 0], changed: "r2", mem: {"10": 8, "11": 6, "12": 9}, foot: "the sentinel", narrate: "<code>$2 = src[2] = 0</code>: the sentinel." }),
+      S({ ex: 3, pc: 4, pcv: 3, regs: [0, 2, 0, 0, 0, 0, 0, 0], changed: "m12", mem: {"10": 8, "11": 6, "12": 0}, foot: "the sentinel is copied too", narrate: "<code>dst[2] = 0</code>. The copy happens <em>before</em> the test, so the terminator is copied as well." }),
+      S({ ex: 4, pc: 8, pcv: 6, regs: [0, 2, 0, 0, 0, 0, 0, 0], mem: {"10": 8, "11": 6, "12": 0}, foot: "jeq fires: done", narrate: "<code>$2 == $0</code> this time, so <code>jeq</code> jumps straight to <code>done</code>." }),
+      S({ ex: 8, pc: 8, pcv: 6, regs: [0, 2, 0, 0, 0, 0, 0, 0], mem: {"10": 8, "11": 6, "12": 0}, foot: "halt", narrate: "<code>halt</code>. Final: <code>dst = 8, 6, 0</code>, a perfect copy, terminator and all." }),
+    ];
+    scene(traceScene({ num: "4", title: "Arrays: Reading, Writing, and Iterating", subtitle: "There's no array type in E20: just labelled memory and indexed addressing.", rowH: 23, size: 15, lines, mem: [10, 11, 12], steps }));
+  })();
+
+  // ================= 4.1 Checking a Palindrome with Two Pointers =================
+  (function () {
+    const lines = [
+      { a: 0, t: "movi $1, items" }, { a: 1, t: "movi $2, items" }, { a: 2, t: "addi $2, $2, 2" },
+      { a: 3, t: "loop: slt  $3, $1, $2" }, { a: 4, t: "    jeq  $3, $0, yes" }, { a: 5, t: "    lw   $4, 0($1)" },
+      { a: 6, t: "    lw   $5, 0($2)" }, { a: 7, t: "    jeq  $4, $5, same" }, { a: 8, t: "    movi $6, 0" },
+      { a: 9, t: "    j    done" }, { a: 10, t: "same: addi $1, $1, 1" }, { a: 11, t: "    addi $2, $2, -1" },
+      { a: 12, t: "    j    loop" }, { a: 13, t: "yes:  movi $6, 1" }, { a: 14, t: "done: sw   $6, ispal($0)" },
+      { a: 15, t: "halt" }, { t: "items: .fill 4, 9, 4", dim: true }, { t: "ispal: .fill 9", dim: true },
+    ];
+    const S = (o) => Object.assign({ chip: 0 }, o);
+    const steps = [
+      S({ ex: null, pc: 0, pcv: 0, regs: [0, 0, 0, 0, 0, 0, 0, 0], mem: {"16": 4, "18": 4, "19": 9}, foot: "front < back?", narrate: "A palindrome reads the same both ways. Two pointers: <code>$1</code> at the front of <code>items</code>, <code>$2</code> at the back. Compare the pair they point at; if equal, step both inward. Stop when front is no longer strictly before back. The answer goes in <code>ispal</code> (the panel shows the first and last element, and <code>ispal</code>)." }),
+      S({ ex: 0, pc: 1, pcv: 1, regs: [0, 16, 0, 0, 0, 0, 0, 0], changed: "r1", mem: {"16": 4, "18": 4, "19": 9}, foot: "front pointer", narrate: "<code>$1 = 16</code>: <code>items</code>' address, the front." }),
+      S({ ex: 1, pc: 2, pcv: 2, regs: [0, 16, 16, 0, 0, 0, 0, 0], changed: "r2", mem: {"16": 4, "18": 4, "19": 9}, foot: "back pointer: starts at items", narrate: "<code>$2 = 16</code> too, for now." }),
+      S({ ex: 2, pc: 3, pcv: 3, regs: [0, 16, 18, 0, 0, 0, 0, 0], changed: "r2", mem: {"16": 4, "18": 4, "19": 9}, foot: "...nudged to the last element", narrate: "<code>$2 = 18</code>: the last of three elements is two cells past the first." }),
+      S({ ex: 3, pc: 4, pcv: 4, regs: [0, 16, 18, 1, 0, 0, 0, 0], changed: "r3", mem: {"16": 4, "18": 4, "19": 9}, foot: "slt: front before back?", narrate: "<code>slt $3, $1, $2</code>: is 16 &lt; 18? Yes, so <code>$3 = 1</code>: there are still pairs to compare." }),
+      S({ ex: 4, pc: 5, pcv: 5, regs: [0, 16, 18, 1, 0, 0, 0, 0], mem: {"16": 4, "18": 4, "19": 9}, foot: "jeq doesn't fire", narrate: "<code>$3</code> is 1, not 0, so we keep going." }),
+      S({ ex: 5, pc: 6, pcv: 6, regs: [0, 16, 18, 1, 4, 0, 0, 0], changed: "r4", mem: {"16": 4, "18": 4, "19": 9}, foot: "lw front", narrate: "<code>$4 = 4</code>: the front element." }),
+      S({ ex: 6, pc: 7, pcv: 7, regs: [0, 16, 18, 1, 4, 4, 0, 0], changed: "r5", mem: {"16": 4, "18": 4, "19": 9}, foot: "lw back", narrate: "<code>$5 = 4</code>: the back element." }),
+      S({ ex: 7, pc: 10, pcv: 10, regs: [0, 16, 18, 1, 4, 4, 0, 0], mem: {"16": 4, "18": 4, "19": 9}, foot: "equal pair: jump to same", narrate: "<code>$4 == $5</code>, so <code>jeq</code> jumps to <code>same</code>: this pair matches." }),
+      S({ ex: 10, pc: 11, pcv: 11, regs: [0, 17, 18, 1, 4, 4, 0, 0], changed: "r1", mem: {"16": 4, "18": 4, "19": 9}, foot: "front++", narrate: "<code>$1 = 17</code>." }),
+      S({ ex: 11, pc: 12, pcv: 12, regs: [0, 17, 17, 1, 4, 4, 0, 0], changed: "r2", mem: {"16": 4, "18": 4, "19": 9}, foot: "back--", narrate: "<code>$2 = 17</code>: both pointers now sit on the middle cell." }),
+      S({ ex: 12, pc: 3, pcv: 3, regs: [0, 17, 17, 1, 4, 4, 0, 0], mem: {"16": 4, "18": 4, "19": 9}, foot: "j loop", narrate: "Back to the top." }),
+      S({ ex: 3, pc: 4, pcv: 4, regs: [0, 17, 17, 0, 4, 4, 0, 0], changed: "r3", mem: {"16": 4, "18": 4, "19": 9}, foot: "both pointers on the middle cell", q: "Both pointers now sit on the middle cell, 17. Does the loop keep going?", narrate: "<code>slt $3, $1, $2</code> asks whether 17 &lt; 17. It isn't, so <code>$3 = 0</code>. One strict comparison catches \"the pointers met\"." }),
+      S({ ex: 4, pc: 13, pcv: 13, regs: [0, 17, 17, 0, 4, 4, 0, 0], mem: {"16": 4, "18": 4, "19": 9}, foot: "jeq fires: yes", narrate: "<code>$3 == $0</code>, so <code>jeq</code> jumps to <code>yes</code>: every pair matched." }),
+      S({ ex: 13, pc: 14, pcv: 14, regs: [0, 17, 17, 0, 4, 4, 1, 0], changed: "r6", mem: {"16": 4, "18": 4, "19": 9}, foot: "$6 := 1", narrate: "<code>$6 = 1</code>: it's a palindrome." }),
+      S({ ex: 14, pc: 15, pcv: 15, regs: [0, 17, 17, 0, 4, 4, 1, 0], changed: "m19", mem: {"16": 4, "18": 4, "19": 1}, foot: "store the answer", narrate: "<code>ispal = 1</code> (cell 19)." }),
+      S({ ex: 15, pc: 15, pcv: 15, regs: [0, 17, 17, 0, 4, 4, 1, 0], mem: {"16": 4, "18": 4, "19": 1}, foot: "halt", narrate: "<code>halt</code>. Final: <code>ispal = 1</code>. Change the last element to 5 and the very first comparison fails: <code>movi $6, 0</code>, <code>j done</code>, and the loop never reaches the middle." }),
+    ];
+    scene(traceScene({ num: "4.1", title: "Checking a Palindrome with Two Pointers", subtitle: "Two pointers walking towards each other, and one test that catches both endings.", rowH: 15, size: 12, lines, mem: [16, 18, 19], steps }));
+  })();
+
+  // ================= 5 Subroutines: jal and jr =================
+  (function () {
+    const lines = [
+      { a: 0, t: "movi $1, 1" }, { a: 1, t: "jal  quadruple" }, { a: 2, t: "add  $2, $0, $1" },
+      { a: 3, t: "movi $1, 5" }, { a: 4, t: "jal  quadruple" }, { a: 5, t: "add  $4, $2, $1" },
+      { a: 6, t: "halt" }, { a: 7, t: "quadruple: add $1, $1, $1" }, { a: 8, t: "    add $1, $1, $1" },
+      { a: 9, t: "    jr  $7" },
+    ];
+    const RZ = [0, 0, 0, 0, 0, 0, 0, 0];
+    const wr = (base, i, v) => { const a = base.slice(); a[i] = v; return a; };
+    const S = (o) => Object.assign({ chip: 0 }, o);
+    const steps = [
+      S({ ex: null, pc: 0, regs: RZ, foot: "the return-address problem", narrate: "A subroutine returns to a <em>different</em> place each time it's called, so the return address can't be baked into its code. It has to be computed at the moment of the call." }),
+      S({ ex: 0, pc: 1, regs: wr(RZ, 1, 1), changed: "r1", foot: "$1 := 1", narrate: "<code>$1 = 1</code>, the argument, by convention." }),
+      S({ ex: 1, pc: 7, regs: [0, 1, 0, 0, 0, 0, 0, 2], changed: "r7", foot: "jal: write and jump", narrate: "<code>jal quadruple</code> does two things at once: <code>$7</code> gets the address right after itself (2) and <code>pc</code> jumps to <code>quadruple</code>." }),
+      S({ ex: 7, pc: 8, regs: [0, 2, 0, 0, 0, 0, 0, 2], changed: "r1", foot: "double", narrate: "<code>$1 = 2</code>." }),
+      S({ ex: 8, pc: 9, regs: [0, 4, 0, 0, 0, 0, 0, 2], changed: "r1", foot: "double again", narrate: "<code>$1 = 4</code>: quadrupled." }),
+      S({ ex: 9, pc: 2, regs: [0, 4, 0, 0, 0, 0, 0, 2], foot: "jr $7: return", narrate: "<code>jr $7</code>: jump to wherever <code>$7</code> points: address 2, exactly the line after the <code>jal</code> that called us." }),
+      S({ ex: 2, pc: 3, regs: [0, 4, 4, 0, 0, 0, 0, 2], changed: "r2", foot: "save the result", narrate: "<code>$2 = 4</code>: the result of <code>quadruple(1)</code>, saved before the register gets reused." }),
+      S({ ex: 3, pc: 4, regs: [0, 5, 4, 0, 0, 0, 0, 2], changed: "r1", foot: "second call", narrate: "<code>$1 = 5</code>, the second argument." }),
+      S({ ex: 4, pc: 7, regs: [0, 5, 4, 0, 0, 0, 0, 5], changed: "r7", foot: "jal again", narrate: "<code>jal quadruple</code> again: same code, but now <code>$7 = 5</code>, a <em>different</em> return address." }),
+      S({ ex: 7, pc: 8, regs: [0, 10, 4, 0, 0, 0, 0, 5], changed: "r1", foot: "double", narrate: "<code>$1 = 10</code>." }),
+      S({ ex: 8, pc: 9, regs: [0, 20, 4, 0, 0, 0, 0, 5], changed: "r1", foot: "double again", narrate: "<code>$1 = 20</code>." }),
+      S({ ex: 9, pc: 5, regs: [0, 20, 4, 0, 0, 0, 0, 5], foot: "jr $7: return, elsewhere", narrate: "<code>jr $7</code>: this time <code>$7 = 5</code>, so we land back at address 5 instead: the <em>second</em> call site, not the first." }),
+      S({ ex: 5, pc: 6, regs: [0, 20, 4, 0, 24, 0, 0, 5], changed: "r4", foot: "combine both results", narrate: "<code>$4 = $2 + $1 = 4 + 20 = 24</code>." }),
+      S({ ex: 6, pc: 6, regs: [0, 20, 4, 0, 24, 0, 0, 5], foot: "halt", narrate: "<code>halt</code>. One subroutine, two call sites, two different return addresses: computed fresh each time, not fixed in the code. <code>jal</code> writes the return address; <code>jr $7</code> reads it back. Everything about subroutines in E20 falls out of that one fact." }),
+    ];
+    scene(traceScene({ num: "5", title: "Subroutines: jal and jr", subtitle: "A chunk of code invoked from many places, that always returns to wherever it was called from.", rowH: 26, size: 16, lines, steps }));
+  })();
+
+  // ================= 6 The Return-Address Problem =================
+  (function () {
+    const linesBug = [
+      { a: 0, t: "main: jal sub1" }, { a: 1, t: "    halt" }, { a: 2, t: "sub1: movi $2, 9" },
+      { a: 3, t: "    jal sub2" }, { a: 4, t: "    movi $3, 8" }, { a: 5, t: "    jr $7" },
+      { a: 6, t: "sub2: movi $4, 7" }, { a: 7, t: "    jr $7" },
+    ];
+    const linesFix = [
+      { a: 0, t: "main: jal sub1" }, { a: 1, t: "    halt" }, { a: 2, t: "sub1: sw $7, saved_ra($0)" },
+      { a: 3, t: "    movi $2, 9" }, { a: 4, t: "    jal sub2" }, { a: 5, t: "    movi $3, 8" },
+      { a: 6, t: "    lw $7, saved_ra($0)" }, { a: 7, t: "    jr $7" }, { a: 8, t: "sub2: movi $4, 7" },
+      { a: 9, t: "    jr $7" }, { a: 10, t: "saved_ra: .fill 0", dim: true },
+    ];
+    const RZ = [0, 0, 0, 0, 0, 0, 0, 0];
+    const wr = (base, i, v) => { const a = base.slice(); a[i] = v; return a; };
+    const S = (view, o) => Object.assign({ view, chip: 0 }, o);
+    const steps = [
+      S("bug", { ex: null, pc: 0, regs: RZ, foot: "what if sub1 calls a second subroutine?", narrate: "A single register can hold exactly one return address. What happens if <code>sub1</code> calls a second subroutine, <code>sub2</code>, before it's had a chance to return itself?" }),
+      S("bug", { ex: 0, pc: 2, regs: wr(RZ, 7, 1), changed: "r7", foot: "jal sub1", narrate: "<code>jal sub1</code>: <code>$7 = 1</code>, the address right after itself." }),
+      S("bug", { ex: 2, pc: 3, regs: [0, 0, 9, 0, 0, 0, 0, 1], changed: "r2", foot: "inside sub1", narrate: "<code>$2 = 9</code>: some work inside <code>sub1</code>." }),
+      S("bug", { ex: 3, pc: 6, regs: [0, 0, 9, 0, 0, 0, 0, 4], changed: "r7", foot: "jal sub2: $7 overwritten", narrate: "<code>jal sub2</code>: <code>$7</code> is unconditionally overwritten to 4. The value 1 (<code>sub1</code>'s own return address) is gone." }),
+      S("bug", { ex: 6, pc: 7, regs: [0, 0, 9, 0, 7, 0, 0, 4], changed: "r4", foot: "inside sub2", narrate: "<code>$4 = 7</code>: some work inside <code>sub2</code>." }),
+      S("bug", { ex: 7, pc: 4, regs: [0, 0, 9, 0, 7, 0, 0, 4], foot: "jr $7: sub2 returns correctly", narrate: "<code>jr $7</code>: jumps to address 4, back inside <code>sub1</code>. <code>sub2</code>'s own return works fine: it's the innermost call, nothing overwrote <code>$7</code> between its <code>jal</code> and its <code>jr</code>." }),
+      S("bug", { ex: 4, pc: 5, regs: [0, 0, 9, 8, 7, 0, 0, 4], changed: "r3", foot: "sub1 continues", narrate: "<code>$3 = 8</code>: <code>sub1</code> continues its own work." }),
+      S("bug", { ex: 5, pc: 4, regs: [0, 0, 9, 8, 7, 0, 0, 4], foot: "jr $7: sub1's turn", q: "sub1 reaches its own jr $7. Where does it actually go: address 1 (main's halt), or somewhere else?",
+          narrate: "<code>$7</code> still holds 4: <code>sub2</code>'s value, not <code>sub1</code>'s original 1. <code>jr $7</code> jumps back to address 4, not address 1. Execution goes somewhere, but not back to <code>main</code>." }),
+      S("bug", { ex: 4, pc: 5, regs: [0, 0, 9, 8, 7, 0, 0, 4], foot: "same two lines, forever", narrate: "Addresses 4 and 5 now trade off forever: <code>movi $3, 8</code>, <code>jr $7</code>, <code>movi $3, 8</code>, <code>jr $7</code>..." }),
+      S("bug", { ex: 5, pc: 4, regs: [0, 0, 9, 8, 7, 0, 0, 4], foot: "main's halt: never reached", narrate: "Not a crash: an infinite loop. <code>main</code>'s <code>halt</code> at address 1 is never reached. This is a direct, structural consequence of having exactly one link register." }),
+      S("fix", { mem: 0, ex: null, pc: 0, regs: RZ, foot: "the fix: save $7 before it's at risk", narrate: "The fix follows directly from the diagnosis: if <code>$7</code> is about to be overwritten by a nested call, save it somewhere safe first, and restore it right before returning." }),
+      S("fix", { mem: 0, ex: 0, pc: 2, regs: wr(RZ, 7, 1), changed: "r7", foot: "jal sub1", narrate: "<code>jal sub1</code>: <code>$7 = 1</code>, same as before." }),
+      S("fix", { mem: 1, ex: 2, pc: 3, regs: [0, 0, 0, 0, 0, 0, 0, 1], changed: "m10", foot: "sw $7, saved_ra($0)", narrate: "Before anything else: <code>sub1</code> writes <code>$7</code> to memory. <code>saved_ra</code> (the memory cell on the right) now holds 1, safe from whatever comes next." }),
+      S("fix", { mem: 1, ex: 3, pc: 4, regs: [0, 0, 9, 0, 0, 0, 0, 1], changed: "r2", foot: "inside sub1", narrate: "<code>$2 = 9</code>." }),
+      S("fix", { mem: 1, ex: 4, pc: 8, regs: [0, 0, 9, 0, 0, 0, 0, 5], changed: "r7", foot: "jal sub2: safe now", narrate: "<code>jal sub2</code>: <code>$7</code> becomes 5. It's fine that this overwrites <code>$7</code>: the value <code>sub1</code> needed is already parked in memory." }),
+      S("fix", { mem: 1, ex: 8, pc: 9, regs: [0, 0, 9, 0, 7, 0, 0, 5], changed: "r4", foot: "inside sub2", narrate: "<code>$4 = 7</code>." }),
+      S("fix", { mem: 1, ex: 9, pc: 5, regs: [0, 0, 9, 0, 7, 0, 0, 5], foot: "jr $7: sub2 returns", narrate: "<code>jr $7</code>: back to address 5, inside <code>sub1</code>." }),
+      S("fix", { mem: 1, ex: 5, pc: 6, regs: [0, 0, 9, 8, 7, 0, 0, 5], changed: "r3", foot: "sub1 continues", narrate: "<code>$3 = 8</code>." }),
+      S("fix", { mem: 1, read: true, ex: 6, pc: 7, regs: [0, 0, 9, 8, 7, 0, 0, 1], changed: "r7", foot: "lw $7, saved_ra($0): restore", narrate: "<code>$7</code> is restored from memory: back to 1, <code>sub1</code>'s own return address." }),
+      S("fix", { mem: 1, ex: 7, pc: 1, regs: [0, 0, 9, 8, 7, 0, 0, 1], foot: "jr $7: now it's correct", narrate: "<code>jr $7</code>: <em>now</em> this returns to address 1, correctly, back in <code>main</code>." }),
+      S("fix", { mem: 1, ex: 1, pc: 1, regs: [0, 0, 9, 8, 7, 0, 0, 1], foot: "halt", narrate: "<code>halt</code>, reached at last. This works, for one level of nesting. It breaks the instant <code>sub1</code> might call itself, or two different subroutines both reach for the same <code>saved_ra</code> cell." }),
+    ];
+    scene({
+      num: "6", title: "The Return-Address Problem", subtitle: "One link register. What happens when a subroutine calls a subroutine?",
+      chips: ["The bug", "Trace", "The fix", "Trace"],
+      steps,
+      build(g) {
+        const r = {};
+        rect(g, 30, 52, 560, 320, { rx: 16, fill: C.white, stroke: C.purple, sw: 5 });
+        txt(g, 58, 80, "ADDR", { size: 11, weight: 700, fill: C.grey, ls: 1 });
+        txt(g, 100, 80, "E20 ASSEMBLY", { size: 13, weight: 700, fill: C.purple, ls: 1 });
+        r.codeBug = codeRows(g, 44, 104, 26, 536, linesBug, { size: 15 });
+        r.codeFix = codeRows(g, 44, 104, 26, 536, linesFix, { size: 15 });
+        r.chev = txt(g, 20, 0, "▶", { size: 15, fill: C.red });
+        r.reg = regBoxes(g, 620, 60, 118, 66, 128, 82, [0, 0, 0, 0, 0, 0, 0, 0]);
+        txt(g, 620, 236, "PC", { size: 12, weight: 700, fill: C.grey, ls: 1 });
+        rect(g, 620, 244, 130, 52, { rx: 10, fill: C.white, stroke: C.purple, sw: 4 });
+        r.pc = txt(g, 685, 279, "0", { size: 24, weight: 700, mono: true, anchor: "middle", fill: C.purple });
+        r.mem = grp(g, 0);
+        txt(r.mem, 790, 236, "MEMORY", { size: 12, weight: 700, fill: C.grey, ls: 1 });
+        r.memBox = rect(r.mem, 790, 244, 150, 52, { rx: 10, fill: C.white, stroke: C.purple, sw: 4 });
+        txt(r.mem, 798, 262, "[10] saved_ra", { size: 12, weight: 700, mono: true, fill: C.lgrey });
+        r.memVal = txt(r.mem, 865, 288, "0", { size: 22, weight: 700, mono: true, anchor: "middle" });
+        return r;
+      },
+      render(s, r) {
+        const active = s.view === "bug" ? r.codeBug : r.codeFix;
+        [r.codeBug, r.codeFix].forEach((cr, i) => {
+          const on = (i === 0) === (s.view === "bug");
+          cr.rows.forEach((el) => { el.style.opacity = on ? 1 : 0; });
+          cr.texts.forEach((el) => { el.style.opacity = on ? 1 : 0; });
+          cr.addrs.forEach((el) => { el.style.opacity = on ? 1 : 0; });
+        });
+        active.rows.forEach((el) => { el.setAttribute("fill", "none"); el.setAttribute("stroke", "none"); });
+        if (s.ex !== null && s.ex !== undefined) { active.rows[s.ex].setAttribute("fill", C.t2); active.rows[s.ex].setAttribute("stroke", C.red); active.rows[s.ex].setAttribute("stroke-width", 3); }
+        r.chev.setAttribute("y", 104 + s.pc * 26);
+        r.pc.textContent = s.pc;
+        vis(r.mem, s.view === "fix");
+        r.memVal.textContent = s.mem === undefined ? "0" : s.mem;
+        const mch = s.changed === "m10";
+        r.memBox.setAttribute("fill", mch ? C.t2 : (s.read ? C.t4 : C.white));
+        r.memBox.setAttribute("stroke", mch ? C.red : (s.read ? C.accent : C.purple));
+        r.reg.vs.forEach((v, i) => { v.textContent = s.regs[i]; });
+        r.reg.boxes.forEach((b, i) => {
+          const ch = s.changed === "r" + i;
+          b.setAttribute("fill", ch ? C.t2 : (i === 0 ? "#dcd2e6" : C.white));
+          b.setAttribute("stroke", ch ? C.red : C.purple);
+        });
+      },
+    });
+  })();
+
+  // ================= 7 Recursion and the Case for a Stack =================
+  (function () {
+    const SLOTS = 6;
+    const S = (o) => Object.assign({ chip: 0, stack: [] }, o);
+    const steps = [
+      S({ n: 0, chip: 1, call: "", foot: "the saved_ra trick doesn't generalise", narrate: "<code>saved_ra</code> fixes one level of nesting. It does not fix <strong>recursion</strong> (a subroutine calling itself) because you don't know in advance how many pending calls will be in flight. You need storage that grows and shrinks: a <strong>stack</strong>." }),
+      S({ n: 1, chip: 1, call: "", foot: "push and pop, by hand", narrate: "E20 has no stack hardware. But nothing stops you simulating one: reserve a register as the 'top of stack' address, and build push/pop out of ordinary <code>sw</code>/<code>lw</code> plus an increment or decrement." }),
+      S({ n: 2, chip: 2, call: "fib(3) begins", stack: [], foot: "trace fib(3), with fib(0)=0, fib(1)=1", narrate: "Trace <code>fib(3)</code> under this convention: before every recursive call, push what you'll still need afterwards: your argument and your own return address." }),
+      S({ n: 3, chip: 2, call: "fib(3) calls fib(2)", stack: ["3   (fib(3)'s argument)", "RA0 (fib(3)'s return address)"], foot: "step 1", narrate: "<code>fib(3)</code> pushes its argument (3) and its return address, then calls <code>fib(2)</code>." }),
+      S({ n: 4, chip: 2, call: "fib(2) calls fib(1)", stack: ["3   (fib(3)'s argument)", "RA0 (fib(3)'s return address)", "2   (fib(2)'s argument)", "RA1 (fib(2)'s return address)"], foot: "step 2: deepest point", narrate: "<code>fib(2)</code> pushes its own argument and return address, then calls <code>fib(1)</code>. Four cells now: two complete, pending frames: exactly the capacity a single register doesn't have." }),
+      S({ n: 5, chip: 2, call: "fib(1): base case, returns 1", stack: ["3   (fib(3)'s argument)", "RA0 (fib(3)'s return address)", "2   (fib(2)'s argument)", "RA1 (fib(2)'s return address)"], foot: "step 3", narrate: "<code>fib(1)</code> is a base case: no recursion, no pushing. It returns 1 directly." }),
+      S({ n: 6, chip: 3, call: "fib(2) saves 1, calls fib(0)", stack: ["3   (fib(3)'s argument)", "RA0 (fib(3)'s return address)", "2   (fib(2)'s argument)", "RA1 (fib(2)'s return address)", "1   (fib(1)'s result, saved)"], foot: "step 4", narrate: "Back in <code>fib(2)</code>: <code>fib(1)</code>'s result is 1. Push it (it needs to survive the next call), then call <code>fib(0)</code>." }),
+      S({ n: 7, chip: 3, call: "fib(0): base case, returns 0", stack: ["3   (fib(3)'s argument)", "RA0 (fib(3)'s return address)", "2   (fib(2)'s argument)", "RA1 (fib(2)'s return address)", "1   (fib(1)'s result, saved)"], foot: "step 5", narrate: "<code>fib(0)</code> is a base case too: it returns 0 directly." }),
+      S({ n: 8, chip: 3, call: "fib(2) returns 1 to fib(3)", stack: ["3   (fib(3)'s argument)", "RA0 (fib(3)'s return address)"], foot: "step 6", narrate: "Back in <code>fib(2)</code>: pop <code>fib(0)</code>'s result (0) and <code>fib(1)</code>'s saved result (1), sum them (1), then pop its own return address and argument off the stack, and return 1 to <code>fib(3)</code>." }),
+      S({ n: 9, chip: 4, call: "fib(3) saves 1, calls fib(1) again", stack: ["3   (fib(3)'s argument)", "RA0 (fib(3)'s return address)", "1   (fib(2)'s result, saved)"], foot: "step 7", narrate: "Back in <code>fib(3)</code>: <code>fib(2)</code>'s result is 1. Push it, then call <code>fib(1)</code> a second time: the other term in <code>fib(3) = fib(2) + fib(1)</code>." }),
+      S({ n: 10, chip: 4, call: "fib(1): base case again, returns 1", stack: ["3   (fib(3)'s argument)", "RA0 (fib(3)'s return address)", "1   (fib(2)'s result, saved)"], foot: "step 8", narrate: "<code>fib(1)</code> is a base case again: returns 1." }),
+      S({ n: 11, chip: 4, call: "fib(3) returns 2", stack: [], foot: "step 9: stack empty again", narrate: "Back in <code>fib(3)</code>: pop this second <code>fib(1)</code>'s result (1) and the saved <code>fib(2)</code> result (1), sum them (2), pop its own return address and argument, and return 2. Every cell that went on has come back off, in reverse order: the stack is empty again." }),
+      S({ n: 12, chip: 4, call: "", stack: [], foot: "one return address -> as many as you need", narrate: "<strong>A stack turns 'one return address' into 'as many as you have memory for.'</strong> <code>fib(3)</code> only goes three calls deep; nothing about the mechanism changes if it went thirty, or three thousand. That's the capability plain E20 subroutines are missing, and it's the single biggest reason real ISAs build a hardware stack in." }),
+    ];
+    scene({
+      num: "7", title: "Recursion and the Case for a Stack", subtitle: "One return address turns into as many as you have memory for.",
+      chips: ["The idea", "fib(3) begins", "The deepest point", "Unwinding"],
+      steps,
+      build(g) {
+        const r = {};
+        r.intro = grp(g, 1);
+        rect(r.intro, 175, 70, 800, 220, { rx: 18, fill: C.white, stroke: C.purple, sw: 6 });
+        txt(r.intro, 575, 106, "SIMULATING PUSH / POP BY HAND", { size: 13, weight: 700, fill: C.purple, anchor: "middle", ls: 2 });
+        const psLines = ["# push $reg: store at top of stack, bump the pointer up", "sw   $reg, 0($6)", "addi $6, $6, 1", "", "# pop into $reg: bump the pointer down, load from the new top", "addi $6, $6, -1", "lw   $reg, 0($6)"];
+        psLines.forEach((l, i) => txt(r.intro, 210, 140 + i * 22, l, { size: 15, weight: 600, mono: true, pre: true, fill: l.startsWith("#") ? C.grey : C.ink }));
+
+        r.stackPanel = grp(g, 0);
+        rect(r.stackPanel, 60, 60, 520, 320, { rx: 16, fill: C.white, stroke: C.purple, sw: 5 });
+        txt(r.stackPanel, 320, 90, "THE STACK", { size: 13, weight: 700, fill: C.purple, anchor: "middle", ls: 2 });
+        r.slots = []; r.slotTexts = [];
+        for (let i = 0; i < SLOTS; i++) {
+          const y = 110 + (SLOTS - 1 - i) * 40;
+          const b = rect(r.stackPanel, 90, y, 460, 34, { rx: 6, fill: C.t3, stroke: C.purple, sw: 2 });
+          const t = txt(r.stackPanel, 320, y + 23, "", { size: 15, weight: 700, mono: true, anchor: "middle" });
+          r.slots.push(b); r.slotTexts.push(t);
+        }
+        r.topTag = txt(r.stackPanel, 570, 0, "◀ top", { size: 13, weight: 700, fill: C.red, anchor: "start" });
+
+        r.callPanel = grp(g, 0);
+        rect(r.callPanel, 620, 60, 460, 90, { rx: 16, fill: C.t1, stroke: C.purple, sw: 5 });
+        txt(r.callPanel, 850, 92, "RIGHT NOW", { size: 12, weight: 700, fill: C.purple, anchor: "middle", ls: 1 });
+        r.callText = txt(r.callPanel, 850, 128, "", { size: 19, weight: 700, mono: true, anchor: "middle" });
+
+        r.closing = grp(g, 0);
+        rect(r.closing, 620, 170, 460, 190, { rx: 16, fill: C.t4, stroke: C.purple, sw: 5 });
+        txt(r.closing, 850, 340, "", { size: 13, italic: true, fill: C.grey, anchor: "middle" });
+        return r;
+      },
+      render(s, r) {
+        vis(r.intro, s.n <= 1);
+        vis(r.stackPanel, s.n >= 2);
+        vis(r.callPanel, s.n >= 2);
+        for (let i = 0; i < SLOTS; i++) {
+          const content = s.stack[i];
+          r.slotTexts[i].textContent = content || "";
+          r.slots[i].setAttribute("fill", content ? (i === s.stack.length - 1 ? C.t2 : C.t1) : C.t3);
+          r.slots[i].setAttribute("stroke", content ? C.purple : "#d9d9d3");
+        }
+        r.callText.textContent = s.call || "";
+      },
+    });
+  })();
+
+  // ================= 8 Tracing a Complete Program =================
+  (function () {
+    const lines = [
+      { a: 0, t: "main: movi $1, 0" }, { a: 1, t: "    movi $2, 0" }, { a: 2, t: "loop: lw   $3, myarray($1)" },
+      { a: 3, t: "    jeq  $3, $0, done" }, { a: 4, t: "    slti $4, $3, 10" }, { a: 5, t: "    jeq  $4, $0, big" },
+      { a: 6, t: "    j    next" }, { a: 7, t: "big:  addi $2, $2, 1" }, { a: 8, t: "next: addi $1, $1, 1" },
+      { a: 9, t: "    j    loop" }, { a: 10, t: "done: sw   $2, count($0)" }, { a: 11, t: "halt" },
+      { t: "myarray: .fill 10, 3, 0", dim: true }, { t: "count: .fill 0", dim: true },
+    ];
+    const S = (o) => Object.assign({ chip: 0 }, o);
+    const steps = [
+      S({ ex: null, pc: 0, pcv: 0, regs: [0, 0, 0, 0, 0, 0, 0, 0], mem: {"15": 0}, foot: "count the elements >= 10", narrate: "Everything at once: a sentinel loop (Section 3), array reads (Section 4), and an <code>if</code> inside the loop (Section 2). The goal: count how many elements are at least 10. <code>$1</code> is the index, <code>$2</code> the count, <code>$3</code> the current element, <code>$4</code> a comparison result." }),
+      S({ ex: 0, pc: 1, pcv: 1, regs: [0, 0, 0, 0, 0, 0, 0, 0], mem: {"15": 0}, foot: "$1 := index", narrate: "<code>$1 = 0</code>: the index." }),
+      S({ ex: 1, pc: 2, pcv: 2, regs: [0, 0, 0, 0, 0, 0, 0, 0], mem: {"15": 0}, foot: "$2 := count", narrate: "<code>$2 = 0</code>: the count so far." }),
+      S({ ex: 2, pc: 3, pcv: 3, regs: [0, 0, 0, 10, 0, 0, 0, 0], changed: "r3", mem: {"15": 0}, foot: "lw: the first element", narrate: "<code>$3 = myarray[0] = 10</code>." }),
+      S({ ex: 3, pc: 4, pcv: 4, regs: [0, 0, 0, 10, 0, 0, 0, 0], mem: {"15": 0}, foot: "not the sentinel", narrate: "10 isn't 0, so the loop continues." }),
+      S({ ex: 4, pc: 5, pcv: 5, regs: [0, 0, 0, 10, 0, 0, 0, 0], mem: {"15": 0}, foot: "slti: is it less than 10?", narrate: "<code>slti $4, $3, 10</code>: is 10 &lt; 10? No, it's equal, so <code>$4 = 0</code>." }),
+      S({ ex: 5, pc: 7, pcv: 7, regs: [0, 0, 0, 10, 0, 0, 0, 0], mem: {"15": 0}, foot: "jeq fires: big", narrate: "<code>$4 == $0</code>, so <code>jeq</code> jumps to <code>big</code>: this element counts, because \"at least 10\" includes 10." }),
+      S({ ex: 7, pc: 8, pcv: 8, regs: [0, 0, 1, 10, 0, 0, 0, 0], changed: "r2", mem: {"15": 0}, foot: "count++", narrate: "<code>$2 = 1</code>." }),
+      S({ ex: 8, pc: 9, pcv: 9, regs: [0, 1, 1, 10, 0, 0, 0, 0], changed: "r1", mem: {"15": 0}, foot: "advance index", narrate: "<code>$1 = 1</code>." }),
+      S({ ex: 9, pc: 2, pcv: 2, regs: [0, 1, 1, 10, 0, 0, 0, 0], mem: {"15": 0}, foot: "j loop", narrate: "Back to the top." }),
+      S({ ex: 2, pc: 3, pcv: 3, regs: [0, 1, 1, 3, 0, 0, 0, 0], changed: "r3", mem: {"15": 0}, foot: "lw: the next element", narrate: "<code>$3 = myarray[1] = 3</code>." }),
+      S({ ex: 3, pc: 4, pcv: 4, regs: [0, 1, 1, 3, 0, 0, 0, 0], mem: {"15": 0}, foot: "not the sentinel", narrate: "3 isn't 0, so the loop continues." }),
+      S({ ex: 4, pc: 5, pcv: 5, regs: [0, 1, 1, 3, 1, 0, 0, 0], changed: "r4", mem: {"15": 0}, foot: "slti: 3 < 10", narrate: "<code>slti</code>: is 3 &lt; 10? Yes, so <code>$4 = 1</code>." }),
+      S({ ex: 5, pc: 6, pcv: 6, regs: [0, 1, 1, 3, 1, 0, 0, 0], mem: {"15": 0}, foot: "jeq doesn't fire", narrate: "<code>$4</code> is 1, not 0, so <code>jeq</code> falls through." }),
+      S({ ex: 6, pc: 8, pcv: 8, regs: [0, 1, 1, 3, 1, 0, 0, 0], mem: {"15": 0}, foot: "j next: skip the count", narrate: "<code>j next</code> jumps over the count: 3 doesn't qualify." }),
+      S({ ex: 8, pc: 9, pcv: 9, regs: [0, 2, 1, 3, 1, 0, 0, 0], changed: "r1", mem: {"15": 0}, foot: "advance index", narrate: "<code>$1 = 2</code>." }),
+      S({ ex: 9, pc: 2, pcv: 2, regs: [0, 2, 1, 3, 1, 0, 0, 0], mem: {"15": 0}, foot: "j loop", narrate: "Back to the top." }),
+      S({ ex: 2, pc: 3, pcv: 3, regs: [0, 2, 1, 0, 1, 0, 0, 0], changed: "r3", mem: {"15": 0}, foot: "the sentinel", narrate: "<code>$3 = myarray[2] = 0</code>: the sentinel." }),
+      S({ ex: 3, pc: 10, pcv: 10, regs: [0, 2, 1, 0, 1, 0, 0, 0], mem: {"15": 0}, foot: "jeq fires: done", narrate: "<code>$3 == $0</code>, so <code>jeq</code> jumps to <code>done</code>." }),
+      S({ ex: 10, pc: 11, pcv: 11, regs: [0, 2, 1, 0, 1, 0, 0, 0], changed: "m15", mem: {"15": 1}, foot: "store the answer", narrate: "<code>count = $2 = 1</code> (cell 15)." }),
+      S({ ex: 11, pc: 11, pcv: 11, regs: [0, 2, 1, 0, 1, 0, 0, 0], mem: {"15": 1}, foot: "halt", narrate: "<code>halt</code>. Final: <code>$2 = 1</code>: only the 10 is at least 10." }),
+    ];
+    scene(traceScene({ num: "8", title: "Tracing a Complete Program", subtitle: "Conditionals, loops, and arrays, composed: counting the elements that are at least 10.", rowH: 19, size: 14, lines, mem: [15], steps }));
+  })();
+  // ---------------- engine ----------------
+  const $ = (id) => document.getElementById(id);
+  const svg = $("stage");
+  const foot = txt(svg, 575, 392, "", { size: 13, italic: true, fill: C.grey, anchor: "middle" });
+
+  scenes.forEach((sc) => {
+    sc.g = E("g", {}, svg);
+    sc.g.style.display = "none";
+    sc.r = sc.build(sc.g) || {};
+    foot.parentNode.appendChild(foot);
+  });
+  $("sec-total").textContent = scenes.length - scenes.filter((x) => x.front).length;
+
+  // si: section, ti: step, ph: 0 = question showing (diagram as before), 1 = answered
+  const off = scenes.filter((x) => x.front).length;   // title slides don't count as sections
+  let si = 0, ti = 0, ph = 1, shownScene = -1;
+  const asks = (i, k) => !!scenes[i].steps[k].q;
+  const startPh = (i, k) => (asks(i, k) && k > 0 ? 0 : 1);
+
+  function readHash() {
+    const m = location.hash.match(/^#(\d+)\.(\d+)(q?)$/);
+    if (!m) { ph = startPh(si, ti); return; }
+    const a = Number(m[1]) - 1 + off, b = Number(m[2]) - 1;
+    if (a >= 0 && a < scenes.length) { si = a; ti = Math.max(0, Math.min(scenes[a].steps.length - 1, b)); }
+    ph = m[3] && asks(si, ti) && ti > 0 ? 0 : 1;
+  }
+
+  function buildChips(sc) {
+    const box = $("chips");
+    box.innerHTML = "";
+    sc.chips.forEach((label) => {
+      const d = document.createElement("div");
+      d.className = "stp";
+      d.textContent = label;
+      box.appendChild(d);
+    });
+  }
+
+  function render() {
+    const sc = scenes[si], s = sc.steps[ti];
+    if (shownScene !== si) {
+      scenes.forEach((x, k) => { x.g.style.display = k === si ? "inline" : "none"; });
+      $("num").textContent = sc.num;
+      $("title").textContent = sc.title;
+      $("subtitle").textContent = sc.subtitle;
+      document.querySelector(".stage").style.visibility = sc.front ? "hidden" : "";
+      $("subtitle").style.visibility = sc.front ? "hidden" : "";
+      $("sec-wrap").style.display = sc.front ? "none" : "";
+      $("foot-left").textContent = sc.title;
+      buildChips(sc);
+      shownScene = si;
+    }
+    const asking = ph === 0 && !!s.q && ti > 0;
+    // while a question is showing, the diagram stays exactly as the previous step left it
+    sc.render(asking ? sc.steps[ti - 1] : s, sc.r, ti);
+    foot.textContent = asking ? "" : (s.foot || "");
+    const qm = '<span class="qm">Q</span>';
+    $("narration").innerHTML = asking ? '<div class="q big">' + qm + s.q + '</div>'
+      : (s.q ? '<div class="q small">' + qm + s.q + '</div>' : "") + s.narrate;
+    $("sec-n").textContent = si - off + 1;
+    $("step-n").textContent = ti + 1;
+    $("step-total").textContent = sc.steps.length;
+    document.querySelectorAll(".stp").forEach((chip, k) => {
+      const n = k + 1;
+      chip.classList.remove("active", "done");
+      if (!s.chip) return;
+      if (s.chip === n) chip.classList.add("active");
+      else if (n < s.chip) chip.classList.add("done");
+    });
+    history.replaceState(null, "", "#" + (si - off + 1) + "." + (ti + 1) + (asking ? "q" : ""));
+  }
+
+  function go(d) {
+    const sc = scenes[si];
+    if (d > 0) {
+      if (ph === 0) ph = 1;
+      else if (ti < sc.steps.length - 1) { ti++; ph = startPh(si, ti); }
+      else if (si < scenes.length - 1) { si++; ti = 0; ph = startPh(si, 0); }
+    } else {
+      if (ph === 1 && asks(si, ti) && ti > 0) ph = 0;
+      else if (ti > 0) { ti--; ph = 1; }
+      else if (si > 0) { si--; ti = scenes[si].steps.length - 1; ph = 1; }
+    }
+    render();
+  }
+
+  function jumpScene(d) {
+    if (d < 0 && ti > 0) ti = 0;
+    else si = Math.max(0, Math.min(scenes.length - 1, si + d)), ti = 0;
+    ph = startPh(si, 0);
+    render();
+  }
+
+  window.addEventListener("keydown", (e) => {
+    const fwd = ["ArrowRight", "ArrowDown", " ", "PageDown"].includes(e.key);
+    const back = ["ArrowLeft", "ArrowUp", "PageUp"].includes(e.key);
+    if (!fwd && !back) return;
+    e.preventDefault();
+    if (e.shiftKey) jumpScene(fwd ? 1 : -1);
+    else go(fwd ? 1 : -1);
+  });
+
+  window.addEventListener("hashchange", () => { readHash(); render(); });
+
+  readHash();
+  render();
+})();
+</script>
+
+</body>
+</html>
