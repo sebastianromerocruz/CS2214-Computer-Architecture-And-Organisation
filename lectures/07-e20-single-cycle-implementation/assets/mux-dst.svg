@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 262" font-family="Helvetica, Arial, sans-serif">
+  <defs><marker id="a" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#57068c"/></marker></defs>
+  <rect width="620" height="262" rx="28" fill="#eee6f3"/>
+  <rect x="20" y="20" width="14" height="14" fill="#8900e1"/>
+  <circle cx="596" cy="238" r="7" fill="#7b5aa6"/>
+  <polygon points="270,40 360,65 360,167 270,192" fill="#e2cdf2" stroke="#57068c" stroke-width="4"/>
+  <text x="310" y="121.0" fill="#57068c" font-size="14" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">MUXdst</text>
+  <line x1="200" y1="70" x2="270" y2="70" stroke="#57068c" stroke-width="3" marker-end="url(#a)"/>
+  <text x="192" y="75" fill="#57068c" font-size="14" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">rB</text>
+  <line x1="200" y1="114" x2="270" y2="114" stroke="#57068c" stroke-width="3" marker-end="url(#a)"/>
+  <text x="192" y="119" fill="#57068c" font-size="14" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">rC</text>
+  <line x1="200" y1="158" x2="270" y2="158" stroke="#57068c" stroke-width="3" marker-end="url(#a)"/>
+  <text x="192" y="163" fill="#57068c" font-size="14" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">7</text>
+  <line x1="360" y1="116.0" x2="460" y2="116.0" stroke="#57068c" stroke-width="3" marker-end="url(#a)"/>
+  <text x="468" y="121.0" fill="#57068c" font-size="15" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">TGT</text>
+  <line x1="315" y1="242" x2="315" y2="178" stroke="#c8202f" stroke-width="3" marker-end="url(#a)"/>
+  <text x="315" y="260" fill="#c8202f" font-size="13" font-weight="700" text-anchor="middle" font-style="italic">select: from control</text>
+</svg>

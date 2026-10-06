@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 260" font-family="Helvetica, Arial, sans-serif">
+  <defs><marker id="a" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#57068c"/></marker></defs>
+  <rect width="560" height="260" rx="28" fill="#eee6f3"/>
+  <rect x="20" y="20" width="14" height="14" fill="#8900e1"/>
+  <circle cx="536" cy="236" r="7" fill="#7b5aa6"/>
+  <polygon points="190,40 370,40 340,180 220,180" fill="#e2cdf2" stroke="#57068c" stroke-width="4"/>
+  <text x="280" y="120" fill="#57068c" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">ALU</text>
+  <polyline points="120,70 200,70" fill="none" stroke="#57068c" stroke-width="3" marker-end="url(#a)"/>
+  <text x="112" y="75" fill="#57068c" font-size="14" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">SRC1dataOut</text>
+  <polyline points="120,110 207,110" fill="none" stroke="#57068c" stroke-width="3" marker-end="url(#a)"/>
+  <text x="112" y="115" fill="#57068c" font-size="14" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">SRC2dataOut</text>
+  <polyline points="280,180 280,225" fill="none" stroke="#57068c" stroke-width="3" marker-end="url(#a)"/>
+  <text x="292" y="220" fill="#57068c" font-size="14" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">result</text>
+  <polyline points="280,8 280,40" fill="none" stroke="#57068c" stroke-width="3" marker-end="url(#a)"/>
+  <text x="292" y="20" fill="#57068c" font-size="13" font-weight="700" text-anchor="start" font-style="italic">FUNCalu (from control)</text>
+</svg>

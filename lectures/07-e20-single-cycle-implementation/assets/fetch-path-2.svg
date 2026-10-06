@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 270" font-family="Helvetica, Arial, sans-serif">
+  <defs><marker id="a" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#57068c"/></marker></defs>
+  <rect width="800" height="270" rx="28" fill="#eee6f3"/>
+  <rect x="20" y="20" width="14" height="14" fill="#8900e1"/>
+  <circle cx="776" cy="246" r="7" fill="#7b5aa6"/>
+  <rect x="50" y="100" width="100" height="60" rx="8" fill="#e2cdf2" stroke="#57068c" stroke-width="4"/>
+  <text x="100" y="137" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">PC</text>
+  <rect x="400" y="85" width="250" height="90" rx="8" fill="#e2cdf2" stroke="#57068c" stroke-width="4"/>
+  <text x="525" y="112" fill="#57068c" font-size="18" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">MEMORY</text>
+  <text x="412" y="134" fill="#57068c" font-size="14" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">instrAddr</text>
+  <text x="638" y="134" fill="#57068c" font-size="14" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">instrOut</text>
+  <line x1="150" y1="130" x2="400" y2="130" stroke="#57068c" stroke-width="3" marker-end="url(#a)"/>
+  <text x="275" y="120" fill="#57068c" font-size="14" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">pc</text>
+  <line x1="650" y1="134" x2="740" y2="134" stroke="#57068c" stroke-width="3" marker-end="url(#a)"/>
+  <text x="700" y="200" fill="#57068c" font-size="12" font-weight="700" text-anchor="end" font-style="italic">the current instruction</text>
+  <rect x="220" y="40" width="90" height="44" rx="8" fill="#f7f0ff" stroke="#57068c" stroke-width="4"/>
+  <text x="265" y="68" fill="#57068c" font-size="18" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">+1</text>
+  <polyline points="200,130 200,62 220,62" fill="none" stroke="#57068c" stroke-width="3" marker-end="url(#a)"/>
+  <polyline points="310,62 340,62 340,20 100,20 100,100" fill="none" stroke="#57068c" stroke-width="3" marker-end="url(#a)"/>
+</svg>
