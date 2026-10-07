@@ -2,6 +2,8 @@
 
 <h1 align=center>The E20 Single-Cycle Datapath</h1>
 
+<p align=center><strong><em>Song of the day</strong>: <a href="https://youtu.be/YYwiO_tGmT0"><strong><u>Cash Wednesday</u></strong></a> by Skylar Spence (2015), recommended by Eliot K.</em></p>
+
 ---
 
 ## Sections
@@ -39,7 +41,7 @@ Here's the one rule for this lecture:
 
 > **Every wire we draw must be justified by an instruction that needs it.** No ghost wires.
 
-We're not designing a processor from scratch, and we're not adding lines because they make the schematic look nice. We're building the *minimum* circuit that makes the instruction set from Weeks 4 and 5 physically real. That turns an open-ended engineering problem into a checklist:
+We're not designing a processor from scratch, and we're not adding lines because they make the schematic look nice. We're building the *minimum* circuit that makes the instruction set from Weeks 4 and 5 physically real:
 
 - `add` reads two registers and writes one, so the register file needs (at least) two read ports and one write port.
 - `lw` computes an address and then reads memory at it, so the ALU needs to be wired to memory's address input.
