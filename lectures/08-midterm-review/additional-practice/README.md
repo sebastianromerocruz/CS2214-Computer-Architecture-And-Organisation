@@ -70,10 +70,10 @@ endmodule
 
 ### 2. (14 points) Bits and two's complement
 
-**(a)** (6 points) Complete the following C function, which returns a value equal to its parameter, with the **second and fifth least significant bits turned on**. A bit that is already on stays on, and every other bit is left alone. For example, `setbits_second_fifth(5)` should return `23`, and `setbits_second_fifth(40)` should return `58`.
+**(a)** (6 points) Complete the following C function, which returns a value built from the **three least significant bits** of its parameter. In the return value, those three bits must sit in the **sixth, fifth and fourth** least significant positions (the most significant of the three goes in the sixth position), and every other bit of the return value must be 0. For example, `placebits(22)` should return `48`, because `22 = 10110` has `110` as its three least significant bits, and `110000 = 48`. For another example, `placebits(45)` should return `40`, because `45 = 101101` ends in `101`, and `101000 = 40`.
 
 ```c
-unsigned int setbits_second_fifth(unsigned int x) {
+unsigned int placebits(unsigned int x) {
     return YOUR CODE HERE;
 }
 ```

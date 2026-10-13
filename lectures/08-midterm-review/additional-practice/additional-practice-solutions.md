@@ -59,21 +59,23 @@ end
 
 ## 2. Bits and two's complement (14 points)
 
-### (a) Turning bits on (6 points)
+### (a) Moving three bits (6 points)
 
-Be exact about *which* bits. "Least significant" means counting from the right, and we number the bits from 0. So the **second** least significant bit is bit 1, and the **fifth** is bit 4. In an 8-bit picture, with `x = 5`:
+Be exact about *which* bits. We number from 0, so the three least significant bits are bits 2, 1 and 0, and the sixth, fifth and fourth least significant positions are bits 5, 4 and 3. The job is to take the group in bits 2 to 0 and slide it up by three places. In an 8-bit picture, with `x = 22`:
 
 ```
-bit number   7 6 5 4 | 3 2 1 0
-x = 5        0 0 0 0 | 0 1 0 1
-                 ^         ^
-                 bit 4     bit 1: the two to turn on
+bit number    7 6 5 4 3 | 2 1 0
+x = 22        0 0 0 1 0 | 1 1 0     <- the group to move is 110
+result        0 0 1 1 0 | 0 0 0     <- 110 now sits in bits 5, 4, 3
 ```
 
-*What turns a bit on, and leaves it on if it already was?* The **OR** operator. `bit | 1` is always 1, and `bit | 0` leaves the bit alone. So OR `x` with a mask that has 1s in exactly the positions we want on, and 0s everywhere else: bit 4 is worth 16 and bit 1 is worth 2, so the mask is `0001 0010`, which is 18.
+There are two jobs, and each has its own operator:
+
+1. **Isolate the three bits.** AND with a mask that has 1s only in the three positions we keep: `0000 0111`, which is 7. `x & 7` throws away everything above bit 2. For `22`, that gives `110 = 6`.
+2. **Move them up three places.** Shift left by 3: `<<` moves every bit three positions towards the most significant end and fills the vacated low bits with 0s, which is exactly the "every other bit is 0" requirement. `6 << 3` is `110000 = 48`.
 
 ```c
-return x | 18;
+return (x & 7) << 3;
 ```
 
 ### (b) Overflow in 5-bit two's complement (6 points)
