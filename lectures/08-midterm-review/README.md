@@ -12,8 +12,8 @@ The midterm is **Thursday, October 15, 2026**. This review is a practice midterm
 
 On the real midterm you will have these two handouts, so use them here too:
 
-- the [E15 Cheat Sheet](handout-e15-cheatsheet.pdf)
-- [Section 3 of the E20 Manual](handout-e20-manual-section3.pdf) (the instruction set)
+- the [E15 Cheat Sheet](assets/handout-e15-cheatsheet.pdf)
+- [Section 3 of the E20 Manual](assets/handout-e20-manual-section3.pdf) (the instruction set)
 
 They are there so you don't need to memorise instruction encodings. Nothing else is allowed: no notes, no phone, no calculator, no simulator.
 
