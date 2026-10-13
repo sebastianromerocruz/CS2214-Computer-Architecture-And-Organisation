@@ -11,10 +11,8 @@
      driven by the arrow keys, one small change per step, plain language
      before jargon. Each section is a "scene" with its own diagram; the arrow
      keys run straight through all of them. Shift + arrow jumps a section.
-     Question-and-answer form: at key beats the slide first asks a question
-     (the diagram stays as the previous step left it) and the next key press
-     reveals the diagram and the answer. Open with #3.5 to start at section 3,
-     step 5 (answered), or #3.5q for the same step with the question showing. */
+     Narrative form: each beat states the problem it has just run into, then the
+     fix. Open with #3.5 to start at section 3, step 5. */
 
   html, body {
     margin: 0;
@@ -332,15 +330,35 @@
     wire("iw", 3, [[380, 162], [430, 162]]);
     const rib = mk("ribbon", 3);
     const cells = [[430, 52.5, "opcode"], [482.5, 52.5, "rA"], [535, 52.5, "rB"], [587.5, 52.5, "rC"], [640, 70, "func"]];
+    const rcell = {};
     cells.forEach(([x, w, l], i) => {
-      rect(rib.g, x, 140, w, 36, { fill: i === 0 ? C.t5 : C.t6, stroke: C.purple, sw: 3 });
-      txt(rib.g, x + w / 2, 163, l, { size: i === 0 ? 12 : 14, weight: 700, mono: true, fill: C.purple, anchor: "middle" });
+      const rc = rect(rib.g, x, 140, w, 36, { fill: i === 0 ? C.t5 : C.t6, stroke: C.purple, sw: 3 });
+      const tx = txt(rib.g, x + w / 2, 163, l, { size: i === 0 ? 12 : 14, weight: 700, mono: true, fill: C.purple, anchor: "middle" });
+      rcell[l] = { rc, tx, fill: i === 0 ? C.t5 : C.t6 };
     });
-    rect(rib.g, 482.5, 122, 227.5, 12, { rx: 4, fill: C.t4, stroke: C.accent, sw: 2 });
-    txt(rib.g, 596, 132, "imm13", { size: 11, weight: 700, mono: true, fill: C.accent, anchor: "middle" });
-    rect(rib.g, 587.5, 108, 122.5, 12, { rx: 4, fill: C.t4, stroke: C.accent, sw: 2 });
-    txt(rib.g, 648, 118, "imm7", { size: 11, weight: 700, mono: true, fill: C.accent, anchor: "middle" });
-    rib.hlf = null;
+    const imm13r = rect(rib.g, 482.5, 122, 227.5, 12, { rx: 4, fill: C.t4, stroke: C.accent, sw: 2 });
+    const imm13t = txt(rib.g, 596, 132, "imm13", { size: 11, weight: 700, mono: true, fill: C.accent, anchor: "middle" });
+    const imm7r = rect(rib.g, 587.5, 108, 122.5, 12, { rx: 4, fill: C.t4, stroke: C.accent, sw: 2 });
+    const imm7t = txt(rib.g, 648, 118, "imm7", { size: 11, weight: 700, mono: true, fill: C.accent, anchor: "middle" });
+    // red highlight for the fields a step is talking about: step.rib lists opcode, rA, rB, rC, func, imm7, imm13
+    rib.hlf = (on, st) => {
+      const parts = on ? ((st && st.rib) || []) : [];
+      const has = (k) => parts.indexOf(k) >= 0;
+      ["opcode", "rA", "rB", "rC", "func"].forEach((k) => {
+        const hot = has(k);
+        rcell[k].rc.setAttribute("fill", hot ? C.t2 : rcell[k].fill);
+        rcell[k].rc.setAttribute("stroke", hot ? C.red : C.purple);
+        rcell[k].rc.setAttribute("stroke-width", hot ? 5 : 3);
+        rcell[k].tx.setAttribute("fill", hot ? C.red : C.purple);
+      });
+      [[imm7r, imm7t, "imm7"], [imm13r, imm13t, "imm13"]].forEach(([r0, t0, k]) => {
+        const hot = has(k);
+        r0.setAttribute("fill", hot ? C.t2 : C.t4);
+        r0.setAttribute("stroke", hot ? C.red : C.accent);
+        r0.setAttribute("stroke-width", hot ? 4 : 2);
+        t0.setAttribute("fill", hot ? C.red : C.accent);
+      });
+    };
     // --- stage 4: register reads
     wire("rB", 4, [[561, 176], [561, 205], [800, 205]], { label: [690, 198, "rB"] });
     wire("rAd", 4, [[508, 176], [508, 237], [785, 237], [785, 245], [800, 245]], { to: 5.5, label: [655, 230, "rA"] });
@@ -390,10 +408,10 @@
     wire("zext", 8.1, [[520, 122], [520, 104]]);
     box("zextb", 8.1, 470, 80, 100, 24, "zero-ext");
     wire("immLane", 8.1, [[520, 80], [520, 20], [130, 20], [130, 36]]);
-    wire("jrLane", 8.2, [[1125, 250], [1125, 4], [50, 4], [50, 36]], { label: [600, 0, "ALU result (jr)"] });
-    wire("j1ext", 8.3, [[245, 87], [405, 87]], { arrow: false });
-    wire("jal", 8.3, [[405, 87], [405, 328], [700, 328]], { label: [520, 321, "pc+1 (jal)"] });
-    dot("j1dot2", 8.3, 405, 87);
+    wire("jrLane", 8.3, [[1125, 250], [1125, 4], [50, 4], [50, 36]], { label: [600, 0, "ALU result (jr)"] });
+    wire("j1ext", 8.2, [[245, 87], [405, 87]], { arrow: false });
+    wire("jal", 8.2, [[405, 87], [405, 328], [700, 328]], { label: [520, 321, "pc+1 (jal)"] });
+    dot("j1dot2", 8.2, 405, 87);
     box("adder", 8.4, 300, 40, 100, 28, "ADD");
     dot("addPdot", 8.4, 325, 87);
     wire("addP", 8.4, [[325, 87], [325, 68]]);
@@ -428,7 +446,7 @@
         for (const k in r.items) {
           const it = r.items[k];
           vis(it.g, s.stage >= it.from && s.stage < it.to);
-          if (it.hlf) it.hlf(!!hl[k]);
+          if (it.hlf) it.hlf(!!hl[k], s);
         }
         vis(r.ro, !!s.ctl);
         for (const k in r.rov) r.rov[k].textContent = s.ctl && s.ctl[k] !== undefined ? "= " + s.ctl[k] : "";
@@ -458,6 +476,7 @@
         rect(r.title, 505, 210, 140, 6, { rx: 3, fill: C.accent });
         txt(r.title, 575, 258, "Opening the black box, one wire at a time", { size: 22, italic: true, fill: C.grey, anchor: "middle" });
         txt(r.title, 575, 312, "Computer Architecture and Organization", { size: 14, fill: C.lgrey, anchor: "middle", ls: 1 });
+        txt(r.title, 575, 368, "Song of the day: Cash Wednesday by Skylar Spence (2015), recommended by Eliot K.", { size: 13, italic: true, fill: C.grey, anchor: "middle" });
         r.route = grp(g, 0);
         txt(r.route, 575, 40, "TODAY'S ROUTE", { size: 13, weight: 700, fill: C.purple, anchor: "middle", ls: 2 });
         ROUTE.forEach((name, i) => {
@@ -542,10 +561,10 @@
     chips: ["PC to memory", "The problem", "The +1 adder"],
     steps: [
       { stage: 1, chip: 1, hl: ["pcmem", "pc", "mem"], foot: "the first wire", narrate: "The PC holds an address and memory wants an address, so the first wire is obvious: PC straight into <code>instrAddr</code>. Say the PC outputs <code>100</code>: that voltage travels down the wire, memory looks up cell 100, and the instruction pops out of <code>instrOut</code>. The machine is alive." },
-      { stage: 1, chip: 2, hl: ["pcmem"], foot: "the same instruction, forever", q: "We fetched the instruction at address 100. What happens on the next clock tick if this is all we've wired?",
-        narrate: "Nothing changes. The PC is still <code>100</code>, so we fetch and execute instruction 100 <strong>forever</strong>. We need a mechanism to advance time." },
+      { stage: 1, chip: 2, hl: ["pcmem"], foot: "the same instruction, forever",
+        narrate: "<strong>A catch.</strong> With only this wiring, nothing changes on the next clock tick: the PC is still <code>100</code>, so we fetch and execute instruction 100 <strong>forever</strong>. We need a mechanism to advance time." },
       { stage: 2, chip: 3, hl: ["inc", "jctw", "tmp"], foot: "the default next pc", narrate: "A dedicated <strong><code>+1</code> adder</strong>. Not a whole ALU, just hardwired logic. Split the PC's output: one branch goes to memory, the other into the <code>+1</code>, and the result loops back into the PC, stored at the end of the cycle. While memory fetches <code>100</code>, the adder is already whispering <em>\"next is 101\"</em> into the PC's ear." },
-      { stage: 2, chip: 3, hl: ["pc"], foot: "pc <- pc + 1", narrate: "That's exactly the E15's fetch step from Week 3, drawn as hardware: <code>pc &lt;- pc + 1</code>, every single cycle. Jumps will complicate this later, but the <em>default</em> next PC is always one more than this one." },
+      { stage: 2, chip: 3, hl: ["pc"], foot: "pc <- pc + 1", narrate: "Jumps will complicate this later, but the <em>default</em> next PC is always one more than this one." },
     ],
   }));
 
@@ -565,8 +584,8 @@
         { n: 1, chip: 2, hl: 0, foot: "opcode, rA, rB, rC, func", narrate: "<strong>Three-register</strong>: <code>opcode</code>, then <code>rA</code>, <code>rB</code>, <code>rC</code> and a 4-bit <code>func</code> in bits 3 to 0. All of these share one opcode, so <code>func</code> says which one it is." },
         { n: 2, chip: 3, hl: 1, foot: "bits 6 to 0 merge into imm7", narrate: "<strong>Two-register</strong>: same top, but bits 6 to 0 merge into one 7-bit signed <code>imm7</code>. It swallows the <code>rC</code> and <code>func</code> territory so a constant can live right inside the instruction." },
         { n: 3, chip: 4, hl: 2, foot: "13 bits, 8192 cells", narrate: "<strong>Jump</strong>: <code>opcode</code>, then registers are abandoned: bits 12 to 0 become one 13-bit <code>imm13</code>. Thirteen bits is exactly enough to name any of the 8192 cells of memory, which is <em>why</em> the E20 has 8192 cells. The width of the instruction sets the size of the machine." },
-        { n: 4, chip: 5, hl: -1, foot: "the genre on the spine", q: "Why is the opcode always the top 3 bits, in every layout?",
-          narrate: "Speed. If the opcode moved around, the hardware would need to know the layout <em>before</em> it could find the opcode, which is a paradox. Keeping it in the same place means decoding starts the instant the bits leave memory: the genre printed on a book's spine, readable without opening it." },
+        { n: 4, chip: 5, hl: -1, foot: "the genre on the spine",
+          narrate: "One design choice worth noticing: the <code>opcode</code> sits in the top 3 bits in every layout, and that is for <strong>speed</strong>. If the opcode moved around, the hardware would need to know the layout <em>before</em> it could find the opcode, which is a paradox. Keeping it in the same place means decoding starts the instant the bits leave memory: the genre printed on a book's spine, readable without opening it." },
       ],
       build(g) {
         const r = { rows: [], cells: [] };
@@ -603,8 +622,8 @@
     steps: [
       { stage: 3.5, chip: 0, hl: [], foot: "", narrate: "Quick recap of what we have: memory, the PC with its <code>+1</code>, and the 16-bit instruction sliced into fields. Now let's feed the register file." },
       { stage: 4, chip: 1, hl: ["rB", "rAd", "rf", "o1"], foot: "rB to SRC1, rA to SRC2", narrate: "Reading is the easy half. <code>rB</code> goes to <code>SRC1</code> and <code>rA</code> goes to <code>SRC2</code>, and their values come out, ready for the ALU or a memory address. (<code>rA</code> will pass through a small mux on its way; we meet it at the end of this section.)" },
-      { stage: 4, chip: 2, hl: ["rf"], foot: "where does the result go?", q: "Writing: add writes to rC, addi writes to rB, jal writes to $7. One TGT port, three places the destination could come from. What now?",
-        narrate: "Three sources competing for one port. That's our first collision, and its answer is our first <strong>mux</strong>." },
+      { stage: 4, chip: 2, hl: ["rf"], foot: "one port, three destinations",
+        narrate: "<strong>Our first collision.</strong> Writing is messier than reading: <code>add</code> writes to <code>rC</code>, <code>addi</code> writes to <code>rB</code>, and <code>jal</code> writes to <code>$7</code>. That is one <code>TGT</code> port with three places the destination could come from. Three sources competing for one port, and the answer is our first <strong>mux</strong>." },
       { stage: 5, chip: 3, hl: ["muxdst", "dstB", "dstC", "dst7", "dstOut"], foot: "MUXdst: rB, rC or 7", narrate: "<code>MUXdst</code> selects between <code>rB</code> (for <code>addi</code>, <code>lw</code>), <code>rC</code> (for <code>add</code>, <code>sub</code>) and the hardwired constant <code>7</code> (for <code>jal</code>, whose destination isn't even in the instruction). Its output feeds <code>TGT</code>." },
       { stage: 5.5, chip: 4, hl: ["muxrf", "rAm", "rCm", "rCdot", "rfOut"], foot: "MUXrf: no instruction needs it", narrate: "The same pattern again: two possible values for one wire means a mux, driven by control. <code>MUXrf</code> chooses which field names the second register read: <code>rA</code> (0) or <code>rC</code> (1). But no E20 instruction reads <code>rC</code>, because it is only ever a destination, so every instruction sets <code>MUXrf</code> to 0. The manual's diagram includes it anyway." },
     ],
@@ -616,9 +635,9 @@
     chips: ["Two trains", "Sign-extend", "MUXalu", "One path"],
     steps: [
       { stage: 4, chip: 1, hl: ["o1", "o2d"], foot: "SRC2 goes straight in, SRC1 forks", narrate: "<code>SRC2dataOut</code> (the value of <code>rA</code>) goes straight into the ALU for every instruction that uses the ALU. The <em>other</em> input is where it forks: <code>add</code>, <code>sub</code>, <code>and</code>, <code>or</code>, <code>slt</code> want the other register's value (<code>SRC1dataOut</code>, the value of <code>rB</code>), while <code>addi</code>, <code>slti</code>, <code>lw</code>, <code>sw</code> want the <strong>immediate</strong>." },
-      { stage: 4, chip: 1, hl: ["o2d"], foot: "one port, two trains", q: "One ALU input port, two instructions that each want it. Why not just solder both wires onto it?",
-        narrate: "Hello, short circuit; hello, garbage data. Two drivers fighting over one wire never ends well. Mux time." },
-      { stage: 5.9, chip: 2, hl: ["imm7t", "sext", "sextd"], foot: "7 bits into 16", narrate: "One wrinkle: registers are 16 bits but <code>imm7</code> is only 7. A 7-bit train doesn't fit a 16-bit track, so it first passes through <strong>sign-extend</strong>: hardwired logic that pads the front with copies of the sign bit, so <code>-3</code> stays <code>-3</code> but is now 16 bits wide." },
+      { stage: 4, chip: 1, hl: ["o2d"], foot: "one port, two trains",
+        narrate: "<strong>Another collision.</strong> One ALU input port, and two kinds of instruction that each want it. We can't just solder both wires onto it: two drivers fighting over one wire means a short circuit and garbage data. Mux time." },
+      { stage: 5.9, chip: 2, hl: ["imm7t", "sext", "sextd"], foot: "7 bits into 16", narrate: "Before we add the mux, the immediate needs fixing: registers are 16 bits but <code>imm7</code> is only 7. A 7-bit train doesn't fit a 16-bit track, so it first passes through <strong>sign-extend</strong>: hardwired logic that pads the front with copies of the sign bit, so <code>-3</code> stays <code>-3</code> but is now 16 bits wide." },
       { stage: 6, chip: 3, hl: ["muxalu", "o2m", "sextAlu", "aluIn2"], foot: "MUXalu", narrate: "<code>MUXalu</code> picks between <code>SRC1dataOut</code> (the register) and the sign-extended immediate, and feeds the ALU's other input." },
       { stage: 6, chip: 4, hl: ["o1", "muxalu", "alu"], foot: "same path, different FUNCalu", narrate: "Once both inputs are wired, <code>add</code>, <code>sub</code>, <code>and</code>, <code>or</code> and <code>addi</code> become the <em>same</em> circuit path. The only thing that differs is <code>FUNCalu</code>, telling the ALU which operation to do." },
     ],
@@ -632,8 +651,8 @@
       { stage: 6, chip: 1, hl: ["o1", "muxalu", "alu"], foot: "rA + imm7", narrate: "<code>lw</code> and <code>sw</code> both compute an address as <code>rA + imm7</code>: base register plus sign-extended immediate. That is <strong>exactly</strong> the ALU computation we just wired, with the function set to add." },
       { stage: 7, chip: 1, hl: ["resb", "addrLane", "alu"], foot: "no new adder", narrate: "So do we build a second adder for addresses? Nope. The ALU's output feeds <code>dataAddr</code> directly: no new arithmetic hardware, just an existing wire reused for a second purpose." },
       { stage: 7.1, chip: 2, hl: ["dataInLane", "o2m", "rf", "mem"], foot: "sw: the value to store", narrate: "<code>sw</code> also needs the <em>value</em> being stored: that's <code>SRC1dataOut</code> (the value of <code>rB</code>), wired to <code>dataIn</code>. Address set, data set, control turns on the memory write-enable, the clock ticks, memory saves it." },
-      { stage: 7.2, chip: 3, hl: ["dataOutRaw", "tgtd", "mem"], foot: "lw: reading back", q: "lw's result leaves memory on dataOut and must reach the register file's TGTdataIn. But add's result from the ALU wants that same port. Two streams, one door: what do we add?",
-        narrate: "You know the drill by now. Another switch yard." },
+      { stage: 7.2, chip: 3, hl: ["dataOutRaw", "tgtd", "mem"], foot: "lw: reading back",
+        narrate: "<strong>A third collision.</strong> <code>lw</code>'s result leaves memory on <code>dataOut</code> and must reach the register file's <code>TGTdataIn</code>, but <code>add</code>'s result from the ALU wants that same port. Two streams, one door. You know the drill by now: another switch yard." },
       { stage: 7.3, chip: 4, hl: ["muxtgt", "tgtALU", "dataOut", "tgtOut"], foot: "MUXtgt", narrate: "<code>MUXtgt</code> is the final bouncer before the register file, deciding <em>what value</em> gets written. So far it picks between the ALU's output and memory's <code>dataOut</code>. A third input is coming in the next section, for <code>jal</code>." },
     ],
   }));
@@ -641,14 +660,14 @@
   // ================= 8 The Program Counter's Four Suitors =================
   scene(dpScene({
     num: "8", title: "The Program Counter's Four Suitors", subtitle: "pc + 1 is not the next PC. It's the default.",
-    chips: ["pc + 1", "imm13", "jr", "jal", "jeq", "EQ"],
+    chips: ["pc + 1", "imm13", "jal", "jr", "jeq", "EQ"],
     steps: [
       { stage: 8, chip: 1, hl: ["muxpc", "pcOut", "pcLane", "inc"], foot: "the default", narrate: "Plot twist: <code>pc + 1</code> isn't <em>the</em> next PC. It's the <em>default</em>. Real programs have loops and functions, so a final mux, <code>MUXpc</code>, now sits in front of the PC, and the <code>+1</code> adder becomes just its first suitor." },
       { stage: 8.1, chip: 2, hl: ["zext", "zextb", "immLane"], foot: "suitor 2: j and jal", narrate: "<code>j</code> and <code>jal</code> jump to an absolute address: the instruction's own 13-bit field, zero-extended and sent straight into <code>MUXpc</code>, bypassing the ALU entirely." },
-      { stage: 8.2, chip: 3, hl: ["jrLane", "alu", "o1"], foot: "suitor 3: jr", narrate: "<code>jr</code> needs a register's value in the PC. The easiest way: pass it through the ALU by adding <code>$0</code> to it, then send the ALU's output to <code>MUXpc</code>. Reuse, again: anything plus zero is itself." },
-      { stage: 8.3, chip: 4, hl: ["jal", "j1ext", "muxtgt", "muxdst", "dst7"], foot: "the breadcrumb", narrate: "<code>jal</code> jumps away but must leave a breadcrumb. The same <code>pc + 1</code> is wired to a <strong>third input of <code>MUXtgt</code></strong>: <code>MUXtgt</code> picks <code>pc+1</code>, <code>MUXdst</code> picks <code>7</code>, <code>WErf</code> is on, and <code>$7 &lt;- pc + 1</code> commits on the same edge that <code>MUXpc</code> sends the PC to <code>imm13</code>." },
-      { stage: 8.3, chip: 5, hl: ["alu", "o1"], foot: "jeq needs a condition", q: "jeq is the only instruction that has to decide whether to jump. The ALU can subtract rA - rB to check. But who computes the branch target, pc + 1 + imm7?",
-        narrate: "The ALU can't: it's busy subtracting. We need a completely separate hardware." },
+      { stage: 8.2, chip: 3, hl: ["jal", "j1ext", "muxtgt", "muxdst", "dst7"], foot: "the breadcrumb", narrate: "<code>jal</code> jumps away but must leave a breadcrumb. The same <code>pc + 1</code> is wired to a <strong>third input of <code>MUXtgt</code></strong>: <code>MUXtgt</code> picks <code>pc+1</code>, <code>MUXdst</code> picks <code>7</code>, <code>WErf</code> is on, and <code>$7 &lt;- pc + 1</code> commits on the same edge that <code>MUXpc</code> sends the PC to <code>imm13</code>." },
+      { stage: 8.3, chip: 4, hl: ["jrLane", "alu", "o1"], foot: "suitor 3: jr", narrate: "<code>jr</code> needs a register's value in the PC. The easiest way: pass it through the ALU by adding <code>$0</code> to it, then send the ALU's output to <code>MUXpc</code>. Reuse, again: anything plus zero is itself." },
+      { stage: 8.3, chip: 5, hl: ["alu", "o1"], foot: "jeq needs a condition",
+        narrate: "<strong>A new problem.</strong> <code>jeq</code> is the only instruction that has to decide whether to jump. The ALU can subtract <code>rA - rB</code> to check, but then who computes the branch target, <code>pc + 1 + imm7</code>? Not the ALU: it's busy subtracting. We need completely separate hardware." },
       { stage: 8.4, chip: 5, hl: ["adder", "addP", "addI", "addLane"], foot: "a second adder", narrate: "A separate <strong>branch adder</strong>, fed by <code>pc + 1</code> and the sign-extended <code>imm7</code>, with its sum going to <code>MUXpc</code> as the fourth suitor. It computes on <strong>every</strong> cycle, even for a boring <code>add</code>. Wasteful? That's software brain: electricity doesn't wait to be needed. It's a running faucet; the mux is the drain that catches the water or lets it go." },
       { stage: 8.5, chip: 6, hl: ["eq", "ctl"], foot: "EQ flows backwards", narrate: "And the decision itself: the ALU subtracts, and if the result is zero the registers were equal. It reports that on a dedicated <strong><code>EQ</code></strong> wire that flows <em>backwards</em>, from the ALU into the control module. It's the only signal in the datapath that flows from a computation back to the brain. If <code>EQ</code> is high, control flips <code>MUXpc</code> to the branch target." },
     ],
@@ -685,17 +704,23 @@
         { n: 1, chip: 2, foot: "add", narrate: "<code>add</code>: <code>FUNCalu = 0</code> (add), <code>MUXalu = 0</code> (register), <code>MUXpc = 1</code> (<code>pc+1</code>), <code>MUXtgt = 0</code> (ALU), <code>MUXdst = 1</code> (<code>rC</code>), <code>WErf = 1</code>, <code>WEdmem = 0</code>." },
         { n: 2, chip: 2, foot: "sub", narrate: "<code>sub</code> is the same row with one change: <code>FUNCalu = 1</code>. Same circuit path, different function." },
         { n: 3, chip: 3, foot: "jeq, not taken", narrate: "<code>jeq</code> subtracts (<code>FUNCalu = 1</code>) to test equality, compares registers (<code>MUXalu = 0</code>), and writes nothing (<code>WErf = 0</code>). With <code>EQ = 0</code>, <code>MUXpc</code> stays on <code>pc+1</code>." },
-        { n: 4, chip: 3, foot: "jeq, taken", q: "Compare the two jeq rows. What is the only thing that changes between 'branch taken' and 'branch not taken'?",
-          narrate: "Just <code>MUXpc</code>: from <code>1</code> to <code>2</code> (<code>pc+1+imm7</code>). That's the whole point of the <code>EQ</code> input: the select line is a direct function of the comparison the ALU just performed." },
+        { n: 4, chip: 3, foot: "jeq, taken",
+          narrate: "Compare the two <code>jeq</code> rows: the only thing that changes between &quot;branch taken&quot; and &quot;branch not taken&quot; is <code>MUXpc</code>, from <code>1</code> to <code>2</code> (<code>pc+1+imm7</code>). That's the whole point of the <code>EQ</code> input: the select line is a direct function of the comparison the ALU just performed." },
         { n: 5, chip: 4, foot: "j and jal", narrate: "<code>j</code> sends <code>MUXpc = 3</code> (<code>imm13</code>) and writes nothing. <code>jal</code> does the same, but also writes: <code>MUXtgt = 1</code> (<code>pc+1</code>), <code>MUXdst = 2</code> (the literal <code>7</code>), <code>WErf = 1</code>." },
         { n: 6, chip: 5, foot: "DC: nobody is listening", narrate: "<code>DC</code> means <strong>don't care</strong>: a signal whose value can't affect anything. Take <code>jeq</code>: <code>WErf</code> is 0, so the register file's door is locked, and it doesn't matter which way <code>MUXdst</code> points. Build it in Verilog as a <code>case</code> on <code>opcode</code> (nested <code>case</code> on <code>func</code>). The numbers are the manual's encodings; the remaining rows are yours to derive." },
-        { n: 7, chip: 6, foot: "instruction to values: sw $1, 2($3)", q: "Your turn. Fill in the row for sw $1, 2($3). Go signal by signal: which ones matter, and what are they?",
-          narrate: "Walk the levers. The ALU adds the base register and the immediate: <code>FUNCalu = 0</code>, <code>MUXalu = 1</code>. Not a jump: <code>MUXpc = 1</code>. The usual register reads: <code>MUXrf = 0</code>. No register is written: <code>WErf = 0</code>, so <code>MUXtgt</code> and <code>MUXdst</code> are <strong>DC</strong>. And memory <em>is</em> written: <code>WEdmem = 1</code>, the only instruction that turns it on." },
-        { n: 8, chip: 7, foot: "values to instruction", q: "Now backwards. FUNCalu = 4, MUXalu = 1, MUXpc = 1, MUXrf = 0, MUXtgt = 0, MUXdst = 0, WErf = 1, WEdmem = 0. Which instruction is this?",
-          narrate: "Eliminate, like a detective. <code>WEdmem = 0</code>: not <code>sw</code>. <code>WErf = 1</code>: a register gets written. <code>MUXpc = 1</code>: no jump. <code>MUXtgt = 0</code>: the value comes from the ALU, so not <code>lw</code>. <code>MUXalu = 1</code>: an immediate operand, and <code>MUXdst = 0</code> says the destination is <code>rB</code>. <code>FUNCalu = 4</code> is <code>slt</code>. So: <strong><code>slti</code></strong>." },
+        { n: 7, sw: 0, hlc: [], encr: [], chip: 6, foot: "instruction to values: sw $1, 2($3)", narrate: "<strong>Filling in a row by hand: <code>sw $1, 2($3)</code>.</strong> A new instruction, a new row. We go left to right, one lever at a time, and for each lever the question is just what <code>sw</code> needs from it. The encoding table on the right is the key." },
+        { n: 7, sw: 1, hlc: [1], encr: [], chip: 6, foot: "EQ", narrate: "<code>EQ</code> first. <code>sw</code> never branches, so nothing in its row depends on what the ALU's comparison says: <strong>DC</strong>." },
+        { n: 7, sw: 2, hlc: [2], encr: [0], chip: 6, foot: "FUNCalu = 0", narrate: "<code>FUNCalu</code>: the ALU has to build the memory address by adding the base register <code>$3</code> and the immediate <code>2</code>. Adding is <code>0</code>." },
+        { n: 7, sw: 3, hlc: [3], encr: [1], chip: 6, foot: "MUXalu = 1", narrate: "<code>MUXalu</code>: one of the ALU's inputs has to be the immediate, not a register. Immediate is <code>1</code>." },
+        { n: 7, sw: 4, hlc: [4], encr: [2], chip: 6, foot: "MUXpc = 1", narrate: "<code>MUXpc</code>: <code>sw</code> is not a jump, so the PC just moves on to <code>pc+1</code>. That is <code>1</code>." },
+        { n: 7, sw: 5, hlc: [5], encr: [3], chip: 6, foot: "MUXrf = 0", narrate: "<code>MUXrf</code>: the usual register reads, <code>rA</code> for the second read. Always <code>0</code>, as for every instruction." },
+        { n: 7, sw: 8, hlc: [6, 7, 8], encr: [4, 5, 6], chip: 6, foot: "WErf = 0, so MUXtgt and MUXdst are DC", narrate: "<code>sw</code> writes <strong>no register</strong>, so <code>WErf = 0</code>. With the register file's door locked, it doesn't matter what <code>MUXtgt</code> or <code>MUXdst</code> pick: both are <strong>DC</strong>." },
+        { n: 7, sw: 9, hlc: [9], encr: [6], chip: 6, foot: "WEdmem = 1", narrate: "And finally, <code>sw</code> <em>does</em> write memory: <code>WEdmem = 1</code>, the only instruction that turns it on. That completes the row: the value from <code>$1</code> is stored at <code>$3 + 2</code>." },
+        { n: 8, chip: 7, foot: "values to instruction",
+          narrate: "<strong>And backwards, from values to instruction.</strong> Take <code>FUNCalu = 4</code>, <code>MUXalu = 1</code>, <code>MUXpc = 1</code>, <code>MUXrf = 0</code>, <code>MUXtgt = 0</code>, <code>MUXdst = 0</code>, <code>WErf = 1</code>, <code>WEdmem = 0</code>. Eliminate, like a detective. <code>WEdmem = 0</code>: not <code>sw</code>. <code>WErf = 1</code>: a register gets written. <code>MUXpc = 1</code>: no jump. <code>MUXtgt = 0</code>: the value comes from the ALU, so not <code>lw</code>. <code>MUXalu = 1</code>: an immediate operand, and <code>MUXdst = 0</code> says the destination is <code>rB</code>. <code>FUNCalu = 4</code> is <code>slt</code>. So: <strong><code>slti</code></strong>." },
       ],
       build(g) {
-        const r = { rows: [], dcs: [] };
+        const r = { rows: [], dcs: [], sw: {} };
         let x = X0;
         r.hdr = grp(g, 1);
         COLS.forEach(([name, w]) => {
@@ -709,7 +734,8 @@
           COLS.forEach(([, w], ci) => {
             const v = row[ci], dc = v === "DC";
             const b = rect(rg, cx, Y0 + ri * RH, w, RH, { fill: ci === 0 ? C.t5 : (dc ? C.t3 : C.white), stroke: C.purple, sw: 2 });
-            txt(rg, cx + w / 2, Y0 + ri * RH + 23, v, { size: ci === 0 ? 14 : 15, weight: 700, mono: true, fill: dc ? C.lgrey : C.ink, anchor: "middle" });
+            const tv = txt(rg, cx + w / 2, Y0 + ri * RH + 23, v, { size: ci === 0 ? 14 : 15, weight: 700, mono: true, fill: dc ? C.lgrey : C.ink, anchor: "middle" });
+            if (ri === 6 && ci > 0) r.sw[ci] = { b, t: tv };
             if (dc && ci > 0) r.dcs.push({ ri, ci, b });
             cx += w;
           });
@@ -758,9 +784,17 @@
         vis(r.hdr, s.n !== 8);
         vis(r.dec, s.n === 8);
         vis(r.hlPc, s.n === 4);
-        r.dcs.forEach((d) => d.b.setAttribute("fill", s.n === 6 ? C.t2 : C.t3));
+        const swk = s.n === 7 ? (s.sw || 0) : 9;
+        r.dcs.forEach((d) => d.b.setAttribute("fill", d.ri === 6 && d.ci > swk ? C.white : (s.n === 6 ? C.t2 : C.t3)));
+        Object.keys(r.sw).forEach((ci) => {
+          const on = Number(ci) <= swk, hot = s.n === 7 && (s.hlc || []).indexOf(Number(ci)) >= 0;
+          vis(r.sw[ci].t, on);
+          if (!on) r.sw[ci].b.setAttribute("fill", C.white);
+          r.sw[ci].b.setAttribute("stroke", hot ? C.red : C.purple);
+          r.sw[ci].b.setAttribute("stroke-width", hot ? 4 : 2);
+        });
         r.encRows.forEach((cells, ri) => cells.forEach((b, ci) => {
-          const on = s.n === 4 && ri === 2;
+          const on = (s.n === 4 && ri === 2) || (s.n === 7 && (s.encr || []).indexOf(ri) >= 0);
           b.setAttribute("stroke", on ? C.red : C.accent);
           b.setAttribute("stroke-width", on ? 4 : 2);
         }));
@@ -779,25 +813,25 @@
       steps: [
         { stage: 9, chip: 1, hl: [], foot: "the whole machine", narrate: "Here's everything, wired. Every wire corresponds to a section we just built, and none was added without an instruction demanding it. Time to watch <code>add $3, $1, $2</code> run. Fair warning: combinational logic doesn't <em>have</em> a step 1 and a step 2. The numbering just matches the order values <em>propagate</em>." },
         { stage: 9, chip: 1, hl: ["pc", "pcmem", "mem", "iw"], foot: "1. fetch", narrate: "<strong>Fetch.</strong> The PC's value drives <code>instrAddr</code>; <code>instrOut</code> produces the raw 16 bits of the instruction." },
-        { stage: 9, chip: 1, hl: ["ribbon"], foot: "2. decode", narrate: "<strong>Decode.</strong> Just by bit position: <code>opcode = 000</code>, <code>rA = 001</code>, <code>rB = 010</code>, <code>rC = 011</code>, plus <code>func</code>. All at once." },
+        { stage: 9, chip: 1, hl: ["ribbon"], rib: ["opcode", "rA", "rB", "rC", "func"], foot: "2. decode", narrate: "<strong>Decode.</strong> Just by bit position: <code>opcode = 000</code>, <code>rA = 001</code>, <code>rB = 010</code>, <code>rC = 011</code>, plus <code>func</code>. All at once." },
         { stage: 9, chip: 1, hl: ["rB", "rAm", "muxrf", "rfOut", "rf", "o1", "o2m"], foot: "3. register read", narrate: "<strong>Register read.</strong> <code>rB</code> drives <code>SRC1</code> and <code>rA</code> drives <code>SRC2</code> (through <code>MUXrf</code>); the register file outputs the current values of <code>$2</code> and <code>$1</code>." },
         { stage: 9, chip: 1, hl: ["ctl", "ctlw"], ctl: ADD, foot: "4. control", narrate: "<strong>Control.</strong> Seeing opcode <code>000</code> and add's <code>func</code>, the control module asserts every signal in the readout (top right): <code>FUNCalu = 0</code> add, <code>MUXalu = 0</code> register operand, <code>MUXpc = 1</code> <code>pc+1</code>, <code>MUXtgt = 0</code> ALU result, <code>MUXdst = 1</code> <code>rC</code>, <code>WErf = 1</code>, <code>WEdmem = 0</code>." },
         { stage: 9, chip: 1, hl: ["o1", "o2m", "muxalu", "aluIn2", "alu"], ctl: ADD, foot: "5. execute", narrate: "<strong>Execute.</strong> The ALU adds <code>SRC2dataOut</code> and <code>SRC1dataOut</code>, as selected by <code>MUXalu</code> and <code>FUNCalu</code>." },
         { stage: 9, chip: 1, hl: ["resb", "tgtALU", "muxtgt", "tgtOut", "muxdst", "dstC", "dstOut", "rf", "pc", "pcOut", "muxpc", "pcLane", "inc"], ctl: ADD, foot: "6. write-back", narrate: "<strong>Write-back.</strong> <code>MUXtgt</code> selects the ALU's output, <code>MUXdst</code> selects <code>rC</code>, and since <code>WErf = 1</code> the register file commits <code>$3 &lt;- sum</code> on the clock edge. Simultaneously <code>pc &lt;- pc + 1</code> commits, because <code>MUXpc</code> picked the default." },
         { stage: 9, chip: 1, hl: [], foot: "one clock cycle", narrate: "All six happened in the <strong>same</strong> clock cycle. It's not a relay race; it's a water main, pressure flooding every pipe at once. The ALU may even start adding garbage before the real operands arrive (engineers call it <em>settling</em>). We only need the clock slow enough that the longest pipe has settled before the edge snaps the photo. That's what makes it <strong>single-cycle</strong>." },
-        { stage: 9, chip: 2, hl: [], foot: "same machine, new instruction", q: "Now addi $1, $2, 5 on the same machine. Compared with add, which control signals have to change?",
-          narrate: "Two. <code>MUXalu</code> has to pick the sign-extended <strong>immediate</strong> instead of the register, and <code>MUXdst</code> has to pick <code>rB</code> instead of <code>rC</code>. Everything else is identical." },
-        { stage: 9, chip: 2, hl: ["pc", "pcmem", "mem", "iw", "ribbon"], foot: "addi: fetch and decode", narrate: "<strong>Fetch and decode.</strong> Opcode <code>001</code> says this is an <code>addi</code>, in the two-register layout: <code>rA = 010</code> (<code>$2</code>), <code>rB = 001</code> (<code>$1</code>), <code>imm7 = 0000101</code>. The bits that were <code>rC</code> and <code>func</code> for <code>add</code> are one 7-bit immediate now." },
+        { stage: 9, chip: 2, hl: [], foot: "same machine, new instruction",
+          narrate: "<strong>Now <code>addi $1, $2, 5</code> on the same machine.</strong> Compared with <code>add</code>, two control signals change. <code>MUXalu</code> has to pick the sign-extended <strong>immediate</strong> instead of the register, and <code>MUXdst</code> has to pick <code>rB</code> instead of <code>rC</code>. Everything else is identical." },
+        { stage: 9, chip: 2, hl: ["pc", "pcmem", "mem", "iw", "ribbon"], rib: ["opcode", "rA", "rB", "imm7"], foot: "addi: fetch and decode", narrate: "<strong>Fetch and decode.</strong> Opcode <code>001</code> says this is an <code>addi</code>, in the two-register layout: <code>rA = 010</code> (<code>$2</code>), <code>rB = 001</code> (<code>$1</code>), <code>imm7 = 0000101</code>. The bits that were <code>rC</code> and <code>func</code> for <code>add</code> are one 7-bit immediate now." },
         { stage: 9, chip: 2, hl: ["rAm", "muxrf", "rfOut", "rf", "o1", "imm7t", "sext", "sextAlu", "muxalu", "aluIn2", "alu"], foot: "addi: read and execute", narrate: "<strong>Read and execute.</strong> <code>rA</code> drives <code>SRC2</code> (through <code>MUXrf</code>), so <code>$2</code>'s value reaches the ALU. The immediate takes the other route: <code>imm7</code> goes through <strong>sign-extend</strong> into <code>MUXalu</code>, which now selects it. The ALU adds <code>$2 + 5</code>." },
         { stage: 9, chip: 2, hl: ["resb", "tgtALU", "muxtgt", "tgtOut", "muxdst", "dstB", "dstOut", "rf", "pc", "pcOut", "muxpc", "pcLane", "inc"], foot: "addi: write-back", narrate: "<strong>Write-back.</strong> <code>MUXtgt</code> still picks the ALU's output, but <code>MUXdst</code> now picks <code>rB</code>, so the sum lands in <code>$1</code>. <code>MUXpc</code> still picks <code>pc + 1</code>. Same machine, two mux selects different." },
-        { stage: 9, chip: 3, hl: [], foot: "lw $1, 3($2): $2 = 10, memory[13] = 42", q: "Now lw $1, 3($2), where $2 holds 10 and memory cell 13 holds 42. Compared with addi, what changes?",
-          narrate: "Almost nothing. The ALU still adds the base register and the sign-extended immediate, and <code>MUXalu</code> and <code>MUXdst</code> pick the same inputs as for <code>addi</code>. One thing changes: <code>MUXtgt</code> has to pick <strong>memory's <code>dataOut</code></strong> instead of the ALU's output." },
-        { stage: 9, chip: 3, hl: ["pc", "pcmem", "mem", "iw", "ribbon"], foot: "lw: fetch and decode", narrate: "<strong>Fetch and decode.</strong> Opcode <code>100</code> is <code>lw</code>, in the two-register layout: <code>rA = 010</code> (<code>$2</code>, the base register), <code>rB = 001</code> (<code>$1</code>, the destination), <code>imm7 = 0000011</code>." },
+        { stage: 9, chip: 3, hl: [], foot: "lw $1, 3($2): $2 = 10, memory[13] = 42",
+          narrate: "<strong>Now <code>lw $1, 3($2)</code>, where <code>$2</code> holds 10 and memory cell 13 holds 42.</strong> Compared with <code>addi</code>, almost nothing changes. The ALU still adds the base register and the sign-extended immediate, and <code>MUXalu</code> and <code>MUXdst</code> pick the same inputs as for <code>addi</code>. One thing changes: <code>MUXtgt</code> has to pick <strong>memory's <code>dataOut</code></strong> instead of the ALU's output." },
+        { stage: 9, chip: 3, hl: ["pc", "pcmem", "mem", "iw", "ribbon"], rib: ["opcode", "rA", "rB", "imm7"], foot: "lw: fetch and decode", narrate: "<strong>Fetch and decode.</strong> Opcode <code>100</code> is <code>lw</code>, in the two-register layout: <code>rA = 010</code> (<code>$2</code>, the base register), <code>rB = 001</code> (<code>$1</code>, the destination), <code>imm7 = 0000011</code>." },
         { stage: 9, chip: 3, hl: ["rAm", "muxrf", "rfOut", "rf", "o1", "imm7t", "sext", "sextAlu", "muxalu", "aluIn2", "alu"], foot: "lw: the ALU computes an address", narrate: "<strong>Address.</strong> The register file hands over <code>$2</code> (10), the immediate is sign-extended through <code>MUXalu</code>, and the ALU adds them: <code>10 + 3 = 13</code>. That 13 is <strong>not the answer</strong>; it's an <em>address</em>." },
         { stage: 9, chip: 3, hl: ["resb", "addrLane", "mem"], foot: "lw: memory reads cell 13", narrate: "<strong>Memory read.</strong> The ALU's result goes into <code>dataAddr</code>, the <em>data</em> port, and memory looks up cell 13 and puts <code>42</code> on <code>dataOut</code>. <code>WEdmem = 0</code>: <code>lw</code> only reads." },
         { stage: 9, chip: 3, hl: ["dataOut", "muxtgt", "tgtOut", "muxdst", "dstB", "dstOut", "rf", "pc", "pcOut", "muxpc", "pcLane", "inc"], foot: "lw: write-back", narrate: "<strong>Write-back.</strong> <code>MUXtgt</code> picks <code>dataOut</code> (the 42), <em>not</em> the ALU's 13; <code>MUXdst</code> picks <code>rB</code>, so <code>$1 = 42</code>. The classic mistake is stopping at the ALU and calling 13 the answer. <code>MUXpc</code> still picks <code>pc + 1</code>." },
-        { stage: 9, chip: 4, hl: [], foot: "jeq", q: "Now jeq $1, $2, target, with $1 equal to $2. What does the register file write, and what does MUXpc pick?",
-          narrate: "The register file writes <strong>nothing</strong> (<code>WErf = 0</code>), and <code>MUXpc</code> picks the <strong>branch adder</strong>, input 2: <code>pc + 1 + imm7</code>. The whole instruction exists to steer the PC." },
+        { stage: 9, chip: 4, hl: [], foot: "jeq",
+          narrate: "<strong>Now <code>jeq $1, $2, target</code>, with <code>$1</code> equal to <code>$2</code>.</strong> The register file writes <strong>nothing</strong> (<code>WErf = 0</code>), and <code>MUXpc</code> picks the <strong>branch adder</strong>, input 2: <code>pc + 1 + imm7</code>. The whole instruction exists to steer the PC." },
         { stage: 9, chip: 4, hl: ["rB", "rAm", "muxrf", "rfOut", "rf", "o1", "o2m", "muxalu", "aluIn2", "alu"], ctl: JEQ, foot: "jeq: read and compare", narrate: "<strong>Read and compare.</strong> Both registers are read, <code>MUXalu</code> picks the register (not an immediate), and <code>FUNCalu = 1</code> makes the ALU subtract. Equal registers subtract to zero." },
         { stage: 9, chip: 4, hl: ["alu", "eq", "ctl", "ctlw"], ctl: JEQ, foot: "jeq: EQ goes backwards", narrate: "<strong>EQ.</strong> The zero result raises <code>EQ</code>, which flows <em>backwards</em> into the control module. With <code>EQ = 1</code>, control knows the branch is taken." },
         { stage: 9, chip: 4, hl: ["inc", "j1", "j1ext", "imm7t", "sext", "addI", "adder", "addP", "addLane"], ctl: JEQ, foot: "jeq: the branch adder, in parallel", narrate: "<strong>Meanwhile</strong>, in the very same cycle, the branch adder has been adding <code>pc + 1</code> and the sign-extended <code>imm7</code>. It computes this on every instruction; only now does anyone care about the answer." },
@@ -817,8 +851,8 @@
         { n: 0, chip: 1, foot: "each instruction's real work", narrate: "Here's the catch. Each instruction has a different amount of real work to do before its result is ready (bars illustrative, not to scale). <code>j</code> barely has to decode; <code>lw</code> has to cross main memory in the middle of the cycle." },
         { n: 1, chip: 2, foot: "the clock is fixed", narrate: "But a single-cycle processor has exactly <strong>one</strong> clock period, the same for every instruction. So how long must it be? Long enough for the <em>slowest</em> instruction to finish: here, <code>lw</code>." },
         { n: 2, chip: 3, foot: "idle time", narrate: "Everything else finishes early and then sits there twiddling its thumbs until the clock ticks. A <code>j</code> or a <code>nop</code> wastes most of its cycle: like making a sprinter walk at a toddler's pace because the marathoner is in the same race. That's the price of one-instruction-per-cycle simplicity, and it's the seed of the multicycle lecture." },
-        { n: 3, chip: 4, foot: "trace both paths", q: "jeq sounds like a long trip too: read registers, subtract, wait for EQ to flow backwards, flip MUXpc. So why is the clock period set by lw and not by jeq?",
-          narrate: "<code>jeq</code>'s path ends at <code>MUXpc</code>. It never touches data memory, and the branch adder runs in parallel with the ALU's comparison, so it adds no time. <code>lw</code> does everything <code>jeq</code> does up through the ALU, <em>and then</em> goes out to memory and back. Memory is slow, so <code>lw</code> wins." },
+        { n: 3, chip: 4, foot: "trace both paths",
+          narrate: "<strong>One thing to settle about the clock period.</strong> <code>jeq</code> sounds like a long trip too: read registers, subtract, wait for <code>EQ</code> to flow backwards, flip <code>MUXpc</code>. Yet the period is set by <code>lw</code>, not <code>jeq</code>. <code>jeq</code>'s path ends at <code>MUXpc</code>. It never touches data memory, and the branch adder runs in parallel with the ALU's comparison, so it adds no time. <code>lw</code> does everything <code>jeq</code> does up through the ALU, <em>and then</em> goes out to memory and back. Memory is slow, so <code>lw</code> wins." },
         { n: 4, chip: 4, foot: "what comes next", narrate: "What if, instead of stretching the cycle to fit the slowest instruction, we split the work into <em>stages</em> and let different instructions occupy different stages at once? Same components, same wires, mostly, just no longer required to all finish in one tick. That's multicycle, and then pipelining." },
       ],
       build(g) {

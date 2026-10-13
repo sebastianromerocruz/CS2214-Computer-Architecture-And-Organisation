@@ -41,7 +41,7 @@ Here's the one rule for this lecture:
 
 > **Every wire we draw must be justified by an instruction that needs it.** No ghost wires.
 
-We're not designing a processor from scratch, and we're not adding lines because they make the schematic look nice. We're building the *minimum* circuit that makes the instruction set from Weeks 4 and 5 physically real:
+We're not designing a processor from scratch, and we're not adding lines because they make the schematic look nice. We're building the *minimum* circuit that makes the instruction set from the past weeks physically possible:
 
 - `add` reads two registers and writes one, so the register file needs (at least) two read ports and one write port.
 - `lw` computes an address and then reads memory at it, so the ALU needs to be wired to memory's address input.
@@ -112,9 +112,9 @@ Two spellings to keep straight: `TGT` names the *register* being written, and `T
 </p>
 <p align=center><sub>MEMORY, with its instruction-fetch port and its data port.</sub></p>
 
-Think of memory as a giant wall of post office boxes: 8192 cells, but with *two* completely independent sets of ports bolted on:
+8192 cells, but with *two* completely independent sets of ports bolted on:
 
-- **The instruction-fetch port:** `instrAddr` in, `instrOut` out. Read-only, driven by the program counter. You hand the postmaster a slip of paper with a box number, and they hand back an instruction.
+- **The instruction-fetch port:** `instrAddr` in, `instrOut` out. Read-only, driven by the program counter. You hand the memory the program counter, and it hands back an instruction.
 - **The data port:** `dataAddr`, `dataIn`, `dataOut`. This is what `lw` and `sw` use.
 
 There's no separate code memory and data memory. This is the "unified memory" idea from Week 4: one array, two doors. The machine doesn't know whether a cell holds an instruction or a variable; it depends on which door you knocked on.
@@ -128,7 +128,7 @@ There's no separate code memory and data memory. This is the "unified memory" id
 </p>
 <p align=center><sub>REGISTER FILE: two read ports, one write port.</sub></p>
 
-The register file is a tiny, intensely fast set of mailboxes sitting right next to the ALU. It holds `$0` through `$7`. Why have it at all, if memory exists? Distance and physics: main memory is vast, and driving a signal down those long wires takes time. The ALU can't afford to wait on it for every addition.
+The register file is a tiny, intensely fast scratchpad sitting right next to the ALU. It holds `$0` through `$7`. Why have it at all, if memory exists? Distance and physics: main memory is vast, and driving a signal down those long wires takes time. The ALU can't afford to wait on it for every addition.
 
 - **Reading:** a register **name** goes into `SRC1` (or `SRC2`) and that register's **value** comes out of `SRC1dataOut` (or `SRC2dataOut`). Combinational: no clock edge needed.
 - **Writing:** a name on `TGT`, a value on `TGTdataIn`, and if the (implicit) write-enable is on, the value lands in that register on the next clock edge.
@@ -148,7 +148,7 @@ The calculator: two 16-bit inputs, one 16-bit result, and a hidden **function-se
 
 ### The Program Counter
 
-The program counter is the bookmark in your code: one 16-bit register holding the address of the current instruction (only the low 13 bits matter, per Week 4). Simplest component, most contested one: by the end, four different values will want to be the next PC.
+The program counter is one 16-bit register holding the address of the current instruction (only the low 13 bits matter). The simplest component but the most contested one: by the end, four different values will want to be the next PC.
 
 ---
 
@@ -176,7 +176,7 @@ We need something that advances the PC. In the example the PC went from 0 to 1 a
 </p>
 <p align=center><sub>Adding +1: the PC feeds both memory and the adder, and the adder feeds back into the PC.</sub></p>
 
-While memory is busy fetching instruction `100`, the adder is already whispering "the next one is `101`" into the PC's ear. On the clock edge the PC latches it, and the loop repeats. That's exactly the E15's fetch step from Week 3, drawn as hardware: `pc <- pc + 1`, every single cycle. Jumps will complicate this later (Section 8), but the *default* next PC is always one more than this one.
+While memory is busy fetching instruction `100`, the adder is already whispering "the next one is `101`" into the PC's ear. On the clock edge the PC latches it, and the loop repeats. Jumps will complicate this later, but the *default* next PC is always one more than this one.
 
 ---
 
@@ -186,7 +186,7 @@ While memory is busy fetching instruction `100`, the adder is already whispering
 
 Say memory hands back 16 bits for `add $3, $1, $2`. Which part do you look at first to know what kind of instruction it is? The top three bits: the _opcode_.
 
-Whatever comes out of `instrOut` is just 16 wires carrying high or low voltage. The hardware tells an `add` from a `jal` by slicing, by bit position. There are three layouts (Week 4):
+Whatever comes out of `instrOut` is just 16 wires carrying high or low voltage. The hardware tells an `add` from a `jal` by slicing, by bit position. There are three layouts:
 
 <p align=center>
     <img src="assets/instruction-fields.svg" width="660" alt="The same 16 bits, read three different ways depending on the opcode.">
@@ -217,7 +217,7 @@ For `add $3, $1, $2`: which two registers does the instruction *read*, and which
 - The first two register fields, `rA` and `rB` read.
 - The third, `rC`, writes.
 
-**Reading** is the easy half. `rB` goes straight into `SRC1`, and `rA` goes into `SRC2` (through a small mux we'll meet at the end of this section). Their values come out ready for the ALU.
+**Reading** is the easy half. `rB` goes straight into `SRC1`, and `rA` goes into `SRC2`. Their values come out ready for the ALU.
 
 <p align=center>
     <img src="assets/dp-reads.svg" width="760" alt="Reading: rB to SRC1, rA to SRC2. The values flow out toward the ALU.">
@@ -228,7 +228,7 @@ For `add $3, $1, $2`: which two registers does the instruction *read*, and which
 
 `addi $1, $2, 5` also writes a register. Which field of its bits names the destination this time? The second, `rB`. 
 
-So now the write port's `TGT` needs `rC` for `add` but `rB` for `addi`: one port, two possible sources. And `jal` writes `$7`, a destination that isn't even *in* the instruction. Three sources, one port. What do you put in front of it?
+So now the write port's `TGT` needs `rC` for `add`. but `rB` for `addi`; one port, two possible sources. And `jal` writes `$7`, a destination that isn't even *in* the instruction. Three sources, one port. What do you put in front of it?
 
 A **mux**. `MUXdst` selects between `rB`, `rC`, and the hardwired constant `7`, and its output feeds `TGT`.
 
@@ -237,7 +237,7 @@ A **mux**. `MUXdst` selects between `rB`, `rC`, and the hardwired constant `7`, 
 </p>
 <p align=center><sub>MUXdst: which register name reaches TGT.</sub></p>
 
-A mux needs a select line, so what decides which input it picks? Ask what the instruction itself contains that tells an `add` apart from an `addi`: the **opcode**. Something has to turn "opcode in" into "select value out", with no memory involved: that's a **combinational circuit**, and we'll meet it later as the *control module*.
+A mux needs a select line so, what decides which input it picks? Ask what the instruction itself contains that tells an `add` apart from an `addi`: the **opcode**. Something has to turn "opcode in" into "select value out", with no memory involved: that's the *control module*, and we'll meet it later.
 
 This is the pattern to internalise for the rest of the lecture:
 
@@ -250,7 +250,7 @@ Picture a railway switch yard: one track leads into a tunnel, but several trains
 </p>
 <p align=center><sub>Every mux in this datapath is this same shape, over and over.</sub></p>
 
-A smaller mux sits on the read side: `MUXrf` chooses which field names the second register read, `rA` (0) or `rC` (1). No E20 instruction reads `rC` (it is only ever a destination), so every instruction sets `MUXrf` to 0. The manual's diagram includes it anyway, and it shows up as a column in the truth table.
+A smaller mux sits on the read side: `MUXrf` chooses which field names the second register read, `rA` (0) or `rC` (1). No E20 instruction reads `rC` (it is only ever a destination), so every instruction sets `MUXrf` to 0. The manual's diagram includes it anyway (for some reason), and it shows up as a column in the truth table.
 
 <p align=center>
     <img src="assets/dp-muxrf.svg" width="760" alt="MUXrf: which field (rA or rC) names the second register read">
@@ -263,15 +263,17 @@ A smaller mux sits on the read side: `MUXrf` chooses which field names the secon
 
 ## Feeding the ALU
 
-`SRC2dataOut` (the value of `rA`) goes straight into the ALU for every instruction that uses the ALU. The *other* input forks.
+`SRC2dataOut` (the value of `rA`) goes straight into the ALU for every instruction that uses the ALU.  That one's easy. 
 
-For `add $3, $1, $2`, which field names the register whose value is the ALU's other input (the one that is not `rA`)? And what does `addi` want there instead?
+The *other* input forks.
 
-For `add` it is the `rB` field, so the **value** of `rB`, coming out of `SRC1dataOut`; `addi` wants its immediate.
+For `add $3, $1, $2`, which field names the register whose value is the ALU's other input (the one that is not `rA`)? For `add` it is the `rB` field, so the **value** of `rB`, coming out of `SRC1dataOut` 
 
-One port, two things that want it: `add`, `sub`, `and`, `or`, `slt` want the value of `rB`, while `addi`, `slti`, `lw`, `sw` want the **immediate**. You can't just solder both wires onto it (hello, short circuit, hello, garbage data). Before we add the mux, the immediate needs fixing.
+And what does `addi` want there instead? `addi` wants its immediate.
 
-There's one wrinkle. Registers are 16 bits wide, but `imm7` is only 7. A 7-bit value doesn't fit a 16-bit track, so it first passes through **sign-extend**: hardwired logic that pads the front with copies of the sign bit. 
+One port, two things that want it: `add`, `sub`, `and`, `or`, `slt` want the value of `rB`, while `addi`, `slti`, `lw`, `sw` want the **immediate**. You can't just solder both wires onto it (hello, short circuit, hello, garbage data). Mux time!
+
+Before we add the mux, the immediate needs fixing. Registers are 16 bits wide, but `imm7` is only 7. A 7-bit value doesn't fit a 16-bit track, so it first passes through **sign-extend**: hardwired logic that pads the front with copies of the sign bit. 
 
 How do you expand `1111111` (that's -1) to 16 bits so it still means -1? Copy the sign bit: sixteen 1s. Zero-extending would give 127, which is a bug.
 
@@ -319,7 +321,7 @@ Now the two memory instructions split.
 
 **`lw`** reads instead: memory looks up `dataAddr` and the value comes out of `dataOut`. It has to be written into a register through `TGTdataIn`. 
 
-What's already feeding `TGTdataIn`? The ALU's output, for `add` and friends. So memory's `dataOut` wants the same port. Two streams, one door: you know the answer by now.
+For `add` and friends, the ALU's output also feeds `TGTdataIn`. So memory's `dataOut` wants the same port. Two streams, one door: you know the answer by now.
 
 <p align=center>
     <img src="assets/dp-lw-collision.svg" width="760" alt="Two streams, one door: the ALU's result and memory's dataOut both want TGTdataIn.">

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 290" font-family="Helvetica, Arial, sans-serif">
+  <rect width="700" height="290" rx="28" fill="#eee6f3"/>
+  <rect x="20" y="20" width="14" height="14" fill="#8900e1"/>
+  <g stroke="#404040" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- A -->
+    <polyline points="70,85 250,85"/>
+    <!-- B with fan-out -->
+    <polyline points="70,150 215,150"/>
+    <polyline points="215,150 215,115 250,115"/>
+    <polyline points="215,150 215,185 258,185"/>
+    <!-- C into NOT -->
+    <polyline points="70,230 130,230"/>
+    <!-- NOT out to OR second input -->
+    <polyline points="180,230 230,230 230,215 258,215"/>
+    <!-- AND out to XOR in1 -->
+    <polyline points="310,100 400,100 400,135 468,135"/>
+    <!-- OR out to XOR in2 -->
+    <polyline points="320,200 420,200 420,165 468,165"/>
+    <!-- XOR out -->
+    <polyline points="540,150 610,150"/>
+  </g>
+  <circle cx="215" cy="150" r="5" fill="#404040"/>
+  <g stroke="#57068c" stroke-width="4" fill="#f7f0ff" stroke-linejoin="round">
+    <!-- AND -->
+    <path d="M250,70 H280 A30,30 0 0 1 280,130 H250 Z"/>
+    <!-- OR -->
+    <path d="M250,170 Q290,170 320,200 Q290,230 250,230 Q272,200 250,170 Z"/>
+    <!-- XOR -->
+    <path d="M470,120 Q510,120 540,150 Q510,180 470,180 Q492,150 470,120 Z"/>
+    <!-- NOT -->
+    <path d="M130,212 L130,248 L170,230 Z"/>
+  </g>
+  <path d="M458,120 Q480,150 458,180" fill="none" stroke="#57068c" stroke-width="4"/>
+  <circle cx="175" cy="230" r="5" fill="#f7f0ff" stroke="#57068c" stroke-width="4"/>
+  <g fill="#57068c" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="24" font-weight="700" text-anchor="end">
+    <text x="58" y="93">A</text><text x="58" y="158">B</text><text x="58" y="238">C</text>
+  </g>
+  <text x="624" y="158" fill="#57068c" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="24" font-weight="700">Y</text>
+</svg>
