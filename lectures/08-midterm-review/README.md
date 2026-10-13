@@ -30,7 +30,7 @@ They are there so you don't need to memorise instruction encodings. Nothing else
 ## How to use this review
 
 1. **Attempt first.** Try every question before you look at any answers. A wrong attempt teaches you more than reading a correct one, because it shows you exactly where your method breaks.
-2. **Then go through the solutions.** There is an animated [slideshow](slides/solutions-lecture-animation.html) that walks through every answer (use the arrow keys), and the written [solutions](solutions.md), which give the answer and then the reasoning behind it, so you can compare *how* you got there and not only what you got. Look at the reasoning first: a right answer reached by a shaky method is worth checking as much as a wrong one.
+2. [**Then go through the solutions.**](solutions.md)
 <!--3. **Want more?** There is a second practice exam, with the same kinds of question and different problems: the [Additional Practice Midterm](lectures/08-midterm-review/additional-practice/README.md), with its own [solutions](lectures/08-midterm-review/additional-practice/additional-practice-solutions.md). It is optional.-->
 
 ---
