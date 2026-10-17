@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 400" font-family="Helvetica, Arial, sans-serif">
+  <defs><marker id="a" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#404040"/></marker>
+  <marker id="r" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#c8202f"/></marker></defs>
+  <rect x="40" y="50" width="150" height="84" rx="10" fill="#e2cdf2" stroke="#57068c" stroke-width="3"/>
+  <text x="115" y="82" fill="#57068c" font-size="22" font-weight="700" text-anchor="middle">IF</text>
+  <text x="115" y="106" fill="#404040" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">IR &lt;- M[pc]</text>
+  <polyline points="192,92 248,92" fill="none" stroke="#404040" stroke-width="3" marker-end="url(#a)" stroke-linejoin="round" stroke-linecap="round"/>
+  <rect x="250" y="50" width="150" height="84" rx="10" fill="#e2cdf2" stroke="#57068c" stroke-width="3"/>
+  <text x="325" y="82" fill="#57068c" font-size="22" font-weight="700" text-anchor="middle">ID</text>
+  <text x="325" y="106" fill="#404040" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">A &lt;- R[reg1]</text>
+  <text x="325" y="124" fill="#404040" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">B &lt;- R[reg2]</text>
+  <polyline points="402,92 458,92" fill="none" stroke="#404040" stroke-width="3" marker-end="url(#a)" stroke-linejoin="round" stroke-linecap="round"/>
+  <rect x="460" y="50" width="150" height="84" rx="10" fill="#e2cdf2" stroke="#57068c" stroke-width="3"/>
+  <text x="535" y="82" fill="#57068c" font-size="22" font-weight="700" text-anchor="middle">EX</text>
+  <text x="535" y="106" fill="#404040" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">aluOut &lt;-</text>
+  <text x="535" y="124" fill="#404040" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">A op B (or imm)</text>
+  <polyline points="612,92 668,92" fill="none" stroke="#404040" stroke-width="3" marker-end="url(#a)" stroke-linejoin="round" stroke-linecap="round"/>
+  <rect x="670" y="50" width="150" height="84" rx="10" fill="#e2cdf2" stroke="#57068c" stroke-width="3"/>
+  <text x="745" y="82" fill="#57068c" font-size="22" font-weight="700" text-anchor="middle">MEM</text>
+  <text x="745" y="106" fill="#404040" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">MDR &lt;- M[aluOut]</text>
+  <text x="745" y="124" fill="#404040" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">or M[aluOut] &lt;- B</text>
+  <polyline points="822,92 878,92" fill="none" stroke="#404040" stroke-width="3" marker-end="url(#a)" stroke-linejoin="round" stroke-linecap="round"/>
+  <rect x="880" y="50" width="150" height="84" rx="10" fill="#e2cdf2" stroke="#57068c" stroke-width="3"/>
+  <text x="955" y="82" fill="#57068c" font-size="22" font-weight="700" text-anchor="middle">WB</text>
+  <text x="955" y="106" fill="#404040" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">R[...] &lt;- ...</text>
+  <text x="955" y="124" fill="#404040" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">pc &lt;- ...</text>
+  <text x="575" y="30" fill="#6d6d6d" font-size="14" font-weight="400" text-anchor="middle" font-style="italic">each stage is one clock cycle</text>
+  <rect x="40" y="250" width="150" height="60" rx="10" fill="#f7f0ff" stroke="#57068c" stroke-width="3"/>
+  <text x="115" y="286" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">MEMORY</text>
+  <rect x="250" y="250" width="150" height="60" rx="10" fill="#f7f0ff" stroke="#57068c" stroke-width="3"/>
+  <text x="325" y="286" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">REGISTER FILE</text>
+  <rect x="460" y="250" width="150" height="60" rx="10" fill="#f7f0ff" stroke="#57068c" stroke-width="3"/>
+  <text x="535" y="286" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">ALU</text>
+  <polyline points="115,134 115,250" fill="none" stroke="#57068c" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+  <polyline points="325,134 325,250" fill="none" stroke="#57068c" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+  <polyline points="535,134 535,250" fill="none" stroke="#57068c" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+  <polyline points="745,134 745,336 150,336 150,310" fill="none" stroke="#57068c" stroke-width="3" stroke-dasharray="6 5" stroke-linejoin="round" stroke-linecap="round"/>
+  <polyline points="955,134 955,356 290,356 290,310" fill="none" stroke="#57068c" stroke-width="3" stroke-dasharray="6 5" stroke-linejoin="round" stroke-linecap="round"/>
+  <text x="450" y="330" fill="#6d6d6d" font-size="12" font-weight="400" text-anchor="middle" font-style="italic">MEM uses the same memory as IF</text>
+  <text x="620" y="376" fill="#6d6d6d" font-size="12" font-weight="400" text-anchor="middle" font-style="italic">WB uses the same register file as ID</text>
+</svg>

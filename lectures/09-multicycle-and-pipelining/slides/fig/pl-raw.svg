@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 970 280" font-family="Helvetica, Arial, sans-serif">
+  <defs><marker id="a" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#404040"/></marker>
+  <marker id="r" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#c8202f"/></marker></defs>
+  <rect x="20" y="26" width="60" height="34" rx="0" fill="#57068c" stroke="#57068c" stroke-width="2"/>
+  <text x="50" y="48" fill="#ffffff" font-size="14" font-weight="700" text-anchor="middle">Time</text>
+  <rect x="80" y="26" width="170" height="34" rx="0" fill="#57068c" stroke="#57068c" stroke-width="2"/>
+  <text x="165.0" y="48" fill="#ffffff" font-size="15" font-weight="700" text-anchor="middle">IF</text>
+  <rect x="250" y="26" width="170" height="34" rx="0" fill="#57068c" stroke="#57068c" stroke-width="2"/>
+  <text x="335.0" y="48" fill="#ffffff" font-size="15" font-weight="700" text-anchor="middle">ID</text>
+  <rect x="420" y="26" width="170" height="34" rx="0" fill="#57068c" stroke="#57068c" stroke-width="2"/>
+  <text x="505.0" y="48" fill="#ffffff" font-size="15" font-weight="700" text-anchor="middle">EX</text>
+  <rect x="590" y="26" width="170" height="34" rx="0" fill="#57068c" stroke="#57068c" stroke-width="2"/>
+  <text x="675.0" y="48" fill="#ffffff" font-size="15" font-weight="700" text-anchor="middle">MEM</text>
+  <rect x="760" y="26" width="170" height="34" rx="0" fill="#57068c" stroke="#57068c" stroke-width="2"/>
+  <text x="845.0" y="48" fill="#ffffff" font-size="15" font-weight="700" text-anchor="middle">WB</text>
+  <rect x="20" y="60" width="60" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <text x="50" y="82" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="middle">1</text>
+  <rect x="80" y="60" width="170" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <rect x="250" y="60" width="170" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <rect x="420" y="60" width="170" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <rect x="590" y="60" width="170" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <rect x="760" y="60" width="170" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <rect x="20" y="94" width="60" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <text x="50" y="116" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="middle">2</text>
+  <rect x="80" y="94" width="170" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <rect x="250" y="94" width="170" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <rect x="420" y="94" width="170" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <rect x="590" y="94" width="170" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <rect x="760" y="94" width="170" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <rect x="20" y="128" width="60" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <text x="50" y="150" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="middle">3</text>
+  <rect x="80" y="128" width="170" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <rect x="250" y="128" width="170" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <rect x="420" y="128" width="170" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <rect x="590" y="128" width="170" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <rect x="760" y="128" width="170" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <rect x="20" y="162" width="60" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <text x="50" y="184" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="middle">4</text>
+  <rect x="80" y="162" width="170" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <rect x="250" y="162" width="170" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <rect x="420" y="162" width="170" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <rect x="590" y="162" width="170" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <rect x="760" y="162" width="170" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <rect x="20" y="196" width="60" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <text x="50" y="218" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="middle">5</text>
+  <rect x="80" y="196" width="170" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <rect x="250" y="196" width="170" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <rect x="420" y="196" width="170" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <rect x="590" y="196" width="170" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <rect x="760" y="196" width="170" height="34" rx="0" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <rect x="83" y="63" width="164" height="28" rx="6" fill="#e2cdf2" stroke="#57068c" stroke-width="2"/>
+  <text x="165.0" y="83" fill="#404040" font-size="13" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">addi $1, $0, 1</text>
+  <rect x="253" y="97" width="164" height="28" rx="6" fill="#e2cdf2" stroke="#57068c" stroke-width="2"/>
+  <text x="335.0" y="117" fill="#404040" font-size="13" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">addi $1, $0, 1</text>
+  <rect x="423" y="131" width="164" height="28" rx="6" fill="#e2cdf2" stroke="#57068c" stroke-width="2"/>
+  <text x="505.0" y="151" fill="#404040" font-size="13" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">addi $1, $0, 1</text>
+  <rect x="593" y="165" width="164" height="28" rx="6" fill="#e2cdf2" stroke="#57068c" stroke-width="2"/>
+  <text x="675.0" y="185" fill="#404040" font-size="13" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">addi $1, $0, 1</text>
+  <rect x="763" y="199" width="164" height="28" rx="6" fill="#e2cdf2" stroke="#57068c" stroke-width="2"/>
+  <text x="845.0" y="219" fill="#404040" font-size="13" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">addi $1, $0, 1</text>
+  <rect x="83" y="97" width="164" height="28" rx="6" fill="#d9e8fb" stroke="#57068c" stroke-width="2"/>
+  <text x="165.0" y="117" fill="#404040" font-size="13" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">addi $1, $1, 1</text>
+  <rect x="253" y="131" width="164" height="28" rx="6" fill="#d9e8fb" stroke="#57068c" stroke-width="2"/>
+  <text x="335.0" y="151" fill="#404040" font-size="13" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">addi $1, $1, 1</text>
+  <rect x="423" y="165" width="164" height="28" rx="6" fill="#d9e8fb" stroke="#57068c" stroke-width="2"/>
+  <text x="505.0" y="185" fill="#404040" font-size="13" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">addi $1, $1, 1</text>
+  <rect x="593" y="199" width="164" height="28" rx="6" fill="#d9e8fb" stroke="#57068c" stroke-width="2"/>
+  <text x="675.0" y="219" fill="#404040" font-size="13" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">addi $1, $1, 1</text>
+  <rect x="763" y="233" width="164" height="28" rx="6" fill="#d9e8fb" stroke="#57068c" stroke-width="2"/>
+  <text x="845.0" y="253" fill="#404040" font-size="13" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">addi $1, $1, 1</text>
+  <rect x="251" y="129" width="168" height="32" rx="6" fill="none" stroke="#c8202f" stroke-width="4"/>
+  <rect x="761" y="197" width="168" height="32" rx="6" fill="none" stroke="#c8202f" stroke-width="4"/>
+</svg>

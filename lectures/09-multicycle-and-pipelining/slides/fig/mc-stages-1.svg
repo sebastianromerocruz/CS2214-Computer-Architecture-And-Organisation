@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 400" font-family="Helvetica, Arial, sans-serif">
+  <defs><marker id="a" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#404040"/></marker>
+  <marker id="r" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#c8202f"/></marker></defs>
+  <rect x="40" y="50" width="150" height="84" rx="10" fill="#e2cdf2" stroke="#57068c" stroke-width="3"/>
+  <text x="115" y="82" fill="#57068c" font-size="22" font-weight="700" text-anchor="middle">IF</text>
+  <text x="115" y="106" fill="#404040" font-size="16" font-weight="600" text-anchor="middle">read the</text>
+  <text x="115" y="126" fill="#404040" font-size="16" font-weight="600" text-anchor="middle">instruction</text>
+  <polyline points="192,92 248,92" fill="none" stroke="#404040" stroke-width="3" marker-end="url(#a)" stroke-linejoin="round" stroke-linecap="round"/>
+  <rect x="250" y="50" width="150" height="84" rx="10" fill="#e2cdf2" stroke="#57068c" stroke-width="3"/>
+  <text x="325" y="82" fill="#57068c" font-size="22" font-weight="700" text-anchor="middle">ID</text>
+  <text x="325" y="106" fill="#404040" font-size="16" font-weight="600" text-anchor="middle">read the</text>
+  <text x="325" y="126" fill="#404040" font-size="16" font-weight="600" text-anchor="middle">registers</text>
+  <polyline points="402,92 458,92" fill="none" stroke="#404040" stroke-width="3" marker-end="url(#a)" stroke-linejoin="round" stroke-linecap="round"/>
+  <rect x="460" y="50" width="150" height="84" rx="10" fill="#e2cdf2" stroke="#57068c" stroke-width="3"/>
+  <text x="535" y="82" fill="#57068c" font-size="22" font-weight="700" text-anchor="middle">EX</text>
+  <text x="535" y="106" fill="#404040" font-size="16" font-weight="600" text-anchor="middle">do the</text>
+  <text x="535" y="126" fill="#404040" font-size="16" font-weight="600" text-anchor="middle">math</text>
+  <polyline points="612,92 668,92" fill="none" stroke="#404040" stroke-width="3" marker-end="url(#a)" stroke-linejoin="round" stroke-linecap="round"/>
+  <rect x="670" y="50" width="150" height="84" rx="10" fill="#e2cdf2" stroke="#57068c" stroke-width="3"/>
+  <text x="745" y="82" fill="#57068c" font-size="22" font-weight="700" text-anchor="middle">MEM</text>
+  <text x="745" y="106" fill="#404040" font-size="16" font-weight="600" text-anchor="middle">use data</text>
+  <text x="745" y="126" fill="#404040" font-size="16" font-weight="600" text-anchor="middle">memory</text>
+  <polyline points="822,92 878,92" fill="none" stroke="#404040" stroke-width="3" marker-end="url(#a)" stroke-linejoin="round" stroke-linecap="round"/>
+  <rect x="880" y="50" width="150" height="84" rx="10" fill="#e2cdf2" stroke="#57068c" stroke-width="3"/>
+  <text x="955" y="82" fill="#57068c" font-size="22" font-weight="700" text-anchor="middle">WB</text>
+  <text x="955" y="106" fill="#404040" font-size="16" font-weight="600" text-anchor="middle">write the</text>
+  <text x="955" y="126" fill="#404040" font-size="16" font-weight="600" text-anchor="middle">result</text>
+  <text x="575" y="30" fill="#6d6d6d" font-size="14" font-weight="400" text-anchor="middle" font-style="italic">each stage is one clock cycle</text>
+</svg>

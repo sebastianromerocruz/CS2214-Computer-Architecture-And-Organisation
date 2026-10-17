@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300" font-family="Helvetica, Arial, sans-serif">
+  <defs><marker id="a" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#404040"/></marker>
+  <marker id="r" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#c8202f"/></marker></defs>
+  <text x="450" y="38" fill="#6d6d6d" font-size="14" font-weight="400" text-anchor="middle" font-style="italic">three add instructions, same unit-delay model (memory 2, register read 1, ALU 1, register write 1)</text>
+  <text x="136" y="102" fill="#57068c" font-size="16" font-weight="700" text-anchor="end">single-cycle</text>
+  <rect x="150" y="70" width="154" height="50" rx="8" fill="#e2cdf2" stroke="#57068c" stroke-width="3"/>
+  <text x="227.0" y="100" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">add $1</text>
+  <rect x="304" y="70" width="154" height="50" rx="8" fill="#e2cdf2" stroke="#57068c" stroke-width="3"/>
+  <text x="381.0" y="100" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">add $2</text>
+  <rect x="458" y="70" width="154" height="50" rx="8" fill="#e2cdf2" stroke="#57068c" stroke-width="3"/>
+  <text x="535.0" y="100" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">add $3</text>
+  <text x="381.0" y="142" fill="#6d6d6d" font-size="13" font-weight="400" text-anchor="middle" font-style="italic">one long cycle each: 7 units</text>
+  <text x="136" y="222" fill="#57068c" font-size="16" font-weight="700" text-anchor="end">multicycle</text>
+  <rect x="150" y="190" width="44" height="50" rx="6" fill="#f7f0ff" stroke="#57068c" stroke-width="2"/>
+  <text x="172" y="221" fill="#57068c" font-size="13" font-weight="700" text-anchor="middle">IF</text>
+  <rect x="194" y="190" width="44" height="50" rx="6" fill="#f7f0ff" stroke="#57068c" stroke-width="2"/>
+  <text x="216" y="221" fill="#57068c" font-size="13" font-weight="700" text-anchor="middle">ID</text>
+  <rect x="238" y="190" width="44" height="50" rx="6" fill="#f7f0ff" stroke="#57068c" stroke-width="2"/>
+  <text x="260" y="221" fill="#57068c" font-size="13" font-weight="700" text-anchor="middle">EX</text>
+  <rect x="282" y="190" width="44" height="50" rx="6" fill="#f7f0ff" stroke="#57068c" stroke-width="2"/>
+  <text x="304" y="221" fill="#57068c" font-size="12" font-weight="700" text-anchor="middle">MEM</text>
+  <rect x="326" y="190" width="44" height="50" rx="6" fill="#f7f0ff" stroke="#57068c" stroke-width="2"/>
+  <text x="348" y="221" fill="#57068c" font-size="13" font-weight="700" text-anchor="middle">WB</text>
+  <rect x="370" y="190" width="44" height="50" rx="6" fill="#e2cdf2" stroke="#57068c" stroke-width="2"/>
+  <text x="392" y="221" fill="#57068c" font-size="13" font-weight="700" text-anchor="middle">IF</text>
+  <rect x="414" y="190" width="44" height="50" rx="6" fill="#e2cdf2" stroke="#57068c" stroke-width="2"/>
+  <text x="436" y="221" fill="#57068c" font-size="13" font-weight="700" text-anchor="middle">ID</text>
+  <rect x="458" y="190" width="44" height="50" rx="6" fill="#e2cdf2" stroke="#57068c" stroke-width="2"/>
+  <text x="480" y="221" fill="#57068c" font-size="13" font-weight="700" text-anchor="middle">EX</text>
+  <rect x="502" y="190" width="44" height="50" rx="6" fill="#e2cdf2" stroke="#57068c" stroke-width="2"/>
+  <text x="524" y="221" fill="#57068c" font-size="12" font-weight="700" text-anchor="middle">MEM</text>
+  <rect x="546" y="190" width="44" height="50" rx="6" fill="#e2cdf2" stroke="#57068c" stroke-width="2"/>
+  <text x="568" y="221" fill="#57068c" font-size="13" font-weight="700" text-anchor="middle">WB</text>
+  <rect x="590" y="190" width="44" height="50" rx="6" fill="#f7f0ff" stroke="#57068c" stroke-width="2"/>
+  <text x="612" y="221" fill="#57068c" font-size="13" font-weight="700" text-anchor="middle">IF</text>
+  <rect x="634" y="190" width="44" height="50" rx="6" fill="#f7f0ff" stroke="#57068c" stroke-width="2"/>
+  <text x="656" y="221" fill="#57068c" font-size="13" font-weight="700" text-anchor="middle">ID</text>
+  <rect x="678" y="190" width="44" height="50" rx="6" fill="#f7f0ff" stroke="#57068c" stroke-width="2"/>
+  <text x="700" y="221" fill="#57068c" font-size="13" font-weight="700" text-anchor="middle">EX</text>
+  <rect x="722" y="190" width="44" height="50" rx="6" fill="#f7f0ff" stroke="#57068c" stroke-width="2"/>
+  <text x="744" y="221" fill="#57068c" font-size="12" font-weight="700" text-anchor="middle">MEM</text>
+  <rect x="766" y="190" width="44" height="50" rx="6" fill="#f7f0ff" stroke="#57068c" stroke-width="2"/>
+  <text x="788" y="221" fill="#57068c" font-size="13" font-weight="700" text-anchor="middle">WB</text>
+  <polyline points="152,252 368,252" fill="none" stroke="#57068c" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+  <text x="260" y="272" fill="#6d6d6d" font-size="12" font-weight="400" text-anchor="middle" font-style="italic">add $1: 5 short cycles, 10 units</text>
+  <polyline points="372,252 588,252" fill="none" stroke="#57068c" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+  <text x="480" y="272" fill="#6d6d6d" font-size="12" font-weight="400" text-anchor="middle" font-style="italic">add $2: 5 short cycles, 10 units</text>
+  <polyline points="592,252 808,252" fill="none" stroke="#57068c" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+  <text x="700" y="272" fill="#6d6d6d" font-size="12" font-weight="400" text-anchor="middle" font-style="italic">add $3: 5 short cycles, 10 units</text>
+</svg>
