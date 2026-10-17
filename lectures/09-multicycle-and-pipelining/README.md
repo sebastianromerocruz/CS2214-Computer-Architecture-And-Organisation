@@ -777,8 +777,6 @@ A `lw`'s value first exists in MEM, after memory has been read, and an `addi` ri
 
 So the whole picture: stalling is simple and always correct but slow; forwarding recovers most of the speed; and the load-use case still costs one cycle. Next week asks what happens when the problem is not a *value* but a *decision*: a branch whose outcome isn't known yet (a **control hazard**), and when two instructions want the same hardware at once (a **structural hazard**).
 
-> Looking ahead: the same "many small, simple, uniform units, all kept busy at once" instinct that motivates a five-stage pipeline is the seed of why a GPU looks nothing like a single powerful CPU core. A GPU doesn't deepen its pipeline further. It takes the *width* approach: thousands of simple ALUs, each running the same instruction on different data, trading the hazard bookkeeping above for sheer replication. Both are answers to "how do I finish more instructions per second without shrinking the clock period further".
-
 ---
 
 ## Appendix: What Each Mux Input Means
