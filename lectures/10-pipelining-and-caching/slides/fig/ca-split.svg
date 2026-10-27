@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 320" font-family="Helvetica, Arial, sans-serif">
+  <defs><marker id="a" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#404040"/></marker>
+  <marker id="r" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#c8202f"/></marker></defs>
+  <text x="450" y="40" fill="#6d6d6d" font-size="15" font-weight="400" text-anchor="middle" font-style="italic">address 181 in a system with 10-bit addresses, block size 4, 8 cache rows</text>
+  <rect x="168" y="100" width="284" height="70" rx="8" fill="#e2cdf2" stroke="#57068c" stroke-width="4"/>
+  <rect x="448" y="100" width="172" height="70" rx="8" fill="#fbe9ea" stroke="#c8202f" stroke-width="4"/>
+  <rect x="616" y="100" width="116" height="70" rx="8" fill="#ffffff" stroke="#6d6d6d" stroke-width="4"/>
+  <text x="198.0" y="147" fill="#404040" font-size="30" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+  <text x="254.0" y="147" fill="#404040" font-size="30" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+  <text x="310.0" y="147" fill="#404040" font-size="30" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+  <text x="366.0" y="147" fill="#404040" font-size="30" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+  <text x="422.0" y="147" fill="#404040" font-size="30" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+  <text x="478.0" y="147" fill="#404040" font-size="30" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+  <text x="534.0" y="147" fill="#404040" font-size="30" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+  <text x="590.0" y="147" fill="#404040" font-size="30" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+  <text x="646.0" y="147" fill="#404040" font-size="30" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+  <text x="702.0" y="147" fill="#404040" font-size="30" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+  <polyline points="174,184 446,184" fill="none" stroke="#57068c" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+  <polyline points="454,184 614,184" fill="none" stroke="#c8202f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+  <polyline points="622,184 726,184" fill="none" stroke="#6d6d6d" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+  <text x="310.0" y="212" fill="#57068c" font-size="18" font-weight="700" text-anchor="middle">tag = 5</text>
+  <text x="310.0" y="236" fill="#6d6d6d" font-size="14" font-weight="400" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">00101</text>
+  <text x="534.0" y="212" fill="#c8202f" font-size="18" font-weight="700" text-anchor="middle">index = 5</text>
+  <text x="534.0" y="236" fill="#6d6d6d" font-size="14" font-weight="400" text-anchor="middle">101  (the row)</text>
+  <text x="674" y="212" fill="#6d6d6d" font-size="18" font-weight="700" text-anchor="middle">offset = 1</text>
+  <text x="674" y="236" fill="#6d6d6d" font-size="14" font-weight="400" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">01</text>
+  <polyline points="174,88 614,88" fill="none" stroke="#404040" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+  <text x="394" y="76" fill="#404040" font-size="14" font-weight="700" text-anchor="middle">block ID = 181 // 4 = 45</text>
+  <text x="450" y="288" fill="#6d6d6d" font-size="13" font-weight="400" text-anchor="middle" font-style="italic">offset: which cell in the block   |   index: which row   |   tag: which block owns that row</text>
+</svg>

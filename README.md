@@ -23,6 +23,7 @@ resource, send me an [**email**](mailto:sebastian.romerocruz@nyu.edu) about it w
 7. [**The E20 Single-Cycle Datapath**](lectures/07-e20-single-cycle-implementation)
 8. [**Midterm Review**](lectures/08-midterm-review)
 9. [**The E20 Multi-Cycle Datapath**](lectures/09-multicycle-and-pipelining)
+10. [**Pipelining & Direct-Mapped Caching**](lectures/10-pipelining-and-caching)
 
 ---
 

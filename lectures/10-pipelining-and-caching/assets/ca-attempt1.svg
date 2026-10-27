@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 380" font-family="Helvetica, Arial, sans-serif">
+<defs><marker id="a" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#57068c"/></marker><marker id="r" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#c1272d"/></marker></defs>
+<rect width="1150" height="380" rx="24" fill="#eee6f3"/>
+<text x="575" y="34" fill="#6d6d6d" font-size="17" font-weight="400" text-anchor="middle" font-style="italic">attempt one: row = address % 4. Four rows, so a quarter of all addresses fight over each row.</text>
+<rect x="50" y="64" width="470" height="110" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="70" y="96" fill="#57068c" font-size="22" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">1.  lw 42</text>
+<text x="70" y="128" fill="#1a1a1a" font-size="19" font-weight="600" text-anchor="start">42 % 4 = 2  →  row 2 stores 17</text>
+<text x="70" y="156" fill="#2e7d32" font-size="18" font-weight="700" text-anchor="start">fine</text>
+<rect x="50" y="206" width="470" height="128" rx="10" fill="#fff" stroke="#c1272d" stroke-width="4"/>
+<text x="70" y="238" fill="#c1272d" font-size="22" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">2.  lw 10</text>
+<text x="70" y="270" fill="#1a1a1a" font-size="19" font-weight="600" text-anchor="start">10 % 4 = 2  →  row 2 already has a value</text>
+<text x="70" y="302" fill="#c1272d" font-size="20" font-weight="700" text-anchor="start">the cache hands back 17</text>
+<text x="70" y="326" fill="#c1272d" font-size="18" font-weight="700" text-anchor="start">but ram[10] is 33</text>
+<text x="684" y="84" fill="#6d6d6d" font-size="20" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="700" y="50" width="300" height="54" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="684" y="158" fill="#6d6d6d" font-size="20" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<rect x="700" y="124" width="300" height="54" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="684" y="232" fill="#6d6d6d" font-size="20" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="700" y="198" width="300" height="54" rx="10" fill="#fbe9ea" stroke="#c1272d" stroke-width="5"/>
+<text x="850" y="233" fill="#1a1a1a" font-size="26" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">17</text>
+<text x="684" y="306" fill="#6d6d6d" font-size="20" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<rect x="700" y="272" width="300" height="54" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<polyline points="522,125 698,212" fill="none" stroke="#57068c" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#a)"/>
+<polyline points="522,262 698,240" fill="none" stroke="#c1272d" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#r)"/>
+<text x="850" y="358" fill="#c1272d" font-size="19" font-weight="700" text-anchor="middle">row 2 can't tell 42 from 10: WRONG</text>
+</svg>

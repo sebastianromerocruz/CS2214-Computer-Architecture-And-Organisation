@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 330" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="330" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" text-anchor="middle">attempt four: the instant the power comes on, every row holds whatever the wires settled to. Say all zeros.</text>
+<text x="190.0" y="70" fill="#c1272d" font-size="19" font-weight="700" text-anchor="middle">cache at power-on (no V yet)</text>
+<rect x="60" y="86" width="70" height="32" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="95.0" y="108" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">row</text>
+<rect x="130" y="86" width="90" height="32" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="175.0" y="108" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">tag</text>
+<rect x="220" y="86" width="100" height="32" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="270.0" y="108" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">value</text>
+<rect x="60" y="118" width="70" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="95.0" y="145" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="130" y="118" width="90" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="175.0" y="145" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="220" y="118" width="100" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="270.0" y="145" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="60" y="158" width="70" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="95.0" y="185" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<rect x="130" y="158" width="90" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="175.0" y="185" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="220" y="158" width="100" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="270.0" y="185" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="60" y="198" width="70" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="95.0" y="225" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="130" y="198" width="90" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="175.0" y="225" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="220" y="198" width="100" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="270.0" y="225" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="60" y="238" width="70" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="95.0" y="265" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<rect x="130" y="238" width="90" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="175.0" y="265" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="220" y="238" width="100" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="270.0" y="265" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<text x="750.0" y="70" fill="#c1272d" font-size="19" font-weight="700" text-anchor="middle">lw 1: row 1, tag 0</text>
+<rect x="620" y="86" width="70" height="32" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="655.0" y="108" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">row</text>
+<rect x="690" y="86" width="90" height="32" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="735.0" y="108" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">tag</text>
+<rect x="780" y="86" width="100" height="32" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="830.0" y="108" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">value</text>
+<rect x="620" y="118" width="70" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="655.0" y="145" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="690" y="118" width="90" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="735.0" y="145" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="780" y="118" width="100" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="830.0" y="145" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="620" y="158" width="70" height="40" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="655.0" y="185" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<rect x="690" y="158" width="90" height="40" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="735.0" y="185" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="780" y="158" width="100" height="40" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="830.0" y="185" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="620" y="198" width="70" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="655.0" y="225" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="690" y="198" width="90" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="735.0" y="225" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="780" y="198" width="100" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="830.0" y="225" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="620" y="238" width="70" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="655.0" y="265" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<rect x="690" y="238" width="90" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="735.0" y="265" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="780" y="238" width="100" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="830.0" y="265" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<text x="750.0" y="308" fill="#c1272d" font-size="17" font-weight="700" text-anchor="middle">stored tag 0 = tag 0: a false HIT on static</text>
+</svg>

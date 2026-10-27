@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 430" font-family="Helvetica, Arial, sans-serif">
+<defs><marker id="a" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#57068c"/></marker></defs>
+<rect width="1150" height="430" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="32" fill="#6d6d6d" font-size="17" text-anchor="middle">one row of the cache, as each attempt adds a column. Here: row 2 after lw 42 (RAM[42] = 17).</text>
+<text x="155" y="76" fill="#57068c" font-size="21" font-weight="700" text-anchor="middle">attempt one</text>
+<rect x="100.0" y="100" width="110" height="50" rx="10" fill="#f3eef7" stroke="#57068c" stroke-width="3"/>
+<text x="155.0" y="132" fill="#57068c" font-size="17" font-weight="700" text-anchor="middle">value</text>
+<rect x="100.0" y="150" width="110" height="70" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="155.0" y="196" fill="#1a1a1a" font-size="28" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">17</text>
+<text x="155" y="262" fill="#c1272d" font-size="18" font-weight="700" text-anchor="middle">lies about address 10</text>
+<polyline points="280,160 308,160" fill="none" stroke="#57068c" stroke-width="4" stroke-linecap="round" marker-end="url(#a)"/>
+<text x="435" y="76" fill="#57068c" font-size="21" font-weight="700" text-anchor="middle">attempt two</text>
+<rect x="325.0" y="100" width="110" height="50" rx="10" fill="#fff8e1" stroke="#b07a00" stroke-width="3"/>
+<text x="380.0" y="132" fill="#b07a00" font-size="17" font-weight="700" text-anchor="middle">address</text>
+<rect x="325.0" y="150" width="110" height="70" rx="10" fill="#fff" stroke="#b07a00" stroke-width="3"/>
+<text x="380.0" y="196" fill="#1a1a1a" font-size="28" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">42</text>
+<rect x="435.0" y="100" width="110" height="50" rx="10" fill="#f3eef7" stroke="#57068c" stroke-width="3"/>
+<text x="490.0" y="132" fill="#57068c" font-size="17" font-weight="700" text-anchor="middle">value</text>
+<rect x="435.0" y="150" width="110" height="70" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="490.0" y="196" fill="#1a1a1a" font-size="28" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">17</text>
+<text x="435" y="262" fill="#2e7d32" font-size="18" font-weight="700" text-anchor="middle">correct, but wasteful</text>
+<polyline points="560,160 588,160" fill="none" stroke="#57068c" stroke-width="4" stroke-linecap="round" marker-end="url(#a)"/>
+<text x="715" y="76" fill="#57068c" font-size="21" font-weight="700" text-anchor="middle">attempt three</text>
+<rect x="605.0" y="100" width="110" height="50" rx="10" fill="#fff8e1" stroke="#b07a00" stroke-width="3"/>
+<text x="660.0" y="132" fill="#b07a00" font-size="17" font-weight="700" text-anchor="middle">tag</text>
+<rect x="605.0" y="150" width="110" height="70" rx="10" fill="#fff" stroke="#b07a00" stroke-width="3"/>
+<text x="660.0" y="196" fill="#1a1a1a" font-size="28" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">10</text>
+<rect x="715.0" y="100" width="110" height="50" rx="10" fill="#f3eef7" stroke="#57068c" stroke-width="3"/>
+<text x="770.0" y="132" fill="#57068c" font-size="17" font-weight="700" text-anchor="middle">value</text>
+<rect x="715.0" y="150" width="110" height="70" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="770.0" y="196" fill="#1a1a1a" font-size="28" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">17</text>
+<text x="715" y="262" fill="#2e7d32" font-size="18" font-weight="700" text-anchor="middle">correct, and thin</text>
+<polyline points="840,160 868,160" fill="none" stroke="#57068c" stroke-width="4" stroke-linecap="round" marker-end="url(#a)"/>
+<text x="995" y="76" fill="#57068c" font-size="21" font-weight="700" text-anchor="middle">attempt four</text>
+<rect x="887.0" y="100" width="56" height="50" rx="10" fill="#fff8e1" stroke="#b07a00" stroke-width="3"/>
+<text x="915.0" y="132" fill="#b07a00" font-size="17" font-weight="700" text-anchor="middle">V</text>
+<rect x="887.0" y="150" width="56" height="70" rx="10" fill="#fff" stroke="#b07a00" stroke-width="3"/>
+<text x="915.0" y="196" fill="#1a1a1a" font-size="28" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<rect x="943.0" y="100" width="80" height="50" rx="10" fill="#f3eef7" stroke="#57068c" stroke-width="3"/>
+<text x="983.0" y="132" fill="#57068c" font-size="17" font-weight="700" text-anchor="middle">tag</text>
+<rect x="943.0" y="150" width="80" height="70" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="983.0" y="196" fill="#1a1a1a" font-size="28" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">10</text>
+<rect x="1023.0" y="100" width="80" height="50" rx="10" fill="#f3eef7" stroke="#57068c" stroke-width="3"/>
+<text x="1063.0" y="132" fill="#57068c" font-size="17" font-weight="700" text-anchor="middle">value</text>
+<rect x="1023.0" y="150" width="80" height="70" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="1063.0" y="196" fill="#1a1a1a" font-size="28" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">17</text>
+<text x="995" y="262" fill="#2e7d32" font-size="18" font-weight="700" text-anchor="middle">correct, even at power-on</text>
+<text x="575" y="316" fill="#b07a00" font-size="17" font-weight="600" text-anchor="middle">gold = the column that was added to fix the previous failure</text>
+<text x="575" y="352" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">address: the cache stored the whole name. tag: only what the row does not already tell us.</text>
+<text x="575" y="384" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">V: is this row real data, or power-on static?</text>
+</svg>

@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 340" font-family="Helvetica, Arial, sans-serif">
+<rect x="0" y="0" width="960" height="340" rx="28" fill="#eee6f3"/>
+<rect x="20" y="20" width="14" height="14" fill="#8900e1"/>
+<text x="480" y="36" fill="#57068c" font-size="18" font-weight="700" text-anchor="middle">predict not-taken, guess wrong: two fetches are flushed</text>
+<text x="234" y="72" fill="#404040" font-size="14" font-weight="700" text-anchor="middle">1</text>
+<text x="328" y="72" fill="#404040" font-size="14" font-weight="700" text-anchor="middle">2</text>
+<text x="422" y="72" fill="#404040" font-size="14" font-weight="700" text-anchor="middle">3</text>
+<text x="516" y="72" fill="#404040" font-size="14" font-weight="700" text-anchor="middle">4</text>
+<text x="610" y="72" fill="#404040" font-size="14" font-weight="700" text-anchor="middle">5</text>
+<text x="704" y="72" fill="#404040" font-size="14" font-weight="700" text-anchor="middle">6</text>
+<text x="798" y="72" fill="#404040" font-size="14" font-weight="700" text-anchor="middle">7</text>
+<text x="892" y="72" fill="#404040" font-size="14" font-weight="700" text-anchor="middle">8</text>
+<text x="10" y="72" fill="#6d6d6d" font-size="12" font-weight="700">cycle</text>
+<text x="10" y="110" fill="#57068c" font-size="13" font-weight="700" font-family="ui-monospace, Menlo, Consolas, monospace">jeq $1,$0,done</text>
+<rect x="193" y="88" width="86" height="34" rx="6" fill="#8900e1"/>
+<text x="236" y="110" fill="#ffffff" font-size="13" font-weight="700" text-anchor="middle">IF</text>
+<rect x="287" y="88" width="86" height="34" rx="6" fill="#57068c"/>
+<text x="330" y="110" fill="#ffffff" font-size="13" font-weight="700" text-anchor="middle">ID</text>
+<rect x="381" y="88" width="86" height="34" rx="6" fill="#7b5aa6"/>
+<text x="424" y="110" fill="#ffffff" font-size="13" font-weight="700" text-anchor="middle">EX</text>
+<rect x="475" y="88" width="86" height="34" rx="6" fill="#a98fc9"/>
+<text x="518" y="110" fill="#ffffff" font-size="13" font-weight="700" text-anchor="middle">MEM</text>
+<rect x="569" y="88" width="86" height="34" rx="6" fill="#c9b8e3"/>
+<text x="612" y="110" fill="#57068c" font-size="13" font-weight="700" text-anchor="middle">WB</text>
+<text x="10" y="156" fill="#6d6d6d" font-size="13" font-weight="700" font-family="ui-monospace, Menlo, Consolas, monospace">add $2,$2,$2</text>
+<rect x="287" y="134" width="86" height="34" rx="6" fill="#e6e4de" stroke="#6d6d6d" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="330" y="156" fill="#6d6d6d" font-size="13" font-weight="700" text-anchor="middle">IF</text>
+<line x1="296" y1="138" x2="364" y2="164" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/><line x1="364" y1="138" x2="296" y2="164" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<rect x="381" y="134" width="86" height="34" rx="6" fill="#e6e4de" stroke="#6d6d6d" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="424" y="156" fill="#6d6d6d" font-size="13" font-weight="700" text-anchor="middle">ID</text>
+<line x1="390" y1="138" x2="458" y2="164" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/><line x1="458" y1="138" x2="390" y2="164" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<text x="10" y="202" fill="#6d6d6d" font-size="13" font-weight="700" font-family="ui-monospace, Menlo, Consolas, monospace">add $4,$4,$4</text>
+<rect x="381" y="180" width="86" height="34" rx="6" fill="#e6e4de" stroke="#6d6d6d" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="424" y="202" fill="#6d6d6d" font-size="13" font-weight="700" text-anchor="middle">IF</text>
+<line x1="390" y1="184" x2="458" y2="210" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/><line x1="458" y1="184" x2="390" y2="210" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<text x="10" y="248" fill="#2e7d32" font-size="13" font-weight="700" font-family="ui-monospace, Menlo, Consolas, monospace">done: add $3,$3,$3</text>
+<rect x="475" y="226" width="86" height="34" rx="6" fill="#2e7d32"/>
+<text x="518" y="248" fill="#ffffff" font-size="13" font-weight="700" text-anchor="middle">IF</text>
+<rect x="569" y="226" width="86" height="34" rx="6" fill="#2e7d32"/>
+<text x="612" y="248" fill="#ffffff" font-size="13" font-weight="700" text-anchor="middle">ID</text>
+<rect x="663" y="226" width="86" height="34" rx="6" fill="#2e7d32"/>
+<text x="706" y="248" fill="#ffffff" font-size="13" font-weight="700" text-anchor="middle">EX</text>
+<rect x="757" y="226" width="86" height="34" rx="6" fill="#2e7d32"/>
+<text x="800" y="248" fill="#ffffff" font-size="13" font-weight="700" text-anchor="middle">MEM</text>
+<rect x="851" y="226" width="86" height="34" rx="6" fill="#2e7d32"/>
+<text x="894" y="248" fill="#ffffff" font-size="13" font-weight="700" text-anchor="middle">WB</text>
+<line x1="470" y1="78" x2="470" y2="276" stroke="#c1272d" stroke-width="3" stroke-dasharray="7 5"/>
+<text x="528" y="150" fill="#c1272d" font-size="14" font-weight="700">jeq resolves in EX (cycle 3):</text>
+<text x="528" y="170" fill="#c1272d" font-size="14" font-weight="700">branch taken, so flush the two fetches</text>
+<text x="528" y="298" fill="#2e7d32" font-size="14" font-weight="700">the real target enters IF in cycle 4, not cycle 2: 2 cycles lost</text>
+<text x="480" y="324" fill="#404040" font-size="13" text-anchor="middle">cycles thrown away, not just re-fetched: that is the real cost of a control hazard</text>
+<circle cx="936" cy="316" r="7" fill="#7b5aa6"/></svg>

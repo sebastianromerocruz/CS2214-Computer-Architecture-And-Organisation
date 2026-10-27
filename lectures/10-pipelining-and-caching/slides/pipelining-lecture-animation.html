@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CS-UY 2214 | Pipelining, Concluded | Animated</title>
+<link rel="stylesheet" href="../../_shared/theme/house.css">
+<style>
+  /* One deck for the pipelining half of the Week IX lecture (hazards), on the same step engine as the lecture 09 deck.
+     Arrow keys step, shift + arrow jumps a section. Open with #4.3. */
+
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: var(--cream);
+    overflow: hidden;
+  }
+
+  .slide {
+    position: relative;
+    width: 1333px;
+    height: 750px;
+    margin: 0 auto;
+    padding: 40px 64px 76px;
+    box-sizing: border-box;
+    overflow: hidden;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: var(--ink);
+  }
+
+  .stage {
+    position: relative;
+    margin-top: 18px;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 10px;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+
+  .stage .num { color: var(--red); font-weight: 700; font-size: 15px; letter-spacing: 0.04em; }
+  .stage h1 { margin: 0; font-size: 30px; font-weight: 700; }
+
+  .subtitle {
+    margin: 8px 0 0;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--mute);
+  }
+
+  .diagram-wrap {
+    margin-top: 10px;
+    background: #eee6f3;
+    border-radius: 24px;
+    padding: 10px 20px;
+    position: relative;
+  }
+
+  .diagram-wrap .mark { position: absolute; top: 20px; left: 20px; width: 14px; height: 14px; background: #8900e1; }
+
+  svg text { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+  svg * { transition: opacity 0.35s ease, fill 0.3s ease, stroke 0.3s ease; }
+
+  svg .mv { transition: transform 0.6s ease; }
+
+  .stps {
+    margin-top: 8px;
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    min-height: 38px;
+  }
+
+  .stp {
+    min-width: 120px;
+    text-align: center;
+    padding: 6px 14px;
+    border: 2px solid #d9d9d3;
+    color: var(--mute);
+    font-size: 15px;
+    font-weight: 600;
+    transition: border-color 0.3s ease, color 0.3s ease, background 0.3s ease;
+  }
+
+  .stp.active { border-color: var(--red); color: var(--ink); background: #fbeceb; }
+  .stp.done { border-color: var(--ink); color: var(--ink); }
+
+  .narration {
+    margin-top: 12px;
+    font-size: 27px;
+    line-height: 1.3;
+    min-height: 44px;
+  }
+
+  .narration strong { color: var(--red); }
+  .narration code {
+    background: #171715;
+    color: #f7f7f4;
+    padding: 1px 7px;
+    border-radius: 4px;
+    font-size: 23px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  .q { font-weight: 700; color: var(--ink); }
+  .q .qm {
+    display: inline-block;
+    background: var(--red);
+    color: #fff;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    padding: 2px 9px;
+    margin-right: 12px;
+    vertical-align: middle;
+  }
+  .q.big { font-size: 26px; line-height: 1.3; }
+  .q.small { font-size: 15px; color: var(--mute); margin-bottom: 8px; font-weight: 600; }
+  .q.small .qm { font-size: 11px; padding: 1px 7px; margin-right: 9px; }
+  .q code { font-size: 0.85em; }
+  .q.small code { background: #e2ded0; color: var(--ink); }
+
+  .slide-footer {
+    position: absolute;
+    bottom: 24px;
+    left: 64px;
+    right: 64px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--faint);
+    border-top: 1px solid var(--rule);
+    padding-top: 10px;
+  }
+
+  .step-indicator {
+    position: absolute;
+    top: 20px;
+    right: 64px;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: var(--mute);
+  }
+
+  .step-indicator .n { color: var(--red); font-weight: 700; }
+
+  .hint {
+    position: absolute;
+    top: 20px;
+    left: 64px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: var(--mute);
+  }
+
+  .hint::before {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: var(--red);
+  }
+</style>
+</head>
+<body>
+
+<div class="slide">
+  <div class="hint">&larr; / &rarr; step &nbsp;&middot;&nbsp; shift + &larr; / &rarr; section</div>
+  <div class="step-indicator"><span id="sec-wrap">SECTION <span class="n" id="sec-n">1</span> / <span id="sec-total">10</span> &nbsp;&middot;&nbsp; </span>STEP <span class="n" id="step-n">1</span> / <span id="step-total">2</span></div>
+
+  <div class="stage">
+    <span class="num" id="num"></span>
+    <h1 id="title">Pipelining, Concluded</h1>
+  </div>
+  <p class="subtitle" id="subtitle"></p>
+
+  <div class="diagram-wrap">
+    <div class="mark"></div>
+    <svg id="stage" viewBox="0 0 1150 400" width="100%" height="372"></svg>
+  </div>
+
+  <div class="stps" id="chips"></div>
+
+  <div class="narration" id="narration"></div>
+
+  <div class="slide-footer"><span id="foot-left">Pipelining, Concluded</span><span>NYU Tandon | Fall 2026</span></div>
+</div>
+
+<script>
+(function () {
+  const NS = "http://www.w3.org/2000/svg";
+  const MONO = "'SF Mono', Menlo, Consolas, monospace";
+  const C = {
+    purple: "#57068c", accent: "#8900e1", dot: "#7b5aa6", ink: "#404040", grey: "#6d6d6d",
+    lgrey: "#9f9f97", red: "#c1272d", bg: "#eee6f3", white: "#ffffff",
+    t1: "#e9d9f5", t2: "#fbeceb", t3: "#e4e3db", t4: "#f3e9ff", t5: "#e2cdf2", t6: "#f7f0ff", t7: "#efe9dc",
+  };
+
+  function E(tag, attrs, parent, text) {
+    const e = document.createElementNS(NS, tag);
+    if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (text !== undefined) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function grp(p, op) { const g = E("g", {}, p); g.style.opacity = op === undefined ? 1 : op; return g; }
+  function rect(p, x, y, w, h, o) {
+    o = o || {};
+    const e = E("rect", { x, y, width: w, height: h, rx: o.rx || 0, fill: o.fill || "none", stroke: o.stroke || "none", "stroke-width": o.sw || 0 }, p);
+    if (o.dash) e.setAttribute("stroke-dasharray", o.dash);
+    return e;
+  }
+  function txt(p, x, y, s, o) {
+    o = o || {};
+    const t = E("text", { x, y, fill: o.fill || C.ink, "font-size": o.size || 16, "font-weight": o.weight || 400, "text-anchor": o.anchor || "start" }, p, s);
+    if (o.mono) t.style.fontFamily = MONO;
+    if (o.italic) t.setAttribute("font-style", "italic");
+    if (o.ls) t.setAttribute("letter-spacing", o.ls);
+    if (o.pre) t.style.whiteSpace = "pre";
+    return t;
+  }
+  function ln(p, x1, y1, x2, y2, o) {
+    o = o || {};
+    const e = E("line", { x1, y1, x2, y2, stroke: o.stroke || C.ink, "stroke-width": o.sw || 4, "stroke-linecap": "round" }, p);
+    if (o.dash) e.setAttribute("stroke-dasharray", o.dash);
+    return e;
+  }
+  function path(p, d, o) {
+    o = o || {};
+    return E("path", { d, fill: o.fill || "none", stroke: o.stroke || "none", "stroke-width": o.sw || 0, "stroke-linecap": "round", "stroke-linejoin": "round" }, p);
+  }
+  function circ(p, cx, cy, r, o) {
+    o = o || {};
+    return E("circle", { cx, cy, r, fill: o.fill || "none", stroke: o.stroke || "none", "stroke-width": o.sw || 0 }, p);
+  }
+  function poly(p, pts, o) {
+    o = o || {};
+    return E("polygon", { points: pts, fill: o.fill || "none", stroke: o.stroke || "none", "stroke-width": o.sw || 0, "stroke-linejoin": "round" }, p);
+  }
+  function vis(el, on) { el.style.opacity = on ? 1 : 0; }
+  function arrowhead(p, x, y, dir, fill) {
+    // dir: "r","l","d","u"
+    const pts = { r: [x, y, x - 12, y - 7, x - 12, y + 7], l: [x, y, x + 12, y - 7, x + 12, y + 7],
+                  d: [x, y, x - 7, y - 12, x + 7, y - 12], u: [x, y, x - 7, y + 12, x + 7, y + 12] }[dir];
+    return poly(p, pts.join(","), { fill: fill || C.ink });
+  }
+
+  const scenes = [];
+  function scene(def) { scenePost(def); scenes.push(def); }
+
+
+  // ---- split any narration that is too long for one slide into several consecutive steps (same visual, next chunk of text)
+  const MAX_WORDS = 50;
+  function plainWords(h) { return h.replace(/<[^>]*>/g, " ").replace(/&[a-z#0-9]+;/gi, "x").split(/\s+/).filter(Boolean).length; }
+  function balanced(h) {
+    return ["strong", "em", "code"].every((t) => (h.match(new RegExp("<" + t + ">", "g")) || []).length === (h.match(new RegExp("</" + t + ">", "g")) || []).length);
+  }
+  function splitNarr(h) {
+    if (plainWords(h) <= MAX_WORDS) return [h];
+    const sents = [];
+    const re = /([.?!])((?:<\/[a-z]+>)*)(\s+)/g;
+    let last = 0, m;
+    while ((m = re.exec(h))) {
+      if (/e\.g\.|i\.e\./.test(h.slice(Math.max(0, m.index - 3), m.index + 2))) continue;
+      const end = m.index + m[1].length + m[2].length;
+      sents.push(h.slice(last, end));
+      last = m.index + m[0].length;
+    }
+    sents.push(h.slice(last));
+    const total = plainWords(h), k = Math.ceil(total / MAX_WORDS), target = total / k;
+    const out = [];
+    let cur = "";
+    sents.filter((x) => x.trim()).forEach((x) => {
+      if (cur && balanced(cur) && plainWords(cur) >= target * 0.85) { out.push(cur); cur = x; }
+      else cur = cur ? cur + " " + x : x;
+    });
+    if (cur) out.push(cur);
+    if (out.length > 1 && plainWords(out[out.length - 1]) < 14) { const lastc = out.pop(); out[out.length - 1] += " " + lastc; }
+    for (let i = 0; i < out.length - 1; i++) if (!balanced(out[i])) { out[i + 1] = out[i] + " " + out[i + 1]; out.splice(i, 1); i--; }
+    return out;
+  }
+  function expandSteps(steps) {
+    const res = [];
+    steps.forEach((st) => {
+      if (!st.narrate) { res.push(st); return; }
+      splitNarr(st.narrate).forEach((chunk) => res.push(Object.assign({}, st, { narrate: chunk })));
+    });
+    return res;
+  }
+  // every section 1 to 9 gets a closing card with what the student should be able to do, then long narrations are split
+  function scenePost(def) {
+    const k = SKILLS[def.num];
+    if (k) def.steps = def.steps.concat([{ sub: "card", card: cd("What you should be able to do", k.lines), chip: (def.chips || []).length, foot: "", narrate: "<strong>What you should be able to do after this section:</strong> " + k.text }]);
+    def.steps = expandSteps(def.steps);
+  }
+  // ---------- helpers for this deck ----------
+  const ASSET = "fig/";
+  function figScene(cfg) {
+    return {
+      num: cfg.num, title: cfg.title, subtitle: cfg.subtitle, chips: cfg.chips || [], steps: cfg.steps,
+      build(g) {
+        const r = { imgs: {} };
+        cfg.steps.forEach((s) => {
+          if (!s.img || r.imgs[s.img]) return;
+          const im = E("image", { x: 0, y: 0, width: 1150, height: 400, preserveAspectRatio: "xMidYMid meet" }, g);
+          im.setAttributeNS("http://www.w3.org/1999/xlink", "href", ASSET + s.img);
+          im.setAttribute("href", ASSET + s.img);
+          im.style.opacity = 0;
+          r.imgs[s.img] = im;
+        });
+        return r;
+      },
+      render(s, r) { for (const k in r.imgs) vis(r.imgs[k], k === s.img); },
+    };
+  }
+  // table scene: cols = [{h, x, anchor, mono, w}], rows = arrays of strings; step: rows = how many rows are showing, hl = highlighted row indices
+  function tableScene(cfg) {
+    const RH = cfg.rh || 34, Y0 = cfg.y0 || 26, FS = cfg.fs || 15;
+    return {
+      num: cfg.num, title: cfg.title, subtitle: cfg.subtitle, chips: cfg.chips || [], steps: cfg.steps,
+      build(g) {
+        const r = { rows: [], bgs: [] };
+        const W = cfg.cols[cfg.cols.length - 1].x + cfg.cols[cfg.cols.length - 1].w + 20 - cfg.cols[0].x;
+        cfg.cols.forEach((c) => txt(g, c.x, Y0 - 8, c.h, { size: 12, weight: 700, fill: C.purple, ls: 1.5, anchor: c.anchor || "start" }));
+        ln(g, cfg.cols[0].x - 10, Y0, cfg.cols[0].x - 10 + W, Y0, { stroke: C.purple, sw: 2 });
+        cfg.rows.forEach((row, i) => {
+          const gg = grp(g, 0); r.rows.push(gg);
+          const y = Y0 + i * RH;
+          r.bgs.push(rect(gg, cfg.cols[0].x - 10, y + 3, W, RH - 4, { rx: 6, fill: "none" }));
+          row.forEach((cell, ci) => {
+            const c = cfg.cols[ci];
+            txt(gg, c.x, y + RH / 2 + 5, cell, { pre: true, size: c.size || FS, mono: !!c.mono, weight: c.bold ? 700 : 400, fill: c.bold ? C.purple : C.ink, anchor: c.anchor || "start" });
+          });
+        });
+        return r;
+      },
+      render(s, r) {
+        const n = s.rows === undefined ? cfg.rows.length : s.rows, hl = s.hl || [];
+        r.rows.forEach((gg, i) => vis(gg, i < n));
+        r.bgs.forEach((b, i) => b.setAttribute("fill", hl.indexOf(i) >= 0 ? C.t2 : "none"));
+      },
+    };
+  }
+
+
+  function mixScene(cfg, subs) {
+    return {
+      num: cfg.num, title: cfg.title, subtitle: cfg.subtitle, chips: cfg.chips || [], steps: cfg.steps,
+      build(g) {
+        const r = { subs: {}, gs: {} };
+        for (const k in subs) { const gg = grp(g, 0); r.gs[k] = gg; r.subs[k] = subs[k].build(gg); }
+        return r;
+      },
+      render(s, r) {
+        for (const k in subs) { vis(r.gs[k], s.sub === k); if (s.sub === k) subs[k].render(s, r.subs[k]); }
+      },
+    };
+  }
+  const tb = (c) => tableScene(Object.assign({ steps: [{}] }, c));
+  const fg = (imgs) => figScene({ steps: imgs.map((i) => ({ img: i })) });
+  // a "card": a big statement for beats of the lecture that have no diagram of their own
+  const cardSub = {
+    build(g) {
+      const r = {};
+      rect(g, 130, 40, 890, 300, { rx: 24, fill: C.white, stroke: C.purple, sw: 7 });
+      r.head = txt(g, 575, 135, "", { size: 42, weight: 700, fill: "#171715", anchor: "middle" });
+      rect(g, 505, 160, 140, 6, { rx: 3, fill: C.accent });
+      r.lines = [0, 1, 2, 3].map((i) => txt(g, 575, 218 + i * 34, "", { size: 21, fill: C.grey, anchor: "middle", pre: true }));
+      return r;
+    },
+    render(s, r) {
+      const c = s.card || {};
+      r.head.textContent = c.head || "";
+      r.head.setAttribute("font-size", c.mono ? 40 : ((c.head || "").length > 30 ? 30 : 40));
+      r.head.style.fontFamily = c.mono ? MONO : "";
+      r.lines.forEach((t, i) => { t.textContent = (c.lines || [])[i] || ""; });
+    },
+  };
+  const cd = (head, lines, mono) => ({ head, lines: lines || [], mono: !!mono });
+
+  const SKILLS = {};
+
+  // ================= Title slide =================
+  (function () {
+    const ROUTE = ["Recap: One Hazard Down", "Who Can Interfere?", "Reordering", "Control Hazards", "Branch Prediction", "Structural Hazards"];
+    scene({
+      front: true, num: "", title: "Pipelining, Concluded", subtitle: "", chips: [],
+      steps: [
+        { view: "title", foot: "",
+          narrate: "Last week we built a pipeline, and it worked: once it filled up, an instruction finished every single clock cycle. Then we found out that overlapping instructions can step on each other's toes. Today we finish that story." },
+        { view: "route", foot: "caching has its own deck",
+          narrate: "We start with the hazard we already know, RAW, and ask which of its siblings are real. Then we ask a stranger question: what if the register being fought over is the <code>pc</code> itself? And last, a hazard that is not about data at all: two instructions wanting the same wire in the same cycle." },
+      ],
+      build(g) {
+        const r = {};
+        r.title = grp(g, 1);
+        rect(r.title, 130, 40, 890, 300, { rx: 24, fill: C.white, stroke: C.purple, sw: 7 });
+        txt(r.title, 575, 104, "CS-UY 2214  |  WEEK IX", { size: 15, weight: 700, fill: C.red, anchor: "middle", ls: 2 });
+        txt(r.title, 575, 184, "Pipelining, Concluded", { size: 50, weight: 700, fill: "#171715", anchor: "middle" });
+        rect(r.title, 505, 210, 140, 6, { rx: 3, fill: C.accent });
+        txt(r.title, 575, 258, "Every way an overlapped instruction can go wrong", { size: 22, italic: true, fill: C.grey, anchor: "middle" });
+        txt(r.title, 575, 312, "Computer Architecture and Organization", { size: 14, fill: C.lgrey, anchor: "middle", ls: 1 });
+        r.route = grp(g, 0);
+        txt(r.route, 575, 40, "TODAY'S ROUTE", { size: 13, weight: 700, fill: C.purple, anchor: "middle", ls: 2 });
+        ROUTE.forEach((name, i) => {
+          const col = i < 3 ? 0 : 1, row = col === 0 ? i : i - 3;
+          const x = 110 + col * 480, y = 90 + row * 74;
+          rect(r.route, x, y, 450, 58, { rx: 12, fill: C.white, stroke: C.purple, sw: 4 });
+          circ(r.route, x + 32, y + 29, 15, { fill: C.purple });
+          txt(r.route, x + 32, y + 35, String(i + 1), { size: 15, weight: 700, fill: C.white, anchor: "middle" });
+          txt(r.route, x + 62, y + 36, name, { size: 19, weight: 700, fill: C.ink });
+        });
+        return r;
+      },
+      render(s, r) { vis(r.title, s.view === "title"); vis(r.route, s.view === "route"); },
+    });
+  })();
+
+  const PSTAGES = ["IF", "ID", "EX", "MEM", "WB"], PUNITS = ["Memory", "Register file", "ALU", "Memory", "Register file"];
+  const PBX = 230, PBW = 130, PGAP = 30, PBY = 150, PBH = 90;
+  const PCOL = ["#e2cdf2", "#d9e8fb", "#fbe9ea", "#e4f3e1", "#fff1cf"];
+  const pcx = (i) => PBX + i * (PBW + PGAP) + PBW / 2;
+  const pth = (str) => { const o = {}; str.split(",").forEach((q) => { const [c, st] = q.split(":"); o[Number(c)] = Number(st); }); return o; };
+  const run5 = (from) => pth([0, 1, 2, 3, 4].map((k) => (from + k) + ":" + k).join(","));
+  const PIPES = {
+    fill: { N: 9, tokens: [0, 1, 2, 3, 4].map((i) => ({ id: "i" + i, label: "addi $" + (i + 1), ci: i, path: run5(i + 1) })) },
+    raw: { N: 6, tokens: [{ id: "a", label: "addi $1,$0,1", ci: 0, path: run5(1) }, { id: "b", label: "addi $1,$1,1", ci: 1, path: run5(2) }] },
+    stall: { N: 9, tokens: [{ id: "a", label: "addi $1,$0,1", ci: 0, path: run5(1) }, { id: "b", label: "addi $1,$1,1", ci: 1, path: pth("2:0,3:0,4:0,5:0,6:1,7:2,8:3,9:4") },
+      { id: "n1", label: "nop", bubble: true, path: pth("3:1,4:2,5:3,6:4") }, { id: "n2", label: "nop", bubble: true, path: pth("4:1,5:2,6:3,7:4") }, { id: "n3", label: "nop", bubble: true, path: pth("5:1,6:2,7:3,8:4") }] },
+    fwdex: { N: 6, tokens: [{ id: "a", label: "addi $1,$0,1", ci: 0, path: run5(1) }, { id: "b", label: "addi $1,$1,1", ci: 1, path: run5(2) }] },
+    fwdid: { N: 7, tokens: [{ id: "a", label: "addi $1,$0,1", ci: 0, path: run5(1) }, { id: "b", label: "movi $2,1", ci: 1, path: run5(2) }, { id: "c", label: "addi $1,$1,1", ci: 2, path: run5(3) }] },
+    lwu: { N: 7, tokens: [{ id: "a", label: "lw $1,1($0)", ci: 0, path: run5(1) }, { id: "b", label: "addi $1,$1,1", ci: 1, path: pth("2:0,3:1,4:1,5:2,6:3,7:4") },
+      { id: "n1", label: "nop", bubble: true, path: pth("4:2,5:3,6:4") }] },
+  };
+  function pipeSub(cfg) {
+    const toks = cfg.tokens.map((t) => {
+      const cyc = Object.keys(t.path).map(Number);
+      return Object.assign({ start: Math.min.apply(null, cyc), end: Math.max.apply(null, cyc) }, t);
+    });
+    const real = toks.filter((t) => !t.bubble);
+    const issueOrder = real.slice().sort((a, b) => a.start - b.start);
+    const retireOrder = real.slice().sort((a, b) => a.end - b.end);
+    return {
+      build(g) {
+        const r = { boxes: [], toks: {} };
+        txt(g, 40, 62, "CLOCK CYCLE", { size: 14, weight: 700, fill: C.grey, ls: 2 });
+        r.cyc = txt(g, 40, 112, "", { size: 52, weight: 700, fill: C.red });
+        PSTAGES.forEach((nm, i) => {
+          const x = PBX + i * (PBW + PGAP);
+          r.boxes.push(rect(g, x, PBY, PBW, PBH, { rx: 14, fill: C.white, stroke: C.purple, sw: 3 }));
+          txt(g, pcx(i), PBY - 30, nm, { size: 22, weight: 700, fill: C.purple, anchor: "middle" });
+          txt(g, pcx(i), PBY - 10, PUNITS[i], { size: 12, italic: true, fill: C.grey, anchor: "middle" });
+        });
+        txt(g, 1072, 82, "RETIRED", { size: 13, weight: 700, fill: C.grey, anchor: "middle", ls: 2 });
+        r.ret = txt(g, 1072, 292, "", { size: 14, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+        r.qlab = txt(g, 105, 148, "WAITING", { size: 13, weight: 700, fill: C.grey, anchor: "middle", ls: 2 });
+        r.tl = [];
+        for (let k = 1; k <= cfg.N; k++) {
+          const x = 575 - cfg.N * 19 + (k - 1) * 38;
+          const rc = rect(g, x, 352, 34, 28, { rx: 6, fill: C.white, stroke: C.lgrey, sw: 2 });
+          const tx = txt(g, x + 17, 372, String(k), { size: 14, weight: 700, mono: true, fill: C.grey, anchor: "middle" });
+          r.tl.push({ rc, tx });
+        }
+        r.mg = grp(g, 1);
+        toks.forEach((t) => {
+          const tg = E("g", { class: "mv" }, g);
+          tg.style.opacity = 0;
+          rect(tg, -62, -26, 124, 52, { rx: 11, fill: t.bubble ? C.t3 : PCOL[t.ci % 5], stroke: t.bubble ? C.lgrey : C.purple, sw: 3, dash: t.bubble ? "6 4" : null });
+          txt(tg, 0, 6, t.label, { size: 14, weight: 700, mono: true, fill: t.bubble ? C.grey : C.ink, anchor: "middle" });
+          r.toks[t.id] = tg;
+        });
+        r.vc = E("g", { class: "mv" }, g); r.vc.style.opacity = 0;
+        r.vcr = rect(r.vc, -20, -15, 40, 30, { rx: 15, fill: C.red, stroke: C.white, sw: 3 });
+        r.vct = txt(r.vc, 0, 7, "1", { size: 20, weight: 700, mono: true, fill: C.white, anchor: "middle" });
+        return r;
+      },
+      render(s, r) {
+        const c = s.cycle || 0;
+        r.cyc.textContent = c ? String(c) : "-";
+        const occ = [0, 0, 0, 0, 0];
+        toks.forEach((t) => { const st = t.path[c]; if (st !== undefined) occ[st] = Math.max(occ[st], t.bubble ? 1 : 2); });
+        r.boxes.forEach((b, i) => b.setAttribute("fill", occ[i] === 2 ? C.t1 : (occ[i] === 1 ? C.t3 : C.white)));
+        const waiting = issueOrder.filter((t) => t.start > c);
+        let nret = 0;
+        toks.forEach((t) => {
+          let x, y, sc = 1, op = 1;
+          const st = t.path[c];
+          if (st !== undefined) { x = pcx(st); y = PBY + PBH / 2; }
+          else if (c < t.start) {
+            if (t.bubble) { x = PBX - 70; y = PBY + PBH / 2; op = 0; }
+            else { x = 105; y = 182 + waiting.indexOf(t) * 38; sc = 0.72; op = 0.7; }
+          } else {
+            if (t.bubble) { x = pcx(4) + 150; y = PBY + PBH / 2; op = 0; }
+            else { x = 1072; y = 112 + retireOrder.indexOf(t) * 38; sc = 0.62; nret++; }
+          }
+          r.toks[t.id].style.transform = "translate(" + x + "px, " + y + "px) scale(" + sc + ")";
+          r.toks[t.id].style.opacity = op;
+        });
+        r.ret.textContent = nret ? nret + " of " + real.length : "";
+        r.qlab.style.opacity = waiting.length ? 1 : 0;
+        r.tl.forEach((q, k) => {
+          const on = k + 1 === c;
+          q.rc.setAttribute("fill", on ? C.red : C.white); q.rc.setAttribute("stroke", on ? C.red : C.lgrey);
+          q.tx.setAttribute("fill", on ? C.white : C.grey);
+        });
+        while (r.mg.firstChild) r.mg.removeChild(r.mg.firstChild);
+        if (s.vchip) {
+          // the value in flight: sits on a stage's lower edge, or inside the stage's box when it is being used
+          r.vct.textContent = s.vchip[2];
+          r.vct.setAttribute("font-size", s.vchip[2].length > 1 ? 15 : 20);
+          r.vc.style.transform = "translate(" + (pcx(s.vchip[0]) + (s.vchip[1] === "in" ? 46 : 0)) + "px, " + (s.vchip[1] === "in" ? PBY + 18 : PBY + PBH) + "px)";
+          r.vc.style.opacity = 1;
+        } else r.vc.style.opacity = 0;
+        const marks = (s.marks || []).slice();
+        // a token finishing WB retires this cycle
+        if (!(s.marks || []).some((m) => m[0] === 4) && !(s.arrows || []).length && toks.some((t) => !t.bubble && t.path[c] === 4)) marks.push([4, "retires"]);
+        marks.forEach(([i, text]) => {
+          rect(r.mg, PBX + i * (PBW + PGAP) - 3, PBY - 3, PBW + 6, PBH + 6, { rx: 16, stroke: C.red, sw: 4 });
+          txt(r.mg, pcx(i), PBY + PBH + 34, text, { size: 16, weight: 700, fill: C.red, anchor: "middle" });
+        });
+        if (s.reg) {
+          // the value of $1 in the register file, and what the second addi does with it
+          const val = s.rval !== undefined ? String(s.rval) : (c >= 5 ? "1" : "0"), live = val !== "0" && val !== "old", ry = 296, bad = s.reg >= 3, lab = s.rlab || ["REGISTER FILE", "$1 holds"], bw = Math.max(56, 16 + val.length * 14), tx = 200 + bw + 54;
+          txt(r.mg, 40, ry + 18, lab[0], { size: 12, weight: 700, fill: C.grey, ls: 2 });
+          txt(r.mg, 40, ry + 40, lab[1], { size: 18, weight: 700, fill: C.ink });
+          rect(r.mg, 200, ry + 8, bw, 40, { rx: 8, fill: live ? C.t2 : C.white, stroke: live ? C.red : C.purple, sw: 3 });
+          txt(r.mg, 200 + bw / 2, ry + 37, val, { size: val.length > 1 ? 18 : 26, weight: 700, mono: true, fill: live ? C.red : C.ink, anchor: "middle" });
+          if (s.reg >= 2) {
+            txt(r.mg, 270, ry + 22, "second addi read $1 = 0, so it computes", { size: 15, fill: C.ink });
+            txt(r.mg, 270, ry + 44, "0 + 1 = 1", { size: 22, weight: 700, mono: true, fill: C.red });
+          }
+          if (s.rtxt) {
+            txt(r.mg, tx, ry + 22, s.rtxt[0], { size: 15, fill: C.ink });
+            txt(r.mg, tx, ry + 44, s.rtxt[1], { size: 22, weight: 700, mono: true, fill: s.rtxt[3] || C.red });
+            if (s.rtxt[2]) txt(r.mg, tx + 380, ry + 44, s.rtxt[2], { size: 18, weight: 700, fill: s.rtxt[3] || C.red });
+          }
+          if (bad) {
+            txt(r.mg, 610, ry + 22, "what the program meant", { size: 15, fill: C.ink });
+            txt(r.mg, 610, ry + 44, "1 + 1 = 2", { size: 22, weight: 700, mono: true, fill: C.purple });
+            txt(r.mg, 820, ry + 44, "wrong answer, silently", { size: 18, weight: 700, fill: C.red });
+          }
+        }
+        (s.arrows || []).forEach(([a, b, label]) => {
+          const ya = PBY + PBH, yd = ya + (s.reg ? 30 : 46);
+          path(r.mg, "M" + pcx(a) + " " + (ya + 4) + " L" + pcx(a) + " " + yd + " L" + pcx(b) + " " + yd + " L" + pcx(b) + " " + (ya + 12), { stroke: C.red, sw: 4 });
+          arrowhead(r.mg, pcx(b), ya + 4, "u", C.red);
+          txt(r.mg, (pcx(a) + pcx(b)) / 2, yd + (s.reg ? 20 : 24), label, { size: 16, weight: 700, fill: C.red, anchor: "middle" });
+        });
+      },
+    };
+  }
+  const nm = (s, t) => ({ cols: [], rows: [] });
+  Object.assign(PIPES, {
+    ordA: { N: 10, tokens: [{ id: "a", label: "movi $1,5", ci: 0, path: run5(1) }, { id: "b", label: "add $2,$2,$1", ci: 1, path: pth("2:0,3:0,4:0,5:0,6:1,7:2,8:3,9:4") },
+      { id: "c", label: "add $3,$3,$3", ci: 2, path: pth("6:0,7:1,8:2,9:3,10:4") },
+      { id: "n1", label: "nop", bubble: true, path: pth("3:1,4:2,5:3,6:4") }, { id: "n2", label: "nop", bubble: true, path: pth("4:1,5:2,6:3,7:4") }, { id: "n3", label: "nop", bubble: true, path: pth("5:1,6:2,7:3,8:4") }] },
+    ordB: { N: 9, tokens: [{ id: "a", label: "movi $1,5", ci: 0, path: run5(1) }, { id: "c", label: "add $3,$3,$3", ci: 2, path: run5(2) },
+      { id: "b", label: "add $2,$2,$1", ci: 1, path: pth("3:0,4:0,5:0,6:1,7:2,8:3,9:4") },
+      { id: "n1", label: "nop", bubble: true, path: pth("4:1,5:2,6:3,7:4") }, { id: "n2", label: "nop", bubble: true, path: pth("5:1,6:2,7:3,8:4") }] },
+    nt: { N: 7, tokens: [{ id: "a", label: "jeq", ci: 0, path: run5(1) }, { id: "b", label: "add $2,$2,$2", ci: 1, path: run5(2) }, { id: "c", label: "add $3,$3,$3", ci: 2, path: run5(3) }] },
+    br: { N: 8, tokens: [{ id: "a", label: "jeq", ci: 0, path: run5(1) }, { id: "w1", label: "add $2,$2,$2", bubble: true, path: pth("2:0,3:1") }, { id: "w2", label: "add $4,$4,$4", bubble: true, path: pth("3:0") },
+      { id: "t", label: "add $3,$3,$3", ci: 3, path: pth("4:0,5:1,6:2,7:3,8:4") }] },
+    st: { N: 8, tokens: [1, 2, 3, 4].map((i) => ({ id: "i" + i, label: "add $" + i + ",$" + i + ",$" + i, ci: i - 1, path: run5(i) })) },
+  });
+  const trn = (el, ms) => { el.style.transition = "opacity " + ms + "ms, fill " + ms + "ms, stroke " + ms + "ms"; return el; };
+  Object.assign(PIPES, {
+    fwdex: { N: 6, tokens: [{ id: "a", label: "addi $1,$0,1", ci: 0, path: run5(1) }, { id: "b", label: "addi $1,$1,1", ci: 1, path: run5(2) }] },
+    one: { N: 5, tokens: [{ id: "a", label: "addi $1,$2,1", ci: 0, path: run5(1) }] },
+    war: { N: 6, tokens: [{ id: "a", label: "addi $1,$2,1", ci: 0, path: run5(1) }, { id: "b", label: "addi $2,$3,1", ci: 1, path: run5(2) }] },
+    waw: { N: 6, tokens: [{ id: "a", label: "addi $1,$2,1", ci: 0, path: run5(1) }, { id: "b", label: "addi $1,$3,1", ci: 1, path: run5(2) }] },
+    rar: { N: 6, tokens: [{ id: "a", label: "addi $1,$2,1", ci: 0, path: run5(1) }, { id: "b", label: "addi $3,$2,1", ci: 1, path: run5(2) }] },
+  });
+  // any pipeline as a table: one row per clock cycle, one column per stage, cells from the pipeline's tokens (bubbles dashed)
+  function tabSub(cfg) {
+    return {
+      build(g) {
+        const r = { rows: [] };
+        const X0 = 60, TW = 70, CW = 192, Y0 = 14, RH = Math.min(36, Math.floor(364 / (cfg.N + 1)));
+        rect(g, X0, Y0, TW + 5 * CW, RH, { fill: C.purple });
+        txt(g, X0 + TW / 2, Y0 + RH / 2 + 5, "Time", { size: 14, weight: 700, fill: C.white, anchor: "middle" });
+        PSTAGES.forEach((nmz, i) => txt(g, X0 + TW + i * CW + CW / 2, Y0 + RH / 2 + 6, nmz, { size: 17, weight: 700, fill: C.white, anchor: "middle" }));
+        for (let c = 1; c <= cfg.N; c++) {
+          const gg = grp(g, 0); trn(gg, 350);
+          const y = Y0 + c * RH;
+          const bg = rect(gg, X0, y, TW + 5 * CW, RH, { fill: C.white, stroke: "#d6c2ea", sw: 1.5 });
+          const tl = txt(gg, X0 + TW / 2, y + RH / 2 + 5, String(c), { size: 15, weight: 700, mono: true, fill: C.grey, anchor: "middle" });
+          const row = { gg, bg, tl, cells: [] };
+          cfg.tokens.forEach((tk) => {
+            const st = tk.path[c];
+            if (st === undefined) return;
+            const rc = rect(gg, X0 + TW + st * CW + 8, y + 3, CW - 16, RH - 6, { rx: 8, fill: tk.bubble ? C.t3 : PCOL[tk.ci % 5], stroke: tk.bubble ? C.grey : C.purple, sw: 2, dash: tk.bubble ? "6 4" : null });
+            txt(gg, X0 + TW + st * CW + CW / 2, y + RH / 2 + 5, tk.label, { size: 14, weight: 700, mono: true, fill: tk.bubble ? C.grey : C.ink, anchor: "middle" });
+            row.cells.push({ rc, bubble: !!tk.bubble, st, c });
+          });
+          r.rows.push(row);
+        }
+        return r;
+      },
+      render(s, r) {
+        const n = s.rows || 0;
+        r.rows.forEach((row, k) => {
+          row.gg.style.opacity = k < n ? 1 : 0;
+          const cur = s.cur === k + 1;
+          row.bg.setAttribute("fill", cur ? C.t2 : C.white);
+          row.tl.setAttribute("fill", cur ? C.red : C.grey);
+          row.cells.forEach((q) => {
+            const hl = (s.hl === "bubbles" && q.bubble) || (s.hlcells || []).some((h) => h[0] === q.c && h[1] === q.st);
+            q.rc.setAttribute("stroke", hl ? C.red : (q.bubble ? C.grey : C.purple));
+            q.rc.setAttribute("stroke-width", hl ? 4 : 2);
+          });
+        });
+      },
+    };
+  }
+  // three instructions that can be swapped; conflicts drawn as a bracket, order animated
+  const PROGS = {
+    p1: { rows: ["movi $1, 5", "add $2, $2, $1", "add $3, $3, $3"], conf: [[0, 1, "RAW on $1"]] },
+    war: { rows: ["addi $1, $2, 1", "addi $2, $3, 1"], conf: [[0, 1, "WAR on $2"]] },
+  };
+  const swapSub = {
+    build(g) {
+      const r = { prog: {} };
+      Object.keys(PROGS).forEach((k) => {
+        const pg = grp(g, 0), P = PROGS[k], boxes = [];
+        P.rows.forEach((lbl, i) => {
+          const b = E("g", { class: "mv" }, pg);
+          rect(b, 0, 0, 340, 56, { rx: 12, fill: PCOL[i % 5], stroke: C.purple, sw: 3 });
+          circ(b, 28, 28, 15, { fill: C.purple });
+          txt(b, 28, 34, String(i + 1), { size: 17, weight: 700, fill: C.white, anchor: "middle" });
+          txt(b, 60, 35, lbl, { size: 22, weight: 700, mono: true, fill: C.ink });
+          boxes.push(b);
+        });
+        r.prog[k] = { pg, boxes };
+      });
+      r.mg = grp(g, 1);
+      return r;
+    },
+    render(s, r) {
+      const P = PROGS[s.prog], order = s.order || P.rows.map((_, i) => i);
+      Object.keys(r.prog).forEach((k) => { r.prog[k].pg.style.opacity = k === s.prog ? 1 : 0; });
+      const pos = {};
+      order.forEach((orig, p) => { pos[orig] = p; });
+      const X = 170, Y0 = 56, DY = 92;
+      r.prog[s.prog].boxes.forEach((b, i) => { b.style.transform = "translate(" + X + "px, " + (Y0 + pos[i] * DY) + "px)"; });
+      while (r.mg.firstChild) r.mg.removeChild(r.mg.firstChild);
+      (s.show === false ? [] : P.conf).forEach(([a, b2, label]) => {
+        const ya = Y0 + pos[a] * DY + 28, yb = Y0 + pos[b2] * DY + 28, bad = pos[a] > pos[b2], col = bad ? C.red : C.purple;
+        path(r.mg, "M" + (X + 346) + " " + ya + " L" + (X + 386) + " " + ya + " L" + (X + 386) + " " + yb + " L" + (X + 346) + " " + yb, { stroke: col, sw: 4 });
+        txt(r.mg, X + 404, (ya + yb) / 2 + 6, label + (bad ? ": order broken" : ": order kept"), { size: 19, weight: 700, fill: col });
+      });
+      (s.notes || []).forEach(([text, col], i) => txt(r.mg, X, 56 + P.rows.length * DY + 22 + i * 28, text, { size: 19, weight: 700, fill: col || C.ink }));
+    },
+  };
+  // bar chart: penalty cycles for two policies over 100 executions of a branch
+  const barsSub = {
+    build(g) {
+      const r = { gs: [] };
+      txt(g, 575, 34, "PENALTY CYCLES OVER 100 EXECUTIONS OF THE BRANCH", { size: 13, weight: 700, fill: C.grey, ls: 2, anchor: "middle" });
+      ln(g, 120, 330, 1030, 330, { stroke: C.grey, sw: 2 });
+      [[250, "taken 10 times out of 100", 200, 20], [760, "taken 90 times out of 100", 200, 180]].forEach(([cx, lab, a, b], k) => {
+        const gg = grp(g, 0); trn(gg, 400);
+        [[cx - 70, a, "always stall", C.purple], [cx + 70, b, "predict not-taken", C.red]].forEach(([x, v, nmz, col]) => {
+          const h = v * 1.25;
+          rect(gg, x - 50, 330 - h, 100, h, { rx: 6, fill: col });
+          txt(gg, x, 330 - h - 10, String(v), { size: 26, weight: 700, mono: true, fill: col, anchor: "middle" });
+          txt(gg, x, 352, nmz, { size: 15, weight: 700, fill: C.ink, anchor: "middle" });
+        });
+        txt(gg, cx, 380, lab, { size: 18, weight: 700, fill: C.grey, anchor: "middle" });
+        r.gs.push(gg);
+      });
+      return r;
+    },
+    render(s, r) { r.gs.forEach((gg, k) => { gg.style.opacity = k < (s.n || 0) ? 1 : 0; }); },
+  };
+  // a loop branch's outcomes, T = taken, N = not taken, against two predictors
+  const DYNSEQ = "TTTTNTTTTN";
+  const dynSub = {
+    build(g) {
+      const r = { cols: [] };
+      const X0 = 330, CW = 62, rows = [["what the branch did", 70], ["predict not-taken", 150], ["predict: same as last time", 230]];
+      rows.forEach(([lab, y]) => txt(g, 300, y + 36, lab, { size: 17, weight: 700, fill: C.ink, anchor: "end" }));
+      for (let i = 0; i < DYNSEQ.length; i++) {
+        const gg = grp(g, 0); trn(gg, 300);
+        const act = DYNSEQ[i], p1 = "N", p2 = i === 0 ? "N" : DYNSEQ[i - 1];
+        [[act, 70, null], [p1, 150, act], [p2, 230, act]].forEach(([v, y, truth], k) => {
+          const ok = truth === null ? null : v === truth;
+          rect(gg, X0 + i * CW, y, CW - 6, 54, { rx: 8, fill: ok === null ? C.t1 : (ok ? "#e4f3e1" : C.t2), stroke: ok === null ? C.purple : (ok ? "#2e7d32" : C.red), sw: 3 });
+          txt(gg, X0 + i * CW + (CW - 6) / 2, y + 36, v, { size: 24, weight: 700, mono: true, fill: ok === null ? C.ink : (ok ? "#2e7d32" : C.red), anchor: "middle" });
+        });
+        r.cols.push(gg);
+      }
+      r.c1 = txt(g, 330, 340, "", { size: 22, weight: 700, fill: C.red });
+      r.c2 = txt(g, 330, 372, "", { size: 22, weight: 700, fill: C.red });
+      return r;
+    },
+    render(s, r) {
+      const n = s.n || 0;
+      r.cols.forEach((gg, i) => { gg.style.opacity = i < n ? 1 : 0; });
+      let w1 = 0, w2 = 0;
+      for (let i = 0; i < n; i++) { if (DYNSEQ[i] !== "N") w1++; if (DYNSEQ[i] !== (i === 0 ? "N" : DYNSEQ[i - 1])) w2++; }
+      r.c1.textContent = n ? "not-taken: wrong " + w1 + " of " + n : "";
+      r.c2.textContent = n ? "same as last time: wrong " + w2 + " of " + n : "";
+    },
+  };
+  // a short program with a pc marker; the branch can fork into "taken" and "not taken"
+  const LISTING = ["movi $1, 0", "jeq $1, $0, done", "add $2, $2, $2", "add $4, $4, $4", "done: add $3, $3, $3"];
+  const listSub = {
+    build(g) {
+      const r = { rows: [] };
+      const X = 300, W = 380, H = 46, Y0 = 46, DY = 64;
+      LISTING.forEach((l, i) => {
+        const y = Y0 + i * DY;
+        const rc = rect(g, X, y, W, H, { rx: 10, fill: i === 4 ? "#e4f3e1" : C.white, stroke: C.purple, sw: 3 });
+        txt(g, X + 20, y + 30, l, { size: 21, weight: 700, mono: true, fill: C.ink });
+        r.rows.push(rc);
+      });
+      r.pcg = E("g", { class: "mv" }, g);
+      poly(r.pcg, "0,-14 30,0 0,14", { fill: C.red });
+      txt(r.pcg, -14, 7, "pc", { size: 22, weight: 700, mono: true, fill: C.red, anchor: "end" });
+      r.mg = grp(g, 1);
+      return r;
+    },
+    render(s, r) {
+      const X = 300, W = 380, H = 46, Y0 = 46, DY = 64, pc = s.pc || 0;
+      r.pcg.style.transform = "translate(" + (X - 44) + "px, " + (Y0 + pc * DY + H / 2) + "px)";
+      r.rows.forEach((rc, i) => { rc.setAttribute("stroke", i === pc ? C.red : C.purple); rc.setAttribute("stroke-width", i === pc ? 6 : 3); });
+      while (r.mg.firstChild) r.mg.removeChild(r.mg.firstChild);
+      const cy = (i) => Y0 + i * DY + H / 2;
+      if (s.next) {
+        path(r.mg, "M" + (X + W + 40) + " " + (cy(pc) + 10) + " L" + (X + W + 40) + " " + (cy(pc + 1) - 8), { stroke: C.purple, sw: 4 });
+        arrowhead(r.mg, X + W + 40, cy(pc + 1) - 8, "d", C.purple);
+        txt(r.mg, X + W + 62, (cy(pc) + cy(pc + 1)) / 2 + 6, "next: pc + 1", { size: 20, weight: 700, fill: C.purple });
+      }
+      if (s.fork) {
+        path(r.mg, "M" + (X + W + 4) + " " + cy(1) + " L" + (X + W + 40) + " " + cy(1) + " L" + (X + W + 40) + " " + cy(2) + " L" + (X + W + 6) + " " + cy(2), { stroke: C.purple, sw: 4 });
+        arrowhead(r.mg, X + W + 4, cy(2), "l", C.purple);
+        txt(r.mg, X + W + 62, (cy(1) + cy(2)) / 2 + 6, "not taken: the line below", { size: 19, weight: 700, fill: C.purple });
+        path(r.mg, "M" + (X - 2) + " " + (cy(1) + 17) + " L" + (X - 130) + " " + (cy(1) + 17) + " L" + (X - 130) + " " + cy(4) + " L" + (X - 8) + " " + cy(4), { stroke: C.red, sw: 4 });
+        arrowhead(r.mg, X - 8, cy(4), "r", C.red);
+        txt(r.mg, X - 144, (cy(1) + cy(4)) / 2, "taken: jump", { size: 19, weight: 700, fill: C.red, anchor: "end" });
+        txt(r.mg, X - 144, (cy(1) + cy(4)) / 2 + 24, "to done", { size: 19, weight: 700, fill: C.red, anchor: "end" });
+        circ(r.mg, X + W + 110, cy(1) - 40, 22, { fill: C.white, stroke: C.red, sw: 4 });
+        txt(r.mg, X + W + 110, cy(1) - 31, "?", { size: 28, weight: 700, fill: C.red, anchor: "middle" });
+      }
+      if (s.note) txt(r.mg, 575, 380, s.note, { size: 20, weight: 700, fill: C.red, anchor: "middle" });
+    },
+  };
+  const pipeSubs2 = () => ({ fill: pipeSub(PIPES.fill), raw: pipeSub(PIPES.raw), stall: pipeSub(PIPES.stall), ordA: pipeSub(PIPES.ordA), ordB: pipeSub(PIPES.ordB), nt: pipeSub(PIPES.nt), br: pipeSub(PIPES.br), st: pipeSub(PIPES.st), fwdex: pipeSub(PIPES.fwdex), one: pipeSub(PIPES.one), war: pipeSub(PIPES.war), waw: pipeSub(PIPES.waw), rar: pipeSub(PIPES.rar),
+    tstall: tabSub(PIPES.stall), tordA: tabSub(PIPES.ordA), tordB: tabSub(PIPES.ordB), tbr: tabSub(PIPES.br), tnt: tabSub(PIPES.nt), tst: tabSub(PIPES.st), swap: swapSub, bars: barsSub, dyn: dynSub, code: listSub });
+
+  const DH = { cols: [{ h: "NAME", x: 60, w: 170, mono: true, bold: true, size: 22 }, { h: "PATTERN", x: 250, w: 380, size: 18 }, { h: "EXAMPLE", x: 650, w: 330, mono: true, size: 15 }, { h: "HAZARD?", x: 1000, w: 140, size: 18, bold: true }],
+    rows: [["RAW", "2 reads what 1 writes", "movi $1,0 | add $2,$2,$1", "yes"], ["WAR", "2 writes what 1 reads", "addi $1,$2,1 | addi $2,$3,1", "no *"], ["WAW", "both write the same register", "addi $1,$2,1 | addi $1,$3,1", "no *"], ["RAR", "both read the same register", "addi $1,$2,1 | addi $3,$2,1", "never"]], rh: 70, y0: 70, fs: 18 };
+  const OPS = { cols: [{ h: "INSTRUCTION", x: 60, w: 230, mono: true, bold: true, size: 20 }, { h: "HAZARD?", x: 320, w: 200, size: 19, bold: true }, { h: "WHY", x: 550, w: 590, size: 17 }],
+    rows: [["addi, add, ...", "no", "the next pc is always pc + 1, known at fetch"], ["jeq", "yes", "pc + 1 or pc + 1 + imm7: which one waits until EX"], ["jr", "yes, and worse", "the target is a register's value: it could be anything"], ["j", "maybe", "the target is in imm13: known early if IF can decode it"], ["jal", "maybe", "same as j"]], rh: 64, y0: 64, fs: 18 };
+  const HZ = { cols: [{ h: "HAZARD", x: 60, w: 210, bold: true, size: 22 }, { h: "THE CONFLICT", x: 300, w: 420, size: 17 }, { h: "THE FIX", x: 750, w: 390, size: 17 }],
+    rows: [["data (RAW)", "a later instruction reads too early", "stall, forward, or reorder"], ["control", "the next pc is not known until a branch resolves", "guess, then flush if wrong"], ["structural", "two instructions want the same wire", "stall one, or build more ports"]], rh: 80, y0: 70, fs: 19 };
+
+  scene(mixScene({
+    num: "1", title: "Recap: One Hazard Down, Three to Go", subtitle: "RAW is solved. What else can go wrong?",
+    chips: ["The snag", "Stall", "Forward", "Three families"],
+    steps: [
+      { sub: "raw", reg: 1, cycle: 3, marks: [[1, "reads $1 now"], [4, "not written yet"]], rtxt: ["the second addi read $1 = 0, so it computes", "0 + 1 = 1", "it meant 2"], chip: 1, foot: "", narrate: "Quick reminder of last week's snag. Two <code>addi</code> instructions back to back: the second reads <code>$1</code> in <code>ID</code> in cycle 3, two cycles before the first writes it. It gets 0, so the program silently computes 1 instead of 2." },
+      { sub: "tstall", rows: 9, cur: 0, hl: "bubbles", chip: 2, foot: "", narrate: "<strong>Stall</strong> is the first fix: hold the second instruction in <code>IF</code> and send bubbles behind the first. Always correct, but every dashed cell is an idle stage, and the pair finishes in cycle 9." },
+      { sub: "fwdex", reg: 1, cycle: 4, arrows: [[3, 2, "$1 forwarded"]], vchip: [3, "bot", "1"], rtxt: ["the register file still holds 0, but a wire carries the 1", "no bubbles"], chip: 3, foot: "", narrate: "<strong>Forward</strong> is the second: the value already exists, so a wire carries it from where it is to where it is needed, skipping the register file. No bubbles, and the pair finishes in cycle 6." },
+      { sub: "card", card: cd("Three more questions", ["data hazards: what are the other patterns?", "control hazards: what if the register is the pc?", "structural hazards: what if the wire is shared?"]), chip: 4, foot: "", narrate: "But RAW has siblings, and not every hazard is about a register. Today we name the data hazards, ask whether we can dodge a stall by reordering, and then find out what happens when the thing being fought over is the <code>pc</code>." },
+    ],
+  }, Object.assign({ card: cardSub }, pipeSubs2())));
+
+  scene(mixScene({
+    num: "2", title: "Who Can Interfere? RAW, WAR, WAW, RAR", subtitle: "Reads happen early. Writes happen late.",
+    chips: ["Early reads, late writes", "Four pairs", "Which one bites", "Conflict or hazard"],
+    steps: [
+      { sub: "one", cycle: 2, marks: [[1, "reads $2 now"]], chip: 1, foot: "", narrate: "One fact drives this whole section. An instruction reads its registers early, in <code>ID</code>, in its second cycle." },
+      { sub: "one", cycle: 5, marks: [[4, "writes $1 now"]], chip: 1, foot: "", narrate: "And it writes its result late, in <code>WB</code>, in its fifth cycle. Three cycles pass in between, and every instruction behind it is already in the pipeline." },
+      { sub: "card", card: cd("Two instructions, one register", ["when two instructions share a register,", "can the second one get a wrong answer?", "it depends on who reads and who writes"]), chip: 2, foot: "", narrate: "So when two instructions share a register, can the second one ever get a wrong answer? It depends on who reads and who writes. There are exactly four cases, and we can check each one against the timing." },
+      { sub: "raw", cycle: 5, marks: [[1, "reads $1: cycle 3"], [4, "writes $1: cycle 5"]], chip: 2, foot: "", narrate: "<strong>Case 1:</strong> the first instruction writes <code>$1</code>, the second reads it. The read happens in cycle 3, the write not until cycle 5. The second one reads too early. This is the hazard from last week, called <strong>RAW</strong>, read after write." },
+      { sub: "war", cycle: 6, marks: [[1, "1st read $2: cycle 2"], [4, "2nd writes $2: cycle 6"]], chip: 2, foot: "", narrate: "<strong>Case 2:</strong> the first reads <code>$2</code>, the second overwrites it. The read is in cycle 2 and the overwrite not until cycle 6, so the read is long over. Safe. This is <strong>WAR</strong>, write after read." },
+      { sub: "waw", cycle: 6, marks: [[4, "writes $1: cycle 5, then cycle 6"]], chip: 2, foot: "", narrate: "<strong>Case 3:</strong> both write <code>$1</code>. The first writes in cycle 5 and the second in cycle 6, so the later write lands last, exactly as it should. Safe. This is <strong>WAW</strong>, write after write." },
+      { sub: "rar", cycle: 3, marks: [[1, "both only read $2"]], chip: 2, foot: "", narrate: "<strong>Case 4:</strong> both only read <code>$2</code>. Reading destroys nothing, so there is nothing to fight over: not even a conflict. This is <strong>RAR</strong>, read after read." },
+      { sub: "dh", rows: 4, hl: [0], chip: 3, foot: "* only if instructions can finish out of order", narrate: "So on the E20 only RAW can go wrong, because reads are early, writes are late, and instructions finish in the order they started. The other three have names because they matter the moment we start moving instructions around, which is the next section." },
+      { sub: "card", card: cd("Conflict is not hazard", ["conflict: share a register, and one of them writes it", "hazard: that can give a wrong answer", "in this pipeline"]), chip: 4, foot: "", narrate: "So keep two words apart. A <strong>conflict</strong> is two instructions sharing a register where at least one writes it: RAW, WAR or WAW. A <strong>hazard</strong> is a conflict that can actually give a wrong answer in this pipeline. Next section, the test for moving instructions is conflict, not hazard." },
+    ],
+  }, Object.assign({ card: cardSub, dh: tb(DH) }, pipeSubs2())));
+
+  scene(mixScene({
+    num: "3", title: "Reordering: When It's Safe, When It Isn't", subtitle: "Fill the gap with work that doesn't depend on it.",
+    chips: ["The idea", "The trace", "The swap", "The rule", "The trap"],
+    steps: [
+      { sub: "card", card: cd("Reordering", ["a stall wastes cycles", "so move independent work into the gap", "(by hand, by a compiler, or by the hardware itself)"]), chip: 1, foot: "", narrate: "Stalling costs cycles. One way to win some back without any forwarding hardware is to reorder the instructions themselves: move an independent instruction into the gap that a stall would otherwise waste." },
+      { sub: "ordA", cycle: 5, marks: [[1, "waits for $1"]], chip: 2, foot: "", narrate: "Here is the original order: <code>movi $1, 5</code>, then <code>add $2, $2, $1</code>, then <code>add $3, $3, $3</code>. The second instruction needs <code>$1</code>, so with stalling it waits for the <code>movi</code> to write it back." },
+      { sub: "ordA", cycle: 10, chip: 2, foot: "", narrate: "Three bubbles flow through the pipeline while it waits, and the whole sequence finishes in <strong>10 cycles</strong>." },
+      { sub: "tordA", rows: 10, cur: 0, hl: "bubbles", chip: 2, foot: "", narrate: "The same run as a table: the three dashed cells are the bubbles, and the last instruction only reaches <code>WB</code> in cycle 10." },
+      { sub: "swap", prog: "p1", order: [0, 1, 2], notes: [["the only conflict is between 1 and 2", C.ink], ["instruction 3 touches neither $1 nor $2", C.ink]], chip: 3, foot: "", narrate: "Which instructions can move? Look for conflicts. The only one is between the <code>movi</code> and the second instruction, through <code>$1</code>. The third instruction touches neither register." },
+      { sub: "swap", prog: "p1", order: [0, 2, 1], notes: [["swap 2 and 3: the conflicting pair keeps its order", "#2e7d32"]], chip: 3, foot: "", narrate: "So swap the second and third instructions. The conflict between <code>movi</code> and <code>add $2, $2, $1</code> is still there, so we still stall. But <code>add $3, $3, $3</code> does not depend on <code>$1</code>, so it takes a slot that used to be a bubble." },
+      { sub: "ordB", cycle: 5, marks: [[1, "useful work, not a bubble"]], chip: 3, foot: "", narrate: "In the pipeline: the third instruction now sits in the gap, doing useful work in <code>ID</code> while the <code>add</code> that needs <code>$1</code> waits in <code>IF</code>." },
+      { sub: "ordB", cycle: 9, chip: 3, foot: "", narrate: "Two bubbles instead of three: the sequence finishes in <strong>9 cycles</strong>, one sooner. The program computes exactly the same thing, just faster." },
+      { sub: "tordB", rows: 9, cur: 0, hl: "bubbles", chip: 3, foot: "", narrate: "As a table: two dashed cells instead of three, and the table ends one row earlier." },
+      { sub: "card", card: cd("The rule", ["never swap two instructions that conflict", "(RAW, WAR or WAW: any of the three)", "only swap instructions with no conflict at all"]), chip: 4, foot: "", narrate: "The rule that makes this safe is narrow: <strong>never change the relative order of two instructions that have a conflict</strong>, whether it is RAW, WAR or WAW. A valid reordering only moves instructions that have no conflict with each other." },
+      { sub: "swap", prog: "p1", order: [1, 0, 2], notes: [["swap 1 and 2: the stall is gone,", C.red], ["but add now reads the OLD $1", C.red]], chip: 5, foot: "", narrate: "It is tempting to swap <code>movi $1, 5</code> and <code>add $2, $2, $1</code> directly, to dodge the RAW stall entirely. It does eliminate the hazard, but it also changes the answer: the <code>add</code> now reads the <em>old</em> value of <code>$1</code>. A different program, not a faster one." },
+      { sub: "swap", prog: "war", order: [0, 1], notes: [["WAR: no hazard in this order", C.ink]], chip: 5, foot: "", narrate: "One more subtlety. A WAR or WAW pair, left in its original order, causes no hazard in an in-order pipeline. That does not make it safe to swap." },
+      { sub: "swap", prog: "war", order: [1, 0], notes: [["swapped: addi $1 now reads a $2", C.red], ["that has already been overwritten", C.red]], chip: 5, foot: "", narrate: "Swap a WAR pair and the read now sees a value that has already been overwritten. For reordering, the right test is <em>conflict</em>, not hazard." },
+    ],
+  }, Object.assign({ card: cardSub }, pipeSubs2())));
+
+  scene(mixScene({
+    num: "4", title: "Control Hazards: When the Pipeline Doesn't Know What Comes Next", subtitle: "Which instruction do I fetch next?",
+    chips: ["The question", "The guess", "The table", "Which opcodes"],
+    steps: [
+      { sub: "code", pc: 0, next: true, chip: 1, foot: "", narrate: "So far every hazard was about data. This one is about a simpler question: which instruction do I fetch next? Usually the answer is easy. It is the line below, <code>pc + 1</code>." },
+      { sub: "code", pc: 1, fork: true, note: "the answer depends on the data: is $1 equal to $0?", chip: 1, foot: "", narrate: "A branch is different. <code>jeq</code> asks whether two registers are equal, and the answer decides what comes next: the line below, or a jump somewhere else. Until that is answered, nobody knows." },
+      { sub: "br", reg: 1, rlab: ["PROGRAM COUNTER", "pc is"], rval: "pc + 1", rtxt: ["jeq is still in ID, so the pipeline fetches the line below", "a guess"], cycle: 2, marks: [[0, "fetch the line below"]], chip: 2, foot: "", narrate: "The pipeline cannot wait, because it fetches an instruction every single cycle. So while <code>jeq</code> is still in <code>ID</code>, it fetches the line below and hopes for the best." },
+      { sub: "br", reg: 1, rlab: ["PROGRAM COUNTER", "pc is"], rval: "pc + 1", rtxt: ["jeq says: taken, so the pc should have been the target", "the two fetched are wrong", "", C.red], cycle: 3, marks: [[2, "the answer: taken"]], chip: 2, foot: "", narrate: "Two cycles in, <code>jeq</code> reaches <code>EX</code> and the answer finally arrives: the branch is taken. The two instructions fetched behind it came from the wrong place." },
+      { sub: "br", reg: 1, rlab: ["PROGRAM COUNTER", "pc is"], rval: "target", rtxt: ["the wrong fetches are thrown away and the target enters IF", "2 cycles wasted"], cycle: 4, marks: [[0, "the real target"]], chip: 2, foot: "", narrate: "They get thrown away, which is called <strong>flushing</strong>, and only now is the real target fetched. Two cycles of work wasted." },
+      { sub: "tbr", rows: 8, cur: 0, hl: "bubbles", chip: 3, foot: "", narrate: "As a table: the dashed cells are the wasted fetches, and the real target only shows up in cycle 4." },
+      { sub: "card", card: cd("Same shape as RAW", ["jeq writes the pc late, in EX", "but the pipeline reads the pc every cycle", "the pc plays the part of $1"]), chip: 3, foot: "", narrate: "If this feels familiar, it is: it is the RAW hazard again, with the <code>pc</code> playing the part of <code>$1</code>. <code>jeq</code> writes the <code>pc</code> late, but the pipeline reads it every cycle." },
+      { sub: "ops", rows: 1, hl: [0], chip: 4, foot: "", narrate: "Which instructions can cause this? Most cannot. <code>addi</code>, <code>add</code> and the rest always go to <code>pc + 1</code>, which is known the moment they are fetched." },
+      { sub: "ops", rows: 5, hl: [1, 2, 3, 4], chip: 4, foot: "", narrate: "<code>jeq</code> has to wait until <code>EX</code>. <code>jr</code> is worse: its target is whatever a register holds. <code>j</code> and <code>jal</code> carry their target inside the instruction, so it can be known early, if the hardware looks for it at fetch." },
+    ],
+  }, Object.assign({ card: cardSub, ops: tb(OPS) }, pipeSubs2())));
+
+  scene(mixScene({
+    num: "5", title: "Branch Prediction: Guess, Then Check", subtitle: "Don't wait. Guess, keep going, and fix the guess if it was wrong.",
+    chips: ["Guess", "Right or wrong", "Which guess", "Remember"],
+    steps: [
+      { sub: "card", card: cd("Guess, then check", ["waiting stalls every branch", "so guess, and keep fetching", "fix it if the guess was wrong"]), chip: 1, foot: "", narrate: "Waiting for the answer would stall on every branch, which is exactly the cost a pipeline exists to avoid. So the pipeline <strong>guesses</strong>, keeps going, and fixes the mistake if the guess was wrong." },
+      { sub: "nt", cycle: 5, chip: 2, foot: "", narrate: "The simplest guess is <strong>not taken</strong>: keep fetching the line below. If the branch really is not taken, the guess was right and <em>nothing</em> was lost." },
+      { sub: "tnt", rows: 7, cur: 0, chip: 2, foot: "", narrate: "In the table, a right guess has no dashed cells at all. The instructions flow through as if nothing had been in doubt." },
+      { sub: "br", cycle: 4, marks: [[0, "2 wasted cycles"]], chip: 2, foot: "", narrate: "If the branch is taken, the guess was wrong. The two instructions behind it are flushed and the real target is fetched. That costs 2 cycles, but only when the guess is wrong." },
+      { sub: "card", card: cd("Which guess is best?", ["a loop jumps back almost every time: guess taken", "an error check almost never fires: guess not taken", "so the best guess depends on the branch"]), chip: 3, foot: "", narrate: "Which guess is best depends on the branch. A loop jumps back to the top almost every time, so <strong>taken</strong> is the better bet. An error check almost never fires, so <strong>not taken</strong> wins." },
+      { sub: "dyn", n: 0, chip: 4, foot: "", narrate: "Real processors do not pick one guess for everything. They remember what each branch did last time, and guess the same again. Here is a loop branch, run twice." },
+      { sub: "dyn", n: 5, chip: 4, foot: "", narrate: "\"Same as last time\" is only wrong when the branch changes its mind. \"Not taken\" is wrong every time the loop jumps back." },
+      { sub: "dyn", n: 10, chip: 4, foot: "", narrate: "After ten runs, \"not taken\" was wrong 8 times and \"same as last time\" only 4. One policy for every branch is always wrong for some of them." },
+    ],
+  }, Object.assign({ card: cardSub }, pipeSubs2())));
+
+  scene(mixScene({
+    num: "6", title: "Structural Hazards: When Two Instructions Want the Same Hardware", subtitle: "Not a data problem: a hardware problem.",
+    chips: ["The idea", "The collision", "The table", "All three"],
+    steps: [
+      { sub: "card", card: cd("A third kind of hazard", ["not about data, and not about the pc", "two instructions need the same hardware", "in the same cycle"]), chip: 1, foot: "", narrate: "The last hazard is not about data or the <code>pc</code>. It happens when two instructions need the same piece of hardware in the same cycle." },
+      { sub: "st", cycle: 5, marks: [[1, "reads the registers"], [4, "writes a register"]], chip: 1, foot: "", narrate: "Take the register file. An instruction in <code>ID</code> reads it, an instruction in <code>WB</code> writes it, and in a full pipeline both happen in every single cycle." },
+      { sub: "card", card: cd("One door or three", ["the real E20: two doors for reading, one for writing", "so a read and a write can happen at once", "a cheaper register file: one door shared by both"]), chip: 2, foot: "", narrate: "The real E20 has separate doors for this: two for reading and one for writing, so both happen at once. Now imagine a cheaper register file with a single door that reads and writes have to share." },
+      { sub: "st", cycle: 5, marks: [[1, "needs the door"], [4, "needs the door"]], chip: 2, foot: "", narrate: "Look at cycle 5 of four <code>add</code> instructions. The first needs the door to write its result in <code>WB</code>, and the fourth needs the same door to read in <code>ID</code>. One door, two instructions." },
+      { sub: "tst", rows: 5, cur: 5, hlcells: [[5, 1], [5, 4]], chip: 3, foot: "", narrate: "In the table it is one row with two cells fighting over the one door. One of them has to wait." },
+      { sub: "card", card: cd("The fix", ["stall one of them, as before", "or build more doors, as the real E20 does", "and every cycle collides with the cheap one"]), chip: 3, foot: "", narrate: "With the cheap register file this would happen in every cycle, because every cycle has a write-back and a decode. The fix is the usual blunt tool, stall one of them, or build more doors, which is what the E20 does." },
+      { sub: "hz", rows: 3, chip: 4, foot: "", narrate: "So here are all three families. Data hazards: a later instruction reads too early, so stall, forward or reorder. Control hazards: the next <code>pc</code> is unknown, so guess and flush if wrong. Structural hazards: two want the same hardware, so stall one or build more." },
+      { sub: "card", card: cd("Next: caching", ["even a perfect pipeline wants an instruction per cycle", "memory takes about 200 times longer than that", "a different problem, with a very old answer"]), chip: 4, foot: "", narrate: "A pipeline in perfect health finishes one instruction per cycle. But a <code>lw</code> has to go to memory, and memory is not remotely that fast. That has nothing to do with hazards, and everything to do with a number from the first slide of this course." },
+    ],
+  }, Object.assign({ card: cardSub, hz: tb(HZ) }, pipeSubs2())));
+
+
+  // ---------------- engine ----------------
+  const $ = (id) => document.getElementById(id);
+  const svg = $("stage");
+  const foot = txt(svg, 575, 392, "", { size: 13, italic: true, fill: C.grey, anchor: "middle" });
+
+  scenes.forEach((sc) => {
+    sc.g = E("g", {}, svg);
+    sc.g.style.display = "none";
+    sc.r = sc.build(sc.g) || {};
+    foot.parentNode.appendChild(foot);
+  });
+  $("sec-total").textContent = scenes.length - scenes.filter((x) => x.front).length;
+
+  // si: section, ti: step, ph: 0 = question showing (diagram as before), 1 = answered
+  const off = scenes.filter((x) => x.front).length;   // title slides don't count as sections
+  let si = 0, ti = 0, ph = 1, shownScene = -1;
+  const asks = (i, k) => !!scenes[i].steps[k].q;
+  const startPh = (i, k) => (asks(i, k) && k > 0 ? 0 : 1);
+
+  function readHash() {
+    const m = location.hash.match(/^#(\d+)\.(\d+)(q?)$/);
+    if (!m) { ph = startPh(si, ti); return; }
+    const a = Number(m[1]) - 1 + off, b = Number(m[2]) - 1;
+    if (a >= 0 && a < scenes.length) { si = a; ti = Math.max(0, Math.min(scenes[a].steps.length - 1, b)); }
+    ph = m[3] && asks(si, ti) && ti > 0 ? 0 : 1;
+  }
+
+  function buildChips(sc) {
+    const box = $("chips");
+    box.innerHTML = "";
+    sc.chips.forEach((label) => {
+      const d = document.createElement("div");
+      d.className = "stp";
+      d.textContent = label;
+      box.appendChild(d);
+    });
+  }
+
+  function render() {
+    const sc = scenes[si], s = sc.steps[ti];
+    if (shownScene !== si) {
+      scenes.forEach((x, k) => { x.g.style.display = k === si ? "inline" : "none"; });
+      $("num").textContent = sc.num;
+      $("title").textContent = sc.title;
+      $("subtitle").textContent = sc.subtitle;
+      document.querySelector(".stage").style.visibility = sc.front ? "hidden" : "";
+      $("subtitle").style.visibility = sc.front ? "hidden" : "";
+      $("sec-wrap").style.display = sc.front ? "none" : "";
+      $("foot-left").textContent = sc.title;
+      buildChips(sc);
+      shownScene = si;
+    }
+    const asking = ph === 0 && !!s.q && ti > 0;
+    // while a question is showing, the diagram stays exactly as the previous step left it
+    sc.render(asking ? sc.steps[ti - 1] : s, sc.r, ti);
+    foot.textContent = asking ? "" : (s.foot || "");
+    const qm = '<span class="qm">Q</span>';
+    $("narration").innerHTML = asking ? '<div class="q big">' + qm + s.q + '</div>'
+      : (s.q ? '<div class="q small">' + qm + s.q + '</div>' : "") + ((!fullText && CAPTIONS[(sc.num === "" ? "T" : sc.num) + "." + (ti + 1)]) || s.narrate);
+    $("sec-n").textContent = si - off + 1;
+    $("step-n").textContent = ti + 1;
+    $("step-total").textContent = sc.steps.length;
+    document.querySelectorAll(".stp").forEach((chip, k) => {
+      const n = k + 1;
+      chip.classList.remove("active", "done");
+      if (!s.chip) return;
+      if (s.chip === n) chip.classList.add("active");
+      else if (n < s.chip) chip.classList.add("done");
+    });
+    history.replaceState(null, "", "#" + (si - off + 1) + "." + (ti + 1) + (asking ? "q" : ""));
+  }
+
+  function go(d) {
+    const sc = scenes[si];
+    if (d > 0) {
+      if (ph === 0) ph = 1;
+      else if (ti < sc.steps.length - 1) { ti++; ph = startPh(si, ti); }
+      else if (si < scenes.length - 1) { si++; ti = 0; ph = startPh(si, 0); }
+    } else {
+      if (ph === 1 && asks(si, ti) && ti > 0) ph = 0;
+      else if (ti > 0) { ti--; ph = 1; }
+      else if (si > 0) { si--; ti = scenes[si].steps.length - 1; ph = 1; }
+    }
+    render();
+  }
+
+  function jumpScene(d) {
+    if (d < 0 && ti > 0) ti = 0;
+    else si = Math.max(0, Math.min(scenes.length - 1, si + d)), ti = 0;
+    ph = startPh(si, 0);
+    render();
+  }
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "n" || e.key === "N") { fullText = !fullText; render(); return; }
+    const fwd = ["ArrowRight", "ArrowDown", " ", "PageDown"].includes(e.key);
+    const back = ["ArrowLeft", "ArrowUp", "PageUp"].includes(e.key);
+    if (!fwd && !back) return;
+    e.preventDefault();
+    if (e.shiftKey) jumpScene(fwd ? 1 : -1);
+    else go(fwd ? 1 : -1);
+  });
+
+  window.addEventListener("hashchange", () => { readHash(); render(); });
+
+  // on-slide captions: short text under the picture. The full narration stays in the speaker script; press n to show it on screen.
+  const CAPTIONS = {
+"T.1": "Last week's pipeline worked. Overlap has a catch.",
+"T.2": "RAW, its siblings, and a hazard on the <code>pc</code>.",
+"T.3": "And a hazard that isn't about data.",
+"1.1": "The snag: the second <code>addi</code> reads <code>$1</code> too early and gets <strong>0</strong>.",
+"1.2": "<strong>Stall:</strong> hold it, send bubbles. Always right, but cycle 9.",
+"1.3": "<strong>Forward:</strong> a wire carries the value. Cycle 6.",
+"1.4": "RAW has siblings. Which are real?",
+"2.1": "Reads happen <strong>early</strong>: <code>ID</code>, cycle 2.",
+"2.2": "Writes happen <strong>late</strong>: <code>WB</code>, cycle 5.",
+"2.3": "Two instructions share a register: four cases. Check each against the timing.",
+"2.4": "<strong>Case 1:</strong> read in cycle 3, write in cycle 5. Too early: <strong>RAW</strong>.",
+"2.5": "<strong>Case 2:</strong> read in cycle 2, overwrite in cycle 6. Safe: <strong>WAR</strong>.",
+"2.6": "<strong>Case 3:</strong> writes land in order. Safe: <strong>WAW</strong>.",
+"2.7": "<strong>Case 4:</strong> two reads. Not even a conflict: <strong>RAR</strong>.",
+"2.8": "On the E20 only <strong>RAW</strong> bites. The others matter when we reorder.",
+"2.9": "<strong>Conflict:</strong> a shared register that one writes. <strong>Hazard:</strong> it can go wrong.",
+"3.1": "Reordering: put independent work into the stall's gap.",
+"3.2": "Original order: the second instruction waits for <code>$1</code>.",
+"3.3": "Three bubbles: <strong>10</strong> cycles.",
+"3.4": "The same run as a table: three dashed bubbles.",
+"3.5": "Which can move? Only instruction 3 has no conflict.",
+"3.6": "Swap 2 and 3: instruction 3 fills the gap.",
+"3.7": "In the pipeline: useful work instead of a bubble.",
+"3.8": "Two bubbles: <strong>9</strong> cycles, same answer.",
+"3.9": "As a table: two dashed cells, one row shorter.",
+"3.10": "The rule: never swap two instructions that <strong>conflict</strong>.",
+"3.11": "The tempting swap changes the answer.",
+"3.12": "A WAR pair is harmless in order, but not safe to swap.",
+"3.13": "Swapped, the read sees an overwritten value.",
+"4.1": "Which instruction do I fetch next? Usually <code>pc + 1</code>.",
+"4.2": "A branch: the answer depends on the data. Nobody knows yet.",
+"4.3": "The pipeline can't wait: it fetches the line below.",
+"4.4": "Cycle 3: <code>jeq</code> says <strong>taken</strong>. Those two fetches were wrong.",
+"4.5": "<strong>Flush</strong> them, fetch the target: 2 cycles wasted.",
+"4.6": "As a table: the dashed cells are the wasted fetches.",
+"4.7": "The same shape as RAW, with the <code>pc</code> as <code>$1</code>.",
+"4.8": "Most instructions always go to <code>pc + 1</code>: no hazard.",
+"4.9": "<code>jeq</code> and <code>jr</code> must wait. <code>j</code>, <code>jal</code> might not.",
+"5.1": "Don't wait: <strong>guess</strong>, keep going, fix it if wrong.",
+"5.2": "Guess <strong>not taken</strong>: if right, nothing is lost.",
+"5.3": "A right guess has no dashed cells.",
+"5.4": "A wrong guess flushes 2 cycles, but only when wrong.",
+"5.5": "A loop: guess <strong>taken</strong>. An error check: guess <strong>not taken</strong>.",
+"5.6": "Remember each branch: guess <strong>what it did last time</strong>.",
+"5.7": "Same as last time is wrong only when the branch changes its mind.",
+"5.8": "Ten runs: 8 wrong against 4 wrong.",
+"6.1": "A third hazard: two instructions, <strong>one piece of hardware</strong>.",
+"6.2": "The register file: read in <code>ID</code>, written in <code>WB</code>, every cycle.",
+"6.3": "The E20 has separate doors. A cheap one has a single shared door.",
+"6.4": "Cycle 5: <code>WB</code> and <code>ID</code> both want the one door.",
+"6.5": "One row, two cells fighting over the door.",
+"6.6": "Fix: stall one, or build more doors.",
+"6.7": "Data, control, structural: three families, three fixes.",
+"6.8": "Next: even a perfect pipeline waits on memory."
+};
+  let fullText = false;
+  window.DECK_STEPS = scenes.map(function (sc) { return { num: sc.num, title: sc.title, front: !!sc.front, steps: sc.steps.map(function (s) { return { narrate: s.narrate, sub: s.sub, img: s.img, card: s.card, cycle: s.cycle, rows: s.rows, hl: s.hl, marks: s.marks, arrows: s.arrows, view: s.view, mark: s.mark, danger: s.danger, chip: s.chip, reg: s.reg, rlab: s.rlab, rtxt: s.rtxt, rval: s.rval, vchip: s.vchip, notes: s.notes, prog: s.prog, order: s.order, n: s.n, hlcells: s.hlcells, cur: s.cur, pc: s.pc, next: s.next, fork: s.fork, note: s.note }; }) }; });
+  if (location.search.indexOf('dump') >= 0) { var pre = document.createElement('pre'); pre.id = 'dump'; pre.textContent = JSON.stringify(window.DECK_STEPS); document.body.innerHTML = ''; document.body.appendChild(pre); return; }
+  readHash();
+  render();
+})();
+</script>
+
+</body>
+</html>

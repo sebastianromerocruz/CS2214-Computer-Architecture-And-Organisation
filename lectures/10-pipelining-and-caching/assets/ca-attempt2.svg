@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 380" font-family="Helvetica, Arial, sans-serif">
+<defs><marker id="a" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#57068c"/></marker><marker id="r" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#c1272d"/></marker></defs>
+<rect width="1150" height="380" rx="24" fill="#eee6f3"/>
+<text x="575" y="34" fill="#6d6d6d" font-size="17" font-weight="400" text-anchor="middle" font-style="italic">attempt two: remember the address next to the value</text>
+<text x="210" y="72" fill="#6d6d6d" font-size="19" font-weight="700" text-anchor="middle">after lw 42</text>
+<text x="74" y="120" fill="#6d6d6d" font-size="20" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="90" y="88" width="240" height="50" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="74" y="184" fill="#6d6d6d" font-size="20" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<rect x="90" y="152" width="240" height="50" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="74" y="248" fill="#6d6d6d" font-size="20" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="90" y="216" width="240" height="50" rx="10" fill="#f1e6fb" stroke="#57068c" stroke-width="5"/>
+<text x="210" y="249" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">(42, 17)</text>
+<text x="74" y="312" fill="#6d6d6d" font-size="20" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<rect x="90" y="280" width="240" height="50" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="380" y="150" width="390" height="116" rx="12" fill="#fff" stroke="#c1272d" stroke-width="4"/>
+<text x="575" y="186" fill="#c1272d" font-size="21" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">lw 10  →  row 2</text>
+<text x="575" y="214" fill="#1a1a1a" font-size="18" font-weight="600" text-anchor="middle">stored address 42 is not 10</text>
+<text x="575" y="244" fill="#c1272d" font-size="19" font-weight="700" text-anchor="middle">miss: fetch 33 from RAM</text>
+<polyline points="332,241 378,212" fill="none" stroke="#57068c" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#a)"/>
+<polyline points="772,212 818,241" fill="none" stroke="#c1272d" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#r)"/>
+<text x="940" y="72" fill="#6d6d6d" font-size="19" font-weight="700" text-anchor="middle">after lw 10</text>
+<text x="804" y="120" fill="#6d6d6d" font-size="20" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="820" y="88" width="240" height="50" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="804" y="184" fill="#6d6d6d" font-size="20" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<rect x="820" y="152" width="240" height="50" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="804" y="248" fill="#6d6d6d" font-size="20" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="820" y="216" width="240" height="50" rx="10" fill="#fbe9ea" stroke="#c1272d" stroke-width="5"/>
+<text x="940" y="249" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">(10, 33)</text>
+<text x="804" y="312" fill="#6d6d6d" font-size="20" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<rect x="820" y="280" width="240" height="50" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="940" y="356" fill="#c1272d" font-size="18" font-weight="700" text-anchor="middle">(42, 17) was thrown out: an eviction</text>
+<text x="300" y="356" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle" font-style="italic">right answer now, but a whole address per row</text>
+</svg>

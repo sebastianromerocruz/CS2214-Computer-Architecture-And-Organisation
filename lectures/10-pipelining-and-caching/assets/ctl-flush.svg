@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 380" font-family="Helvetica, Arial, sans-serif">
+<defs><marker id="a" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#57068c"/></marker><marker id="r" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#c1272d"/></marker><marker id="g" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#2e7d32"/></marker></defs>
+<rect width="1150" height="380" rx="24" fill="#eee6f3"/>
+<text x="575" y="30" fill="#6d6d6d" font-size="17" font-weight="400" text-anchor="middle" font-style="italic">jeq's answer arrives in cycle 3. The two fetches behind it were wrong.</text>
+<text x="245" y="64" fill="#57068c" font-size="22" font-weight="700" text-anchor="middle">IF</text>
+<text x="395" y="64" fill="#57068c" font-size="22" font-weight="700" text-anchor="middle">ID</text>
+<text x="545" y="64" fill="#57068c" font-size="22" font-weight="700" text-anchor="middle">EX</text>
+<text x="60" y="64" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="start">cycle</text>
+<text x="100" y="116" fill="#6d6d6d" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<rect x="164" y="78" width="456" height="52" rx="8" fill="#fff" stroke="#d6c2ea" stroke-width="2"/>
+<rect x="176" y="83" width="134" height="42" rx="8" fill="#e2cdf2" stroke="#57068c" stroke-width="3"/>
+<text x="243" y="114" fill="#1a1a1a" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">jeq</text>
+<text x="100" y="176" fill="#6d6d6d" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="164" y="138" width="456" height="52" rx="8" fill="#fff" stroke="#d6c2ea" stroke-width="2"/>
+<rect x="176" y="143" width="134" height="42" rx="8" fill="#e6e4de" stroke="#6d6d6d" stroke-width="3" stroke-dasharray="7 5"/>
+<text x="243" y="174" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">add $2,$2,$2</text>
+<line x1="184" y1="149" x2="302" y2="179" stroke="#c1272d" stroke-width="5" stroke-linecap="round"/>
+<line x1="302" y1="149" x2="184" y2="179" stroke="#c1272d" stroke-width="5" stroke-linecap="round"/>
+<rect x="326" y="143" width="134" height="42" rx="8" fill="#d9e8fb" stroke="#57068c" stroke-width="3"/>
+<text x="393" y="174" fill="#1a1a1a" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">jeq</text>
+<text x="100" y="236" fill="#6d6d6d" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<rect x="164" y="198" width="456" height="52" rx="8" fill="#fff" stroke="#d6c2ea" stroke-width="2"/>
+<rect x="176" y="203" width="134" height="42" rx="8" fill="#e6e4de" stroke="#6d6d6d" stroke-width="3" stroke-dasharray="7 5"/>
+<text x="243" y="234" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">add $4,$4,$4</text>
+<line x1="184" y1="209" x2="302" y2="239" stroke="#c1272d" stroke-width="5" stroke-linecap="round"/>
+<line x1="302" y1="209" x2="184" y2="239" stroke="#c1272d" stroke-width="5" stroke-linecap="round"/>
+<rect x="326" y="203" width="134" height="42" rx="8" fill="#e6e4de" stroke="#6d6d6d" stroke-width="3" stroke-dasharray="7 5"/>
+<text x="393" y="234" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">add $2,$2,$2</text>
+<line x1="334" y1="209" x2="452" y2="239" stroke="#c1272d" stroke-width="5" stroke-linecap="round"/>
+<line x1="452" y1="209" x2="334" y2="239" stroke="#c1272d" stroke-width="5" stroke-linecap="round"/>
+<rect x="476" y="203" width="134" height="42" rx="8" fill="#fbe9ea" stroke="#c1272d" stroke-width="5"/>
+<text x="543" y="234" fill="#1a1a1a" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">jeq</text>
+<text x="100" y="296" fill="#6d6d6d" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">4</text>
+<rect x="164" y="258" width="456" height="52" rx="8" fill="#fff" stroke="#d6c2ea" stroke-width="2"/>
+<rect x="176" y="263" width="134" height="42" rx="8" fill="#e4f3e1" stroke="#2e7d32" stroke-width="5"/>
+<text x="243" y="294" fill="#1a1a1a" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">add $3,$3,$3</text>
+<text x="690" y="228" fill="#c1272d" font-size="20" font-weight="700" text-anchor="start">cycle 3: jeq reaches EX.</text>
+<text x="690" y="254" fill="#c1272d" font-size="20" font-weight="700" text-anchor="start">The answer is in: taken.</text>
+<text x="690" y="288" fill="#2e7d32" font-size="20" font-weight="700" text-anchor="start">cycle 4: the real target enters IF.</text>
+<line x1="660" y1="168" x2="660" y2="288" stroke="#6d6d6d" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 4"/>
+<text x="690" y="118" fill="#1a1a1a" font-size="18" font-weight="600" text-anchor="start">best case: the target would</text>
+<text x="690" y="142" fill="#1a1a1a" font-size="18" font-weight="600" text-anchor="start">have entered IF in cycle 2</text>
+<text x="690" y="178" fill="#1a1a1a" font-size="18" font-weight="600" text-anchor="start">actual: cycle 4</text>
+<rect x="690" y="318" width="380" height="44" rx="12" fill="#fff" stroke="#c1272d" stroke-width="4"/>
+<text x="880" y="347" fill="#c1272d" font-size="18" font-weight="700" text-anchor="middle">2 cycles lost = 2 instructions flushed</text>
+</svg>

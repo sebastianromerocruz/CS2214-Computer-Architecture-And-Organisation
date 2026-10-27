@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 380" font-family="Helvetica, Arial, sans-serif">
+<defs><marker id="a" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#57068c"/></marker><marker id="r" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#c1272d"/></marker><marker id="g" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#2e7d32"/></marker></defs>
+<rect width="1150" height="380" rx="24" fill="#eee6f3"/>
+<text x="575" y="30" fill="#6d6d6d" font-size="17" font-weight="400" text-anchor="middle" font-style="italic">a loop branch, run twice: two ways to guess</text>
+<text x="300" y="100" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="end">what the branch did</text>
+<text x="300" y="186" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="end">always guess N</text>
+<text x="300" y="272" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="end">guess: same as last time</text>
+<rect x="330" y="64" width="56" height="54" rx="8" fill="#e2cdf2" stroke="#57068c" stroke-width="3"/>
+<text x="358" y="100" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="330" y="150" width="56" height="54" rx="8" fill="#fbe9ea" stroke="#c1272d" stroke-width="3"/>
+<text x="358" y="186" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="330" y="236" width="56" height="54" rx="8" fill="#fbe9ea" stroke="#c1272d" stroke-width="3"/>
+<text x="358" y="272" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="392" y="64" width="56" height="54" rx="8" fill="#e2cdf2" stroke="#57068c" stroke-width="3"/>
+<text x="420" y="100" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="392" y="150" width="56" height="54" rx="8" fill="#fbe9ea" stroke="#c1272d" stroke-width="3"/>
+<text x="420" y="186" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="392" y="236" width="56" height="54" rx="8" fill="#e4f3e1" stroke="#2e7d32" stroke-width="3"/>
+<text x="420" y="272" fill="#2e7d32" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="454" y="64" width="56" height="54" rx="8" fill="#e2cdf2" stroke="#57068c" stroke-width="3"/>
+<text x="482" y="100" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="454" y="150" width="56" height="54" rx="8" fill="#fbe9ea" stroke="#c1272d" stroke-width="3"/>
+<text x="482" y="186" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="454" y="236" width="56" height="54" rx="8" fill="#e4f3e1" stroke="#2e7d32" stroke-width="3"/>
+<text x="482" y="272" fill="#2e7d32" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="516" y="64" width="56" height="54" rx="8" fill="#e2cdf2" stroke="#57068c" stroke-width="3"/>
+<text x="544" y="100" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="516" y="150" width="56" height="54" rx="8" fill="#fbe9ea" stroke="#c1272d" stroke-width="3"/>
+<text x="544" y="186" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="516" y="236" width="56" height="54" rx="8" fill="#e4f3e1" stroke="#2e7d32" stroke-width="3"/>
+<text x="544" y="272" fill="#2e7d32" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="578" y="64" width="56" height="54" rx="8" fill="#e2cdf2" stroke="#57068c" stroke-width="3"/>
+<text x="606" y="100" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="578" y="150" width="56" height="54" rx="8" fill="#e4f3e1" stroke="#2e7d32" stroke-width="3"/>
+<text x="606" y="186" fill="#2e7d32" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="578" y="236" width="56" height="54" rx="8" fill="#fbe9ea" stroke="#c1272d" stroke-width="3"/>
+<text x="606" y="272" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="640" y="64" width="56" height="54" rx="8" fill="#e2cdf2" stroke="#57068c" stroke-width="3"/>
+<text x="668" y="100" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="640" y="150" width="56" height="54" rx="8" fill="#fbe9ea" stroke="#c1272d" stroke-width="3"/>
+<text x="668" y="186" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="640" y="236" width="56" height="54" rx="8" fill="#fbe9ea" stroke="#c1272d" stroke-width="3"/>
+<text x="668" y="272" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="702" y="64" width="56" height="54" rx="8" fill="#e2cdf2" stroke="#57068c" stroke-width="3"/>
+<text x="730" y="100" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="702" y="150" width="56" height="54" rx="8" fill="#fbe9ea" stroke="#c1272d" stroke-width="3"/>
+<text x="730" y="186" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="702" y="236" width="56" height="54" rx="8" fill="#e4f3e1" stroke="#2e7d32" stroke-width="3"/>
+<text x="730" y="272" fill="#2e7d32" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="764" y="64" width="56" height="54" rx="8" fill="#e2cdf2" stroke="#57068c" stroke-width="3"/>
+<text x="792" y="100" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="764" y="150" width="56" height="54" rx="8" fill="#fbe9ea" stroke="#c1272d" stroke-width="3"/>
+<text x="792" y="186" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="764" y="236" width="56" height="54" rx="8" fill="#e4f3e1" stroke="#2e7d32" stroke-width="3"/>
+<text x="792" y="272" fill="#2e7d32" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="826" y="64" width="56" height="54" rx="8" fill="#e2cdf2" stroke="#57068c" stroke-width="3"/>
+<text x="854" y="100" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="826" y="150" width="56" height="54" rx="8" fill="#fbe9ea" stroke="#c1272d" stroke-width="3"/>
+<text x="854" y="186" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="826" y="236" width="56" height="54" rx="8" fill="#e4f3e1" stroke="#2e7d32" stroke-width="3"/>
+<text x="854" y="272" fill="#2e7d32" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="888" y="64" width="56" height="54" rx="8" fill="#e2cdf2" stroke="#57068c" stroke-width="3"/>
+<text x="916" y="100" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="888" y="150" width="56" height="54" rx="8" fill="#e4f3e1" stroke="#2e7d32" stroke-width="3"/>
+<text x="916" y="186" fill="#2e7d32" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="888" y="236" width="56" height="54" rx="8" fill="#fbe9ea" stroke="#c1272d" stroke-width="3"/>
+<text x="916" y="272" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<text x="330" y="326" fill="#c1272d" font-size="22" font-weight="700" text-anchor="start">always N: wrong 8 of 10</text>
+<text x="330" y="360" fill="#2e7d32" font-size="22" font-weight="700" text-anchor="start">same as last time: wrong 4 of 10</text>
+</svg>

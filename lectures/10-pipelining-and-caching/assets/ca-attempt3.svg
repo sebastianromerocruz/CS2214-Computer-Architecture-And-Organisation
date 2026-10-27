@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 380" font-family="Helvetica, Arial, sans-serif">
+<defs><marker id="a" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#57068c"/></marker><marker id="r" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#c1272d"/></marker></defs>
+<rect width="1150" height="380" rx="24" fill="#eee6f3"/>
+<text x="575" y="32" fill="#6d6d6d" font-size="17" font-weight="400" text-anchor="middle">attempt three: divide the address by the number of rows (4). Remainder = row. Quotient = tag.</text>
+<rect x="40" y="52" width="560" height="132" rx="12" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="66" y="88" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="start">address 42</text>
+<rect x="40" y="200" width="560" height="132" rx="12" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="66" y="236" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="start">address 10</text>
+<rect x="700" y="52" width="400" height="86" rx="12" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="900" y="84" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">row 2 stores</text>
+<text x="900" y="120" fill="#1a1a1a" font-size="26" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">tag 10  →  17</text>
+<polyline points="602,118 698,100" fill="none" stroke="#57068c" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a)"/>
+<rect x="700" y="200" width="400" height="132" rx="12" fill="#fff" stroke="#c1272d" stroke-width="4"/>
+<text x="900" y="232" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle">lw 10: row 2, tag 2</text>
+<text x="900" y="266" fill="#c1272d" font-size="21" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">stored tag 10  ≠  tag 2</text>
+<text x="900" y="308" fill="#c1272d" font-size="19" font-weight="700" text-anchor="middle">a miss, as it should be</text>
+<polyline points="602,266 698,266" fill="none" stroke="#c1272d" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#r)"/>
+<text x="66" y="140" font-size="32" font-weight="700" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#1a1a1a">42&#160;=&#160;4&#160;×&#160;<tspan fill="#57068c">10</tspan>&#160;+&#160;<tspan fill="#b07a00">2</tspan></text>
+<text x="259" y="166" fill="#57068c" font-size="17" font-weight="700" text-anchor="middle">tag</text><text x="345" y="166" fill="#b07a00" font-size="17" font-weight="700" text-anchor="middle">row</text>
+<text x="66" y="288" font-size="32" font-weight="700" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#1a1a1a">10&#160;=&#160;4&#160;×&#160;<tspan fill="#57068c">2</tspan>&#160;+&#160;<tspan fill="#b07a00">2</tspan></text>
+<text x="249" y="314" fill="#57068c" font-size="17" font-weight="700" text-anchor="middle">tag</text><text x="326" y="314" fill="#b07a00" font-size="17" font-weight="700" text-anchor="middle">row</text>
+</svg>

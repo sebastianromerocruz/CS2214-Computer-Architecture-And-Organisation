@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 380" font-family="Helvetica, Arial, sans-serif">
+<defs><marker id="a" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#57068c"/></marker><marker id="r" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#c1272d"/></marker><marker id="g" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#2e7d32"/></marker></defs>
+<rect width="1150" height="380" rx="24" fill="#eee6f3"/>
+<text x="575" y="30" fill="#6d6d6d" font-size="17" font-weight="400" text-anchor="middle" font-style="italic">the line below, or a jump? The pipeline doesn't know until the answer arrives</text>
+<rect x="330" y="52" width="380" height="46" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="350" y="83" fill="#1a1a1a" font-size="21" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">movi $1, 0</text>
+<rect x="330" y="114" width="380" height="46" rx="10" fill="#fff" stroke="#c1272d" stroke-width="6"/>
+<text x="350" y="145" fill="#1a1a1a" font-size="21" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">jeq $1, $0, done</text>
+<rect x="330" y="176" width="380" height="46" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="350" y="207" fill="#1a1a1a" font-size="21" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">add $2, $2, $2</text>
+<rect x="330" y="238" width="380" height="46" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="350" y="269" fill="#1a1a1a" font-size="21" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">add $4, $4, $4</text>
+<rect x="330" y="300" width="380" height="46" rx="10" fill="#e4f3e1" stroke="#57068c" stroke-width="3"/>
+<text x="350" y="331" fill="#1a1a1a" font-size="21" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">done: add $3, $3, $3</text>
+<polygon points="316,123 332,137 316,151" fill="#c1272d"/>
+<text x="296" y="144" fill="#c1272d" font-size="22" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">pc</text>
+<polyline points="714,137 750,137 750,199 716,199" fill="none" stroke="#57068c" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#a)"/>
+<text x="770" y="174" fill="#57068c" font-size="19" font-weight="700" text-anchor="start">not taken: the line below</text>
+<polyline points="328,154 200,154 200,323 322,323" fill="none" stroke="#c1272d" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#r)"/>
+<text x="186" y="230" fill="#c1272d" font-size="19" font-weight="700" text-anchor="end">taken: jump</text>
+<text x="186" y="254" fill="#c1272d" font-size="19" font-weight="700" text-anchor="end">to done</text>
+<circle cx="830" cy="93" r="22" fill="#fff" stroke="#c1272d" stroke-width="4"/>
+<text x="830" y="102" fill="#c1272d" font-size="28" font-weight="700" text-anchor="middle">?</text>
+<text x="575" y="372" fill="#c1272d" font-size="20" font-weight="700" text-anchor="middle">it depends on the data: is $1 equal to $0?</text>
+</svg>

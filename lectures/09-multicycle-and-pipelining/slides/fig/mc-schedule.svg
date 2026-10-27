@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 400" font-family="Helvetica, Arial, sans-serif">
+  <defs><marker id="r" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#c1272d"/></marker></defs>
+  <text x="575" y="30" fill="#6d6d6d" font-size="15" font-style="italic" text-anchor="middle">control's to-do list for one lw: which switch to flip in which cycle</text>
+  <text x="150" y="64" fill="#6d6d6d" font-size="13" font-weight="700" letter-spacing="2">CYCLE</text>
+  <text x="280" y="64" fill="#6d6d6d" font-size="13" font-weight="700" letter-spacing="2">STAGE</text>
+  <text x="420" y="64" fill="#6d6d6d" font-size="13" font-weight="700" letter-spacing="2">SWITCH TURNED ON</text>
+  <text x="720" y="64" fill="#6d6d6d" font-size="13" font-weight="700" letter-spacing="2">WHAT IT CATCHES</text>
+  <line x1="140" y1="72" x2="1010" y2="72" stroke="#57068c" stroke-width="2"/>
+  <rect x="140" y="84" width="870" height="38" rx="9" fill="#e2cdf2" stroke="#57068c" stroke-width="2"/>
+  <text x="150" y="110" fill="#57068c" font-size="20" font-weight="700" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+  <text x="280" y="110" fill="#57068c" font-size="20" font-weight="700">IF</text>
+  <text x="420" y="110" fill="#1a1a1a" font-size="19" font-weight="700" font-family="ui-monospace, Menlo, Consolas, monospace">WEir</text>
+  <text x="720" y="110" fill="#404040" font-size="17">IR catches the instruction</text>
+  <rect x="140" y="130" width="870" height="38" rx="9" fill="#d9e8fb" stroke="#57068c" stroke-width="2"/>
+  <text x="150" y="156" fill="#57068c" font-size="20" font-weight="700" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+  <text x="280" y="156" fill="#57068c" font-size="20" font-weight="700">ID</text>
+  <text x="420" y="156" fill="#1a1a1a" font-size="19" font-weight="700" font-family="ui-monospace, Menlo, Consolas, monospace">WEa and WEb</text>
+  <text x="720" y="156" fill="#404040" font-size="17">A and B catch the two registers</text>
+  <rect x="140" y="176" width="870" height="38" rx="9" fill="#fbe9ea" stroke="#57068c" stroke-width="2"/>
+  <text x="150" y="202" fill="#57068c" font-size="20" font-weight="700" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+  <text x="280" y="202" fill="#57068c" font-size="20" font-weight="700">EX</text>
+  <text x="420" y="202" fill="#1a1a1a" font-size="19" font-weight="700" font-family="ui-monospace, Menlo, Consolas, monospace">WEalu</text>
+  <text x="720" y="202" fill="#404040" font-size="17">aluOut catches the result</text>
+  <rect x="140" y="222" width="870" height="38" rx="9" fill="#e4f3e1" stroke="#57068c" stroke-width="2"/>
+  <text x="150" y="248" fill="#57068c" font-size="20" font-weight="700" font-family="ui-monospace, Menlo, Consolas, monospace">4</text>
+  <text x="280" y="248" fill="#57068c" font-size="20" font-weight="700">MEM</text>
+  <text x="420" y="248" fill="#1a1a1a" font-size="19" font-weight="700" font-family="ui-monospace, Menlo, Consolas, monospace">MDR</text>
+  <text x="720" y="248" fill="#404040" font-size="17">MDR catches the loaded data</text>
+  <rect x="140" y="268" width="870" height="38" rx="9" fill="#fff1cf" stroke="#57068c" stroke-width="2"/>
+  <text x="150" y="294" fill="#57068c" font-size="20" font-weight="700" font-family="ui-monospace, Menlo, Consolas, monospace">5</text>
+  <text x="280" y="294" fill="#57068c" font-size="20" font-weight="700">WB</text>
+  <text x="420" y="294" fill="#1a1a1a" font-size="19" font-weight="700" font-family="ui-monospace, Menlo, Consolas, monospace">write the register</text>
+  <text x="720" y="294" fill="#404040" font-size="17">and update the pc</text>
+  <rect x="300" y="334" width="550" height="46" rx="12" fill="#ffffff" stroke="#c1272d" stroke-width="4"/>
+  <text x="575" y="364" fill="#c1272d" font-size="20" font-weight="700" text-anchor="middle">but who keeps track of which cycle we are in?</text>
+</svg>

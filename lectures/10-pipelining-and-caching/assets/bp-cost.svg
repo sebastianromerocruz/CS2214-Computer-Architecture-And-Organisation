@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 380" font-family="Helvetica, Arial, sans-serif">
+<defs><marker id="a" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#57068c"/></marker><marker id="r" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#c1272d"/></marker><marker id="g" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#2e7d32"/></marker></defs>
+<rect width="1150" height="380" rx="24" fill="#eee6f3"/>
+<text x="575" y="30" fill="#6d6d6d" font-size="17" font-weight="400" text-anchor="middle" font-style="italic">a branch run 100 times: total penalty cycles (a wrong guess costs 2)</text>
+<rect x="165" y="110" width="110" height="210" rx="6" fill="#57068c" stroke="#57068c" stroke-width="4"/>
+<text x="220" y="98" fill="#57068c" font-size="28" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">200</text>
+<text x="220" y="346" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle">always stall</text>
+<rect x="325" y="131" width="110" height="189" rx="6" fill="#fbe9ea" stroke="#c1272d" stroke-width="4"/>
+<text x="380" y="119" fill="#c1272d" font-size="28" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">180</text>
+<text x="380" y="346" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle">guess not taken</text>
+<text x="300" y="372" fill="#6d6d6d" font-size="18" font-weight="700" text-anchor="middle">taken 90 times out of 100</text>
+<rect x="715" y="110" width="110" height="210" rx="6" fill="#57068c" stroke="#57068c" stroke-width="4"/>
+<text x="770" y="98" fill="#57068c" font-size="28" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">200</text>
+<text x="770" y="346" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle">always stall</text>
+<rect x="875" y="299" width="110" height="21" rx="6" fill="#fbe9ea" stroke="#c1272d" stroke-width="4"/>
+<text x="930" y="287" fill="#c1272d" font-size="28" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">20</text>
+<text x="930" y="346" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle">guess not taken</text>
+<text x="850" y="372" fill="#6d6d6d" font-size="18" font-weight="700" text-anchor="middle">taken 10 times out of 100</text>
+<text x="300" y="62" fill="#c1272d" font-size="19" font-weight="700" text-anchor="middle">only a 10% win: barely worth it</text>
+<text x="850" y="62" fill="#2e7d32" font-size="19" font-weight="700" text-anchor="middle">ten times better</text>
+<line x1="120" y1="320" x2="1030" y2="320" stroke="#6d6d6d" stroke-width="2" stroke-linecap="round"/>
+</svg>

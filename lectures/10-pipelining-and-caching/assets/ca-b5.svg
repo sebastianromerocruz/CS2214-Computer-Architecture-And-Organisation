@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 360" font-family="Helvetica, Arial, sans-serif">
+<defs><marker id="a" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#57068c"/></marker></defs>
+<rect width="1150" height="360" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" text-anchor="middle">the bet can lose: a pointer-chasing program uses one cell of each block it drags in.</text>
+<text x="200" y="76" fill="#c1272d" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">lw 3  →  fetch block 0</text>
+<rect x="40" y="96" width="40" height="52" rx="8" fill="#f0f0f0" stroke="#cfc3d8" stroke-width="2"/>
+<text x="60" y="128" fill="#a0a0a0" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="80" y="96" width="40" height="52" rx="8" fill="#f0f0f0" stroke="#cfc3d8" stroke-width="2"/>
+<text x="100" y="128" fill="#a0a0a0" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<rect x="120" y="96" width="40" height="52" rx="8" fill="#f0f0f0" stroke="#cfc3d8" stroke-width="2"/>
+<text x="140" y="128" fill="#a0a0a0" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="160" y="96" width="40" height="52" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="180" y="128" fill="#1a1a1a" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<rect x="200" y="96" width="40" height="52" rx="8" fill="#f0f0f0" stroke="#cfc3d8" stroke-width="2"/>
+<text x="220" y="128" fill="#a0a0a0" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">4</text>
+<rect x="240" y="96" width="40" height="52" rx="8" fill="#f0f0f0" stroke="#cfc3d8" stroke-width="2"/>
+<text x="260" y="128" fill="#a0a0a0" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">5</text>
+<rect x="280" y="96" width="40" height="52" rx="8" fill="#f0f0f0" stroke="#cfc3d8" stroke-width="2"/>
+<text x="300" y="128" fill="#a0a0a0" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">6</text>
+<rect x="320" y="96" width="40" height="52" rx="8" fill="#f0f0f0" stroke="#cfc3d8" stroke-width="2"/>
+<text x="340" y="128" fill="#a0a0a0" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">7</text>
+<text x="200" y="176" fill="#6d6d6d" font-size="16" font-weight="600" text-anchor="middle">1 cell used, 7 hauled for nothing</text>
+<text x="570" y="76" fill="#c1272d" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">lw 90  →  fetch block 11</text>
+<rect x="410" y="96" width="40" height="52" rx="8" fill="#f0f0f0" stroke="#cfc3d8" stroke-width="2"/>
+<text x="430" y="128" fill="#a0a0a0" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">88</text>
+<rect x="450" y="96" width="40" height="52" rx="8" fill="#f0f0f0" stroke="#cfc3d8" stroke-width="2"/>
+<text x="470" y="128" fill="#a0a0a0" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">89</text>
+<rect x="490" y="96" width="40" height="52" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="510" y="128" fill="#1a1a1a" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">90</text>
+<rect x="530" y="96" width="40" height="52" rx="8" fill="#f0f0f0" stroke="#cfc3d8" stroke-width="2"/>
+<text x="550" y="128" fill="#a0a0a0" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">91</text>
+<rect x="570" y="96" width="40" height="52" rx="8" fill="#f0f0f0" stroke="#cfc3d8" stroke-width="2"/>
+<text x="590" y="128" fill="#a0a0a0" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">92</text>
+<rect x="610" y="96" width="40" height="52" rx="8" fill="#f0f0f0" stroke="#cfc3d8" stroke-width="2"/>
+<text x="630" y="128" fill="#a0a0a0" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">93</text>
+<rect x="650" y="96" width="40" height="52" rx="8" fill="#f0f0f0" stroke="#cfc3d8" stroke-width="2"/>
+<text x="670" y="128" fill="#a0a0a0" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">94</text>
+<rect x="690" y="96" width="40" height="52" rx="8" fill="#f0f0f0" stroke="#cfc3d8" stroke-width="2"/>
+<text x="710" y="128" fill="#a0a0a0" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">95</text>
+<text x="570" y="176" fill="#6d6d6d" font-size="16" font-weight="600" text-anchor="middle">1 cell used, 7 hauled for nothing</text>
+<text x="940" y="76" fill="#c1272d" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">lw 41  →  fetch block 5</text>
+<rect x="780" y="96" width="40" height="52" rx="8" fill="#f0f0f0" stroke="#cfc3d8" stroke-width="2"/>
+<text x="800" y="128" fill="#a0a0a0" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">40</text>
+<rect x="820" y="96" width="40" height="52" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="840" y="128" fill="#1a1a1a" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">41</text>
+<rect x="860" y="96" width="40" height="52" rx="8" fill="#f0f0f0" stroke="#cfc3d8" stroke-width="2"/>
+<text x="880" y="128" fill="#a0a0a0" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">42</text>
+<rect x="900" y="96" width="40" height="52" rx="8" fill="#f0f0f0" stroke="#cfc3d8" stroke-width="2"/>
+<text x="920" y="128" fill="#a0a0a0" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">43</text>
+<rect x="940" y="96" width="40" height="52" rx="8" fill="#f0f0f0" stroke="#cfc3d8" stroke-width="2"/>
+<text x="960" y="128" fill="#a0a0a0" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">44</text>
+<rect x="980" y="96" width="40" height="52" rx="8" fill="#f0f0f0" stroke="#cfc3d8" stroke-width="2"/>
+<text x="1000" y="128" fill="#a0a0a0" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">45</text>
+<rect x="1020" y="96" width="40" height="52" rx="8" fill="#f0f0f0" stroke="#cfc3d8" stroke-width="2"/>
+<text x="1040" y="128" fill="#a0a0a0" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">46</text>
+<rect x="1060" y="96" width="40" height="52" rx="8" fill="#f0f0f0" stroke="#cfc3d8" stroke-width="2"/>
+<text x="1080" y="128" fill="#a0a0a0" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">47</text>
+<text x="940" y="176" fill="#6d6d6d" font-size="16" font-weight="600" text-anchor="middle">1 cell used, 7 hauled for nothing</text>
+<text x="575" y="240" fill="#c1272d" font-size="19" font-weight="700" text-anchor="middle">bandwidth and energy spent carrying cells nobody asks for, each block evicted before its neighbours are touched</text>
+<text x="575" y="280" fill="#6d6d6d" font-size="18" font-weight="600" text-anchor="middle">with no spatial locality, big blocks do worse than no blocks at all</text>
+<text x="575" y="320" fill="#2e7d32" font-size="19" font-weight="700" text-anchor="middle">so structure your data to win the bet: arrays and linear loops, not linked lists</text>
+</svg>

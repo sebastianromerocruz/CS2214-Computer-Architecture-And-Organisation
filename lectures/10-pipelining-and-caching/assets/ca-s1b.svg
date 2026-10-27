@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 330" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="330" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" text-anchor="middle">attempt one: lw 10. Row 2 = 10 % 4. A value is sitting there, so the cache hands it back.</text>
+<text x="215.0" y="70" fill="#6d6d6d" font-size="19" font-weight="700" text-anchor="middle">cache</text>
+<rect x="130" y="86" width="70" height="32" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="165.0" y="108" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">row</text>
+<rect x="200" y="86" width="100" height="32" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="250.0" y="108" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">value</text>
+<rect x="130" y="118" width="70" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="165.0" y="145" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="200" y="118" width="100" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="250.0" y="145" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+<rect x="130" y="158" width="70" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="165.0" y="185" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<rect x="200" y="158" width="100" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="250.0" y="185" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+<rect x="130" y="198" width="70" height="40" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="165.0" y="225" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="200" y="198" width="100" height="40" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="250.0" y="225" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">17</text>
+<rect x="130" y="238" width="70" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="165.0" y="265" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<rect x="200" y="238" width="100" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="250.0" y="265" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+<text x="215.0" y="308" fill="#6d6d6d" font-size="17" font-weight="700" text-anchor="middle">10 % 4 = 2: goes to row 2, finds 17</text>
+<text x="795.0" y="70" fill="#c1272d" font-size="19" font-weight="700" text-anchor="middle">what the cache answers</text>
+<rect x="710" y="86" width="70" height="32" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="745.0" y="108" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">row</text>
+<rect x="780" y="86" width="100" height="32" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="830.0" y="108" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">value</text>
+<rect x="710" y="118" width="70" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="745.0" y="145" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="780" y="118" width="100" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="830.0" y="145" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+<rect x="710" y="158" width="70" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="745.0" y="185" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<rect x="780" y="158" width="100" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="830.0" y="185" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+<rect x="710" y="198" width="70" height="40" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="745.0" y="225" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="780" y="198" width="100" height="40" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="830.0" y="225" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">17</text>
+<rect x="710" y="238" width="70" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="745.0" y="265" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<rect x="780" y="238" width="100" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="830.0" y="265" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+<text x="795.0" y="308" fill="#c1272d" font-size="17" font-weight="700" text-anchor="middle">but RAM[10] = 33: wrong answer</text>
+</svg>

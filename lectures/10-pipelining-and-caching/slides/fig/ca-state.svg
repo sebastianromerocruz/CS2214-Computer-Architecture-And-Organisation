@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300" font-family="Helvetica, Arial, sans-serif">
+  <defs><marker id="a" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#404040"/></marker>
+  <marker id="r" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#c8202f"/></marker></defs>
+  <text x="450" y="38" fill="#6d6d6d" font-size="15" font-weight="400" text-anchor="middle" font-style="italic">the cache after all ten accesses of the worked trace</text>
+  <text x="120" y="78" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="start">row</text>
+  <text x="230" y="78" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="start">V</text>
+  <text x="320" y="78" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="start">tag</text>
+  <text x="430" y="78" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="start">holds block</text>
+  <text x="640" y="78" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="start">cells</text>
+  <rect x="100" y="92" width="640" height="38" rx="8" fill="#ffffff" stroke="#57068c" stroke-width="2"/>
+  <text x="120" y="117" fill="#404040" font-size="15" font-weight="400" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+  <text x="230" y="117" fill="#404040" font-size="15" font-weight="400" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+  <text x="320" y="117" fill="#404040" font-size="15" font-weight="400" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+  <text x="430" y="117" fill="#404040" font-size="15" font-weight="400" text-anchor="start">(empty)</text>
+  <text x="640" y="117" fill="#404040" font-size="15" font-weight="400" text-anchor="start"></text>
+  <rect x="100" y="136" width="640" height="38" rx="8" fill="#ffffff" stroke="#57068c" stroke-width="2"/>
+  <text x="120" y="161" fill="#404040" font-size="15" font-weight="400" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+  <text x="230" y="161" fill="#404040" font-size="15" font-weight="400" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+  <text x="320" y="161" fill="#404040" font-size="15" font-weight="400" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+  <text x="430" y="161" fill="#404040" font-size="15" font-weight="400" text-anchor="start">(empty)</text>
+  <text x="640" y="161" fill="#404040" font-size="15" font-weight="400" text-anchor="start"></text>
+  <rect x="100" y="180" width="640" height="38" rx="8" fill="#fbe9ea" stroke="#c8202f" stroke-width="3"/>
+  <text x="120" y="205" fill="#404040" font-size="15" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+  <text x="230" y="205" fill="#404040" font-size="15" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+  <text x="320" y="205" fill="#404040" font-size="15" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+  <text x="430" y="205" fill="#404040" font-size="15" font-weight="700" text-anchor="start">block 6</text>
+  <text x="640" y="205" fill="#404040" font-size="15" font-weight="700" text-anchor="start">48 to 55</text>
+  <rect x="100" y="224" width="640" height="38" rx="8" fill="#fbe9ea" stroke="#c8202f" stroke-width="3"/>
+  <text x="120" y="249" fill="#404040" font-size="15" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+  <text x="230" y="249" fill="#404040" font-size="15" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+  <text x="320" y="249" fill="#404040" font-size="15" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+  <text x="430" y="249" fill="#404040" font-size="15" font-weight="700" text-anchor="start">block 3</text>
+  <text x="640" y="249" fill="#404040" font-size="15" font-weight="700" text-anchor="start">24 to 31</text>
+  <text x="450" y="288" fill="#6d6d6d" font-size="13" font-weight="400" text-anchor="middle" font-style="italic">rows 0 and 1 were never touched: the conflicts all landed on rows 2 and 3</text>
+</svg>

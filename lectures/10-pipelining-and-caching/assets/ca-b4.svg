@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 360" font-family="Helvetica, Arial, sans-serif">
+<defs><marker id="a" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#57068c"/></marker></defs>
+<rect width="1150" height="360" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" text-anchor="middle">after the miss at 53, the rest of block 6 is already in row 2: 54 and 55 are hits.</text>
+<text x="575" y="72" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle">row 2 holds block 6 (tag 1, V = 1)</text>
+<rect x="397" y="90" width="44" height="44" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="419.0" y="119" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">48</text>
+<rect x="441" y="90" width="44" height="44" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="463.0" y="119" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">49</text>
+<rect x="485" y="90" width="44" height="44" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="507.0" y="119" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">50</text>
+<rect x="529" y="90" width="44" height="44" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="551.0" y="119" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">51</text>
+<rect x="573" y="90" width="44" height="44" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="595.0" y="119" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">52</text>
+<rect x="617" y="90" width="44" height="44" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="639.0" y="119" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">53</text>
+<rect x="661" y="90" width="44" height="44" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="683.0" y="119" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">54</text>
+<rect x="705" y="90" width="44" height="44" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="727.0" y="119" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">55</text>
+<text x="639" y="160" fill="#c1272d" font-size="16" font-weight="700" text-anchor="middle">miss</text>
+<text x="683" y="160" fill="#2e7d32" font-size="16" font-weight="700" text-anchor="middle">hit</text>
+<text x="727" y="160" fill="#2e7d32" font-size="16" font-weight="700" text-anchor="middle">hit</text>
+<text x="575" y="215" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle">the loop, reads of addresses 48 to 55</text>
+<rect x="30" y="232" width="128" height="70" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="94.0" y="262" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">48</text>
+<text x="94.0" y="289" fill="#c1272d" font-size="16" font-weight="700" text-anchor="middle">MISS</text>
+<rect x="166" y="232" width="128" height="70" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="230.0" y="262" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">49</text>
+<text x="230.0" y="289" fill="#2e7d32" font-size="16" font-weight="700" text-anchor="middle">hit</text>
+<rect x="302" y="232" width="128" height="70" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="366.0" y="262" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">50</text>
+<text x="366.0" y="289" fill="#2e7d32" font-size="16" font-weight="700" text-anchor="middle">hit</text>
+<rect x="438" y="232" width="128" height="70" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="502.0" y="262" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">51</text>
+<text x="502.0" y="289" fill="#2e7d32" font-size="16" font-weight="700" text-anchor="middle">hit</text>
+<rect x="574" y="232" width="128" height="70" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="638.0" y="262" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">52</text>
+<text x="638.0" y="289" fill="#2e7d32" font-size="16" font-weight="700" text-anchor="middle">hit</text>
+<rect x="710" y="232" width="128" height="70" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="774.0" y="262" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">53</text>
+<text x="774.0" y="289" fill="#2e7d32" font-size="16" font-weight="700" text-anchor="middle">hit</text>
+<rect x="846" y="232" width="128" height="70" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="910.0" y="262" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">54</text>
+<text x="910.0" y="289" fill="#2e7d32" font-size="16" font-weight="700" text-anchor="middle">hit</text>
+<rect x="982" y="232" width="128" height="70" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="1046.0" y="262" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">55</text>
+<text x="1046.0" y="289" fill="#2e7d32" font-size="16" font-weight="700" text-anchor="middle">hit</text>
+<text x="575" y="340" fill="#2e7d32" font-size="20" font-weight="700" text-anchor="middle">one miss and seven hits, where the one-value-per-row cache missed all eight</text>
+</svg>

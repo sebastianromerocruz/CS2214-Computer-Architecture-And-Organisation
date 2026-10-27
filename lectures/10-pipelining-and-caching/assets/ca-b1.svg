@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 260" font-family="Helvetica, Arial, sans-serif">
+<defs><marker id="a" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#57068c"/></marker></defs>
+<rect width="1150" height="260" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" text-anchor="middle">the array loop on the one-value-per-row cache: every read is a new address, so every read is a miss.</text>
+<rect x="30" y="70" width="128" height="70" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="94.0" y="100" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">[0]  100</text>
+<text x="94.0" y="127" fill="#c1272d" font-size="16" font-weight="700" text-anchor="middle">MISS</text>
+<rect x="166" y="70" width="128" height="70" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="230.0" y="100" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">[1]  101</text>
+<text x="230.0" y="127" fill="#c1272d" font-size="16" font-weight="700" text-anchor="middle">MISS</text>
+<rect x="302" y="70" width="128" height="70" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="366.0" y="100" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">[2]  102</text>
+<text x="366.0" y="127" fill="#c1272d" font-size="16" font-weight="700" text-anchor="middle">MISS</text>
+<rect x="438" y="70" width="128" height="70" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="502.0" y="100" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">[3]  103</text>
+<text x="502.0" y="127" fill="#c1272d" font-size="16" font-weight="700" text-anchor="middle">MISS</text>
+<rect x="574" y="70" width="128" height="70" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="638.0" y="100" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">[4]  104</text>
+<text x="638.0" y="127" fill="#c1272d" font-size="16" font-weight="700" text-anchor="middle">MISS</text>
+<rect x="710" y="70" width="128" height="70" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="774.0" y="100" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">[5]  105</text>
+<text x="774.0" y="127" fill="#c1272d" font-size="16" font-weight="700" text-anchor="middle">MISS</text>
+<rect x="846" y="70" width="128" height="70" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="910.0" y="100" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">[6]  106</text>
+<text x="910.0" y="127" fill="#c1272d" font-size="16" font-weight="700" text-anchor="middle">MISS</text>
+<rect x="982" y="70" width="128" height="70" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="1046.0" y="100" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">[7]  107</text>
+<text x="1046.0" y="127" fill="#c1272d" font-size="16" font-weight="700" text-anchor="middle">MISS</text>
+<text x="575" y="190" fill="#c1272d" font-size="22" font-weight="700" text-anchor="middle">8 reads, 8 trips to RAM: 8 × 100 ns</text>
+<text x="575" y="225" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">the cache never gets the chance to help, because each address is brand new</text>
+</svg>

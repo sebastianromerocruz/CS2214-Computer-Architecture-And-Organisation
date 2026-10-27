@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 380" font-family="Helvetica, Arial, sans-serif">
+<defs><marker id="a" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#57068c"/></marker><marker id="r" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#c1272d"/></marker><marker id="g" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#2e7d32"/></marker></defs>
+<rect width="1150" height="380" rx="24" fill="#eee6f3"/>
+<text x="575" y="30" fill="#6d6d6d" font-size="17" font-weight="400" text-anchor="middle" font-style="italic">the register file: ID reads it, WB writes it, in the same cycle</text>
+<text x="290" y="70" fill="#2e7d32" font-size="22" font-weight="700" text-anchor="middle">real E20</text>
+<rect x="165" y="110" width="250" height="120" rx="14" fill="#e4f3e1" stroke="#57068c" stroke-width="4"/>
+<text x="290" y="182" fill="#57068c" font-size="22" font-weight="700" text-anchor="middle">register file</text>
+<polyline points="70,140 163,140" fill="none" stroke="#57068c" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#a)"/>
+<text x="70" y="128" fill="#57068c" font-size="15" font-weight="700" text-anchor="start">ID read 1</text>
+<polyline points="70,185 163,185" fill="none" stroke="#57068c" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#a)"/>
+<text x="70" y="205" fill="#57068c" font-size="15" font-weight="700" text-anchor="start">ID read 2</text>
+<polyline points="520,225 417,225" fill="none" stroke="#c1272d" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#r)"/>
+<text x="430" y="252" fill="#c1272d" font-size="15" font-weight="700" text-anchor="start">WB write</text>
+<text x="290" y="300" fill="#2e7d32" font-size="19" font-weight="700" text-anchor="middle">two read doors + one write door</text>
+<text x="290" y="328" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">a read and a write fit in one cycle</text>
+<line x1="575" y1="60" x2="575" y2="350" stroke="#bda7d4" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 6"/>
+<text x="860" y="70" fill="#c1272d" font-size="22" font-weight="700" text-anchor="middle">cheaper register file</text>
+<rect x="735" y="110" width="250" height="120" rx="14" fill="#e4f3e1" stroke="#57068c" stroke-width="4"/>
+<text x="860" y="182" fill="#57068c" font-size="22" font-weight="700" text-anchor="middle">register file</text>
+<rect x="735" y="236" width="250" height="40" rx="10" fill="#fbe9ea" stroke="#c1272d" stroke-width="5"/>
+<text x="860" y="263" fill="#c1272d" font-size="18" font-weight="700" text-anchor="middle">ONE shared door</text>
+<polyline points="640,175 733,252" fill="none" stroke="#57068c" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#a)"/>
+<text x="640" y="160" fill="#57068c" font-size="16" font-weight="700" text-anchor="start">ID: read</text>
+<polyline points="1080,175 987,252" fill="none" stroke="#c1272d" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#r)"/>
+<text x="1000" y="160" fill="#c1272d" font-size="16" font-weight="700" text-anchor="start">WB: write</text>
+<text x="860" y="318" fill="#c1272d" font-size="18" font-weight="700" text-anchor="middle">cycle 5: the 1st add writes while</text>
+<text x="860" y="344" fill="#c1272d" font-size="18" font-weight="700" text-anchor="middle">the 4th reads. One door, two users.</text>
+</svg>

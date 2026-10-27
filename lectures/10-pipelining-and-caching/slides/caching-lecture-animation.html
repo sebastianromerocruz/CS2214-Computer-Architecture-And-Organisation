@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CS-UY 2214 | Direct-Mapped Caching | Animated</title>
+<link rel="stylesheet" href="../../_shared/theme/house.css">
+<style>
+  /* Caching half of lecture 10, on the 07 deck's step engine. Arrow keys step, shift + arrow
+     jumps a section. Narrative form: each beat states the problem it has just run into, then the
+     fix. Figure scenes show the lecture's SVGs (fig/); table scenes are drawn here. Open with #5.3. */
+
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: var(--cream);
+    overflow: hidden;
+  }
+
+  .slide {
+    position: relative;
+    width: 1333px;
+    height: 750px;
+    margin: 0 auto;
+    padding: 40px 64px 76px;
+    box-sizing: border-box;
+    overflow: hidden;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: var(--ink);
+  }
+
+  .stage {
+    position: relative;
+    margin-top: 18px;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 10px;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+
+  .stage .num { color: var(--red); font-weight: 700; font-size: 15px; letter-spacing: 0.04em; }
+  .stage h1 { margin: 0; font-size: 30px; font-weight: 700; }
+
+  .subtitle {
+    margin: 8px 0 0;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--mute);
+  }
+
+  .diagram-wrap {
+    margin-top: 10px;
+    background: #eee6f3;
+    border-radius: 24px;
+    padding: 10px 20px;
+    position: relative;
+  }
+
+  .diagram-wrap .mark { position: absolute; top: 20px; left: 20px; width: 14px; height: 14px; background: #8900e1; }
+
+  svg text { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+  svg * { transition: opacity 0.35s ease, fill 0.3s ease, stroke 0.3s ease; }
+
+  svg .mv { transition: transform 0.6s ease; }
+
+  .stps {
+    margin-top: 8px;
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    min-height: 38px;
+  }
+
+  .stp {
+    min-width: 120px;
+    text-align: center;
+    padding: 6px 14px;
+    border: 2px solid #d9d9d3;
+    color: var(--mute);
+    font-size: 15px;
+    font-weight: 600;
+    transition: border-color 0.3s ease, color 0.3s ease, background 0.3s ease;
+  }
+
+  .stp.active { border-color: var(--red); color: var(--ink); background: #fbeceb; }
+  .stp.done { border-color: var(--ink); color: var(--ink); }
+
+  .narration {
+    margin-top: 12px;
+    font-size: 27px;
+    line-height: 1.3;
+    min-height: 44px;
+  }
+
+  .narration strong { color: var(--red); }
+  .narration code {
+    background: #171715;
+    color: #f7f7f4;
+    padding: 1px 7px;
+    border-radius: 4px;
+    font-size: 23px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  .q { font-weight: 700; color: var(--ink); }
+  .q .qm {
+    display: inline-block;
+    background: var(--red);
+    color: #fff;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    padding: 2px 9px;
+    margin-right: 12px;
+    vertical-align: middle;
+  }
+  .q.big { font-size: 26px; line-height: 1.3; }
+  .q.small { font-size: 15px; color: var(--mute); margin-bottom: 8px; font-weight: 600; }
+  .q.small .qm { font-size: 11px; padding: 1px 7px; margin-right: 9px; }
+  .q code { font-size: 0.85em; }
+  .q.small code { background: #e2ded0; color: var(--ink); }
+
+  .slide-footer {
+    position: absolute;
+    bottom: 24px;
+    left: 64px;
+    right: 64px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--faint);
+    border-top: 1px solid var(--rule);
+    padding-top: 10px;
+  }
+
+  .step-indicator {
+    position: absolute;
+    top: 20px;
+    right: 64px;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: var(--mute);
+  }
+
+  .step-indicator .n { color: var(--red); font-weight: 700; }
+
+  .hint {
+    position: absolute;
+    top: 20px;
+    left: 64px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: var(--mute);
+  }
+
+  .hint::before {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: var(--red);
+  }
+</style>
+</head>
+<body>
+
+<div class="slide">
+  <div class="hint">&larr; / &rarr; step &nbsp;&middot;&nbsp; shift + &larr; / &rarr; section</div>
+  <div class="step-indicator"><span id="sec-wrap">SECTION <span class="n" id="sec-n">1</span> / <span id="sec-total">7</span> &nbsp;&middot;&nbsp; </span>STEP <span class="n" id="step-n">1</span> / <span id="step-total">2</span></div>
+
+  <div class="stage">
+    <span class="num" id="num"></span>
+    <h1 id="title">Direct-Mapped Caching</h1>
+  </div>
+  <p class="subtitle" id="subtitle"></p>
+
+  <div class="diagram-wrap">
+    <div class="mark"></div>
+    <svg id="stage" viewBox="0 0 1150 400" width="100%" height="372"></svg>
+  </div>
+
+  <div class="stps" id="chips"></div>
+
+  <div class="narration" id="narration"></div>
+
+  <div class="slide-footer"><span id="foot-left">Direct-Mapped Caching</span><span>NYU Tandon | Fall 2026</span></div>
+</div>
+
+<script>
+(function () {
+  const NS = "http://www.w3.org/2000/svg";
+  const MONO = "'SF Mono', Menlo, Consolas, monospace";
+  const C = {
+    purple: "#57068c", accent: "#8900e1", dot: "#7b5aa6", ink: "#404040", grey: "#6d6d6d",
+    lgrey: "#9f9f97", red: "#c1272d", bg: "#eee6f3", white: "#ffffff",
+    t1: "#e9d9f5", t2: "#fbeceb", t3: "#e4e3db", t4: "#f3e9ff", t5: "#e2cdf2", t6: "#f7f0ff", t7: "#efe9dc",
+  };
+
+  function E(tag, attrs, parent, text) {
+    const e = document.createElementNS(NS, tag);
+    if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (text !== undefined) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function grp(p, op) { const g = E("g", {}, p); g.style.opacity = op === undefined ? 1 : op; return g; }
+  function rect(p, x, y, w, h, o) {
+    o = o || {};
+    const e = E("rect", { x, y, width: w, height: h, rx: o.rx || 0, fill: o.fill || "none", stroke: o.stroke || "none", "stroke-width": o.sw || 0 }, p);
+    if (o.dash) e.setAttribute("stroke-dasharray", o.dash);
+    return e;
+  }
+  function txt(p, x, y, s, o) {
+    o = o || {};
+    const t = E("text", { x, y, fill: o.fill || C.ink, "font-size": o.size || 16, "font-weight": o.weight || 400, "text-anchor": o.anchor || "start" }, p, s);
+    if (o.mono) t.style.fontFamily = MONO;
+    if (o.italic) t.setAttribute("font-style", "italic");
+    if (o.ls) t.setAttribute("letter-spacing", o.ls);
+    if (o.pre) t.style.whiteSpace = "pre";
+    return t;
+  }
+  function ln(p, x1, y1, x2, y2, o) {
+    o = o || {};
+    const e = E("line", { x1, y1, x2, y2, stroke: o.stroke || C.ink, "stroke-width": o.sw || 4, "stroke-linecap": "round" }, p);
+    if (o.dash) e.setAttribute("stroke-dasharray", o.dash);
+    return e;
+  }
+  function path(p, d, o) {
+    o = o || {};
+    return E("path", { d, fill: o.fill || "none", stroke: o.stroke || "none", "stroke-width": o.sw || 0, "stroke-linecap": "round", "stroke-linejoin": "round" }, p);
+  }
+  function circ(p, cx, cy, r, o) {
+    o = o || {};
+    return E("circle", { cx, cy, r, fill: o.fill || "none", stroke: o.stroke || "none", "stroke-width": o.sw || 0 }, p);
+  }
+  function poly(p, pts, o) {
+    o = o || {};
+    return E("polygon", { points: pts, fill: o.fill || "none", stroke: o.stroke || "none", "stroke-width": o.sw || 0, "stroke-linejoin": "round" }, p);
+  }
+  function vis(el, on) { el.style.opacity = on ? 1 : 0; }
+  function arrowhead(p, x, y, dir, fill) {
+    // dir: "r","l","d","u"
+    const pts = { r: [x, y, x - 12, y - 7, x - 12, y + 7], l: [x, y, x + 12, y - 7, x + 12, y + 7],
+                  d: [x, y, x - 7, y - 12, x + 7, y - 12], u: [x, y, x - 7, y + 12, x + 7, y + 12] }[dir];
+    return poly(p, pts.join(","), { fill: fill || C.ink });
+  }
+
+  const scenes = [];
+  function scene(def) { scenes.push(def); }
+
+  // ================= 10 caching deck =================
+  // ---------- helpers for this deck ----------
+  const ASSET = "fig/";
+  function figScene(cfg) {
+    return {
+      num: cfg.num, title: cfg.title, subtitle: cfg.subtitle, chips: cfg.chips || [], steps: cfg.steps,
+      build(g) {
+        const r = { imgs: {} };
+        cfg.steps.forEach((s) => {
+          if (!s.img || r.imgs[s.img]) return;
+          const im = E("image", { x: 0, y: 0, width: 1150, height: 400, preserveAspectRatio: "xMidYMid meet" }, g);
+          im.setAttributeNS("http://www.w3.org/1999/xlink", "href", ASSET + s.img);
+          im.setAttribute("href", ASSET + s.img);
+          im.style.opacity = 0;
+          r.imgs[s.img] = im;
+        });
+        return r;
+      },
+      render(s, r) { for (const k in r.imgs) vis(r.imgs[k], k === s.img); },
+    };
+  }
+  // table scene: cols = [{h, x, anchor, mono, w}], rows = arrays of strings; step: rows = how many rows are showing, hl = highlighted row indices
+  function tableScene(cfg) {
+    const RH = cfg.rh || 34, Y0 = cfg.y0 || 26, FS = cfg.fs || 15;
+    return {
+      num: cfg.num, title: cfg.title, subtitle: cfg.subtitle, chips: cfg.chips || [], steps: cfg.steps,
+      build(g) {
+        const r = { rows: [], bgs: [] };
+        const W = cfg.cols[cfg.cols.length - 1].x + cfg.cols[cfg.cols.length - 1].w + 20 - cfg.cols[0].x;
+        cfg.cols.forEach((c) => txt(g, c.x, Y0 - 8, c.h, { size: 12, weight: 700, fill: C.purple, ls: 1.5, anchor: c.anchor || "start" }));
+        ln(g, cfg.cols[0].x - 10, Y0, cfg.cols[0].x - 10 + W, Y0, { stroke: C.purple, sw: 2 });
+        cfg.rows.forEach((row, i) => {
+          const gg = grp(g, 0); r.rows.push(gg);
+          const y = Y0 + i * RH;
+          r.bgs.push(rect(gg, cfg.cols[0].x - 10, y + 3, W, RH - 4, { rx: 6, fill: "none" }));
+          row.forEach((cell, ci) => {
+            const c = cfg.cols[ci];
+            txt(gg, c.x, y + RH / 2 + 5, cell, { pre: true, size: c.size || FS, mono: !!c.mono, weight: c.bold ? 700 : 400, fill: c.bold ? C.purple : C.ink, anchor: c.anchor || "start" });
+          });
+        });
+        return r;
+      },
+      render(s, r) {
+        const n = s.rows === undefined ? cfg.rows.length : s.rows, hl = s.hl || [];
+        r.rows.forEach((gg, i) => vis(gg, i < n));
+        r.bgs.forEach((b, i) => b.setAttribute("fill", hl.indexOf(i) >= 0 ? C.t2 : "none"));
+      },
+    };
+  }
+
+
+  function mixScene(cfg, subs) {
+    return {
+      num: cfg.num, title: cfg.title, subtitle: cfg.subtitle, chips: cfg.chips || [], steps: cfg.steps,
+      build(g) {
+        const r = { subs: {}, gs: {} };
+        for (const k in subs) { const gg = grp(g, 0); r.gs[k] = gg; r.subs[k] = subs[k].build(gg); }
+        return r;
+      },
+      render(s, r) {
+        for (const k in subs) { vis(r.gs[k], s.sub === k); if (s.sub === k) subs[k].render(s, r.subs[k]); }
+      },
+    };
+  }
+  const tb = (c) => tableScene(Object.assign({ steps: [{}] }, c));
+  const fg = (imgs) => figScene({ steps: imgs.map((i) => ({ img: i })) });
+
+  // ================= Title slide =================
+  (function () {
+    const ROUTE = ["The Memory Wall", "Where Does a Cell Go?", "Blocks: Locality Is a Bet", "Decoding an Address",
+                   "Tracing a Cache", "Sizing a Cache", "What a Cache Is Worth"];
+    scene({
+      front: true, num: "", title: "Direct-Mapped Caching", subtitle: "", chips: [],
+      steps: [
+        { view: "title", foot: "",
+          narrate: "A student writing a paper keeps the books they need on the desk, because the library across campus is a long walk. Every processor has the same problem: memory is a very long walk away. Today we build the <strong>desk</strong>: a small, fast cache between the CPU and RAM, and we work out exactly where each memory cell goes in it." },
+        { view: "route", foot: "seven sections, one running example",
+          narrate: "We build the cache the way an engineer would: make the dumbest thing that could work, watch it break, fix the break. Then we trace one by hand, because tracing is the skill that gets tested. Here is the route." },
+      ],
+      build(g) {
+        const r = {};
+        r.title = grp(g, 1);
+        rect(r.title, 130, 40, 890, 300, { rx: 24, fill: C.white, stroke: C.purple, sw: 7 });
+        txt(r.title, 575, 104, "CS-UY 2214  |  WEEK IX", { size: 15, weight: 700, fill: C.red, anchor: "middle", ls: 2 });
+        txt(r.title, 575, 184, "Direct-Mapped Caching", { size: 56, weight: 700, fill: "#171715", anchor: "middle" });
+        rect(r.title, 505, 210, 140, 6, { rx: 3, fill: C.accent });
+        txt(r.title, 575, 258, "A small, fast desk for a huge, slow library", { size: 22, italic: true, fill: C.grey, anchor: "middle" });
+        txt(r.title, 575, 312, "Computer Architecture and Organization", { size: 14, fill: C.lgrey, anchor: "middle", ls: 1 });
+        r.route = grp(g, 0);
+        txt(r.route, 575, 40, "TODAY'S ROUTE", { size: 13, weight: 700, fill: C.purple, anchor: "middle", ls: 2 });
+        ROUTE.forEach((name, i) => {
+          const col = i < 4 ? 0 : 1, row = col === 0 ? i : i - 4;
+          const x = 110 + col * 480, y = 80 + row * 62;
+          rect(r.route, x, y, 450, 50, { rx: 12, fill: C.white, stroke: C.purple, sw: 4 });
+          circ(r.route, x + 28, y + 25, 14, { fill: C.purple });
+          txt(r.route, x + 28, y + 30, String(i + 1), { size: 14, weight: 700, fill: C.white, anchor: "middle" });
+          txt(r.route, x + 54, y + 32, name, { size: 17, weight: 700, fill: C.ink });
+        });
+        txt(r.route, 575, 372, "1 to 3: why, and the design   |   4 to 5: decode and trace   |   6 to 7: size and worth", { size: 13, italic: true, fill: C.grey, anchor: "middle" });
+        return r;
+      },
+      render(s, r) { vis(r.title, s.view === "title"); vis(r.route, s.view === "route"); },
+    });
+  })();
+
+  // ================= 1 The Memory Wall =================
+  const trn = (el, ms) => { el.style.transition = "opacity " + ms + "ms, fill " + ms + "ms, stroke " + ms + "ms"; return el; };
+  const growX = (el, ms) => { el.style.transformBox = "fill-box"; el.style.transformOrigin = "0% 50%"; el.style.transform = "scaleX(0)"; el.style.transition = "transform " + ms + "ms ease, opacity 0.3s"; return el; };
+  const PC5 = ["#e2cdf2", "#d9e8fb", "#fbe9ea", "#e4f3e1", "#fff1cf"];
+
+  // 1: the memory hierarchy as bars on a log scale: every step is about ten times slower
+  const HIER = [["SRAM (cache)", "~1 ns", "~$10,000 / GB", 1], ["DRAM (main memory)", "10 to 50 ns", "~$10 / GB", 30], ["SSD", "100,000 ns", "~$1 / GB", 1e5], ["HDD", "10,000,000 ns", "~$0.1 / GB", 1e7]];
+  const hierSub = {
+    build(g) {
+      const r = { bars: [] };
+      txt(g, 575, 32, "ACCESS TIME, ON A LOG SCALE: EACH TICK IS 10 TIMES SLOWER", { size: 13, weight: 700, fill: C.grey, ls: 2, anchor: "middle" });
+      HIER.forEach(([nm, time, price, ns], i) => {
+        const y = 66 + i * 78, w = 60 + 95 * Math.log10(ns);
+        txt(g, 30, y + 36, nm, { size: 20, weight: 700, fill: C.purple });
+        const b = growX(grp(g, 1), 700);
+        rect(b, 270, y, w, 54, { rx: 10, fill: PC5[i], stroke: C.purple, sw: 3 });
+        txt(b, 270 + w + 14, y + 25, time, { size: 20, weight: 700, mono: true, fill: C.ink });
+        txt(b, 270 + w + 14, y + 47, price, { size: 15, fill: C.grey });
+        r.bars.push(b);
+      });
+      txt(g, 575, 384, "the fast technology is small and expensive; the slow one is huge and cheap", { size: 15, italic: true, fill: C.grey, anchor: "middle" });
+      return r;
+    },
+    render(s, r) { r.bars.forEach((b, i) => { b.style.transitionDelay = (s.on ? 0.25 * i : 0) + "s"; b.style.transform = s.on ? "scaleX(1)" : "scaleX(0)"; }); },
+  };
+
+  // 2: a cache you can watch: the CPU asks, the row answers or misses, RAM fills it
+  const cacSub = {
+    build(g) {
+      const r = { rows: [], cols: [] };
+      const RX = 400, RY = 92, RH = 54, GAP = 14;
+      rect(g, 28, 150, 130, 84, { rx: 14, fill: C.white, stroke: C.purple, sw: 3 });
+      txt(g, 93, 184, "CPU", { size: 22, weight: 700, fill: C.purple, anchor: "middle" });
+      r.req = txt(g, 93, 214, "", { size: 18, weight: 700, mono: true, fill: C.red, anchor: "middle" });
+      rect(g, 868, 92, 252, 150, { rx: 14, fill: C.white, stroke: C.purple, sw: 3 });
+      txt(g, 994, 120, "RAM", { size: 18, weight: 700, fill: C.purple, anchor: "middle" });
+      ["ram[42] = 17", "ram[10] = 33"].forEach((l, i) => { rect(g, 888, 132 + i * 52, 212, 40, { rx: 8, fill: C.t1, stroke: C.purple, sw: 2 }); txt(g, 994, 159 + i * 52, l, { size: 19, weight: 700, mono: true, fill: C.ink, anchor: "middle" }); });
+      r.hdr = grp(g, 1);
+      for (let i = 0; i < 4; i++) {
+        const y = RY + i * (RH + GAP);
+        txt(g, RX - 18, y + RH / 2 + 7, String(i), { size: 20, weight: 700, mono: true, fill: C.grey, anchor: "end" });
+        const rc = rect(g, RX, y, 400, RH, { rx: 10, fill: C.white, stroke: C.purple, sw: 3 });
+        const cells = [0, 1, 2].map(() => txt(g, 0, y + RH / 2 + 8, "", { size: 22, weight: 700, mono: true, fill: C.ink, anchor: "middle" }));
+        r.rows.push({ rc, cells, y });
+      }
+      r.tok = E("g", { class: "mv" }, g); r.tok.style.opacity = 0;
+      r.tokr = rect(r.tok, -40, -18, 80, 36, { rx: 18, fill: C.red, stroke: C.white, sw: 3 });
+      r.tokt = txt(r.tok, 0, 7, "", { size: 18, weight: 700, mono: true, fill: C.white, anchor: "middle" });
+      r.say = txt(g, 575, 372, "", { size: 21, weight: 700, fill: C.red, anchor: "middle" });
+      r.RX = RX; r.RY = RY; r.RH = RH; r.GAP = GAP;
+      return r;
+    },
+    render(s, r) {
+      const mode = s.mode || 1, heads = { 1: ["value"], 2: ["address", "value"], 3: ["tag", "value"], 4: ["V", "tag", "value"] }[mode];
+      const widths = { 1: [400], 2: [190, 210], 3: [190, 210], 4: [90, 150, 160] }[mode];
+      while (r.hdr.firstChild) r.hdr.removeChild(r.hdr.firstChild);
+      let x = r.RX; const cx = [];
+      heads.forEach((h, i) => { txt(r.hdr, x + widths[i] / 2, r.RY - 12, h.toUpperCase(), { size: 13, weight: 700, mono: true, fill: C.grey, ls: 2, anchor: "middle" }); cx.push(x + widths[i] / 2); x += widths[i]; });
+      r.rows.forEach((row, i) => {
+        const hot = s.hot === i, spec = (s.rows || [])[i] || [];
+        row.rc.setAttribute("fill", hot ? (s.hotcol === "green" ? "#e4f3e1" : (s.hotcol === "red" ? C.t2 : C.t1)) : C.white);
+        row.rc.setAttribute("stroke", hot ? (s.hotcol === "green" ? "#2e7d32" : (s.hotcol === "red" ? C.red : C.purple)) : C.purple);
+        row.rc.setAttribute("stroke-width", hot ? 6 : 3);
+        row.cells.forEach((c, k) => { c.textContent = k < heads.length ? (spec[k] === undefined ? "" : spec[k]) : ""; c.setAttribute("x", cx[k] === undefined ? 0 : cx[k]); });
+      });
+      r.req.textContent = s.req || "";
+      const at = s.tok;
+      if (at) {
+        let px, py;
+        if (at === "cpu") { px = 93; py = 262; }
+        else if (at === "ram") { px = 868; py = 270; }
+        else { px = r.RX - 62; py = r.RY + at.row * (r.RH + r.GAP) + r.RH / 2; }
+        r.tok.style.transform = "translate(" + px + "px, " + py + "px)"; r.tok.style.opacity = 1;
+        r.tokt.textContent = s.tokt || ""; const w = Math.max(64, (s.tokt || "").length * 12 + 26);
+        r.tokr.setAttribute("width", w); r.tokr.setAttribute("x", -w / 2);
+        r.tokr.setAttribute("fill", s.tokcol === "green" ? "#2e7d32" : C.red);
+      } else r.tok.style.opacity = 0;
+      r.say.textContent = s.say || ""; r.say.setAttribute("fill", s.saycol === "green" ? "#2e7d32" : C.red);
+    },
+  };
+
+  // 3a: a loop walking an array: the pointer moves one cell at a time, the sum is touched every time
+  const arrSub = {
+    build(g) {
+      const r = { cells: [], i: 0, timer: null };
+      const X0 = 82, CW = 82;
+      for (let k = 0; k < 12; k++) {
+        const rc = rect(g, X0 + k * CW, 110, CW - 6, 56, { rx: 8, fill: C.white, stroke: C.purple, sw: 3 }); trn(rc, 250);
+        txt(g, X0 + k * CW + (CW - 6) / 2, 144, String(k), { size: 22, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+        txt(g, X0 + k * CW + (CW - 6) / 2, 188, String(100 + k), { size: 14, mono: true, fill: C.grey, anchor: "middle" });
+        r.cells.push(rc);
+      }
+      txt(g, 30, 140, "", {});
+      txt(g, 575, 60, "for (i = 0; i < 12; i++)   sum += my_array[i];", { size: 22, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+      txt(g, 20, 112, "", {});
+      r.ptr = E("g", { class: "mv" }, g); poly(r.ptr, "0,0 -12,-18 12,-18", { fill: C.red }); txt(r.ptr, 0, -26, "i", { size: 20, weight: 700, mono: true, fill: C.red, anchor: "middle" });
+      r.ptr.style.transition = "transform 0.35s ease";
+      r.sum = rect(g, 130, 270, 220, 64, { rx: 12, fill: C.white, stroke: C.purple, sw: 3 }); trn(r.sum, 250);
+      txt(g, 240, 310, "sum", { size: 26, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+      txt(g, 240, 358, "touched every iteration", { size: 16, weight: 700, fill: C.purple, anchor: "middle" });
+      txt(g, 240, 376, "temporal locality", { size: 14, italic: true, fill: C.grey, anchor: "middle" });
+      txt(g, 820, 306, "the next address is right", { size: 18, weight: 700, fill: C.red, anchor: "middle" });
+      txt(g, 820, 330, "next to the last one", { size: 18, weight: 700, fill: C.red, anchor: "middle" });
+      txt(g, 820, 358, "spatial locality", { size: 14, italic: true, fill: C.grey, anchor: "middle" });
+      txt(g, 575, 214, "addresses", { size: 13, weight: 700, fill: C.grey, ls: 2, anchor: "middle" });
+      return r;
+    },
+    render(s, r) {
+      const set = (i) => {
+        r.cells.forEach((c, k) => { c.setAttribute("fill", k === i ? C.t2 : (k < i ? C.t1 : C.white)); c.setAttribute("stroke", k === i ? C.red : C.purple); c.setAttribute("stroke-width", k === i ? 6 : 3); });
+        r.ptr.style.transform = "translate(" + (82 + i * 82 + 38) + "px, 100px)";
+        r.sum.setAttribute("fill", C.t2); setTimeout(() => r.sum.setAttribute("fill", C.white), 160);
+      };
+      if (r.timer) { clearInterval(r.timer); r.timer = null; }
+      if (s.anim) { r.i = 0; set(0); r.timer = setInterval(() => { r.i = (r.i + 1) % 12; set(r.i); }, 800); }
+    },
+  };
+
+  // 3b: memory cut into blocks; one miss pulls the whole block into one cache row
+  const blkSub = {
+    build(g) {
+      const r = { cells: [], slots: [] };
+      const X0 = 95, CW = 40, Y = 76;
+      for (let a = 40; a < 64; a++) {
+        const k = a - 40, blk = Math.floor(a / 8) - 5;
+        const rc = rect(g, X0 + k * CW, Y, CW - 3, 44, { rx: 6, fill: [C.t1, "#e4f3e1", "#fff1cf"][blk], stroke: C.purple, sw: 2 }); trn(rc, 300);
+        txt(g, X0 + k * CW + (CW - 3) / 2, Y + 29, String(a), { size: 15, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+        r.cells.push(rc);
+      }
+      r.lab = grp(g, 0); r.lab.style.transition = "opacity 0.5s";
+      [["block 5", 0], ["block 6", 1], ["block 7", 2]].forEach(([l, b]) => { path(r.lab, "M" + (X0 + b * 8 * CW) + " " + (Y + 54) + " L" + (X0 + b * 8 * CW) + " " + (Y + 62) + " L" + (X0 + (b + 1) * 8 * CW - 3) + " " + (Y + 62) + " L" + (X0 + (b + 1) * 8 * CW - 3) + " " + (Y + 54), { stroke: C.purple, sw: 3 }); txt(r.lab, X0 + (b * 8 + 4) * CW, Y + 86, l, { size: 17, weight: 700, fill: C.purple, anchor: "middle" }); });
+      r.req = grp(g, 0); r.req.style.transition = "opacity 0.4s";
+      poly(r.req, (X0 + 13 * CW + 18) + "," + (Y - 4) + " " + (X0 + 13 * CW + 6) + "," + (Y - 22) + " " + (X0 + 13 * CW + 30) + "," + (Y - 22), { fill: C.red });
+      txt(r.req, X0 + 13 * CW + 18, Y - 30, "lw 53", { size: 18, weight: 700, mono: true, fill: C.red, anchor: "middle" });
+      r.line = grp(g, 0); r.line.style.transition = "opacity 0.5s";
+      path(r.line, "M" + (X0 + 12 * CW) + " " + (Y + 100) + " L" + (X0 + 12 * CW) + " 236", { stroke: C.red, sw: 4 });
+      arrowhead(r.line, X0 + 12 * CW, 240, "d", C.red);
+      txt(r.line, X0 + 12 * CW + 16, 178, "53 // 8 = block 6;  6 % 4 = row 2", { size: 18, weight: 700, fill: C.red });
+      txt(r.line, X0 + 12 * CW + 16, 202, "one trip to RAM: all 8 cells", { size: 16, fill: C.grey, italic: true });
+      txt(g, 60, 292, "row 2", { size: 20, weight: 700, mono: true, fill: C.purple, anchor: "middle" });
+      for (let k = 0; k < 8; k++) {
+        const sg = grp(g, 0); sg.style.transition = "opacity 0.35s";
+        const rc = rect(sg, 120 + k * 100, 262, 94, 60, { rx: 8, fill: "#e4f3e1", stroke: C.purple, sw: 3 }); trn(rc, 300);
+        txt(sg, 120 + k * 100 + 47, 300, String(48 + k), { size: 22, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+        r.slots.push({ sg, rc });
+      }
+      r.tag = grp(g, 0); r.tag.style.transition = "opacity 0.5s";
+      txt(r.tag, 120, 348, "V = 1     tag = 6 // 4 = 1", { size: 18, weight: 700, mono: true, fill: C.purple });
+      r.hit = grp(g, 0); r.hit.style.transition = "opacity 0.5s";
+      txt(r.hit, 575, 374, "54 and 55: both hits, no trip to RAM at all", { size: 20, weight: 700, fill: "#2e7d32", anchor: "middle" });
+      return r;
+    },
+    render(s, r) {
+      const ph = s.ph || 0;
+      vis(r.lab, ph >= 1); vis(r.req, ph >= 2); vis(r.line, ph >= 2); vis(r.tag, ph >= 2); vis(r.hit, ph >= 3);
+      r.cells.forEach((c, k) => { const a = 40 + k, inb = a >= 48 && a < 56; c.setAttribute("stroke", ph >= 2 && inb ? C.red : C.purple); c.setAttribute("stroke-width", ph >= 2 && inb ? 4 : 2); });
+      r.slots.forEach((q, k) => { q.sg.style.transitionDelay = (ph >= 2 ? 0.07 * k : 0) + "s"; q.sg.style.opacity = ph >= 2 ? 1 : 0; q.rc.setAttribute("fill", ph >= 3 && (k === 6 || k === 7) ? "#bfe6b8" : "#e4f3e1"); q.rc.setAttribute("stroke", ph >= 3 && (k === 6 || k === 7) ? "#2e7d32" : C.purple); q.rc.setAttribute("stroke-width", ph >= 3 && (k === 6 || k === 7) ? 6 : 3); });
+    },
+  };
+
+  // 6: the anatomy of a row and what it costs
+  const szSub = {
+    build(g) {
+      const r = { v: [] };
+      const mk = () => { const x = grp(g, 0); x.style.transition = "opacity 0.5s"; r.v.push(x); return x; };
+      // 1: anatomy
+      let v = mk();
+      txt(v, 575, 52, "ONE ROW OF THE CACHE", { size: 13, weight: 700, fill: C.grey, ls: 2, anchor: "middle" });
+      [["V", 1, 110, C.t2], ["tag", 5, 230, C.t1], ["data: the whole block", 128, 640, "#e4f3e1"]].forEach(([l, b, w, f], i) => {
+        const x = 110 + [0, 120, 360][i];
+        rect(v, x, 90, w, 90, { rx: 12, fill: f, stroke: C.purple, sw: 3 });
+        txt(v, x + w / 2, 128, l, { size: 24, weight: 700, fill: C.ink, anchor: "middle" });
+        txt(v, x + w / 2, 160, ["1 bit", "tag bits", "blockSize x 8 bits"][i], { size: 17, mono: true, fill: C.grey, anchor: "middle" });
+      });
+      txt(v, 575, 250, "size = rows  x  ( 1  +  tag bits  +  block bits )", { size: 28, weight: 700, mono: true, fill: C.purple, anchor: "middle" });
+      txt(v, 575, 300, "the valid bit and the tag are real storage too", { size: 20, weight: 700, fill: C.red, anchor: "middle" });
+      // 2: bit widths
+      v = mk();
+      txt(v, 575, 52, "A 12-BIT ADDRESS, 8 ROWS, 16-BYTE BLOCKS", { size: 13, weight: 700, fill: C.grey, ls: 2, anchor: "middle" });
+      [["tag", 5, C.t1, "12 - 4 - 3 = 5"], ["index", 3, C.t2, "log2(8) = 3"], ["offset", 4, "#fff1cf", "log2(16) = 4"]].forEach(([l, n, f, fo], i) => {
+        const x0 = 95 + [0, 5, 8][i] * 80;
+        for (let b = 0; b < n; b++) rect(v, x0 + b * 80, 90, 74, 70, { rx: 10, fill: f, stroke: C.purple, sw: 3 });
+        path(v, "M" + x0 + " 176 L" + x0 + " 186 L" + (x0 + n * 80 - 6) + " 186 L" + (x0 + n * 80 - 6) + " 176", { stroke: C.purple, sw: 4 });
+        txt(v, x0 + n * 40 - 3, 218, l + ": " + n + " bits", { size: 22, weight: 700, fill: C.purple, anchor: "middle" });
+        txt(v, x0 + n * 40 - 3, 246, fo, { size: 17, mono: true, fill: C.grey, anchor: "middle" });
+      });
+      // 3: the total
+      v = mk();
+      txt(v, 575, 44, "EACH ROW: 1 + 5 + 128 = 134 BITS", { size: 13, weight: 700, fill: C.grey, ls: 2, anchor: "middle" });
+      for (let i = 0; i < 8; i++) {
+        const y = 64 + i * 34;
+        rect(v, 150, y, 20, 28, { rx: 4, fill: C.t2, stroke: C.purple, sw: 2 });
+        rect(v, 174, y, 60, 28, { rx: 4, fill: C.t1, stroke: C.purple, sw: 2 });
+        rect(v, 238, y, 640, 28, { rx: 4, fill: "#e4f3e1", stroke: C.purple, sw: 2 });
+        txt(v, 126, y + 21, String(i), { size: 16, weight: 700, mono: true, fill: C.grey, anchor: "end" });
+      }
+      txt(v, 560, 354, "8 rows x 134 = 1072 bits = 134 bytes", { size: 28, weight: 700, mono: true, fill: C.red, anchor: "middle" });
+      // 4: the overhead
+      v = mk();
+      txt(v, 575, 52, "WHAT IS DATA AND WHAT IS BOOKKEEPING", { size: 13, weight: 700, fill: C.grey, ls: 2, anchor: "middle" });
+      rect(v, 110, 100, 900, 70, { rx: 12, fill: "#e4f3e1", stroke: C.purple, sw: 3 });
+      rect(v, 1010 - 42, 100, 42, 70, { rx: 8, fill: C.t2, stroke: C.red, sw: 4 });
+      txt(v, 560, 144, "128 bytes of data", { size: 26, weight: 700, fill: C.ink, anchor: "middle" });
+      path(v, "M968 190 L968 204 L1010 204 L1010 190", { stroke: C.red, sw: 4 });
+      txt(v, 990, 236, "6 bytes of", { size: 20, weight: 700, fill: C.red, anchor: "middle" });
+      txt(v, 990, 260, "valid bits and tags", { size: 20, weight: 700, fill: C.red, anchor: "middle" });
+      txt(v, 575, 330, "about 5 percent overhead on top of the data", { size: 24, weight: 700, fill: C.purple, anchor: "middle" });
+      return r;
+    },
+    render(s, r) { r.v.forEach((x, i) => { x.style.opacity = i + 1 === s.view ? 1 : 0; }); },
+  };
+
+  // 7: what a cache is worth, as bars
+  const avgSub = {
+    build(g) {
+      const r = { bars: [] };
+      const X0 = 250, U = 12;
+      const data = [["no cache", 0, 60], ["80% hit", 0.2, 14], ["90% hit", 0.1, 8], ["99% hit", 0.01, 2.6]];
+      txt(g, 575, 24, "AVERAGE ACCESS TIME (ns) = 2 + MISS RATIO x 60", { size: 13, weight: 700, fill: C.grey, ls: 2, anchor: "middle" });
+      data.forEach(([l, m, tot], i) => {
+        const y = 84 + i * 72, gg = growX(grp(g, 1), 600);
+        txt(g, 230, y + 38, l, { size: 21, weight: 700, mono: true, fill: C.ink, anchor: "end" });
+        if (i === 0) rect(gg, X0, y, 60 * U, 56, { rx: 8, fill: C.t3, stroke: C.grey, sw: 3 });
+        else { rect(gg, X0, y, 2 * U, 56, { rx: 6, fill: C.t1, stroke: C.purple, sw: 3 }); rect(gg, X0 + 2 * U, y, Math.max(6, m * 60 * U), 56, { rx: 6, fill: C.t2, stroke: C.red, sw: 3 }); }
+        txt(gg, X0 + tot * U + 14, y + 38, tot + " ns", { size: 24, weight: 700, mono: true, fill: i === 0 ? C.grey : C.red });
+        r.bars.push({ gg, y, i });
+      });
+      r.leg = grp(g, 1);
+      rect(r.leg, 250, 38, 20, 14, { fill: C.t1, stroke: C.purple, sw: 2 }); txt(r.leg, 278, 50, "the cache access every time (2 ns)", { size: 14, fill: C.grey });
+      rect(r.leg, 640, 38, 20, 14, { fill: C.t2, stroke: C.red, sw: 2 }); txt(r.leg, 668, 50, "the extra trip to memory on a miss", { size: 14, fill: C.grey });
+      r.note = txt(g, 575, 372, "", { size: 19, weight: 700, fill: C.red, anchor: "middle" });
+      return r;
+    },
+    render(s, r) {
+      const show = s.show || [0, 1, 2, 3];
+      r.bars.forEach((b) => { b.gg.style.transitionDelay = (show.indexOf(b.i) >= 0 ? 0.15 * b.i : 0) + "s"; b.gg.style.transform = show.indexOf(b.i) >= 0 ? "scaleX(1)" : "scaleX(0)"; });
+      r.note.textContent = s.note || "";
+    },
+  };
+  const TECH = { cols: [{ h: "TECHNOLOGY", x: 60, w: 300, bold: true, size: 20 }, { h: "PRICE / GB", x: 400, w: 200, mono: true, size: 18 }, { h: "ACCESS TIME", x: 640, w: 220, mono: true, size: 18 }, { h: "BANDWIDTH", x: 900, w: 200, mono: true, size: 18 }],
+    rows: [["SRAM (cache)", "~$10,000", "~1 ns", "25+ GB/s"], ["DRAM (main memory)", "~$10", "10 to 50 ns", "~10 GB/s"], ["SSD", "~$1", "~100,000 ns", "~0.5 GB/s"], ["HDD", "~$0.1", "~10,000,000 ns", "~0.1 GB/s"]], rh: 64, y0: 60, fs: 18 };
+  scene(mixScene({
+    num: "1", title: "The Memory Wall", subtitle: "A desk is fast and small. A library is slow and huge.",
+    chips: ["Desk and library", "The trade", "Cache first", "The catch"],
+    steps: [
+      { sub: "fig", img: "ca-hierarchy.svg", chip: 1, foot: "L1 about 0.5 ns, DRAM about 100 ns: roughly 200 times slower", narrate: "We have treated <code>lw</code> as one polite <code>MEM</code> stage. It isn't. A student writing a paper keeps the open book on the desk, because the library across campus is a long walk. Real numbers: an L1 cache reference is about <strong>0.5 ns</strong> and a main-memory reference is about <strong>100 ns</strong>, roughly 200 times slower. Scale both by a billion: a heartbeat against a trip that takes a minute and a half." },
+      { sub: "hier", on: true, chip: 2, foot: "no technology is both fast and big", narrate: "Read the table as a trade. The fast technology is expensive and small, the slow one is cheap and enormous, and nothing is both. So machines use <strong>several layers</strong>, with a small fast <strong>cache</strong> between the processor and main memory. (The E20 lets a <code>lw</code> stall a few cycles. Real machines can pay fifty or more.)" },
+      { sub: "fig", img: "ca-hierarchy.svg", chip: 3, foot: "hit: found in the cache.  miss: not found, go to RAM", narrate: "The simplest version: a cache that remembers every value it has seen, keyed by address. The first <code>lw $1, 5($0)</code> goes on to RAM, RAM says 42, and the cache keeps a copy. The second time, the cache answers in about 1 ns and RAM never hears about it. Finding the value in the cache is a <strong>hit</strong>, not finding it is a <strong>miss</strong>, and the fraction that hit is the <strong>hit ratio</strong>." },
+      { sub: "fig", img: "ca-hierarchy.svg", chip: 4, foot: "where?   how do we know?   what do we throw out?", narrate: "The catch: a cache big enough to hold <em>everything</em> is just another RAM with the same slowness. Fast memory is expensive, so a real cache holds a few hundred kilobytes against gigabytes of RAM. It can only keep a sliver, so every cache must decide <strong>where</strong> each cell goes, <strong>how to know</strong> which cell it is looking at, and <strong>what to throw out</strong>. The simplest answer is the <strong>direct-mapped cache</strong>." },
+    ],
+  }, { fig: fg(["ca-hierarchy.svg"]), tbl: tb(TECH), hier: hierSub }));
+
+  // ================= 2 Where Does a Cell Go? =================
+  const mk4 = (cols, rows) => tb({ cols, rows, rh: 70, y0: 60, fs: 20 });
+  const C1 = [{ h: "ROW", x: 120, w: 160, mono: true, bold: true, size: 20 }, { h: "VALUE", x: 340, w: 240, mono: true, size: 20 }];
+  const C2 = [{ h: "ROW", x: 120, w: 140, mono: true, bold: true, size: 20 }, { h: "ADDRESS", x: 300, w: 200, mono: true, size: 20 }, { h: "VALUE", x: 540, w: 200, mono: true, size: 20 }];
+  const C3 = [{ h: "ROW", x: 120, w: 140, mono: true, bold: true, size: 20 }, { h: "TAG", x: 300, w: 200, mono: true, size: 20 }, { h: "VALUE", x: 540, w: 200, mono: true, size: 20 }];
+  const C4 = [{ h: "ROW", x: 120, w: 120, mono: true, bold: true, size: 20 }, { h: "V", x: 280, w: 100, mono: true, size: 20 }, { h: "TAG", x: 420, w: 160, mono: true, size: 20 }, { h: "VALUE", x: 620, w: 200, mono: true, size: 20 }];
+  scene(mixScene({
+    num: "2", title: "Where Does a Cell Go? Rows, Tags, and the Valid Bit", subtitle: "Build the dumbest thing that works, watch it break, fix the break.",
+    chips: ["Attempt 1", "Attempt 2", "Attempt 3", "Attempt 4", "The lookup"],
+    steps: [
+      { sub: "cac", mode: 1, rows: [[], [], ["17"], []], hot: 2, hotcol: "purple", req: "lw 42", tok: { row: 2 }, tokt: "42", say: "42 % 4 = 2: row 2 stores 17", chip: 1, foot: "ram[42] = 17, ram[10] = 33; four rows", narrate: "<strong>Attempt one: split by remainder.</strong> Four rows, each holding one value, and the cheapest rule for which row a cell goes into: <code>row = address % 4</code>. A <code>lw</code> of address 42 lands in row <code>42 % 4 = 2</code>, and row 2 now holds 17." },
+      { sub: "cac", mode: 1, rows: [[], [], ["17"], []], hot: 2, hotcol: "red", req: "lw 10", tok: "cpu", tokt: "17", say: "10 % 4 = 2 too: it returns 17, but ram[10] = 33. WRONG", chip: 1, foot: "it breaks: address 10 also maps to row 2", narrate: "Now the program asks for address 10. <code>10 % 4 = 2</code>, so the cache goes to row 2, sees a value, and hands back <strong>17</strong>. Wrong: the real value of address 10 is 33. A quarter of all addresses fight over each row, and the cache can't tell the contestants apart. A cache that returns wrong answers is worse than no cache." },
+      { sub: "cac", mode: 2, rows: [[], [], ["42", "17"], []], hot: 2, hotcol: "purple", req: "lw 42", tok: { row: 2 }, tokt: "42", say: "row 2 remembers which address its value came from", chip: 2, foot: "attempt two: remember the address", narrate: "<strong>Attempt two: store the address too.</strong> Next to each value, remember where it came from: row 2 holds <code>(42, 17)</code>. Asking for address 10 now compares the stored address (42) with the requested one (10), sees a mismatch, and knows it can't use what's there." },
+      { sub: "cac", mode: 2, rows: [[], [], ["10", "33"], []], hot: 2, hotcol: "red", req: "lw 10", tok: "ram", tokt: "33", say: "42 is not 10: a miss. Fetch 33 and evict (42, 17)", chip: 2, foot: "a miss, and an eviction", narrate: "That is a <strong>miss</strong>. The cache fetches the real value (33) from RAM and overwrites row 2 with <code>(10, 33)</code>. Throwing out a perfectly good entry to make room is an <strong>eviction</strong>. Correct now, but storing the whole address is wasteful." },
+      { sub: "cac", mode: 3, rows: [[], [], ["10", "17"], []], hot: 2, hotcol: "purple", req: "lw 42", tok: { row: 2 }, tokt: "42", say: "row 2 + tag 42 // 4 = 10: store only the tag", chip: 3, foot: "attempt three: store only what the row doesn't already tell us", narrate: "<strong>Attempt three: store only what we don't know.</strong> The row number came from the low bits of the address, so those don't need storing again. What the row can't tell us is the rest, <code>address // 4</code>: the <strong>tag</strong>. Address 42 goes to row 2 with tag <code>42 // 4 = 10</code>; address 10 also goes to row 2 but with tag <code>10 // 4 = 2</code>. Compare the stored tag with the computed tag: equal is a <strong>hit</strong>." },
+      { sub: "cac", mode: 4, rows: [["0", "0", "0"], ["0", "0", "0"], ["0", "0", "0"], ["0", "0", "0"]], hot: 1, hotcol: "green", req: "lw 1", tok: { row: 1 }, tokt: "tag 0", say: "tag 0 = tag 0 would be a false hit. V = 0 says: ignore it, a miss", chip: 4, foot: "attempt four: the valid bit", narrate: "<strong>Attempt four: how do we know a row is empty?</strong> At power-on every row holds <em>something</em>, say all zeros. The program asks for address 1: row 1, tag <code>1 // 4 = 0</code>. The leftover tag 0 matches, the cache declares a hit and returns garbage it never loaded. So we add one bit per row, the <strong>valid bit</strong> <code>V</code>: a row only counts if <code>V = 1</code> <em>and</em> the tags match." },
+      { sub: "cac", mode: 4, rows: [["0"], ["0"], ["1", "10", "17"], ["0"]], hot: 2, hotcol: "green", req: "lw 42", tok: "cpu", tokt: "17", saycol: "green", say: "hit only if V = 1 and the tags match", chip: 5, foot: "row = address % rows, tag = address // rows", narrate: "That is the whole lookup. Compute <code>row = address % rows</code> and <code>tag = address // rows</code>. Go to the row. If <code>V = 1</code> and the stored tag equals the computed tag, it's a <strong>hit</strong>. Otherwise it's a <strong>miss</strong>: fetch from RAM, store the new tag and value, set <code>V = 1</code> (evicting whatever was there), and return the value." },
+    ],
+  }, {
+    a1: mk4(C1, [["0", "?"], ["1", "?"], ["2", "17"], ["3", "?"]]),
+    a2: mk4(C2, [["0", "", ""], ["1", "", ""], ["2", "42", "17"], ["3", "", ""]]),
+    a2b: mk4(C2, [["0", "", ""], ["1", "", ""], ["2", "10", "33"], ["3", "", ""]]),
+    a3: mk4(C3, [["0", "", ""], ["1", "", ""], ["2", "10", "17"], ["3", "", ""]]),
+    a4: mk4(C4, [["0", "0", "0", "junk"], ["1", "0", "0", "junk"], ["2", "0", "0", "junk"], ["3", "0", "0", "junk"]]),
+    a5: mk4(C4, [["0", "0", "", ""], ["1", "0", "", ""], ["2", "1", "10", "17"], ["3", "0", "", ""]]),
+    cac: cacSub,
+  }));
+
+  // ================= 3 Blocks =================
+  const LOC = { cols: [{ h: "KIND OF LOCALITY", x: 60, w: 300, bold: true, size: 20 }, { h: "THE HABIT", x: 400, w: 380, size: 18 }, { h: "EXAMPLE", x: 820, w: 300, mono: true, size: 16 }],
+    rows: [["temporal", "an address just used is likely to be used again soon", "a loop counter"], ["spatial", "accesses cluster near recently used addresses", "sum += my_array[i]"]], rh: 90, y0: 70, fs: 18 };
+  scene(mixScene({
+    num: "3", title: "Blocks: Locality Is a Bet, Not a Guarantee", subtitle: "When you walk to the stacks, you bring back the whole shelf.",
+    chips: ["Two localities", "Whole blocks", "A worked fetch", "A bet"],
+    steps: [
+      { sub: "arr", anim: true, chip: 1, foot: "our one-value-per-row cache gets only the first for free", narrate: "Look at the most ordinary loop in the world: sum an array, one address after the next. That is <strong>spatial locality</strong>. Its sibling is <strong>temporal locality</strong>: an address used a moment ago will probably be used again. Our one-value-per-row cache gets temporal locality for free, but asking for the <em>next</em> address is a guaranteed miss, as costly as asking for something on the far side of memory." },
+      { sub: "blk", ph: 1, chip: 2, foot: "blocks of 8 cells: 48 to 55 is block 6", narrate: "The library move: don't carry back one book, carry the stretch of shelf around it. Divide memory into <strong>blocks</strong> of <code>n</code> consecutive cells (a power of two, here 8), and on any miss fetch the <em>whole block</em> that contains the requested cell." },
+      { sub: "blk", ph: 2, chip: 3, foot: "53 // 8 = block 6;  6 % 4 = row 2;  6 // 4 = tag 1", narrate: "Four rows, block size 8. The program asks for address 53. The cache computes the block, <code>53 // 8 = 6</code>, cells 48 through 55, fetches all eight in one trip, and stores them in row <code>6 % 4 = 2</code> with tag <code>6 // 4 = 1</code>. Then the program asks for 54 and 55: both <strong>hits</strong>, no trip to RAM at all." },
+      { sub: "blk", ph: 3, chip: 4, foot: "a bet that can lose", narrate: "That wasn't luck. The cache <strong>bet</strong> on spatial locality when it hauled in the whole block, and the bet paid off. It is also why an array loop runs so much faster with a cache: eight addresses share one slow trip. And it is a bet: if the program never touches the neighbors, we paid to carry seven cells we didn't need. The trace in Section 5 shows both outcomes." },
+    ],
+  }, { tbl: tb(LOC), fig: fg(["ca-blocks.svg"]), arr: arrSub, blk: blkSub }));
+
+  // ================= 4 Decoding an Address =================
+  const SLICE = { cols: [{ h: "SLICE", x: 60, w: 200, bold: true, mono: true, size: 20 }, { h: "WIDTH", x: 300, w: 300, mono: true, size: 18 }, { h: "ANSWERS", x: 640, w: 480, size: 18 }],
+    rows: [["tag", "everything above the index", "which block, of those that map here, is stored"], ["index", "log2(numberOfRows) bits", "which cache row this block must live in"], ["offset", "log2(blockSize) bits", "which cell inside the block"]], rh: 80, y0: 60, fs: 18 };
+  const FORM = { cols: [{ h: "QUESTION", x: 60, w: 300, bold: true, size: 20 }, { h: "FORMULA", x: 420, w: 600, mono: true, size: 20 }],
+    rows: [["block ID", "address // blockSize"], ["offset", "address % blockSize"], ["row (index)", "blockID % numberOfRows"], ["tag", "blockID // numberOfRows"]], rh: 70, y0: 60, fs: 20 };
+  const EX = { cols: [{ h: "ADDRESS", x: 60, w: 160, bold: true, mono: true, size: 20 }, { h: "BLOCK", x: 260, w: 200, mono: true, size: 18 }, { h: "OFFSET", x: 500, w: 200, mono: true, size: 18 }, { h: "ROW", x: 740, w: 160, mono: true, size: 18 }, { h: "TAG", x: 940, w: 160, mono: true, size: 18 }],
+    rows: [["53", "53 // 8 = 6", "53 % 8 = 5", "6 % 4 = 2", "6 // 4 = 1"], ["100", "100 // 8 = 12", "100 % 8 = 4", "12 % 4 = 0", "12 // 4 = 3"], ["77", "77 // 8 = 9", "77 % 8 = 5", "9 % 4 = 1", "9 // 4 = 2"]], rh: 80, y0: 60, fs: 17 };
+  scene(mixScene({
+    num: "4", title: "Decoding an Address: Tag, Index, Offset", subtitle: "Three questions, three slices of the same bits.",
+    chips: ["Three slices", "The formulas", "In binary", "Three examples"],
+    steps: [
+      { sub: "slice", rows: 3, hl: [], chip: 1, foot: "least significant bits first: offset, then index, then tag", narrate: "With blocks, an address has to answer three questions: which block is this cell in, which row does that block map to, and where is the cell <em>inside</em> the block? Each is a slice of the address's bits, from least significant up. <strong>Offset</strong>: the low <code>log2(blockSize)</code> bits. <strong>Index</strong>: the next <code>log2(numberOfRows)</code> bits. <strong>Tag</strong>: everything above." },
+      { sub: "form", rows: 4, hl: [], chip: 2, foot: "the version you will use on exams", narrate: "In arithmetic form, which is the one you'll use on exams: <code>block ID = address // blockSize</code>, <code>offset = address % blockSize</code>, <code>row = blockID % numberOfRows</code>, <code>tag = blockID // numberOfRows</code>." },
+      { sub: "fig", img: "ca-split.svg", chip: 3, foot: "block size 4: 2 offset bits.  8 rows: 3 index bits.  tag: 10 - 2 - 3 = 5 bits", narrate: "Here it is in binary: a 10-bit address system, block size 4, 8 rows. Address 181 is <code>0010110101</code>. The low 2 bits (<code>01</code>) are the offset, the next 3 (<code>101</code>) are the row, and the top 5 (<code>00101</code>) are the tag. Same answer in arithmetic: <code>181 // 4 = 45</code>, <code>181 % 4 = 1</code>, <code>45 % 8 = 5</code>, <code>45 // 8 = 5</code>." },
+      { sub: "ex", rows: 3, hl: [], chip: 4, foot: "4 rows, block size 8", narrate: "Three more on the cache we'll trace next, 4 rows and block size 8: address 53 is block 6, offset 5, row 2, tag 1. Address 100 is block 12, offset 4, row 0, tag 3. And address 77 is block 9, offset 5, row 1, tag 2." },
+    ],
+  }, { slice: tb(SLICE), form: tb(FORM), fig: fg(["ca-split.svg"]), ex: tb(EX) }));
+
+  // ================= 5 Tracing a Cache =================
+  const TRACE = {"acc": [[52, 6, 2, 1, "MISS"], [53, 6, 2, 1, "HIT"], [92, 11, 3, 2, "MISS"], [55, 6, 2, 1, "HIT"], [20, 2, 2, 0, "MISS"], [54, 6, 2, 1, "MISS"], [60, 7, 3, 1, "MISS"], [53, 6, 2, 1, "HIT"], [29, 3, 3, 0, "MISS"], [28, 3, 3, 0, "HIT"]], "states": [[null, null, [1, 6], null], [null, null, [1, 6], null], [null, null, [1, 6], [2, 11]], [null, null, [1, 6], [2, 11]], [null, null, [0, 2], [2, 11]], [null, null, [1, 6], [2, 11]], [null, null, [1, 6], [1, 7]], [null, null, [1, 6], [1, 7]], [null, null, [1, 6], [0, 3]], [null, null, [1, 6], [0, 3]]]};
+  const TRACE_NARR = [
+    "<strong>Address 52:</strong> block 6, row 2, tag 1. Row 2 is empty (<code>V = 0</code>), so it's a <strong>miss</strong>: load block 6, cells 48 to 55, into row 2.",
+    "<strong>Address 53:</strong> block 6, row 2, tag 1. <code>V = 1</code> and the tags match: a <strong>hit</strong>. This is spatial locality paying off: 53 rode in with 52.",
+    "<strong>Address 92:</strong> block 11, row 3, tag 2. Row 3 is empty: a <strong>miss</strong>. Load block 11.",
+    "<strong>Address 55:</strong> block 6, still sitting in row 2 with tag 1. A <strong>hit</strong>.",
+    "<strong>Address 20:</strong> block 2, row 2, tag 0. Row 2 holds tag 1 (block 6), and 0 is not 1: a <strong>miss</strong> and an <strong>eviction</strong>. Block 6 is thrown out for a block that happens to share its row.",
+    "<strong>Address 54:</strong> block 6 again, but we just evicted it. Row 2 now holds tag 0, so: a <strong>miss</strong>, and block 2 is evicted to bring block 6 back. This is a <strong>conflict</strong>: blocks 2 and 6 both map to row 2.",
+    "<strong>Address 60:</strong> block 7, row 3, tag 1. Row 3 holds tag 2 (block 11): a <strong>miss</strong>, evict.",
+    "<strong>Address 53:</strong> block 6, row 2, tag 1. Block 6 was reloaded two steps ago and nothing has touched row 2 since: a <strong>hit</strong>.",
+    "<strong>Address 29:</strong> block 3, row 3, tag 0. Row 3 holds tag 1 (block 7): a <strong>miss</strong>, evict.",
+    "<strong>Address 28:</strong> same block as 29, now in row 3. A <strong>hit</strong>.",
+  ];
+  const traceSub = (function () {
+    const X0 = 30, Y0 = 54, RH = 30;
+    const COLS = [["address", 84], ["block", 70], ["row", 56], ["tag", 56], ["result", 96]];
+    const CX = 520;
+    return {
+      build(g) {
+        const r = { rows: [], bgs: [], cache: [] };
+        let x = X0;
+        COLS.forEach(([name, w]) => {
+          rect(g, x, Y0 - 30, w, 30, { fill: C.purple });
+          txt(g, x + w / 2, Y0 - 10, name, { size: 11, weight: 700, mono: true, fill: C.white, anchor: "middle" });
+          x += w;
+        });
+        TRACE.acc.forEach((a, i) => {
+          const rg = grp(g, 0); r.rows.push(rg);
+          let cx = X0;
+          const y = Y0 + i * RH;
+          COLS.forEach(([, w], ci) => {
+            const hit = a[4] === "HIT";
+            const b = rect(rg, cx, y, w, RH, { fill: C.white, stroke: C.purple, sw: 2 });
+            if (ci === 0) r.bgs.push([]);
+            r.bgs[i].push(b);
+            const v = ci === 4 ? a[4] : String(a[ci]);
+            txt(rg, cx + w / 2, y + 21, v, { size: 14, weight: 700, mono: true, fill: ci === 4 && hit ? C.red : C.ink, anchor: "middle" });
+            cx += w;
+          });
+        });
+        // cache panel
+        txt(g, CX + 280, Y0 - 38, "THE CACHE", { size: 13, weight: 700, fill: C.purple, anchor: "middle", ls: 2 });
+        [["row", 60], ["V", 60], ["tag", 80], ["holds block", 200], ["cells", 150]].reduce((xx, [name, w]) => {
+          rect(g, xx, Y0 - 30, w, 30, { fill: C.accent });
+          txt(g, xx + w / 2, Y0 - 10, name, { size: 11, weight: 700, mono: true, fill: C.white, anchor: "middle" });
+          return xx + w;
+        }, CX);
+        for (let i = 0; i < 4; i++) {
+          const y = Y0 + i * 62;
+          const cells = [];
+          let xx = CX;
+          [60, 60, 80, 200, 150].forEach((w, ci) => {
+            const b = rect(g, xx, y, w, 56, { fill: C.white, stroke: C.accent, sw: 2 });
+            const t = txt(g, xx + w / 2, y + 35, ci === 0 ? String(i) : "", { size: 15, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+            cells.push({ b, t });
+            xx += w;
+          });
+          r.cache.push(cells);
+        }
+        r.note = txt(g, CX + 275, Y0 + 4 * 62 + 24, "", { size: 14, weight: 700, mono: true, fill: C.red, anchor: "middle" });
+        return r;
+      },
+      render(s, r) {
+        const k = s.k || 0;
+        r.rows.forEach((rg, i) => vis(rg, i < k));
+        r.bgs.forEach((cells, i) => cells.forEach((b) => b.setAttribute("fill", i === k - 1 && !s.sum ? C.t2 : (s.sum && TRACE.acc[i][4] === "HIT" ? C.t2 : C.white))));
+        const st = k > 0 ? TRACE.states[k - 1] : [null, null, null, null];
+        const cur = k > 0 ? TRACE.acc[k - 1] : null;
+        for (let i = 0; i < 4; i++) {
+          const e = st[i], c = r.cache[i];
+          c[1].t.textContent = e ? "1" : "0";
+          c[2].t.textContent = e ? String(e[0]) : "";
+          c[3].t.textContent = e ? "block " + e[1] : "(empty)";
+          c[4].t.textContent = e ? (e[1] * 8) + " to " + (e[1] * 8 + 7) : "";
+          const hot = cur && cur[2] === i && !s.sum;
+          c.forEach((cell, ci) => {
+            cell.b.setAttribute("fill", hot ? C.t2 : C.white);
+            cell.b.setAttribute("stroke", hot ? C.red : C.accent);
+            cell.b.setAttribute("stroke-width", hot ? 4 : 2);
+          });
+        }
+        r.note.textContent = cur && !s.sum ? "address " + cur[0] + " -> row " + cur[2] + ": " + cur[4] : (s.sum ? "4 hits in 10 accesses" : "");
+      },
+    };
+  })();
+  const SEQ = { cols: [{ h: "ADDRESSES", x: 80, w: 260, mono: true, bold: true, size: 20 }, { h: "BLOCK", x: 380, w: 200, mono: true, size: 20 }, { h: "RESULT", x: 620, w: 400, size: 20 }],
+    rows: [["50 to 55", "block 6", "1 miss, then 5 hits"], ["56 to 63", "block 7", "1 miss, then 7 hits"], ["64 to 69", "block 8", "1 miss, then 5 hits"], ["total", "20 accesses", "17 hits: hit ratio 17/20"]], rh: 70, y0: 60, fs: 20 };
+  const WORST = { cols: [{ h: "ADDRESS", x: 80, w: 200, mono: true, bold: true, size: 20 }, { h: "BLOCK", x: 320, w: 200, mono: true, size: 20 }, { h: "ROW", x: 560, w: 160, mono: true, size: 20 }, { h: "RESULT", x: 760, w: 300, mono: true, size: 20 }],
+    rows: [["16", "2", "2", "MISS"], ["80", "10", "2", "MISS"], ["17", "2", "2", "MISS"], ["81", "10", "2", "MISS"], ["18", "2", "2", "MISS"], ["82", "10", "2", "MISS: 0 hits in 6"]], rh: 50, y0: 56, fs: 20 };
+  const traceSteps = [{ sub: "trace", k: 0, chip: 1, foot: "4 rows, block size 8, starting empty", narrate: "Time to run one. The cache has <strong>four rows and a block size of 8</strong> and starts completely empty. The program makes ten <code>lw</code> accesses, in this order: <code>52, 53, 92, 55, 20, 54, 60, 53, 29, 28</code>. For each address we compute <code>block = address // 8</code>, <code>row = block % 4</code>, <code>tag = block // 4</code>, then look at the row." }];
+  TRACE.acc.forEach((a, i) => traceSteps.push({ sub: "trace", k: i + 1, chip: 2, foot: "", narrate: TRACE_NARR[i] }));
+  traceSteps.push({ sub: "trace", k: 10, sum: true, chip: 3, foot: "rows 0 and 1 were never used", narrate: "Four hits in ten accesses: a hit ratio of <strong>4/10</strong>. Rows 0 and 1 were never touched, while blocks 6 and 2, and blocks 11, 7 and 3, kept evicting each other. A direct-mapped cache has no way around that: each block may live in exactly <em>one</em> row, however empty the rest of the cache is." });
+  traceSteps.push({ sub: "seq", rows: 4, hl: [3], chip: 4, foot: "same cache, different access pattern", narrate: "The same cache on a program that walks memory in order: <code>50, 51, 52, ..., 69</code>, twenty accesses. Only the first access to each new block misses: 50, 56 and 64. Three misses and seventeen hits, a hit ratio of <strong>17/20</strong>. Same cache, a wildly better result, because the access pattern matches the bet the cache made." });
+  traceSteps.push({ sub: "worst", rows: 6, hl: [], chip: 5, foot: "rows 0, 1 and 3 sit idle", narrate: "And the worst case: <code>16, 80, 17, 81, 18, 82</code>. Cells 16 to 18 are block 2, cells 80 to 82 are block 10, and both map to row 2 (<code>2 % 4 = 10 % 4 = 2</code>). Every access evicts the other: six misses, a hit ratio of <strong>0</strong>, with three rows idle. It failed not because the cache was small but because of <em>where</em> the blocks landed. That is what next lecture's associative caches relax." });
+  scene(mixScene({
+    num: "5", title: "Tracing a Cache: A Worked Example", subtitle: "Four rows, block size 8. Tracing by hand is the skill that gets tested.",
+    chips: ["The setup", "Ten accesses", "The result", "In order", "Worst case"],
+    steps: traceSteps,
+  }, { trace: traceSub, seq: tb(SEQ), worst: tb(WORST) }));
+
+  // ================= 6 Sizing a Cache =================
+  const SIZEF = { cols: [{ h: "WHAT", x: 60, w: 260, bold: true, size: 20 }, { h: "FORMULA", x: 360, w: 700, mono: true, size: 20 }],
+    rows: [["total size, in bits", "numberOfRows x (1 + tagBits + blockBits)"], ["1", "the valid bit"], ["tagBits", "address bits - index bits - offset bits"], ["blockBits", "blockSize x 8, for byte-sized cells"]], rh: 70, y0: 60, fs: 20 };
+  const SIZEX = { cols: [{ h: "STEP", x: 60, w: 260, bold: true, size: 19 }, { h: "12-BIT ADDRESSES, 8 ROWS, 16-BYTE BLOCKS", x: 360, w: 700, mono: true, size: 19 }],
+    rows: [["offset bits", "log2(16) = 4"], ["index bits", "log2(8) = 3"], ["tag bits", "12 - 4 - 3 = 5"], ["data per row", "16 x 8 = 128 bits"], ["bits per row", "1 + 5 + 128 = 134"], ["total", "8 x 134 = 1072 bits = 134 bytes"]], rh: 54, y0: 56, fs: 19 };
+  scene(mixScene({
+    num: "6", title: "Sizing a Cache", subtitle: "The valid bit and the tag are real storage too.",
+    chips: ["The formula", "Bit widths", "The total", "The overhead"],
+    steps: [
+      { sub: "sz", view: 1, chip: 1, foot: "", narrate: "The size of a cache is a slippery word. The data is <code>rows &times; blockSize</code>, but the hardware also stores a <strong>valid bit and a tag in every row</strong>, and those take real transistors too. So: <code>total bits = numberOfRows &times; (1 + tagBits + blockBits)</code>." },
+      { sub: "sz", view: 2, chip: 2, foot: "", narrate: "Worked example: 12-bit addresses, 8 rows, 16-byte blocks. Sixteen bytes needs <code>log2(16) = 4</code> offset bits, 8 rows needs <code>log2(8) = 3</code> index bits, and the tag gets the rest: <code>12 - 4 - 3 = 5</code> bits." },
+      { sub: "sz", view: 3, chip: 3, foot: "", narrate: "Each block holds <code>16 &times; 8 = 128</code> bits of data, so each row costs <code>1 + 5 + 128 = 134</code> bits, and the whole cache is <code>8 &times; 134 = 1072</code> bits, or <strong>134 bytes</strong>." },
+      { sub: "sz", view: 4, chip: 4, foot: "6 bytes of overhead on 128 bytes of data", narrate: "It stores only <code>8 &times; 16 = 128</code> bytes of actual data, so the metadata is 6 bytes: about 5 percent. That overhead shrinks as blocks grow (more data shares the same tag and valid bit), which is one reason designers don't shrink blocks toward zero." },
+    ],
+  }, { f: tb(SIZEF), x: tb(SIZEX), sz: szSub }));
+
+  // ================= 7 What a Cache Is Worth =================
+  const AVGF = { cols: [{ h: "THE CONVENTION", x: 60, w: 360, bold: true, size: 19 }, { h: "", x: 460, w: 640, mono: true, size: 19 }],
+    rows: [["every access checks the cache first", "hit or miss, it pays the cache time (2 ns)"], ["a miss also pays for memory", "on top of that, memory time (60 ns)"], ["average time", "cache time + (1 - hit ratio) x memory time"]], rh: 80, y0: 60, fs: 19 };
+  const AVGT = { cols: [{ h: "HIT RATIO", x: 70, w: 220, bold: true, mono: true, size: 20 }, { h: "AVERAGE TIME", x: 330, w: 460, mono: true, size: 19 }, { h: "VS NO CACHE (60 ns)", x: 830, w: 300, size: 19 }],
+    rows: [["no cache", "60 ns", "1 times"], ["80%", "2 + 0.2 x 60 = 14 ns", "4.3 times faster"], ["90%", "2 + 0.1 x 60 = 8 ns", "7.5 times faster"], ["99%", "2 + 0.01 x 60 = 2.6 ns", "23 times faster"]], rh: 70, y0: 60, fs: 19 };
+  scene(mixScene({
+    num: "7", title: "What a Cache Is Worth: Hit Ratio and Average Time", subtitle: "Cache 2 ns, memory 60 ns (invented, right shape).",
+    chips: ["The formula", "90 percent", "Why it matters", "Looking ahead"],
+    steps: [
+      { sub: "avg", show: [0], note: "every access pays the full 60 ns", chip: 1, foot: "", narrate: "One more number, and it explains why anyone bothers. A cache access takes 2 ns and a trip to memory takes 60 ns (invented, with the right shape). The usual convention: <strong>every access checks the cache first</strong>, hit or miss, so every access pays 2 ns, and a miss pays the memory trip on top. <code>average time = cache time + (1 - hit ratio) &times; memory time</code>." },
+      { sub: "avg", show: [0, 2], chip: 2, foot: "", narrate: "At a 90 percent hit ratio: <code>2 + 0.1 &times; 60 = 8 ns</code>. With no cache every access would cost 60 ns, so the cache made the average access <strong>7.5 times faster</strong>." },
+      { sub: "avg", show: [0, 1, 2, 3], note: "a few points of hit ratio change the average a lot", chip: 3, foot: "the few misses dominate the average", narrate: "Now watch a few points of hit ratio. At 99 percent it is 2.6 ns, three times faster again than 90. At 80 percent it is 14 ns, nearly twice as slow as 90. The memory trip is so expensive that the handful of misses dominates the average. That is why designers obsess over hit ratio, and why blocks and walking memory in order matter so much." },
+      { sub: "avg", show: [0, 1, 2, 3], note: "a miss stalls MEM: this number feeds straight into CPI", chip: 4, foot: "next lecture: writes, then associative caches", narrate: "It connects back to the pipeline: a miss stalls the <code>MEM</code> stage, so average memory time feeds straight into CPI. And everything today was about <em>reading</em>. We haven't said what happens on a <code>sw</code>, and a direct-mapped cache lets each block live in only one row. Next lecture relaxes that rule with <strong>associative caches</strong>, then moves on to virtual memory, where the same tag, index and offset vocabulary returns at a much larger scale." },
+    ],
+  }, { f: tb(AVGF), t: tb(AVGT), avg: avgSub }));
+
+
+  // ---------------- engine ----------------
+  const $ = (id) => document.getElementById(id);
+  const svg = $("stage");
+  const foot = txt(svg, 575, 392, "", { size: 13, italic: true, fill: C.grey, anchor: "middle" });
+
+  scenes.forEach((sc) => {
+    sc.g = E("g", {}, svg);
+    sc.g.style.display = "none";
+    sc.r = sc.build(sc.g) || {};
+    foot.parentNode.appendChild(foot);
+  });
+  $("sec-total").textContent = scenes.length - scenes.filter((x) => x.front).length;
+
+  // si: section, ti: step, ph: 0 = question showing (diagram as before), 1 = answered
+  const off = scenes.filter((x) => x.front).length;   // title slides don't count as sections
+  let si = 0, ti = 0, ph = 1, shownScene = -1;
+  const asks = (i, k) => !!scenes[i].steps[k].q;
+  const startPh = (i, k) => (asks(i, k) && k > 0 ? 0 : 1);
+
+  function readHash() {
+    const m = location.hash.match(/^#(\d+)\.(\d+)(q?)$/);
+    if (!m) { ph = startPh(si, ti); return; }
+    const a = Number(m[1]) - 1 + off, b = Number(m[2]) - 1;
+    if (a >= 0 && a < scenes.length) { si = a; ti = Math.max(0, Math.min(scenes[a].steps.length - 1, b)); }
+    ph = m[3] && asks(si, ti) && ti > 0 ? 0 : 1;
+  }
+
+  function buildChips(sc) {
+    const box = $("chips");
+    box.innerHTML = "";
+    sc.chips.forEach((label) => {
+      const d = document.createElement("div");
+      d.className = "stp";
+      d.textContent = label;
+      box.appendChild(d);
+    });
+  }
+
+  function render() {
+    const sc = scenes[si], s = sc.steps[ti];
+    if (shownScene !== si) {
+      scenes.forEach((x, k) => { x.g.style.display = k === si ? "inline" : "none"; });
+      $("num").textContent = sc.num;
+      $("title").textContent = sc.title;
+      $("subtitle").textContent = sc.subtitle;
+      document.querySelector(".stage").style.visibility = sc.front ? "hidden" : "";
+      $("subtitle").style.visibility = sc.front ? "hidden" : "";
+      $("sec-wrap").style.display = sc.front ? "none" : "";
+      $("foot-left").textContent = sc.title;
+      buildChips(sc);
+      shownScene = si;
+    }
+    const asking = ph === 0 && !!s.q && ti > 0;
+    // while a question is showing, the diagram stays exactly as the previous step left it
+    sc.render(asking ? sc.steps[ti - 1] : s, sc.r, ti);
+    foot.textContent = asking ? "" : (s.foot || "");
+    const qm = '<span class="qm">Q</span>';
+    $("narration").innerHTML = asking ? '<div class="q big">' + qm + s.q + '</div>'
+      : (s.q ? '<div class="q small">' + qm + s.q + '</div>' : "") + ((!fullText && CAPTIONS[(sc.num === "" ? "T" : sc.num) + "." + (ti + 1)]) || s.narrate);
+    $("sec-n").textContent = si - off + 1;
+    $("step-n").textContent = ti + 1;
+    $("step-total").textContent = sc.steps.length;
+    document.querySelectorAll(".stp").forEach((chip, k) => {
+      const n = k + 1;
+      chip.classList.remove("active", "done");
+      if (!s.chip) return;
+      if (s.chip === n) chip.classList.add("active");
+      else if (n < s.chip) chip.classList.add("done");
+    });
+    history.replaceState(null, "", "#" + (si - off + 1) + "." + (ti + 1) + (asking ? "q" : ""));
+  }
+
+  function go(d) {
+    const sc = scenes[si];
+    if (d > 0) {
+      if (ph === 0) ph = 1;
+      else if (ti < sc.steps.length - 1) { ti++; ph = startPh(si, ti); }
+      else if (si < scenes.length - 1) { si++; ti = 0; ph = startPh(si, 0); }
+    } else {
+      if (ph === 1 && asks(si, ti) && ti > 0) ph = 0;
+      else if (ti > 0) { ti--; ph = 1; }
+      else if (si > 0) { si--; ti = scenes[si].steps.length - 1; ph = 1; }
+    }
+    render();
+  }
+
+  function jumpScene(d) {
+    if (d < 0 && ti > 0) ti = 0;
+    else si = Math.max(0, Math.min(scenes.length - 1, si + d)), ti = 0;
+    ph = startPh(si, 0);
+    render();
+  }
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "n" || e.key === "N") { fullText = !fullText; render(); return; }
+    const fwd = ["ArrowRight", "ArrowDown", " ", "PageDown"].includes(e.key);
+    const back = ["ArrowLeft", "ArrowUp", "PageUp"].includes(e.key);
+    if (!fwd && !back) return;
+    e.preventDefault();
+    if (e.shiftKey) jumpScene(fwd ? 1 : -1);
+    else go(fwd ? 1 : -1);
+  });
+
+  window.addEventListener("hashchange", () => { readHash(); render(); });
+
+  // on-slide captions: short text under the picture. The full narration stays in the speaker script; press n to show it on screen.
+  const CAPTIONS = {
+"T.1": "A student keeps books on the desk, not at the library.",
+"T.2": "Build the cache: break it, fix it, then trace it.",
+"1.1": "<code>lw</code> isn't one polite stage. Memory is far away.",
+"1.2": "Fast is small and expensive; slow is huge and cheap.",
+"1.3": "A cache keeps a copy of what it has seen: a <strong>hit</strong> or a <strong>miss</strong>.",
+"1.4": "A cache can hold only a <strong>sliver</strong> of memory.",
+"2.1": "Attempt one: <code>row = address % 4</code>. <code>lw 42</code> goes to row 2.",
+"2.2": "<code>lw 10</code> also maps to row 2, and gets 17. <strong>Wrong.</strong>",
+"2.3": "Attempt two: store the <strong>address</strong> too.",
+"2.4": "A mismatch is a miss. The old entry is <strong>evicted</strong>.",
+"2.5": "Attempt three: store only the <strong>tag</strong>, <code>address // 4</code>.",
+"2.6": "Attempt four: a <strong>valid bit</strong> says whether a row means anything.",
+"2.7": "The lookup: hit only if <code>V = 1</code> and the tags match.",
+"3.1": "Two localities: next address (spatial), same address (temporal).",
+"3.2": "Carry back the whole shelf: memory in <strong>blocks</strong>.",
+"3.3": "<code>lw 53</code> loads all of block 6 into row 2.",
+"3.4": "54 and 55 are hits: the bet paid off.",
+"4.1": "An address answers three questions: <strong>block</strong>, <strong>row</strong>, <strong>offset</strong>.",
+"4.2": "Block = <code>address // size</code>. Row = <code>block % rows</code>.",
+"4.3": "Address 181 in binary: tag | index | offset.",
+"4.4": "Three more examples, on the cache we trace next.",
+"5.1": "Four rows, block size 8, starting empty. Ten accesses.",
+"5.2": "52: <strong>miss</strong>. Load block 6 into row 2.",
+"5.3": "53: <strong>hit</strong>. It rode in with 52.",
+"5.4": "92: <strong>miss</strong>. Load block 11 into row 3.",
+"5.5": "55: <strong>hit</strong>.",
+"5.6": "20: <strong>miss</strong>, and block 6 is evicted.",
+"5.7": "54: a <strong>conflict</strong>: blocks 2 and 6 share row 2.",
+"5.8": "60: <strong>miss</strong>, evict.",
+"5.9": "53: <strong>hit</strong>.",
+"5.10": "29: <strong>miss</strong>, evict.",
+"5.11": "28: <strong>hit</strong>.",
+"5.12": "4 hits in 10. Rows 0 and 1 were never used.",
+"5.13": "Sequential walk: <strong>17 hits</strong> in 20.",
+"5.14": "Worst case: <strong>0 hits</strong>, three rows idle.",
+"6.1": "Size = rows &times; (1 + tag bits + block bits).",
+"6.2": "12-bit address, 8 rows, 16-byte blocks: 5 + 3 + 4 bits.",
+"6.3": "8 rows &times; 134 bits = <strong>1072</strong> bits.",
+"6.4": "6 bytes of overhead on 128 bytes of data.",
+"7.1": "Average time = cache time + miss rate &times; memory time.",
+"7.2": "90% hits: 2 + 0.1 &times; 60 = <strong>8 ns</strong>.",
+"7.3": "A few points of hit ratio matter a lot.",
+"7.4": "A miss stalls <code>MEM</code>: it feeds into CPI."
+};
+  let fullText = false;
+  window.DECK_STEPS = scenes.map(function (sc) { return { num: sc.num, title: sc.title, front: !!sc.front, steps: sc.steps.map(function (s) { return { narrate: s.narrate, sub: s.sub, img: s.img, card: s.card, rows: s.rows, hl: s.hl, chip: s.chip, k: s.k }; }) }; });
+  if (location.search.indexOf('dump') >= 0) { var pre = document.createElement('pre'); pre.id = 'dump'; pre.textContent = JSON.stringify(window.DECK_STEPS); document.body.innerHTML = ''; document.body.appendChild(pre); return; }
+  readHash();
+  render();
+})();
+</script>
+
+</body>
+</html>

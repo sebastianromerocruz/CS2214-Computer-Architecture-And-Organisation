@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 400" font-family="Helvetica, Arial, sans-serif">
+<defs><marker id="a" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#57068c"/></marker></defs>
+<rect width="1150" height="400" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="32" fill="#6d6d6d" font-size="17" text-anchor="middle">attempt one: row = address % 4. A quarter of all addresses are routed to each row, and the row cannot tell them apart.</text>
+<rect x="40" y="60" width="255" height="240" rx="10" fill="#fff" stroke="#57068c" stroke-width="4"/>
+<text x="167" y="96" fill="#57068c" font-size="24" font-weight="700" text-anchor="middle">row 0</text>
+<text x="167" y="140" fill="#1a1a1a" font-size="20" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">address 0</text>
+<text x="167" y="174" fill="#1a1a1a" font-size="20" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">address 4</text>
+<text x="167" y="208" fill="#1a1a1a" font-size="20" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">address 8</text>
+<text x="167" y="242" fill="#1a1a1a" font-size="20" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">address 12</text>
+<text x="167" y="282" fill="#6d6d6d" font-size="16" font-weight="600" text-anchor="middle">…and so on</text>
+<rect x="315" y="60" width="255" height="240" rx="10" fill="#fff" stroke="#b07a00" stroke-width="4"/>
+<text x="442" y="96" fill="#b07a00" font-size="24" font-weight="700" text-anchor="middle">row 1</text>
+<text x="442" y="140" fill="#1a1a1a" font-size="20" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">address 1</text>
+<text x="442" y="174" fill="#1a1a1a" font-size="20" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">address 5</text>
+<text x="442" y="208" fill="#1a1a1a" font-size="20" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">address 9</text>
+<text x="442" y="242" fill="#1a1a1a" font-size="20" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">address 13</text>
+<text x="442" y="282" fill="#6d6d6d" font-size="16" font-weight="600" text-anchor="middle">…and so on</text>
+<rect x="590" y="60" width="255" height="240" rx="10" fill="#fff" stroke="#2e7d32" stroke-width="4"/>
+<text x="717" y="96" fill="#2e7d32" font-size="24" font-weight="700" text-anchor="middle">row 2</text>
+<text x="717" y="140" fill="#1a1a1a" font-size="20" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">address 2</text>
+<text x="717" y="174" fill="#1a1a1a" font-size="20" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">address 6</text>
+<text x="717" y="208" fill="#1a1a1a" font-size="20" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">address 10</text>
+<text x="717" y="242" fill="#1a1a1a" font-size="20" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">address 14</text>
+<text x="717" y="282" fill="#6d6d6d" font-size="16" font-weight="600" text-anchor="middle">…and 42, 100, …</text>
+<rect x="865" y="60" width="255" height="240" rx="10" fill="#fff" stroke="#c1272d" stroke-width="4"/>
+<text x="992" y="96" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle">row 3</text>
+<text x="992" y="140" fill="#1a1a1a" font-size="20" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">address 3</text>
+<text x="992" y="174" fill="#1a1a1a" font-size="20" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">address 7</text>
+<text x="992" y="208" fill="#1a1a1a" font-size="20" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">address 11</text>
+<text x="992" y="242" fill="#1a1a1a" font-size="20" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">address 15</text>
+<text x="992" y="282" fill="#6d6d6d" font-size="16" font-weight="600" text-anchor="middle">…and so on</text>
+<text x="575" y="342" fill="#c1272d" font-size="21" font-weight="700" text-anchor="middle">Row 2 receives addresses 2, 6, 10, 14, … 42 … all at once.</text>
+<text x="575" y="376" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">One mailbox for the whole building, and the letters carry only the apartment number.</text>
+</svg>

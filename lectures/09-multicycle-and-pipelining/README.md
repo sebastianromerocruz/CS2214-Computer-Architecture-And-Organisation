@@ -39,14 +39,6 @@ It's the same memory, register file, ALU and program counter you already know. W
 
 ## Why One Long Cycle Isn't Enough
 
-Think of a convoy of cars. A convoy travels at the speed of its slowest vehicle, no exceptions: one guy in a minivan with a flat spare and everybody does 30 on the highway. Single-cycle is a convoy.
-
-Here's why. A **clock cycle** is the time between two ticks of the processor's clock, and in single-cycle everything an instruction needs (fetching it, reading the registers, running the ALU, touching data memory, writing the result) has to finish inside *one* tick.
-
-That's a problem because electricity isn't instant. Signals take real time to flow through memory, through muxes, through the ALU's gates, and different instructions need different amounts of that flowing. But the clock is a fixed interval, so the designer has no choice: **size the cycle for the worst path through the circuit.**
-
-The slowest instruction sets the speed for everybody. In the E20, that instruction is `lw`.
-
 Let's put numbers on it: (note: **these delays are invented.** They are not in the E20 manual. They're stand-ins with the right *shape*: memory is slow, the other parts are quick. Any numbers with that shape tell the same story)
 
 | Step | Time it takes |
@@ -160,28 +152,28 @@ In `lw`, the address register `$2` sits in slot 1 and the destination `$1` in sl
 
 ## Five Registers: What Each Cycle Leaves Behind
 
-Now a physical reality that single-cycle let us ignore. In cycle 1, `IF`, the memory puts the instruction, say `add $3, $1, $2`, on its output wires. Nothing has copied it anywhere. It is simply there, on the wires.
+Now a physical reality that single-cycle let us ignore. In cycle 1, `IF`, the memory looks up the instruction, say `add $3, $1, $2`, and it shows up at the memory's output. Nothing has saved it anywhere: it is only there because the memory is showing it right now.
 
 <p align=center>
     <img src="assets/mc-stages-1-if.svg" width="760" alt="cycle 1: the instruction sits on the memory output wires">
 </p>
-<p align=center><sub>Cycle 1, <code>IF</code>: the instruction is on the memory's output wires.</sub></p>
+<p align=center><sub>Cycle 1, <code>IF</code>: the instruction is showing at the memory's output.</sub></p>
 
-Does the instruction flow straight on into `ID` during the first clock cycle? **No.** In single-cycle, one long chain of wires carried it all the way through. Now `IF` fills cycle 1 on its own, and `ID` is a separate cycle, on the far side of a clock tick.
+Does the instruction carry straight on into `ID` in the same cycle? **No.** Single-cycle had one long chain of wires; now `IF` gets cycle 1 to itself, and `ID` waits for the next cycle, across a clock tick.
 
 <p align=center>
     <img src="assets/mc-stages-1-tick.svg" width="760" alt="IF in cycle 1, a clock tick, and ID in cycle 2, with a question mark over the instruction">
 </p>
 <p align=center><sub>The clock tick sits between <code>IF</code> and <code>ID</code>: the instruction does not simply flow across it.</sub></p>
 
-In cycle 2, `ID`, across the tick, the memory is free to be asked for something else, so its output wires now carry whatever it answers. The instruction is gone, and `ID` has nothing to chop up.
+In cycle 2, `ID`, after the tick, the memory is already answering a different question, the next instruction, so ours has vanished from its output. `ID` has nothing left to read.
 
 <p align=center>
     <img src="assets/mc-stages-1-id.svg" width="760" alt="cycle 2: the instruction is gone and ID needs it">
 </p>
-<p align=center><sub>Cycle 2, <code>ID</code>: the memory is answering something else, so the instruction is gone.</sub></p>
+<p align=center><sub>Cycle 2, <code>ID</code>: the memory is answering with the next instruction, so ours is gone.</sub></p>
 
-A wire only holds a value while something is driving it. The same goes for the two register values read in `ID`: if nothing keeps them, `EX` has nothing to add. Single-cycle never showed us this, because everything finished before the clock ticked.
+The two register values that `ID` reads have the same problem. A value only stays on a wire while something keeps putting it there, so if nothing saves them, `EX` has nothing to add. Single-cycle never showed this: everything finished before the tick.
 
 <p align=center>
     <img src="assets/mc-stages-1-lost.svg" width="760" alt="the two register values read in ID are lost at the clock tick, so EX has nothing to add">
@@ -252,7 +244,17 @@ The others are `WEa`, `WEb` and `WEalu` (for `aluOut`), and control turns on onl
 
 ## The State Register and the State Diagram
 
-That write-enable story hides a bigger problem, and it's the biggest conceptual hurdle of the week. Think about what the control module has to do for our `lw`.
+At the end of the last section, control was given a job: flip the right write-enable at the right moment. For our `lw`, that is a to-do list:
+
+| Cycle | Stage | Switch turned on | What it catches |
+|:-:|:-:|---|---|
+| 1 | IF | `WEir` | `IR` catches the instruction |
+| 2 | ID | `WEa` and `WEb` | `A` and `B` catch the two registers |
+| 3 | EX | `WEalu` | `aluOut` catches the result |
+| 4 | MEM | `MDR` | `MDR` catches the loaded data |
+| 5 | WB | write the register | and update the `pc` |
+
+But who keeps track of where we are in that list? Here is why it matters. Think about what the control module has to do for our `lw`.
 
 In cycle 1, the memory's address has to come from the `pc` (we're fetching). In cycle 4, the memory's address has to come from `aluOut` (we're loading data). The control module is looking at the **exact same instruction** in the exact same `IR` both times.
 
@@ -266,7 +268,7 @@ In cycle 1, the memory's address has to come from the `pc` (we're fetching). In 
 </p>
 <p align=center><sub>The control module sees the same <code>lw</code> in <code>IR</code> both times, but it needs to give two different answers.</sub></p>
 
-But a control module that's a pure truth table, opcode in and signals out, can't possibly give two different answers for the same input.
+But a control module that only reads the instruction, opcode in and signals out, has to give the same answer twice, and it needs two different ones.
 
 So what extra piece of information does it need? The thing that *differs* between the two cycles is **which cycle we're in**. Control needs to know where in the instruction's life we are.
 
@@ -275,11 +277,9 @@ So what extra piece of information does it need? The thing that *differs* betwee
 </p>
 <p align=center><sub>A new input, the <strong>state</strong>, is what differs between the two cycles.</sub></p>
 
-That's a **state**, and we keep it in one more register: the **state register**. (Think of it as the page number of a recipe: same recipe, but what you're doing depends on which page you're on.)
+That is called the **state**, and we keep it in one more register: the **state register**. Think of it as the page number in a recipe: same recipe, but what you do depends on which page you're on.
 
-The control module now reads *two* inputs, the opcode and the current state, and produces *two* kinds of output: the control signals for this cycle (as before), and the **new state**, which gets stored on the next tick.
-
-Nothing about the circuit became exotic. It's still a lookup table, with one more column on the input side. But a lookup table that feeds its own output back into a register is a **finite state machine**, and that's what the control module is now.
+Control now looks at two things, the instruction and the state. It hands back two things: the signals for this cycle, and the next state. A loop like that is called a **finite state machine**, and that is what the control module is now.
 
 <p align=center>
     <img src="assets/mc-stages-4.svg" width="760" alt="the stages, the registers, and the state register with control">

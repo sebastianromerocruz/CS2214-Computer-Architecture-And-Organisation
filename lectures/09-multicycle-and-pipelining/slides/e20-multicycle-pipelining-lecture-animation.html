@@ -88,19 +88,19 @@
   .stp.done { border-color: var(--ink); color: var(--ink); }
 
   .narration {
-    margin-top: 10px;
-    font-size: 18px;
+    margin-top: 12px;
+    font-size: 27px;
     line-height: 1.3;
-    min-height: 52px;
+    min-height: 44px;
   }
 
   .narration strong { color: var(--red); }
   .narration code {
     background: #171715;
     color: #f7f7f4;
-    padding: 1px 6px;
-    border-radius: 3px;
-    font-size: 16px;
+    padding: 1px 7px;
+    border-radius: 4px;
+    font-size: 23px;
     font-family: "SF Mono", Menlo, Consolas, monospace;
   }
 
@@ -516,6 +516,326 @@
   const CTLT = { cols: [{ h: "STATE", x: 40, w: 60, mono: true, bold: true }, { h: "STAGE", x: 110, w: 60 }, { h: "WHAT HAPPENS", x: 190, w: 400, mono: true, size: 13 }, { h: "CONTROL VALUES (UNLISTED WE = 0, UNLISTED MUX = DON'T CARE)", x: 610, w: 520, mono: true, size: 11 }],
     rows: [["0", "IF", "IR <- M[pc]", "WEir=1  MUXaddr=1"], ["1", "ID", "A <- R[reg1]   B <- R[reg2]", "WEa=1  WEb=1  MUXr1=4  MUXb=0"], ["2", "ID", "A <- R[0]   B <- zeroExt13(imm13)", "WEa=1  WEb=1  MUXr1=0  MUXb=1"], ["3", "EX", "aluOut <- A op signExt7(imm7)", "WEalu=1  MUXalu=0  aluOp=op"], ["4", "EX", "aluOut <- A op B", "WEalu=1  MUXalu=1  aluOp=op"], ["5", "MEM", "MDR <- M[aluOut]   (lw)", "MUXaddr=0  WEram=0"], ["6", "MEM", "M[aluOut] <- B   (sw)", "MUXaddr=0  WEram=1"], ["7", "MEM", "nothing", ""], ["8", "WB", "R[reg2] <- MDR   pc <- pc+1", "MUXr1=3 MUXtgt=1 WEreg=1 MUXpc=1 MUXpcIncr=1 WEpc=1"], ["9", "WB", "pc <- pc+1   (sw)", "MUXpc=1  MUXpcIncr=1  WEpc=1"], ["10", "WB", "R[reg2] <- aluOut   pc <- pc+1", "MUXr1=3 MUXtgt=0 WEreg=1 MUXpc=1 MUXpcIncr=1 WEpc=1"], ["11", "WB", "pc <- pc+1 (+imm7 if aluOut = 0)", "MUXpc=1  MUXpcIncr=(aluOut ? 1 : 0)  WEpc=1"], ["12", "WB", "pc <- aluOut   (j, jr)", "MUXpc=0  WEpc=1"], ["13", "WB", "R[7] <- pc+1   pc <- aluOut", "MUXr1=1  MUXtgt=2  WEreg=1  MUXpc=0  WEpc=1"], ["14", "WB", "R[reg3] <- aluOut   pc <- pc+1", "MUXr1=2 MUXtgt=0 WEreg=1 MUXpc=1 MUXpcIncr=1 WEpc=1"]], rh: 23, y0: 34, fs: 13 };
   // ---- tables new to this version
+  // single-cycle timeline: lw and add as bars on one time axis, each stage growing in; the clock is welded at 7
+  const TLSEG = {
+    lw: [["fetch", 2], ["decode", 1], ["ALU", 1], ["memory", 2], ["write", 1]],
+    add: [["fetch", 2], ["read", 1], ["ALU", 1], ["write", 1]],
+  };
+  const tlSub = {
+    build(g) {
+      const r = { seg: { lw: [], add: [] } };
+      const X0 = 170, U = 120, Y = { lw: 92, add: 214 }, H = 64;
+      r.X0 = X0; r.U = U; r.Y = Y; r.H = H;
+      for (let k = 0; k <= 7; k++) {
+        ln(g, X0 + k * U, 66, X0 + k * U, 330, { stroke: C.lgrey, sw: 1 });
+        txt(g, X0 + k * U, 352, String(k), { size: 15, mono: true, fill: C.grey, anchor: "middle" });
+      }
+      txt(g, X0 + 3.5 * U, 380, "TIME UNITS", { size: 13, weight: 700, fill: C.grey, ls: 2, anchor: "middle" });
+      txt(g, 60, Y.lw + 40, "lw", { size: 28, weight: 700, mono: true, fill: C.ink });
+      txt(g, 60, Y.add + 40, "add", { size: 28, weight: 700, mono: true, fill: C.ink });
+      ["lw", "add"].forEach((row) => {
+        let x = X0;
+        TLSEG[row].forEach(([lab, w], i) => {
+          const sg = grp(g, 1);
+          sg.style.transformBox = "fill-box"; sg.style.transformOrigin = "0% 50%"; sg.style.transform = "scaleX(0)";
+          sg.style.transition = "transform 0.6s ease, opacity 0.3s";
+          rect(sg, x + 2, Y[row], w * U - 4, H, { rx: 10, fill: PCOL[i % 5], stroke: C.purple, sw: 3 });
+          txt(sg, x + w * U / 2, Y[row] + 29, lab, { size: 18, weight: 700, fill: C.ink, anchor: "middle" });
+          txt(sg, x + w * U / 2, Y[row] + 50, String(w), { size: 17, mono: true, weight: 700, fill: C.purple, anchor: "middle" });
+          r.seg[row].push(sg);
+          x += w * U;
+        });
+      });
+      r.idle = grp(g, 0); r.idle.style.transition = "opacity 0.5s";
+      rect(r.idle, X0 + 5 * U + 2, Y.add, 2 * U - 4, H, { rx: 10, fill: C.t3, stroke: C.grey, sw: 3, dash: "7 5" });
+      txt(r.idle, X0 + 6 * U, Y.add + 29, "idle", { size: 18, weight: 700, fill: C.grey, anchor: "middle" });
+      txt(r.idle, X0 + 6 * U, Y.add + 50, "2", { size: 17, mono: true, weight: 700, fill: C.grey, anchor: "middle" });
+      r.clock = grp(g, 0); r.clock.style.transition = "opacity 0.5s";
+      ln(r.clock, X0 + 7 * U, 62, X0 + 7 * U, 334, { stroke: C.red, sw: 4, dash: "9 6" });
+      txt(r.clock, X0 + 7 * U + 12, 80, "the clock ticks here:", { size: 15, weight: 700, fill: C.red });
+      txt(r.clock, X0 + 7 * U + 12, 100, "welded at 7", { size: 15, weight: 700, fill: C.red });
+      r.br = grp(g, 1);
+      return r;
+    },
+    render(s, r) {
+      ["lw", "add"].forEach((row) => {
+        const n = s[row] || 0;
+        r.seg[row].forEach((sg, i) => { sg.style.transitionDelay = (i < n ? 0.12 * (i % 5) : 0) + "s"; sg.style.transform = i < n ? "scaleX(1)" : "scaleX(0)"; });
+      });
+      vis(r.idle, !!s.idle); vis(r.clock, !!s.clock);
+      while (r.br.firstChild) r.br.removeChild(r.br.firstChild);
+      (s.braces || []).forEach(([row, units, label, col]) => {
+        const x0 = r.X0 + 2, x1 = r.X0 + units * r.U - 2, y = r.Y[row] + r.H + 10;
+        path(r.br, "M" + x0 + " " + (y - 2) + " L" + x0 + " " + (y + 8) + " L" + x1 + " " + (y + 8) + " L" + x1 + " " + (y - 2), { stroke: col || C.red, sw: 4 });
+        txt(r.br, (x0 + x1) / 2, y + 34, label, { size: 20, weight: 700, fill: col || C.red, anchor: "middle" });
+      });
+    },
+  };
+  // slicing an instruction into short cycles: single-cycle against multicycle on one time axis (0 to 10 units)
+  const slSub = {
+    build(g) {
+      const r = { A: [], B: [], C: [] };
+      const X0 = 200, U = 86, YA = 54, YB = 134, YC = 232, H = 52;
+      r.X0 = X0; r.U = U; r.Y = { A: YA, B: YB, C: YC }; r.H = H;
+      for (let k = 0; k <= 10; k++) {
+        ln(g, X0 + k * U, 50, X0 + k * U, 322, { stroke: C.lgrey, sw: 1 });
+        txt(g, X0 + k * U, 344, String(k), { size: 14, mono: true, fill: C.grey, anchor: "middle" });
+      }
+      txt(g, X0 + 5 * U, 372, "TIME UNITS", { size: 13, weight: 700, fill: C.grey, ls: 2, anchor: "middle" });
+      r.lab = {};
+      [["A", YA, "single-cycle"], ["B", YB, "multicycle add"], ["C", YC, "multicycle lw"]].forEach(([k, y, lab]) => {
+        r.lab[k] = txt(g, 28, y + 34, lab, { size: 18, weight: 700, fill: C.purple });
+        r.lab[k].style.transition = "opacity 0.4s";
+      });
+      const grow = (el, ms) => { el.style.transformBox = "fill-box"; el.style.transformOrigin = "0% 50%"; el.style.transform = "scaleX(0)"; el.style.transition = "transform " + ms + "ms ease, opacity 0.4s"; return el; };
+      r.grow = grow;
+      // row A: lw cut into its five natural steps, then a solid 7-unit cycle
+      r.Aseg = [];
+      let x = X0;
+      [["fetch", 2], ["decode", 1], ["ALU", 1], ["memory", 2], ["write", 1]].forEach(([l, w], i) => {
+        const sg = grow(grp(g, 1), 600);
+        const rc = rect(sg, x + 2, YA, w * U - 4, H, { rx: 10, fill: PCOL[i % 5], stroke: C.purple, sw: 3 });
+        txt(sg, x + w * U / 2, YA + 24, l, { size: 16, weight: 700, fill: C.ink, anchor: "middle" });
+        txt(sg, x + w * U / 2, YA + 45, String(w), { size: 16, mono: true, weight: 700, fill: C.purple, anchor: "middle" });
+        r.Aseg.push({ sg, rc }); x += w * U;
+      });
+      r.Asolid = grow(grp(g, 1), 600);
+      rect(r.Asolid, X0 + 2, YA, 7 * U - 4, H, { rx: 10, fill: C.t1, stroke: C.purple, sw: 3 });
+      txt(r.Asolid, X0 + 3.5 * U, YA + 24, "one long cycle", { size: 17, weight: 700, fill: C.ink, anchor: "middle" });
+      txt(r.Asolid, X0 + 3.5 * U, YA + 45, "7", { size: 16, mono: true, weight: 700, fill: C.purple, anchor: "middle" });
+      // rows B and C: five 2-unit cycles
+      ["B", "C"].forEach((k) => {
+        const y = k === "B" ? YB : YC;
+        ["IF", "ID", "EX", "MEM", "WB"].forEach((l, i) => {
+          const sg = grow(grp(g, 1), 450);
+          const rc = rect(sg, X0 + i * 2 * U + 2, y, 2 * U - 4, H, { rx: 10, fill: PCOL[i % 5], stroke: C.purple, sw: 3 });
+          txt(sg, X0 + (i * 2 + 1) * U, y + 24, l, { size: 18, weight: 700, fill: C.ink, anchor: "middle" });
+          txt(sg, X0 + (i * 2 + 1) * U, y + 45, "2", { size: 16, mono: true, weight: 700, fill: C.purple, anchor: "middle" });
+          r[k].push({ sg, rc });
+        });
+      });
+      r.line = grp(g, 0); r.line.style.transition = "opacity 0.5s";
+      ln(r.line, X0 + 7 * U, 46, X0 + 7 * U, 326, { stroke: C.red, sw: 4, dash: "9 6" });
+      txt(r.line, X0 + 7 * U + 10, 62, "single-cycle: 7", { size: 15, weight: 700, fill: C.red });
+      r.mg = grp(g, 1);
+      return r;
+    },
+    render(s, r) {
+      const aMode = s.a || 0;   // 0 hidden, 1 five steps, 2 solid
+      r.Aseg.forEach((q, i) => { q.sg.style.transitionDelay = aMode === 1 ? 0.1 * i + "s" : "0s"; q.sg.style.transform = aMode === 1 ? "scaleX(1)" : "scaleX(0)"; q.rc.setAttribute("stroke", s.slow && i === 3 ? C.red : C.purple); q.rc.setAttribute("stroke-width", s.slow && i === 3 ? 6 : 3); });
+      r.Asolid.style.transform = aMode === 2 ? "scaleX(1)" : "scaleX(0)";
+      ["B", "C"].forEach((k) => {
+        const n = k === "B" ? (s.b || 0) : (s.c || 0);
+        r[k].forEach((q, i) => { q.sg.style.transitionDelay = n ? 0.12 * i + "s" : "0s"; q.sg.style.transform = i < n ? "scaleX(1)" : "scaleX(0)"; q.rc.setAttribute("stroke", s.hot === k && i === 0 ? C.red : C.purple); q.rc.setAttribute("stroke-width", s.hot === k && i === 0 ? 6 : 3); });
+      });
+      r.lab.A.style.opacity = aMode ? 1 : 0; r.lab.B.style.opacity = s.b ? 1 : 0; r.lab.C.style.opacity = s.c ? 1 : 0;
+      vis(r.line, !!s.line);
+      while (r.mg.firstChild) r.mg.removeChild(r.mg.firstChild);
+      (s.braces || []).forEach(([row, from, to, label, col]) => {
+        const y = r.Y[row] + r.H + 10, x0 = r.X0 + from * r.U + 2, x1 = r.X0 + to * r.U - 2;
+        path(r.mg, "M" + x0 + " " + (y - 2) + " L" + x0 + " " + (y + 8) + " L" + x1 + " " + (y + 8) + " L" + x1 + " " + (y - 2), { stroke: col || C.red, sw: 4 });
+        txt(r.mg, (x0 + x1) / 2, y + 30, label, { size: 19, weight: 700, fill: col || C.red, anchor: "middle" });
+      });
+      (s.chips || []).forEach((c, i) => {
+        const x = 200 + i * 400;
+        rect(r.mg, x, 262, 380, 46, { rx: 12, fill: "#e4f3e1", stroke: "#2e7d32", sw: 3 });
+        txt(r.mg, x + 190, 292, c, { size: 18, weight: 700, fill: "#2e7d32", anchor: "middle" });
+      });
+    },
+  };
+  // one memory, one ALU: which unit is busy in which cycle. view single: the clash; view multi: the grid fills in
+  const rsSub = {
+    build(g) {
+      const r = { cells: [] };
+      const X0 = 230, CW = 150, Y0 = 70, RH = 78;
+      r.single = grp(g, 0); r.single.style.transition = "opacity 0.5s";
+      rect(r.single, 180, 40, 790, 300, { rx: 18, fill: C.white, stroke: C.purple, sw: 4 });
+      txt(r.single, 575, 74, "ONE CLOCK CYCLE", { size: 14, weight: 700, fill: C.grey, ls: 2, anchor: "middle" });
+      [[240, "fetch the instruction", "needs the memory"], [610, "a lw's data access", "needs the memory"]].forEach(([x, a, b]) => {
+        rect(r.single, x, 110, 300, 100, { rx: 14, fill: C.t1, stroke: C.red, sw: 5 });
+        txt(r.single, x + 150, 150, a, { size: 20, weight: 700, fill: C.ink, anchor: "middle" });
+        txt(r.single, x + 150, 182, b, { size: 17, fill: C.red, weight: 700, anchor: "middle" });
+      });
+      txt(r.single, 575, 262, "same cycle, same memory:", { size: 20, weight: 700, fill: C.red, anchor: "middle" });
+      txt(r.single, 575, 292, "two memories (or double ports)", { size: 20, weight: 700, fill: C.red, anchor: "middle" });
+      r.multi = grp(g, 0); r.multi.style.transition = "opacity 0.5s";
+      ["IF", "ID", "EX", "MEM", "WB"].forEach((l, i) => {
+        rect(r.multi, X0 + i * CW, 20, CW - 8, 34, { fill: C.purple });
+        txt(r.multi, X0 + i * CW + CW / 2 - 4, 43, "cycle " + (i + 1) + " " + l, { size: 14, weight: 700, fill: C.white, anchor: "middle" });
+      });
+      const use = { Memory: [0, 3], "Register file": [1, 4], ALU: [2] };
+      Object.keys(use).forEach((u, k) => {
+        const y = Y0 + k * RH - 8;
+        txt(r.multi, 20, y + 42, u, { size: 19, weight: 700, fill: C.purple });
+        rect(r.multi, X0, y, 5 * CW - 8, RH - 16, { rx: 8, fill: C.white, stroke: "#d6c2ea", sw: 2 });
+        use[u].forEach((c) => {
+          const sg = grp(r.multi, 1);
+          sg.style.transformBox = "fill-box"; sg.style.transformOrigin = "0% 50%"; sg.style.transform = "scaleX(0)"; sg.style.transition = "transform 0.5s ease";
+          rect(sg, X0 + c * CW + 4, y + 4, CW - 16, RH - 24, { rx: 8, fill: PCOL[c], stroke: C.purple, sw: 3 });
+          txt(sg, X0 + c * CW + CW / 2 - 4, y + 38, ["fetch", "decode", "execute", "data access", "write back"][c], { size: 15, weight: 700, fill: C.ink, anchor: "middle" });
+          r.cells.push({ sg, u: k, c });
+        });
+      });
+      r.note = txt(r.multi, 575, 330, "", { size: 21, weight: 700, fill: C.red, anchor: "middle" });
+      return r;
+    },
+    render(s, r) {
+      vis(r.single, s.view === "single"); vis(r.multi, s.view === "multi");
+      r.cells.forEach((q, i) => { q.sg.style.transitionDelay = 0.15 * q.c + "s"; q.sg.style.transform = s.view === "multi" ? "scaleX(1)" : "scaleX(0)"; });
+      r.note.textContent = s.note || "";
+    },
+  };
+  // overlap: three instructions, each one starting before the last has finished
+  const ovSub = {
+    build(g) {
+      const r = { rows: [] };
+      const X0 = 200, CW = 100, Y0 = 70, RH = 64;
+      for (let c = 0; c < 7; c++) txt(g, X0 + c * CW + CW / 2, 50, "cycle " + (c + 1), { size: 14, mono: true, fill: C.grey, anchor: "middle" });
+      for (let i = 0; i < 3; i++) {
+        const gg = grp(g, 0); gg.style.transition = "opacity 0.5s";
+        txt(gg, 30, Y0 + i * RH + 38, "instruction " + (i + 1), { size: 18, weight: 700, fill: C.purple });
+        ["IF", "ID", "EX", "MEM", "WB"].forEach((l, k) => {
+          const x = X0 + (i + k) * CW;
+          rect(gg, x + 3, Y0 + i * RH, CW - 6, RH - 12, { rx: 10, fill: PCOL[k], stroke: C.purple, sw: 3 });
+          txt(gg, x + CW / 2, Y0 + i * RH + 32, l, { size: 18, weight: 700, fill: C.ink, anchor: "middle" });
+        });
+        r.rows.push(gg);
+      }
+      r.note = grp(g, 0); r.note.style.transition = "opacity 0.5s";
+      txt(r.note, 575, 330, "instruction 2 starts in cycle 2, long before instruction 1 is done", { size: 21, weight: 700, fill: C.red, anchor: "middle" });
+      return r;
+    },
+    render(s, r) { r.rows.forEach((gg, i) => { gg.style.opacity = i < (s.n || 0) ? 1 : 0; }); vis(r.note, !!s.n); },
+  };
+  // the five stages as boxes: the active one lights up and a value is handed to the next
+  const ST5 = {
+    add: { banner: "add $3, $1, $2        $1 = 5     $2 = 9     pc = 10",
+      does: [["read memory", "at the pc"], ["read the two", "registers it names"], ["the ALU adds", "the two values"], ["nothing to do", "for an add"], ["save the result,", "move the pc on"]],
+      out: ["add $3,$1,$2", "5 and 9", "14", "(unused)", "$3 = 14, pc = 11"], tok: ["", "the add", "5 and 9", "14", "14"], unused: 3 },
+    lw: { banner: "lw $1, 0($2)        $2 = 100     M[100] = 7     pc = 10",
+      does: [["read memory", "at the pc"], ["read the register", "that holds the base"], ["the ALU adds base", "and the offset 0"], ["read memory", "at that address"], ["save the value,", "move the pc on"]],
+      out: ["lw $1,0($2)", "100", "address 100", "7", "$1 = 7, pc = 11"], tok: ["", "the lw", "100", "address 100", "7"], unused: -1 },
+  };
+  const st5Sub = {
+    build(g) {
+      const r = { boxes: [], arrows: [] };
+      const X0 = 52, W = 190, GAP = 24, Y = 78, H = 214;
+      r.ban = txt(g, 575, 40, "", { size: 22, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+      PSTAGES.forEach((nmz, i) => {
+        const x = X0 + i * (W + GAP);
+        const bg = grp(g, 1);
+        const rc = rect(bg, x, Y, W, H, { rx: 16, fill: C.white, stroke: C.purple, sw: 3 });
+        const nm2 = txt(bg, x + W / 2, Y + 40, nmz, { size: 30, weight: 700, fill: C.purple, anchor: "middle" });
+        const un = txt(bg, x + W / 2, Y + 62, PUNITS[i], { size: 14, italic: true, fill: C.grey, anchor: "middle" });
+        const d1 = txt(bg, x + W / 2, Y + 100, "", { size: 16, fill: C.ink, anchor: "middle" });
+        const d2 = txt(bg, x + W / 2, Y + 121, "", { size: 16, fill: C.ink, anchor: "middle" });
+        const ob = rect(bg, x + 12, Y + 148, W - 24, 52, { rx: 10, fill: C.t1, stroke: C.purple, sw: 2 });
+        const ot = txt(bg, x + W / 2, Y + 181, "", { size: 16, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+        bg.style.transition = "opacity 0.4s";
+        r.boxes.push({ bg, rc, d1, d2, ob, ot, x, W, Y, H });
+        if (i < 4) { const a = grp(g, 0); a.style.transition = "opacity 0.4s"; path(a, "M" + (x + W + 2) + " " + (Y + 110) + " L" + (x + W + GAP - 4) + " " + (Y + 110), { stroke: C.red, sw: 4 }); arrowhead(a, x + W + GAP - 2, Y + 110, "r", C.red); r.arrows.push(a); }
+      });
+      r.tok = E("g", { class: "mv" }, g); r.tok.style.opacity = 0;
+      r.tokr = rect(r.tok, -58, -17, 116, 34, { rx: 17, fill: C.red, stroke: C.white, sw: 3 });
+      r.tokt = txt(r.tok, 0, 6, "", { size: 15, weight: 700, mono: true, fill: C.white, anchor: "middle" });
+      r.note = txt(g, 575, 336, "", { size: 21, weight: 700, fill: C.red, anchor: "middle" });
+      return r;
+    },
+    render(s, r) {
+      const P = ST5[s.prog], n = s.n || 0, act = s.act !== undefined ? s.act : n - 1;
+      r.ban.textContent = P.banner;
+      r.boxes.forEach((b, i) => {
+        const on = i < n, hot = i === act;
+        b.rc.setAttribute("stroke", hot ? C.red : (on ? C.purple : C.lgrey));
+        b.rc.setAttribute("stroke-width", hot ? 6 : 3);
+        b.rc.setAttribute("fill", hot ? C.t2 : (on ? C.white : "#f6f1fa"));
+        b.rc.setAttribute("stroke-dasharray", on ? "" : "8 6");
+        const un = P.unused === i;
+        b.d1.textContent = on ? P.does[i][0] : ""; b.d2.textContent = on ? P.does[i][1] : "";
+        b.ob.style.opacity = on ? 1 : 0; b.ot.style.opacity = on ? 1 : 0;
+        b.ot.textContent = P.out[i];
+        b.ob.setAttribute("fill", un ? C.t3 : C.t1); b.ob.setAttribute("stroke", un ? C.grey : C.purple);
+        b.ot.setAttribute("fill", un ? C.grey : C.ink);
+        b.ot.setAttribute("font-size", P.out[i].length > 14 ? 13 : 16);
+      });
+      r.arrows.forEach((a, i) => vis(a, i < n - 1));
+      if (n >= 2 && s.act === undefined) {
+        const k = n - 1, b0 = r.boxes[k - 1];
+        r.tok.style.transform = "translate(" + (b0.x + b0.W + 12) + "px, " + (b0.Y - 16) + "px)";
+        r.tokt.textContent = P.tok[k]; r.tok.style.opacity = 1;
+        r.tokr.setAttribute("width", Math.max(70, P.tok[k].length * 10 + 24)); r.tokr.setAttribute("x", -Math.max(70, P.tok[k].length * 10 + 24) / 2);
+      } else r.tok.style.opacity = 0;
+      r.note.textContent = s.note || "";
+    },
+  };
+  // the three register slots after the opcode, and what each instruction uses them for
+  const fieldsSub = {
+    build(g) {
+      const r = { rows: [] };
+      const X0 = 210, FW = 190, rowsDef = [
+        { y: 70, ins: "add $3, $1, $2", f: ["$1", "$2", "$3"], role: ["first input", "second input", "destination"] },
+        { y: 210, ins: "lw $1, 0($2)", f: ["$2", "$1", "offset 0"], role: ["the address", "destination", "the immediate"] }];
+      ["opcode", "reg1", "reg2", "reg3 / immediate"].forEach((h, i) => txt(g, X0 + i * FW + FW / 2 - 6, 40, h, { size: 15, weight: 700, mono: true, fill: C.grey, anchor: "middle" }));
+      rowsDef.forEach((R, k) => {
+        const gg = grp(g, 0); gg.style.transition = "opacity 0.5s";
+        txt(gg, 20, R.y + 40, R.ins, { size: 19, weight: 700, mono: true, fill: C.purple });
+        const op = rect(gg, X0 + 4, R.y, FW - 14, 60, { rx: 10, fill: C.t1, stroke: C.purple, sw: 3 });
+        txt(gg, X0 + FW / 2 - 6, R.y + 38, k ? "lw" : "add", { size: 22, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+        const cells = [];
+        R.f.forEach((f, i) => {
+          const x = X0 + (i + 1) * FW;
+          const rc = rect(gg, x + 4, R.y, FW - 14, 60, { rx: 10, fill: PCOL[(i + 1) % 5], stroke: C.purple, sw: 3 });
+          txt(gg, x + FW / 2 - 6, R.y + 38, f, { size: 22, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+          const dest = R.role[i] === "destination";
+          txt(gg, x + FW / 2 - 6, R.y + 84, R.role[i], { size: 17, weight: 700, fill: dest ? C.red : C.grey, anchor: "middle" });
+          cells.push({ rc, dest });
+        });
+        r.rows.push({ gg, cells });
+      });
+      r.mg = grp(g, 1);
+      return r;
+    },
+    render(s, r) {
+      r.rows.forEach((row, k) => {
+        row.gg.style.opacity = k < (s.n || 0) ? 1 : 0;
+        row.cells.forEach((c) => { c.rc.setAttribute("stroke", s.hot && c.dest ? C.red : C.purple); c.rc.setAttribute("stroke-width", s.hot && c.dest ? 6 : 3); });
+      });
+      while (r.mg.firstChild) r.mg.removeChild(r.mg.firstChild);
+      if (s.hot) {
+        txt(r.mg, 575, 340, "the destination moved from slot 3 to slot 2:", { size: 20, weight: 700, fill: C.red, anchor: "middle" });
+        txt(r.mg, 575, 368, "the hardware knows slots, not destinations", { size: 20, weight: 700, fill: C.red, anchor: "middle" });
+      }
+    },
+  };
+  // the performance equation as four big boxes: instructions x CPI x clock cycle = time
+  const eqSub = {
+    build(g) {
+      const r = { v: [] };
+      const BW = 230, X0 = 40, OPW = 50;
+      const defs = [["instructions", "how many run", C.t1], ["CPI", "cycles per instruction", "#d9e8fb"], ["clock cycle", "length of one cycle", C.t2], ["execution time", "what we want", "#e4f3e1"]];
+      defs.forEach(([l, sub, f], i) => {
+        const x = X0 + i * (BW + OPW);
+        r.v.push({ rc: rect(g, x, 100, BW, 170, { rx: 16, fill: f, stroke: C.purple, sw: 4 }), x });
+        txt(g, x + BW / 2, 140, l, { size: 24, weight: 700, fill: C.purple, anchor: "middle" });
+        txt(g, x + BW / 2, 258, sub, { size: 15, fill: C.grey, anchor: "middle" });
+        r.v[i].val = txt(g, x + BW / 2, 222, "", { size: 54, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+        if (i < 3) txt(g, x + BW + OPW / 2, 205, i < 2 ? "×" : "=", { size: 46, weight: 700, fill: C.purple, anchor: "middle" });
+      });
+      txt(g, 575, 340, "", { size: 20 });
+      r.note = txt(g, 575, 340, "", { size: 22, weight: 700, fill: C.red, anchor: "middle" });
+      return r;
+    },
+    render(s, r) {
+      r.v.forEach((b, i) => {
+        const v = (s.vals || [])[i];
+        b.val.textContent = v === undefined ? "" : v;
+        b.val.setAttribute("fill", v === "?" ? C.lgrey : C.ink);
+        b.rc.setAttribute("stroke", s.hot === i ? C.red : C.purple);
+        b.rc.setAttribute("stroke-width", s.hot === i ? 7 : 4);
+      });
+      r.note.textContent = s.note || "";
+    },
+  };
   const DELAYS = { cols: [{ h: "STEP", x: 120, w: 420, size: 22, bold: true }, { h: "TIME IT TAKES", x: 640, w: 300, mono: true, size: 22 }],
     rows: [["Read or write memory", "2 time units"], ["Read a register", "1 time unit"], ["Do one ALU operation", "1 time unit"], ["Write a register", "1 time unit"]], rh: 64, y0: 70, fs: 22 };
   const LWWALK = { cols: [{ h: "", x: 50, w: 60, mono: true, bold: true, size: 20 }, { h: "WALKING lw THROUGH THE MACHINE", x: 130, w: 700, size: 19 }, { h: "TIME", x: 900, w: 200, mono: true, size: 20 }],
@@ -535,55 +855,60 @@
 
   // ================= 1 Why One Long Cycle Isn't Enough =================
   scene(mixScene({
-    num: "1", title: "Why One Long Cycle Isn't Enough", subtitle: "A convoy goes at the speed of its slowest vehicle.",
-    chips: ["The convoy", "The numbers", "The proposal", "The speed trap", "What it buys"],
+    num: "1", title: "Why One Long Cycle Isn't Enough", subtitle: "The slowest instruction sets the clock for everybody.",
+    chips: ["The numbers", "The proposal", "The speed trap", "What it buys"],
     steps: [
-      { sub: "card", card: cd("Single-cycle is a convoy", ["a convoy travels at the speed of its slowest vehicle", "no exceptions"]), chip: 1, foot: "", narrate: "Think of a convoy of cars. A convoy travels at the speed of its slowest vehicle, no exception. Single-cycle is a convoy." },
-      { sub: "card", card: cd("The clock cycle", ["the time between two ticks of the processor's clock", "everything an instruction needs must finish inside one tick", "so: size the cycle for the worst path through the circuit"]), chip: 1, foot: "", narrate: "A <strong>clock cycle</strong> is the time between two ticks of the processor's clock, and in single-cycle everything an instruction needs has to finish inside <em>one</em> tick. Signals take real time to flow, and different instructions need different amounts of it. But the clock is a fixed interval, so: <strong>size the cycle for the worst path through the circuit.</strong> The slowest instruction sets the speed for everybody. In the E20, that instruction is <code>lw</code>." },
-      { sub: "delays", rows: 4, hl: [], chip: 2, foot: "these delays are invented", narrate: "Note: <strong>these delays are invented.</strong> They are not in the E20 manual. They're stand-ins with the right <em>shape</em>: memory is slow, the other parts are quick." },
-      { sub: "lw", rows: 6, hl: [5], chip: 2, foot: "", narrate: "Now walk <code>lw</code> through the machine. Fetch the instruction from memory: <strong>2</strong>. Decode it and read the base register: <strong>1</strong>. Push the base address through the ALU: <strong>1</strong>. Access data memory: <strong>2</strong> again. Write the loaded value into a register: <strong>1</strong>. That's 2 + 1 + 1 + 2 + 1 = <strong>7 time units</strong>, so the single-cycle clock cycle can't be a hair shorter than 7, period." },
-      { sub: "add", rows: 6, hl: [4, 5], chip: 2, foot: "", narrate: "Now compare an <code>add</code>. It fetches (2), reads <em>both</em> input registers at the same time (1), adds in the ALU (1) and writes the sum back (1): <strong>5 units</strong> of actual work. It never touches data memory. But the clock is welded at 7, so the <code>add</code> finishes at unit 5 and the whole processor, fully powered up and doing absolutely nothing, waits two units for the clock to tick. Every instruction that does less work than <code>lw</code> pays that tax, and <code>j</code> pays the most." },
-      { sub: "fig", img: "mc-time.svg", chip: 3, foot: "", narrate: "So here's the proposal. Stop sizing the clock for the whole instruction. <strong>Slice the instruction into small steps, and size the clock for the slowest <em>step</em>.</strong> Looking at our delays, the slowest single step is a memory access: 2 units. So the clock cycle drops from 7 units to a very aggressive <strong>2</strong>, and every step of an instruction gets exactly one of those short cycles." },
-      { sub: "fig", img: "mc-time.svg", chip: 4, foot: "", narrate: "Which sounds fantastic, until you do the math. Take the <code>add</code> again. We cut it into five steps, and each step gets a 2-unit cycle: 5 &times; 2 = <strong>10 units</strong>. In single-cycle the same <code>add</code> took 7. And <code>lw</code>? Also five steps of two units: 10, up from 7. <strong>Multicycle makes every single instruction slower.</strong>" },
-      { sub: "card", card: cd("What does it buy us?", ["why would anyone, on purpose, adopt a design", "that makes every instruction slower?"]), chip: 5, foot: "", narrate: "That should bother you. Why would anyone, on purpose, adopt a design that makes every instruction slower? What on earth does it buy us? Two things, and the second one is the whole point of the lecture." },
-      { sub: "card", card: cd("Reuse across time", ["fetch in cycle 1, data access in cycle 4", "they never overlap, so one memory is enough", "we're trading time for space"]), chip: 5, foot: "", narrate: "<strong>Reuse across time.</strong> In single-cycle the instruction fetch and a <code>lw</code>'s data access both need the memory <em>at the same time</em>. That takes a memory with two sets of ports, or two memories. Chop the instruction into steps and the two accesses land in different cycles. They never overlap, so <strong>one memory is enough</strong>. Same economy for the ALU and the adders: now the ALU compares in one cycle and the PC adder finds the target in a later one. We're trading <em>time</em> for <em>space</em>." },
-      { sub: "card", card: cd("Separation", ["five independent, standardised steps", "the next instruction needn't wait for all five", "that's pipelining (Section 7)"]), chip: 5, foot: "", narrate: "<strong>Separation.</strong> Once an instruction's work is cut into five independent standardised steps, nothing says the next instruction has to wait for all five of them to finish before it starts. That's <strong>pipelining</strong>, and it's where the speed-up finally shows up (Section 8)." },
-      { sub: "card", card: cd("Multicycle is not a speed-up", ["a restructuring that slows each instruction down", "so the hardware can be reused", "and so we can overlap instructions later"]), chip: 5, foot: "", narrate: "So let's say it plainly: <strong>multicycle is not a speed-up.</strong> It's a restructuring that slows each instruction down so the hardware can be reused, and so we can overlap instructions later." },
+      { sub: "delays", rows: 4, hl: [], chip: 1, foot: "these delays are invented", narrate: "Note: <strong>these delays are invented.</strong> They are not in the E20 manual. They're stand-ins with the right <em>shape</em>: memory is slow, the other parts are quick." },
+      { sub: "tl", lw: 4, braces: [["lw", 6, "6 units so far", null]], chip: 1, foot: "", narrate: "Now walk <code>lw</code> through the machine. Fetch the instruction from memory: <strong>2</strong>. Decode it and read the base register: <strong>1</strong>. Push the base address through the ALU: <strong>1</strong>. Access data memory: <strong>2</strong> again." },
+      { sub: "tl", lw: 5, clock: true, braces: [["lw", 7, "7 time units: the clock cannot be shorter", null]], chip: 1, foot: "", narrate: "Write the loaded value into a register: <strong>1</strong>. That's 2 + 1 + 1 + 2 + 1 = <strong>7 time units</strong>, so the single-cycle clock cycle can't be a hair shorter than 7, period." },
+      { sub: "tl", lw: 5, add: 4, clock: true, braces: [["add", 5, "5 units of actual work", "#5b2d90"]], chip: 1, foot: "", narrate: "Now compare an <code>add</code>. It fetches (2), reads <em>both</em> input registers at the same time (1), adds in the ALU (1) and writes the sum back (1): <strong>5 units</strong> of actual work. It never touches data memory." },
+      { sub: "tl", lw: 5, add: 4, idle: true, clock: true, braces: [["add", 7, "finishes at 5, then waits for the tick", null]], chip: 1, foot: "", narrate: "But the clock is welded at 7, so the <code>add</code> finishes at unit 5 and the whole processor, fully powered up and doing absolutely nothing, waits two units for the clock to tick. Every instruction that does less work than <code>lw</code> pays that tax, and <code>j</code> pays the most." },
+      { sub: "sl", a: 1, slow: true, braces: [["A", 4, 6, "slowest step: memory, 2 units", null]], chip: 2, foot: "", narrate: "So here's the proposal. Stop sizing the clock for the whole instruction. <strong>Slice the instruction into small steps, and size the clock for the slowest <em>step</em>.</strong> Looking at our delays, the slowest single step is a memory access: 2 units." },
+      { sub: "sl", a: 1, b: 5, hot: "B", braces: [["B", 0, 2, "clock cycle: 2", null]], chip: 2, foot: "", narrate: "So the clock cycle drops from 7 units to a very aggressive <strong>2</strong>, and every step of an instruction gets exactly one of those short cycles." },
+      { sub: "sl", a: 2, b: 5, line: true, braces: [["B", 0, 10, "5 steps x 2 = 10 units", null]], chip: 3, foot: "", narrate: "Which sounds fantastic, until you do the math. Take the <code>add</code> again. We cut it into five steps, and each step gets a 2-unit cycle: 5 &times; 2 = <strong>10 units</strong>." },
+      { sub: "sl", a: 2, b: 5, c: 5, line: true, braces: [["B", 0, 10, "add: 10, up from 7", null], ["C", 0, 10, "lw: 10, up from 7", null]], chip: 3, foot: "", narrate: "In single-cycle the same <code>add</code> took 7. And <code>lw</code>? Also five steps of two units: 10, up from 7. <strong>Multicycle makes every single instruction slower.</strong>" },
+      { sub: "card", card: cd("What does it buy us?", ["why would anyone, on purpose, adopt a design", "that makes every instruction slower?"]), chip: 4, foot: "", narrate: "That should bother you. Why would anyone, on purpose, adopt a design that makes every instruction slower? What on earth does it buy us? Two things, and the second one is the whole point of the lecture." },
+      { sub: "rs", view: "single", chip: 4, foot: "", narrate: "<strong>Reuse across time.</strong> In single-cycle the instruction fetch and a <code>lw</code>'s data access both need the memory <em>at the same time</em>. That takes a memory with two sets of ports, or two memories. Chop the instruction into steps and the two accesses land in different cycles." },
+      { sub: "rs", view: "multi", note: "one memory, one ALU: each busy in different cycles", chip: 4, foot: "", narrate: "They never overlap, so <strong>one memory is enough</strong>. Same economy for the ALU and the adders: now the ALU compares in one cycle and the PC adder finds the target in a later one. We're trading <em>time</em> for <em>space</em>." },
+      { sub: "ov", n: 3, chip: 4, foot: "", narrate: "<strong>Separation.</strong> Once an instruction's work is cut into five independent standardised steps, nothing says the next instruction has to wait for all five of them to finish before it starts. That's <strong>pipelining</strong>, and it's where the speed-up finally shows up (Section 8)." },
+      { sub: "sl", a: 2, b: 5, line: true, braces: [["B", 0, 10, "slower: 10 against 7", null]], chips: ["hardware can be reused", "instructions can overlap later"], chip: 4, foot: "", narrate: "So let's say it plainly: <strong>multicycle is not a speed-up.</strong> It's a restructuring that slows each instruction down so the hardware can be reused, and so we can overlap instructions later." },
     ],
-  }, { card: cardSub, delays: tb(DELAYS), lw: tb(LWWALK), add: tb(ADDWALK), fig: fg(["mc-time.svg"]) }));
+  }, { card: cardSub, delays: tb(DELAYS), tl: tlSub, sl: slSub, rs: rsSub, ov: ovSub, fig: fg(["mc-time.svg"]) }));
 
   // ================= 2 Five Stages, Followed on Real Instructions =================
   scene(mixScene({
     num: "2", title: "Five Stages, Followed on Real Instructions", subtitle: "To cut an instruction into steps, we first agree on what the steps are.",
     chips: ["An add", "The five names", "An lw", "Register fields"],
     steps: [
-      { sub: "card", card: cd("add $3, $1, $2", ["$1 = 5      $2 = 9      pc = 10"], true), chip: 1, foot: "", narrate: "To cut an instruction into steps, we need to agree on what the steps are. Take <code>add $3, $1, $2</code>. Let's say <code>$1</code> holds 5, <code>$2</code> holds 9, and the program counter holds 10. The steps this instruction takes are the following." },
-      { sub: "add", rows: 1, hl: [0], chip: 1, foot: "", narrate: "<strong>Find it.</strong> Before any math, look at the <code>pc</code>, go to memory address 10, and pull out the 16-bit instruction. We call this <strong>instruction fetch</strong>, or <code>IF</code>." },
-      { sub: "add", rows: 2, hl: [1], chip: 1, foot: "", narrate: "<strong>Understand it.</strong> Read the bits: it's an <code>add</code>. Chop the instruction into its fields and read the two registers it names: <code>$1</code> gives 5, <code>$2</code> gives 9. This is <strong>instruction decode</strong>, <code>ID</code>." },
-      { sub: "add", rows: 3, hl: [2], chip: 1, foot: "", narrate: "<strong>Math it.</strong> Send 5 and 9 through the ALU. Out comes 14. This is <strong>execute</strong>, <code>EX</code>." },
-      { sub: "add", rows: 4, hl: [3], chip: 1, foot: "", narrate: "<strong>Touch data.</strong> Does an <code>add</code> need data memory? Nope, everything it needs was already in the registers. So this step does nothing. But we keep it in the timeline anyway, and it's called <strong>memory access</strong>, <code>MEM</code>. (It's going to matter later.)" },
-      { sub: "add", rows: 5, hl: [4], chip: 1, foot: "", narrate: "<strong>Save it.</strong> Write 14 into <code>$3</code>, and set the <code>pc</code> to 11 so the next instruction is the one at address 11. This is <strong>write-back</strong>, <code>WB</code>." },
-      { sub: "names", rows: 5, hl: [], chip: 2, foot: "every instruction passes through all five, in this order", narrate: "<code>IF</code>, <code>ID</code>, <code>EX</code>, <code>MEM</code>, <code>WB</code>. Five phases make up the life of an instruction, and every instruction goes through the same five, in the same order. Let's prove it with a different one." },
-      { sub: "card", card: cd("lw $1, 0($2)", ["$2 = 100      M[100] = 7      pc = 10"], true), chip: 3, foot: "", narrate: "Let's prove it with a different one: <code>lw $1, 0($2)</code>, with <code>$2</code> holding 100, memory at address 100 holding 7, and the <code>pc</code> at 10." },
-      { sub: "lw", rows: 1, hl: [0], chip: 3, foot: "", narrate: "<code>IF</code>: read memory at address 10, and get the <code>lw</code>." },
-      { sub: "lw", rows: 2, hl: [1], chip: 3, foot: "", narrate: "<code>ID</code>: read the register that holds the base address, <code>$2</code>, and get 100." },
-      { sub: "lw", rows: 3, hl: [2], chip: 3, foot: "", narrate: "<code>EX</code>: the ALU adds the 100 and the instruction's offset, 0, and gets 100." },
-      { sub: "lw", rows: 4, hl: [3], chip: 3, foot: "", narrate: "<code>MEM</code>: this time we really use it. Send address 100 to data memory, and get 7." },
-      { sub: "lw", rows: 5, hl: [4], chip: 3, foot: "", narrate: "<code>WB</code>: write 7 into <code>$1</code>, and set the <code>pc</code> to 11." },
-      { sub: "lw", rows: 5, hl: [2], chip: 3, foot: "the ALU computed an address", narrate: "Same five stages, but look at what the ALU did in step 3. It didn't do &quot;arithmetic&quot; in the way it did for <code>add</code>. It computed an <em>address</em>. The ALU is just a part that adds two numbers, and here the two numbers happen to be a base and an offset. The stage is named after what it does for <em>this</em> instruction." },
-      { sub: "slots", rows: 5, hl: [2], chip: 4, foot: "", narrate: "<strong>A note on register fields.</strong> Every instruction has three register slots after the opcode, called <code>reg1</code>, <code>reg2</code>, <code>reg3</code> by position. The hardware knows slots, not &quot;destinations&quot;. In <code>lw</code>, the address register <code>$2</code> sits in slot 1 and the destination <code>$1</code> in slot 2: assembly order can mislead." },
+      { sub: "st5", prog: "add", n: 0, chip: 1, foot: "", narrate: "To cut an instruction into steps, we need to agree on what the steps are. Take <code>add $3, $1, $2</code>. Let's say <code>$1</code> holds 5, <code>$2</code> holds 9, and the program counter holds 10. The steps this instruction takes are the following." },
+      { sub: "st5", prog: "add", n: 1, chip: 1, foot: "", narrate: "<strong>Find it.</strong> Before any math, look at the <code>pc</code>, go to memory address 10, and pull out the 16-bit instruction. We call this <strong>instruction fetch</strong>, or <code>IF</code>." },
+      { sub: "st5", prog: "add", n: 2, chip: 1, foot: "", narrate: "<strong>Understand it.</strong> Read the bits: it's an <code>add</code>. Chop the instruction into its fields and read the two registers it names: <code>$1</code> gives 5, <code>$2</code> gives 9. This is <strong>instruction decode</strong>, <code>ID</code>." },
+      { sub: "st5", prog: "add", n: 3, chip: 1, foot: "", narrate: "<strong>Math it.</strong> Send 5 and 9 through the ALU. Out comes 14. This is <strong>execute</strong>, <code>EX</code>." },
+      { sub: "st5", prog: "add", n: 4, chip: 1, foot: "", narrate: "<strong>Touch data.</strong> Does an <code>add</code> need data memory? Nope, everything it needs was already in the registers. So this step does nothing. But we keep it in the timeline anyway, and it's called <strong>memory access</strong>, <code>MEM</code>. (It's going to matter later.)" },
+      { sub: "st5", prog: "add", n: 5, chip: 1, foot: "", narrate: "<strong>Save it.</strong> Write 14 into <code>$3</code>, and set the <code>pc</code> to 11 so the next instruction is the one at address 11. This is <strong>write-back</strong>, <code>WB</code>." },
+      { sub: "st5", prog: "add", n: 5, act: -1, note: "every instruction passes through all five, in this order", chip: 2, foot: "", narrate: "<code>IF</code>, <code>ID</code>, <code>EX</code>, <code>MEM</code>, <code>WB</code>. Five phases make up the life of an instruction, and every instruction goes through the same five, in the same order. Let's prove it with a different one." },
+      { sub: "st5", prog: "lw", n: 0, chip: 3, foot: "", narrate: "Let's prove it with a different one: <code>lw $1, 0($2)</code>, with <code>$2</code> holding 100, memory at address 100 holding 7, and the <code>pc</code> at 10." },
+      { sub: "st5", prog: "lw", n: 1, chip: 3, foot: "", narrate: "<code>IF</code>: read memory at address 10, and get the <code>lw</code>." },
+      { sub: "st5", prog: "lw", n: 2, chip: 3, foot: "", narrate: "<code>ID</code>: read the register that holds the base address, <code>$2</code>, and get 100." },
+      { sub: "st5", prog: "lw", n: 3, chip: 3, foot: "", narrate: "<code>EX</code>: the ALU adds the 100 and the instruction's offset, 0, and gets 100." },
+      { sub: "st5", prog: "lw", n: 4, chip: 3, foot: "", narrate: "<code>MEM</code>: this time we really use it. Send address 100 to data memory, and get 7." },
+      { sub: "st5", prog: "lw", n: 5, chip: 3, foot: "", narrate: "<code>WB</code>: write 7 into <code>$1</code>, and set the <code>pc</code> to 11." },
+      { sub: "st5", prog: "lw", n: 5, act: 2, note: "the ALU computed an address", chip: 3, foot: "", narrate: "Same five stages, but look at what the ALU did in step 3. It didn't do &quot;arithmetic&quot; in the way it did for <code>add</code>. It computed an <em>address</em>." },
+      { sub: "st5", prog: "lw", n: 5, act: 2, note: "the ALU computed an address", chip: 3, foot: "", narrate: "The ALU is just a part that adds two numbers, and here the two numbers happen to be a base and an offset. The stage is named after what it does for <em>this</em> instruction." },
+      { sub: "fields", n: 1, chip: 4, foot: "", narrate: "<strong>A note on register fields.</strong> Every instruction has three register slots after the opcode, called <code>reg1</code>, <code>reg2</code>, <code>reg3</code> by position. In <code>add</code> they hold the two inputs and then the destination." },
+      { sub: "fields", n: 2, hot: true, chip: 4, foot: "", narrate: "In <code>lw</code>, the address register <code>$2</code> sits in slot 1 and the destination <code>$1</code> in slot 2: assembly order can mislead. The hardware knows slots, not &quot;destinations&quot;." },
     ],
-  }, { card: cardSub, add: tb(T2.add), names: tb(T2.names), lw: tb(T2.lw), slots: tb(T2.slots) }));
+  }, { card: cardSub, st5: st5Sub, fields: fieldsSub }));
 
   // ================= 3 Five Registers: What Each Cycle Leaves Behind =================
   scene(mixScene({
-    num: "3", title: "Five Registers: What Each Cycle Leaves Behind", subtitle: "A wire only carries a value while something keeps driving it.",
+    num: "3", title: "Five Registers: What Each Cycle Leaves Behind", subtitle: "A value only stays put while something keeps holding it there.",
     chips: ["The clock ticks", "Holding pens", "A lw, by cycle", "Write-enables"],
     steps: [
-      { sub: "fig", img: "mc-stages-1-if.svg", chip: 1, foot: "", narrate: "Cycle 1, <code>IF</code>. The memory puts the instruction, say <code>add $3, $1, $2</code>, on its output wires. Nothing has copied it anywhere. It is simply there, on the wires." },
-      { sub: "fig", img: "mc-stages-1-tick.svg", chip: 1, foot: "", narrate: "Does the instruction flow straight on into <code>ID</code> during the first clock cycle? <strong>No.</strong> In single-cycle, one long chain of wires carried it all the way through. Now <code>IF</code> fills cycle 1 on its own, and <code>ID</code> is a separate cycle, on the far side of a clock tick." },
-      { sub: "fig", img: "mc-stages-1-id.svg", chip: 1, foot: "", narrate: "Cycle 2, <code>ID</code>. Across the tick, the memory is free to be asked for something else, so its output wires now carry whatever it answers. The instruction is gone, and <code>ID</code> has nothing to chop up." },
-      { sub: "fig", img: "mc-stages-1-lost.svg", chip: 1, foot: "", narrate: "A wire only holds a value while something is driving it. The same goes for the two register values read in <code>ID</code>: if nothing keeps them, <code>EX</code> has nothing to add. Single-cycle never showed us this, because everything finished before the clock ticked." },
+      { sub: "fig", img: "mc-stages-1-if.svg", chip: 1, foot: "", narrate: "Cycle 1, <code>IF</code>. The memory looks up the instruction, say <code>add $3, $1, $2</code>, and it shows up at the memory's output. Nothing has saved it anywhere: it is only there because the memory is showing it right now." },
+      { sub: "fig", img: "mc-stages-1-tick.svg", chip: 1, foot: "", narrate: "Does the instruction carry straight on into <code>ID</code> in the same cycle? <strong>No.</strong> Single-cycle had one long chain of wires; now <code>IF</code> gets cycle 1 to itself, and <code>ID</code> waits for the next cycle, across a clock tick." },
+      { sub: "fig", img: "mc-stages-1-id.svg", chip: 1, foot: "", narrate: "Cycle 2, <code>ID</code>. After the tick, the memory is already answering a different question, the next instruction, so ours has vanished from its output. <code>ID</code> has nothing left to read." },
+      { sub: "fig", img: "mc-stages-1-lost.svg", chip: 1, foot: "", narrate: "The two register values that <code>ID</code> reads have the same problem. A value only stays on a wire while something keeps putting it there, so if nothing saves them, <code>EX</code> has nothing to add. Single-cycle never showed this: everything finished before the tick." },
       { sub: "fig", img: "mc-stages-3a.svg", chip: 2, foot: "", narrate: "So after each stage we put a <strong>holding pen</strong>: a register that catches the stage's result and keeps it steady until the next stage has used it. Start with <code>IF</code>. The memory puts the instruction on its wires, and a register called <code>IR</code> (instruction register) catches it." },
       { sub: "fig", img: "mc-stages-3b.svg", chip: 2, foot: "", narrate: "After <code>ID</code> we need two pens. The register file is asked for two registers, and two registers called <code>A</code> and <code>B</code> catch the two values it returns, the registers named by <code>reg1</code> and <code>reg2</code>." },
       { sub: "fig", img: "mc-stages-3c.svg", chip: 2, foot: "", narrate: "<code>EX</code> hands two numbers to the ALU, and a register called <code>aluOut</code> catches its result: a sum, a comparison, or a memory address." },
@@ -609,10 +934,12 @@
     num: "4", title: "The State Register and the State Diagram", subtitle: "15 states, numbered 0 to 14. Each is one clock cycle.",
     chips: ["Which cycle?", "IF and ID", "EX and MEM", "WB", "Paths"],
     steps: [
-      { sub: "fig", img: "mc-hurdle-1.svg", chip: 1, foot: "", narrate: "That write-enable story hides a bigger problem, and it's the biggest conceptual hurdle of the week. In cycle 1, the memory's address has to come from the <code>pc</code> (we're fetching). In cycle 4, it has to come from <code>aluOut</code> (we're loading data)." },
-      { sub: "fig", img: "mc-hurdle-2.svg", chip: 1, foot: "", narrate: "The control module is looking at the <strong>exact same instruction</strong> in the exact same <code>IR</code> both times. A control module that's a pure truth table can't possibly give two different answers for the same input." },
-      { sub: "fig", img: "mc-hurdle-3.svg", chip: 1, foot: "", narrate: "So what extra piece of information does it need? The thing that <em>differs</em> between the two cycles is <strong>which cycle we're in</strong>. Control needs to know where in the instruction's life we are." },
-      { sub: "fig", img: "mc-stages-4.svg", chip: 1, foot: "", narrate: "That's a <strong>state</strong>, and we keep it in one more register: the <strong>state register</strong>. (Think of it as the page number of a recipe.) The control module now reads <em>two</em> inputs, the opcode and the current state, and produces <em>two</em> kinds of output: the control signals for this cycle, and the <strong>new state</strong>, stored on the next tick. It's still a lookup table, with one more column on the input side. But a lookup table that feeds its own output back into a register is a <strong>finite state machine</strong>." },
+      { sub: "fig", img: "mc-schedule.svg", chip: 1, foot: "", narrate: "Control now has a to-do list for every instruction: <code>WEir</code> in cycle 1, <code>WEa</code> and <code>WEb</code> in cycle 2, <code>WEalu</code> in cycle 3, and so on. But who keeps track of where we are in that list?" },
+      { sub: "fig", img: "mc-hurdle-1.svg", chip: 1, foot: "", narrate: "Here is why that matters. Take one <code>lw</code>. In cycle 1 the memory's address has to come from the <code>pc</code>, because we are fetching. In cycle 4 it has to come from <code>aluOut</code>, because we are loading data." },
+      { sub: "fig", img: "mc-hurdle-2.svg", chip: 1, foot: "", narrate: "Both times, the control module is looking at the <strong>exact same instruction</strong>, sitting in the same <code>IR</code>. A control module that only reads the instruction has to give the same answer twice, and it needs two different ones." },
+      { sub: "fig", img: "mc-hurdle-3.svg", chip: 1, foot: "", narrate: "So what else does it need to know? The one thing that <em>differs</em> between the two cycles is <strong>which cycle we are in</strong>. Control has to know where we are in the instruction's life." },
+      { sub: "fig", img: "mc-stages-4.svg", chip: 1, foot: "", narrate: "That is called the <strong>state</strong>, and we keep it in one more register: the <strong>state register</strong>. Think of it as the page number in a recipe." },
+      { sub: "fig", img: "mc-stages-4.svg", chip: 1, foot: "", narrate: "Control now looks at two things, the instruction and the state. It hands back two things: the signals for this cycle, and the next state. A loop like that is called a <strong>finite state machine</strong>." },
       { sub: "fig", img: "mc-states-q1.svg", chip: 2, foot: "", narrate: "So how many states do we need? The most natural answer is the one we already have: <strong>one state for each stage</strong>. Fetch is a state, decode is a state, then execute, memory and write-back: five states, one clock cycle each." },
       { sub: "fig", img: "mc-states-q2.svg", chip: 2, foot: "", narrate: "That's an easy rule to remember, so let's start there and see whether it holds up. (Spoiler: almost, and the places where it breaks are the interesting part.)" },
       { sub: "fig", img: "mc-states-q3.svg", chip: 2, foot: "", narrate: "To keep track of it, engineers draw a <strong>state diagram</strong>, which is just a flowchart of the machine's life. Each box is one state, which is one clock cycle." },
@@ -651,7 +978,7 @@
       { sub: "fig", img: "mc-path-jeq.svg", chip: 5, foot: "", narrate: "<code>jeq</code>: the ALU subtracts in state 4, and in state 11 whether <code>aluOut</code> is zero decides which way the <code>pc</code> goes. States <strong>0, 1, 4, 7, 11</strong>." },
       { sub: "fig", img: "mc-path-jr.svg", chip: 5, foot: "", narrate: "To check you can read the diagram, trace <code>jr $3</code>. In state 1, <code>A</code> gets the value of <code>$3</code>, and because <code>jr</code> has its <code>reg2</code> field set to 0, <code>B</code> gets register 0, which is always 0. State 4 computes <code>A + B</code>, which is just the value of <code>$3</code>, so <code>aluOut</code> is the target. State 7 does nothing. State 12 finishes with <code>pc &lt;- aluOut</code>." },
     ],
-  }, { card: cardSub, fig: fg(["man-lw-1.png", "man-lw-2.png", "man-lw-3.png", "man-lw-4.png", "man-lw-5.png", "mc-states-wb8.svg", "mc-states-wb9.svg", "mc-states-wb10.svg", "mc-states-wb11.svg", "mc-states-wb12.svg", "mc-states-wb13.svg", "mc-states-wb14.svg", "mc-states-mema.svg", "mc-states-memb.svg", "mc-states-memc.svg", "mc-states-memd.svg", "mc-states-exa.svg", "mc-states-ida.svg", "mc-states-idb.svg", "mc-states-h10.svg", "mc-states-h11.svg", "mc-states-h12.svg", "mc-states-h14.svg", "mc-states-h15.svg", "mc-states-h16.svg", "mc-states-h17.svg", "mc-states-h18.svg", "mc-states-h19.svg", "mc-states-h20.svg", "mc-states-h21.svg", "mc-states-h22.svg", "mc-states-q1.svg", "mc-states-q2.svg", "mc-states-q3.svg", "mc-states-q4.svg", "mc-hurdle-1.svg", "mc-hurdle-2.svg", "mc-hurdle-3.svg", "mc-stages-4.svg", "mc-states-if.svg", "mc-states-id.svg", "mc-states-ex.svg", "mc-states-mem.svg", "mc-states-wb.svg", "mc-path-lw.svg", "mc-path-jeq.svg", "mc-path-jr.svg"]), wbt: tb(WBT), paths: tb(PATHS) }));
+  }, { card: cardSub, fig: fg(["mc-schedule.svg", "man-lw-1.png", "man-lw-2.png", "man-lw-3.png", "man-lw-4.png", "man-lw-5.png", "mc-states-wb8.svg", "mc-states-wb9.svg", "mc-states-wb10.svg", "mc-states-wb11.svg", "mc-states-wb12.svg", "mc-states-wb13.svg", "mc-states-wb14.svg", "mc-states-mema.svg", "mc-states-memb.svg", "mc-states-memc.svg", "mc-states-memd.svg", "mc-states-exa.svg", "mc-states-ida.svg", "mc-states-idb.svg", "mc-states-h10.svg", "mc-states-h11.svg", "mc-states-h12.svg", "mc-states-h14.svg", "mc-states-h15.svg", "mc-states-h16.svg", "mc-states-h17.svg", "mc-states-h18.svg", "mc-states-h19.svg", "mc-states-h20.svg", "mc-states-h21.svg", "mc-states-h22.svg", "mc-states-q1.svg", "mc-states-q2.svg", "mc-states-q3.svg", "mc-states-q4.svg", "mc-hurdle-1.svg", "mc-hurdle-2.svg", "mc-hurdle-3.svg", "mc-stages-4.svg", "mc-states-if.svg", "mc-states-id.svg", "mc-states-ex.svg", "mc-states-mem.svg", "mc-states-wb.svg", "mc-path-lw.svg", "mc-path-jeq.svg", "mc-path-jr.svg"]), wbt: tb(WBT), paths: tb(PATHS) }));
 
   // ----- 5 A Sample Question, Solved -----
   const RETCMP = { cols: [{ h: "SIGNAL", x: 60, w: 460, mono: true, bold: true, size: 20 }, { h: "STATE 1", x: 560, w: 260, mono: true, size: 20 }, { h: "NEW STATE (for ret)", x: 850, w: 280, mono: true, size: 20 }],
@@ -687,12 +1014,13 @@
     num: "6", title: "What Multicycle Bought and Cost", subtitle: "Execution time = instructions x CPI x clock cycle length.",
     chips: ["The receipt", "Single-cycle", "Multicycle", "The tease"],
     steps: [
-      { sub: "card", card: cd("Execution time", ["= number of instructions x CPI x clock cycle length", "CPI: cycles per instruction, the average number of clock cycles one instruction takes"]), chip: 1, foot: "", narrate: "Performance has three factors, and every design trades them against each other: <strong>execution time = number of instructions &times; CPI &times; clock cycle length</strong>, where <strong>CPI</strong> (cycles per instruction) is the average number of clock cycles one instruction takes. Let's run a program of 1000 instructions with the time units from Section 1." },
+      { sub: "eq", vals: ["", "", "", ""], chip: 1, foot: "", narrate: "Performance has three factors, and every design trades them against each other: <strong>execution time = number of instructions &times; CPI &times; clock cycle length</strong>, where <strong>CPI</strong> (cycles per instruction) is the average number of clock cycles one instruction takes." },
+      { sub: "eq", vals: ["1000", "?", "?", "?"], hot: 0, note: "CPI = the average number of clock cycles one instruction takes", chip: 1, foot: "", narrate: "Let's run a program of 1000 instructions with the time units from Section 1." },
       { sub: "perf", rows: 1, hl: [0], chip: 2, foot: "", narrate: "Single-cycle: 1000 &times; 1 &times; 7 = <strong>7000</strong>." },
       { sub: "perf", rows: 2, hl: [1], chip: 3, foot: "", narrate: "Multicycle: we shrank the clock to 2, but the CPI jumped to 5, so 1000 &times; 5 &times; 2 = <strong>10 000</strong>. We said it back in Section 1, but here it is on paper: <strong>10 000 is worse than 7000.</strong> Multicycle is definitively slower. (Although caveat: these are illustrative numbers. Real stages are rarely perfectly balanced, and balancing them is the first thing a processor designer works on.)" },
       { sub: "perf", rows: 3, hl: [2], chip: 4, foot: "", narrate: "So was the whole exercise pointless? Not even close, and here's the one-sentence version of why: <strong>pipelining keeps the short clock cycle <em>and</em> overlaps instructions, bringing the CPI back down to about 1.</strong>" },
     ],
-  }, { card: cardSub, perf: tb(PERF) }));
+  }, { card: cardSub, perf: tb(PERF), eq: eqSub }));
 
   // ---- the pipeline, animated: tokens (instructions and bubbles) slide through the five stage boxes, one clock cycle per step
   const PSTAGES = ["IF", "ID", "EX", "MEM", "WB"], PUNITS = ["Memory", "Register file", "ALU", "Memory", "Register file"];
@@ -783,6 +1111,15 @@
           q.tx.setAttribute("fill", on ? C.white : C.grey);
         });
         while (r.mg.firstChild) r.mg.removeChild(r.mg.firstChild);
+        if (s.prog) {
+          // the instructions under discussion stay visible at the top, in the same colours as their tokens
+          s.prog.forEach((l, i) => {
+            const x = 330 + i * 330, hot = s.proghot === i;
+            rect(r.mg, x, 22, 310, 40, { rx: 10, fill: PCOL[i % 5], stroke: hot ? C.red : C.purple, sw: hot ? 5 : 3 });
+            txt(r.mg, x + 22, 49, String(i + 1), { size: 17, weight: 700, fill: C.purple, anchor: "middle" });
+            txt(r.mg, x + 44, 49, l, { size: 22, weight: 700, mono: true, fill: C.ink });
+          });
+        }
         if (s.vchip) {
           // the value in flight: sits on a stage's lower edge, or inside the stage's box when it is being used
           r.vct.textContent = s.vchip[2];
@@ -954,6 +1291,25 @@
       });
     },
   };
+  // the two instructions of the RAW example, big: the shared $1 stands out
+  const twoSub = {
+    build(g) {
+      const L = ["addi $1, $0, 1", "addi $1, $1, 1"];
+      L.forEach((l, i) => {
+        const y = 52 + i * 128;
+        rect(g, 170, y, 810, 100, { rx: 16, fill: PCOL[i], stroke: C.purple, sw: 4 });
+        const nb = grp(g, 1);
+        circ(nb, 222, y + 50, 26, { fill: C.purple });
+        txt(nb, 222, y + 59, String(i + 1), { size: 26, weight: 700, fill: C.white, anchor: "middle" });
+        const tx = E("text", { x: 280, y: y + 66, "font-size": 46, "font-weight": 700, fill: C.ink, "font-family": MONO }, g);
+        l.split(/(\$1)/).forEach((p) => { if (p) { const sp = E("tspan", { fill: p === "$1" ? C.red : C.ink }, tx); sp.textContent = p; } });
+      });
+      path(g, "M575 156 L575 176", { stroke: C.purple, sw: 4 }); arrowhead(g, 575, 180, "d", C.purple);
+      txt(g, 575, 378, "back to back, and both use $1", { size: 20, weight: 700, fill: C.red, anchor: "middle" });
+      return {};
+    },
+    render() {},
+  };
   const pipeSubs = () => ({ fill: pipeSub(PIPES.fill), raw: pipeSub(PIPES.raw), stall: pipeSub(PIPES.stall), fwdex: pipeSub(PIPES.fwdex), fwdid: pipeSub(PIPES.fwdid), lwu: pipeSub(PIPES.lwu), stable: stSub });
 
   // ================= 8 Pipelining: Overlap Instead of Reuse =================
@@ -1007,14 +1363,14 @@
     num: "8", title: "Where It Breaks: The RAW Hazard", subtitle: "addi $1, $0, 1  then  addi $1, $1, 1",
     chips: ["Two instructions", "The read", "The write", "The hazard"],
     steps: [
-      { sub: "card", card: cd("Two instructions back to back", ["addi $1, $0, 1", "addi $1, $1, 1"], true), chip: 1, foot: "", narrate: "Consider two instructions back to back: <code>addi $1, $0, 1</code> and <code>addi $1, $1, 1</code>." },
-      { sub: "raw", cycle: 2, reg: 1, chip: 1, foot: "", narrate: "The first <code>addi</code> sets <code>$1</code> to 1, and the second adds 1 more, so <code>$1</code> should end up as <strong>2</strong>. For now, <code>$1</code> holds 0." },
-      { sub: "raw", cycle: 3, reg: 2, marks: [[1, "reads $1 now"]], chip: 2, foot: "", narrate: "In cycle 3 the second instruction reads <code>$1</code> in <code>ID</code>. It gets 0, because the first instruction has only just reached <code>EX</code>: the 1 isn't even computed yet. So it computes 0 + 1." },
-      { sub: "raw", cycle: 4, reg: 2, marks: [[1, "already read"], [3, "1 exists now"]], chip: 3, foot: "", narrate: "In cycle 4 the 1 finally exists, in the first instruction's <code>MEM</code> stage. But it is in a pipeline register, not in the register file, and the register file still holds 0." },
-      { sub: "raw", cycle: 5, reg: 2, marks: [[1, "read: cycle 3"], [4, "written now"]], chip: 3, foot: "", narrate: "Only in cycle 5 does <code>WB</code> write the 1 into <code>$1</code>. The read happened two cycles too early." },
-      { sub: "raw", cycle: 5, reg: 3, marks: [[1, "read: cycle 3"], [4, "written now"]], chip: 4, foot: "", narrate: "The second instruction ends up writing 1 where the program meant 2. This is a <strong>RAW hazard</strong> (&quot;read after write&quot;): an instruction reads a register before an earlier, still-in-flight instruction has finished writing it. Each instruction is correct on its own. The hazard exists only because the pipeline overlaps them." },
+      { sub: "two", chip: 1, foot: "", narrate: "Consider two instructions back to back: <code>addi $1, $0, 1</code> and <code>addi $1, $1, 1</code>." },
+      { sub: "raw", prog: ["addi $1, $0, 1", "addi $1, $1, 1"], cycle: 2, reg: 1, chip: 1, foot: "", narrate: "The first <code>addi</code> sets <code>$1</code> to 1, and the second adds 1 more, so <code>$1</code> should end up as <strong>2</strong>. For now, <code>$1</code> holds 0." },
+      { sub: "raw", prog: ["addi $1, $0, 1", "addi $1, $1, 1"], proghot: 1, cycle: 3, reg: 2, marks: [[1, "reads $1 now"]], chip: 2, foot: "", narrate: "In cycle 3 the second instruction reads <code>$1</code> in <code>ID</code>. It gets 0, because the first instruction has only just reached <code>EX</code>: the 1 isn't even computed yet. So it computes 0 + 1." },
+      { sub: "raw", prog: ["addi $1, $0, 1", "addi $1, $1, 1"], cycle: 4, reg: 2, marks: [[1, "already read"], [3, "1 exists now"]], chip: 3, foot: "", narrate: "In cycle 4 the 1 finally exists, in the first instruction's <code>MEM</code> stage. But it is in a pipeline register, not in the register file, and the register file still holds 0." },
+      { sub: "raw", prog: ["addi $1, $0, 1", "addi $1, $1, 1"], proghot: 0, cycle: 5, reg: 2, marks: [[1, "read: cycle 3"], [4, "written now"]], chip: 3, foot: "", narrate: "Only in cycle 5 does <code>WB</code> write the 1 into <code>$1</code>. The read happened two cycles too early." },
+      { sub: "raw", prog: ["addi $1, $0, 1", "addi $1, $1, 1"], cycle: 5, reg: 3, marks: [[1, "read: cycle 3"], [4, "written now"]], chip: 4, foot: "", narrate: "The second instruction ends up writing 1 where the program meant 2. This is a <strong>RAW hazard</strong> (&quot;read after write&quot;): an instruction reads a register before an earlier, still-in-flight instruction has finished writing it. Each instruction is correct on its own. The hazard exists only because the pipeline overlaps them." },
     ],
-  }, Object.assign({ card: cardSub }, pipeSubs())));
+  }, Object.assign({ card: cardSub, two: twoSub }, pipeSubs())));
 
   // ================= 10 Two Fixes: Stall, or Forward =================
   scene(mixScene({
@@ -1102,7 +1458,7 @@
     foot.textContent = asking ? "" : (s.foot || "");
     const qm = '<span class="qm">Q</span>';
     $("narration").innerHTML = asking ? '<div class="q big">' + qm + s.q + '</div>'
-      : (s.q ? '<div class="q small">' + qm + s.q + '</div>' : "") + s.narrate;
+      : (s.q ? '<div class="q small">' + qm + s.q + '</div>' : "") + ((!fullText && CAPTIONS[(sc.num === "" ? "T" : sc.num) + "." + (ti + 1)]) || s.narrate);
     $("sec-n").textContent = si - off + 1;
     $("step-n").textContent = ti + 1;
     $("step-total").textContent = sc.steps.length;
@@ -1138,6 +1494,7 @@
   }
 
   window.addEventListener("keydown", (e) => {
+    if (e.key === "n" || e.key === "N") { fullText = !fullText; render(); return; }
     const fwd = ["ArrowRight", "ArrowDown", " ", "PageDown"].includes(e.key);
     const back = ["ArrowLeft", "ArrowUp", "PageUp"].includes(e.key);
     if (!fwd && !back) return;
@@ -1148,7 +1505,212 @@
 
   window.addEventListener("hashchange", () => { readHash(); render(); });
 
-  window.DECK_STEPS = scenes.map(function (sc) { return { num: sc.num, title: sc.title, front: !!sc.front, steps: sc.steps.map(function (s) { return { narrate: s.narrate, sub: s.sub, img: s.img, card: s.card, cycle: s.cycle, rows: s.rows, hl: s.hl, marks: s.marks, arrows: s.arrows, view: s.view, mark: s.mark, danger: s.danger, chip: s.chip }; }) }; });
+  // on-slide captions: short text under the picture. The full narration stays in the speaker script; press n to show it on screen.
+  const CAPTIONS = {
+"T.1": "To build the fastest processors, we first make them <strong>slower</strong>.",
+"T.2": "Single-cycle: one cycle, as long as the slowest instruction.",
+"T.3": "A <code>j</code> finishes early, then just waits.",
+"T.4": "The second idea is built on the first.",
+"1.1": "These delays are <strong>invented</strong>. They are not in the manual.",
+"1.2": "<code>lw</code>: fetch 2, decode 1, ALU 1, memory 2.",
+"1.3": "<code>lw</code> needs <strong>7</strong> units, so the clock can't be shorter.",
+"1.4": "An <code>add</code> needs only <strong>5</strong> units: no data memory.",
+"1.5": "The clock is stuck at 7, so <code>add</code> waits <strong>2</strong> units.",
+"1.6": "Proposal: size the clock for the slowest <strong>step</strong>: 2 units.",
+"1.7": "The clock drops from 7 to <strong>2</strong>: one short cycle per step.",
+"1.8": "But an <code>add</code> is now 5 &times; 2 = <strong>10</strong> units.",
+"1.9": "10 is worse than 7: <strong>every</strong> instruction got slower.",
+"1.10": "So why would anyone do this?",
+"1.11": "<strong>Reuse across time:</strong> fetch and data access land in different cycles.",
+"1.12": "One memory, one ALU: trading <strong>time for space</strong>.",
+"1.13": "<strong>Separation:</strong> the next instruction needn't wait. That is pipelining.",
+"1.14": "Multicycle is a <strong>restructuring</strong>, not a speed-up.",
+"2.1": "Take <code>add $3, $1, $2</code> with $1 = 5, $2 = 9, pc = 10.",
+"2.2": "<strong>Find it:</strong> instruction fetch, <code>IF</code>.",
+"2.3": "<strong>Understand it:</strong> instruction decode, <code>ID</code>.",
+"2.4": "<strong>Math it:</strong> execute, <code>EX</code>. 5 + 9 = 14.",
+"2.5": "<strong>Touch data:</strong> memory access, <code>MEM</code>. Nothing to do here.",
+"2.6": "<strong>Save it:</strong> write-back, <code>WB</code>. $3 = 14, pc = 11.",
+"2.7": "Every instruction goes through all five, in this order.",
+"2.8": "Now <code>lw $1, 0($2)</code>, with $2 = 100 and M[100] = 7.",
+"2.9": "<code>IF</code>: fetch the <code>lw</code>.",
+"2.10": "<code>ID</code>: read the base register: 100.",
+"2.11": "<code>EX</code>: 100 + 0 = 100, an <strong>address</strong>.",
+"2.12": "<code>MEM</code>: read address 100, get 7.",
+"2.13": "<code>WB</code>: write 7 into $1, pc = 11.",
+"2.14": "Same five stages, but the ALU computed an <strong>address</strong>.",
+"2.15": "A stage is named for what it does for <em>this</em> instruction.",
+"2.16": "Three register slots: <code>reg1</code>, <code>reg2</code>, <code>reg3</code>.",
+"2.17": "In <code>lw</code>, the destination is slot 2, not slot 3.",
+"3.1": "Cycle 1, <code>IF</code>: the instruction is at the memory's output.",
+"3.2": "Does it flow straight into <code>ID</code>? <strong>No.</strong> A clock tick is in the way.",
+"3.3": "Cycle 2: the memory answers something else. The instruction is <strong>gone</strong>.",
+"3.4": "The registers <code>ID</code> reads have the same problem.",
+"3.5": "A <strong>holding pen</strong> after <code>IF</code>: <code>IR</code> catches the instruction.",
+"3.6": "After <code>ID</code>: <code>A</code> and <code>B</code> catch the two registers.",
+"3.7": "After <code>EX</code>: <code>aluOut</code> catches the result.",
+"3.8": "After <code>MEM</code>: <code>MDR</code> catches the loaded value.",
+"3.9": "<code>WB</code> writes the register file. Five stages, four pens.",
+"3.10": "Microarchitectural: in the machine, not in assembly.",
+"3.11": "Same <code>lw $1, 0($2)</code>: $2 = 100, M[100] = 7, old $1 = 3, pc = 10.",
+"3.12": "Cycle 1, <code>IF</code>: <code>IR</code> catches the <code>lw</code>.",
+"3.13": "Cycle 2, <code>ID</code>: A = 100, B = 3.",
+"3.14": "Cycle 3, <code>EX</code>: <code>aluOut</code> = 100.",
+"3.15": "Cycle 4, <code>MEM</code>: <code>MDR</code> = 7.",
+"3.16": "Cycle 5, <code>WB</code>: $1 = 7, pc = 11.",
+"3.17": "The corner shows which register changed.",
+"3.18": "Why did B grab the old $1? Nobody used it.",
+"3.19": "Reading both every time is <strong>cheaper</strong> than checking.",
+"3.20": "<code>IR</code> must keep the <code>lw</code> for all five cycles.",
+"3.21": "But registers grab their input every tick, and memory now outputs 7.",
+"3.22": "<code>IR</code> would catch the 7 and lose the <code>lw</code>.",
+"3.23": "The fix: a <strong>write-enable</strong>. 1 takes the value, 0 keeps the old one.",
+"3.24": "<code>WEa</code>, <code>WEb</code>, <code>WEalu</code>: only the current stage's is on.",
+"4.1": "Control's to-do list: but who tracks <strong>where we are</strong>?",
+"4.2": "Same <code>lw</code>: the address comes from <code>pc</code> in cycle 1, <code>aluOut</code> in cycle 4.",
+"4.3": "Same instruction in <code>IR</code>, two different answers needed.",
+"4.4": "So control must know <strong>which cycle</strong> we are in.",
+"4.5": "That is the <strong>state</strong>, in a new <strong>state register</strong>.",
+"4.6": "Instruction + state in; signals + next state out: a <strong>finite state machine</strong>.",
+"4.7": "First guess: one state per stage, five in all.",
+"4.8": "Let's see whether that rule holds up.",
+"4.9": "A <strong>state diagram</strong>: each box is one state, one clock cycle.",
+"4.10": "Arrows say what comes next, and for which instructions.",
+"4.11": "<strong>IF</strong>, state 0: every instruction starts here.",
+"4.12": "<strong>ID</strong>, state 1: <code>reg1</code> and <code>reg2</code> go into A and B.",
+"4.13": "Jumps name no registers: they carry a 13-bit target.",
+"4.14": "But EX wants A and B as inputs. What do we put in them?",
+"4.15": "State 2: A = 0, B = the target.",
+"4.16": "Then 0 + target passes the target through the ALU.",
+"4.17": "So there are already <strong>three</strong> states for two stages.",
+"4.18": "<strong>EX</strong>, state 3: a register plus a 7-bit immediate.",
+"4.19": "State 4: both inputs from registers: <code>A op B</code>.",
+"4.20": "<strong>MEM</strong>: <code>lw</code> reads memory, state 5.",
+"4.21": "<code>sw</code> writes memory, state 6.",
+"4.22": "Why not let <code>add</code> skip <code>MEM</code>? It would take 4 cycles.",
+"4.23": "Because different lengths would complicate control.",
+"4.24": "So <code>add</code> passes through state 7, which does <strong>nothing</strong>.",
+"4.25": "<strong>WB</strong>: one state for each kind of ending.",
+"4.26": "State 8: <code>lw</code> writes MDR into <code>reg2</code>.",
+"4.27": "State 9: <code>sw</code> only moves the pc.",
+"4.28": "State 10: <code>addi</code>, <code>slti</code> write <code>reg2</code>.",
+"4.29": "State 11: <code>jeq</code> moves the pc, maybe by imm7.",
+"4.30": "State 12: <code>j</code>, <code>jr</code>: pc = aluOut.",
+"4.31": "State 13: <code>jal</code> also writes <code>$7</code>.",
+"4.32": "State 14: <code>add</code>, <code>sub</code>... write <code>reg3</code>.",
+"4.33": "Everything leads back to state 0: 15 states in all.",
+"4.34": "Each instruction is now a <strong>path</strong> through the diagram.",
+"4.35": "Every path has five states: <code>j</code> is no faster than <code>lw</code>.",
+"4.36": "<code>lw</code>: states <strong>0, 1, 3, 5, 8</strong>.",
+"4.37": "Cycle 1, <code>IF</code> (state 0): pc to memory, instruction into <code>IR</code>.",
+"4.38": "Cycle 2, <code>ID</code> (state 1): registers into A and B.",
+"4.39": "Cycle 3, <code>EX</code> (state 3): A + imm7 into <code>aluOut</code>.",
+"4.40": "Cycle 4, <code>MEM</code> (state 5): memory read into <code>MDR</code>.",
+"4.41": "Cycle 5, <code>WB</code> (state 8): <code>MDR</code> into the register; pc + 1.",
+"4.42": "<code>jeq</code>: states <strong>0, 1, 4, 7, 11</strong>.",
+"4.43": "Trace <code>jr $3</code>: state 1 loads A = $3, B = 0.",
+"4.44": "State 4 adds, 7 waits, 12 sets the pc to the target.",
+"5.1": "The exam question: add an instruction by choosing a state for each stage.",
+"5.2": "Our instruction: <code>ret</code>, jump to the address in <code>$7</code>.",
+"5.3": "In plain words first: fetch, read <code>$7</code>...",
+"5.4": "...compute the target, no memory, write the pc.",
+"5.5": "<code>IF</code>: state 0. Nothing to decide.",
+"5.6": "<code>ID</code>: we need A = register 7. Which state?",
+"5.7": "<code>MUXr1</code> picks which register is read.",
+"5.8": "States 1 and 2 read <code>reg1</code> and the number 0. None reads 7.",
+"5.9": "So write a new state, starting from the closest one.",
+"5.10": "Only <code>MUXr1</code> differs: 1 instead of 4.",
+"5.11": "New state: state 1 with <code>MUXr1 = 1</code>.",
+"5.12": "<code>EX</code>: we want A + B, so state 4.",
+"5.13": "<code>MEM</code>: nothing to do: state 7.",
+"5.14": "<code>WB</code>: pc = aluOut, no register: state 12.",
+"5.15": "The answer: 0, new, 4, 7, 12.",
+"5.16": "Unlisted write-enable = 0. Unlisted mux = don't care.",
+"5.17": "The method: name an existing state, or adapt the closest one.",
+"5.18": "A second question: <code>jalr</code>, built from existing states only.",
+"5.19": "<code>IF</code> is always state 0.",
+"5.20": "<code>ID</code>: same as <code>jr</code>: state 1.",
+"5.21": "<code>EX</code>: state 4, A + B.",
+"5.22": "<code>MEM</code>: state 7, the empty one.",
+"5.23": "<code>WB</code>: write $7 and jump: state 13, the one <code>jal</code> uses.",
+"5.24": "Path <strong>0, 1, 4, 7, 13</strong>: a new instruction from existing states.",
+"6.1": "Time = instructions &times; <strong>CPI</strong> &times; clock cycle.",
+"6.2": "A program of 1000 instructions, with our delays.",
+"6.3": "Single-cycle: 1000 &times; 1 &times; 7 = <strong>7000</strong>.",
+"6.4": "Multicycle: 1000 &times; 5 &times; 2 = <strong>10 000</strong>.",
+"6.5": "Multicycle is slower (with these illustrative numbers).",
+"6.6": "Pipelining keeps the short clock and brings CPI back to about <strong>1</strong>.",
+"7.1": "Four loads of laundry, four 30-minute steps each.",
+"7.2": "The careful way: finish one load before the next.",
+"7.3": "4 loads &times; 4 steps &times; 30 minutes = <strong>480</strong> minutes.",
+"7.4": "The clever way: load 1 goes into the washer.",
+"7.5": "30 minutes later: load 1 to the dryer, load 2 to the washer.",
+"7.6": "Load 1 is folding, 2 is drying, 3 is washing.",
+"7.7": "Load 1 still takes 120 minutes.",
+"7.8": "The whole overlapped schedule: only 7 slots, not 16.",
+"7.9": "Load 1 needs all 4 steps: 4 slots.",
+"7.10": "Each other load finishes one slot later: 3 more.",
+"7.11": "(4 + 3) &times; 30 = <strong>210</strong> minutes, against 480.",
+"7.12": "No load got faster. Every machine is just <strong>busy</strong>. That is pipelining.",
+"7.13": "The same five stages, each with its own hardware.",
+"7.14": "In multicycle, four of five units sit idle.",
+"7.15": "Each stage's register now holds a <strong>different</strong> instruction.",
+"7.16": "Five <code>addi</code> instructions, one entering <code>IF</code> per cycle.",
+"7.17": "Cycle 1: one instruction in <code>IF</code>.",
+"7.18": "Cycle 2: the second enters <code>IF</code>.",
+"7.19": "Cycle 3: three in flight.",
+"7.20": "Cycle 4: four in flight.",
+"7.21": "Cycle 5: all five stages busy. The first reaches <code>WB</code>.",
+"7.22": "<strong>Issue:</strong> enter <code>IF</code>. <strong>Retire:</strong> leave <code>WB</code>.",
+"7.23": "Each takes 5 cycles, but one retires <strong>every</strong> cycle.",
+"7.24": "Cycle 7: nothing new enters. The pipeline drains.",
+"7.25": "Cycle 8: the fourth retires.",
+"7.26": "Cycle 9: the fifth retires.",
+"7.27": "5 instructions in 9 cycles: <strong>CPI = 1.8</strong>, against 5.",
+"7.28": "<code>n</code> instructions, <code>k</code> stages: <code>k + (n - 1)</code> cycles.",
+"7.29": "One instruction still takes 5 cycles: <strong>throughput</strong> went up.",
+"7.30": "The same pipeline as a <strong>table</strong>: what the exam asks for.",
+"7.31": "Cycle 1: the first <code>addi</code> is in <code>IF</code>.",
+"7.32": "Cycle 2: it moves to <code>ID</code>; the second enters <code>IF</code>.",
+"7.33": "Cycle 3: three in flight.",
+"7.34": "Cycle 4: four.",
+"7.35": "Cycle 5: every column is full.",
+"7.36": "Cycle 6: the first has retired.",
+"7.37": "Cycle 7: the pipeline drains.",
+"7.38": "Cycle 8: only <code>MEM</code> and <code>WB</code> are busy.",
+"7.39": "Cycle 9: the last one writes back.",
+"7.40": "A <strong>diagonal</strong> is one instruction's journey.",
+"7.41": "A <strong>row</strong> is a snapshot of the machine.",
+"8.1": "Two instructions: <code>addi $1, $0, 1</code> then <code>addi $1, $1, 1</code>.",
+"8.2": "<code>$1</code> should end up as 2. For now it holds 0.",
+"8.3": "Cycle 3: the second reads <code>$1</code> and gets <strong>0</strong>.",
+"8.4": "Cycle 4: the 1 exists, but not in the register file yet.",
+"8.5": "Cycle 5: <code>WB</code> writes the 1. Two cycles too late.",
+"8.6": "A <strong>RAW hazard</strong>: read after write.",
+"9.1": "<strong>Stall:</strong> hold the second instruction, send bubbles.",
+"9.2": "The second waits in <code>IF</code> until cycle 5.",
+"9.3": "It reads <code>$1</code> in cycle 6: always correct.",
+"9.4": "But every bubble is wasted time: cycle 9, not 6.",
+"9.5": "The same stall as a table: cycle 2.",
+"9.6": "Cycle 3: the second <code>addi</code> waits; a bubble enters <code>ID</code>.",
+"9.7": "Cycles 4 and 5: the bubbles move down.",
+"9.8": "Cycle 6: it moves on. Each dashed cell is idle hardware.",
+"9.9": "<strong>Forward:</strong> the value exists in cycle 3, so route it directly.",
+"9.10": "<strong>EX-to-EX:</strong> a wire carries the 1 to the next ALU.",
+"9.11": "<code>1 + 1 = 2</code>, no stall.",
+"9.12": "Done in cycle 6, not 9: three cycles saved.",
+"9.13": "One instruction in between: the value is needed a cycle later.",
+"9.14": "<strong>EX-to-ID:</strong> the 1 is delivered to <code>ID</code> in cycle 4.",
+"9.15": "The dependent <code>addi</code> computes <code>1 + 1 = 2</code>. Still no stall.",
+"9.16": "Forwarding costs wires, not cycles. But not every hazard is fixable.",
+"9.17": "A <code>lw</code>'s value only exists after <code>MEM</code>: too late.",
+"9.18": "<strong>MEM-to-EX:</strong> a <code>lw</code> then its user still costs one stall.",
+"9.19": "Stall: simple, slow. Forward: fast, costs wires. Load-use: one cycle.",
+"9.20": "Looking ahead: a GPU keeps many simple units busy.",
+"9.21": "It takes the <strong>width</strong> approach: thousands of simple ALUs."
+};
+  let fullText = false;
+  window.DECK_STEPS = scenes.map(function (sc) { return { num: sc.num, title: sc.title, front: !!sc.front, steps: sc.steps.map(function (s) { return { narrate: s.narrate, sub: s.sub, img: s.img, card: s.card, cycle: s.cycle, rows: s.rows, hl: s.hl, marks: s.marks, arrows: s.arrows, view: s.view, mark: s.mark, danger: s.danger, chip: s.chip, prog: s.prog, n: s.n, act: s.act, note: s.note, hot: s.hot }; }) }; });
   if (location.search.indexOf('dump') >= 0) { var pre = document.createElement('pre'); pre.id = 'dump'; pre.textContent = JSON.stringify(window.DECK_STEPS); document.body.innerHTML = ''; document.body.appendChild(pre); return; }
   readHash();
   render();

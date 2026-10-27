@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 330" font-family="Helvetica, Arial, sans-serif">
+<defs><marker id="a" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#57068c"/></marker></defs>
+<rect width="1150" height="330" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" text-anchor="middle">two kinds of locality: reuse the same address, or use the ones next door.</text>
+<rect x="40" y="56" width="520" height="240" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="300" y="92" fill="#57068c" font-size="21" font-weight="700" text-anchor="middle">temporal locality: the same address again</text>
+<rect x="70" y="130" width="80" height="56" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="110" y="166" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">i</text>
+<rect x="165" y="130" width="80" height="56" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="205" y="166" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">i</text>
+<rect x="260" y="130" width="80" height="56" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="300" y="166" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">i</text>
+<rect x="355" y="130" width="80" height="56" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="395" y="166" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">i</text>
+<rect x="450" y="130" width="80" height="56" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="490" y="166" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">i</text>
+<text x="110" y="214" fill="#c1272d" font-size="16" font-weight="700" text-anchor="middle">miss</text>
+<text x="390" y="214" fill="#2e7d32" font-size="16" font-weight="700" text-anchor="middle">hits, for free</text>
+<text x="300" y="260" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">the loop counter i is read on every iteration</text>
+<rect x="590" y="56" width="520" height="240" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="850" y="92" fill="#57068c" font-size="21" font-weight="700" text-anchor="middle">spatial locality: the neighbours next</text>
+<rect x="610" y="130" width="86" height="56" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="3"/>
+<text x="653" y="166" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">[0]</text>
+<rect x="708" y="130" width="86" height="56" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="3"/>
+<text x="751" y="166" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">[1]</text>
+<rect x="806" y="130" width="86" height="56" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="3"/>
+<text x="849" y="166" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">[2]</text>
+<rect x="904" y="130" width="86" height="56" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="3"/>
+<text x="947" y="166" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">[3]</text>
+<rect x="1002" y="130" width="86" height="56" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="3"/>
+<text x="1045" y="166" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">[4]</text>
+<text x="850" y="214" fill="#2e7d32" font-size="16" font-weight="700" text-anchor="middle">consecutive addresses, one after the other</text>
+<text x="850" y="260" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">the array: touch [3] and you will touch [4]</text>
+</svg>

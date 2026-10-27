@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 420" font-family="Helvetica, Arial, sans-serif">
+<defs><marker id="a" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#57068c"/></marker></defs>
+<rect width="1150" height="420" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="32" fill="#6d6d6d" font-size="17" text-anchor="middle">the finished cache, and three lookups. One hit and two different kinds of miss.</text>
+<text x="190" y="70" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle">the cache</text>
+<rect x="40" y="90" width="70" height="34" rx="10" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="75.0" y="114" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">row</text>
+<rect x="110" y="90" width="60" height="34" rx="10" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="140.0" y="114" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">V</text>
+<rect x="170" y="90" width="80" height="34" rx="10" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="210.0" y="114" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">tag</text>
+<rect x="250" y="90" width="90" height="34" rx="10" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="295.0" y="114" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">value</text>
+<rect x="40" y="124" width="70" height="44" rx="10" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="75.0" y="154" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="110" y="124" width="60" height="44" rx="10" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="140.0" y="154" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="170" y="124" width="80" height="44" rx="10" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="210.0" y="154" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+<rect x="250" y="124" width="90" height="44" rx="10" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="295.0" y="154" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+<rect x="40" y="168" width="70" height="44" rx="10" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="75.0" y="198" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<rect x="110" y="168" width="60" height="44" rx="10" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="140.0" y="198" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="170" y="168" width="80" height="44" rx="10" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="210.0" y="198" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+<rect x="250" y="168" width="90" height="44" rx="10" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="295.0" y="198" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+<rect x="40" y="212" width="70" height="44" rx="10" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="75.0" y="242" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="110" y="212" width="60" height="44" rx="10" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="140.0" y="242" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<rect x="170" y="212" width="80" height="44" rx="10" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="210.0" y="242" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">10</text>
+<rect x="250" y="212" width="90" height="44" rx="10" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="295.0" y="242" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">17</text>
+<rect x="40" y="256" width="70" height="44" rx="10" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="75.0" y="286" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<rect x="110" y="256" width="60" height="44" rx="10" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="140.0" y="286" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="170" y="256" width="80" height="44" rx="10" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="210.0" y="286" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+<rect x="250" y="256" width="90" height="44" rx="10" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="295.0" y="286" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+<rect x="430" y="70" width="660" height="92" rx="10" fill="#fff" stroke="#2e7d32" stroke-width="4"/>
+<text x="520" y="110" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">lw 42</text>
+<text x="520" y="140" fill="#6d6d6d" font-size="16" font-weight="600" text-anchor="middle">row 2, tag 10</text>
+<text x="760" y="110" fill="#1a1a1a" font-size="19" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">V = 1, 10 = 10</text>
+<text x="940" y="146" fill="#2e7d32" font-size="22" font-weight="700" text-anchor="middle">HIT</text>
+<rect x="430" y="180" width="660" height="92" rx="10" fill="#fff" stroke="#c1272d" stroke-width="4"/>
+<text x="520" y="220" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">lw 10</text>
+<text x="520" y="250" fill="#6d6d6d" font-size="16" font-weight="600" text-anchor="middle">row 2, tag 2</text>
+<text x="760" y="220" fill="#1a1a1a" font-size="19" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">V = 1, but 10 ≠ 2</text>
+<text x="940" y="256" fill="#c1272d" font-size="22" font-weight="700" text-anchor="middle">MISS (tag mismatch)</text>
+<rect x="430" y="290" width="660" height="92" rx="10" fill="#fff" stroke="#c1272d" stroke-width="4"/>
+<text x="520" y="330" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">lw 1</text>
+<text x="520" y="360" fill="#6d6d6d" font-size="16" font-weight="600" text-anchor="middle">row 1, tag 0</text>
+<text x="760" y="330" fill="#1a1a1a" font-size="19" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">V = 0</text>
+<text x="940" y="366" fill="#c1272d" font-size="22" font-weight="700" text-anchor="middle">MISS (not valid)</text>
+</svg>

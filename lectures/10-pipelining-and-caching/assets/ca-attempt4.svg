@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 380" font-family="Helvetica, Arial, sans-serif">
+<defs><marker id="a" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#57068c"/></marker><marker id="r" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#c1272d"/></marker></defs>
+<rect width="1150" height="380" rx="24" fill="#eee6f3"/>
+<text x="575" y="34" fill="#6d6d6d" font-size="17" font-weight="400" text-anchor="middle" font-style="italic">attempt four: at power-on every row holds leftover zeros. Is a row empty, or really holding a tag 0?</text>
+<text x="260" y="72" fill="#c1272d" font-size="20" font-weight="700" text-anchor="middle">no valid bit</text>
+<text x="84" y="117" fill="#6d6d6d" font-size="20" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="100" y="86" width="320" height="48" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="260" y="118" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">tag 0 | 0</text>
+<text x="84" y="177" fill="#6d6d6d" font-size="20" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<rect x="100" y="146" width="320" height="48" rx="10" fill="#fbe9ea" stroke="#c1272d" stroke-width="5"/>
+<text x="260" y="178" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">tag 0 | 0</text>
+<text x="84" y="237" fill="#6d6d6d" font-size="20" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="100" y="206" width="320" height="48" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="260" y="238" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">tag 0 | 0</text>
+<text x="84" y="297" fill="#6d6d6d" font-size="20" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<rect x="100" y="266" width="320" height="48" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="260" y="298" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">tag 0 | 0</text>
+<text x="260" y="350" fill="#1a1a1a" font-size="18" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">lw 1: row 1, tag 1 // 4 = 0</text>
+<text x="260" y="374" fill="#c1272d" font-size="19" font-weight="700" text-anchor="middle">stored tag 0 = tag 0: a HIT on garbage</text>
+<text x="830" y="72" fill="#2e7d32" font-size="20" font-weight="700" text-anchor="middle">with a valid bit</text>
+<text x="680" y="100" fill="#6d6d6d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">V</text>
+<text x="790" y="100" fill="#6d6d6d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">tag</text>
+<text x="920" y="100" fill="#6d6d6d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">value</text>
+<rect x="640" y="108" width="380" height="46" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="680" y="139" fill="#6d6d6d" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<text x="790" y="139" fill="#6d6d6d" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">-</text>
+<text x="920" y="139" fill="#6d6d6d" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">-</text>
+<rect x="640" y="168" width="380" height="46" rx="10" fill="#f1fbef" stroke="#2e7d32" stroke-width="5"/>
+<text x="680" y="199" fill="#2e7d32" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<text x="790" y="199" fill="#6d6d6d" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">-</text>
+<text x="920" y="199" fill="#6d6d6d" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">-</text>
+<rect x="640" y="228" width="380" height="46" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="680" y="259" fill="#6d6d6d" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<text x="790" y="259" fill="#6d6d6d" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">-</text>
+<text x="920" y="259" fill="#6d6d6d" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">-</text>
+<rect x="640" y="288" width="380" height="46" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="680" y="319" fill="#6d6d6d" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<text x="790" y="319" fill="#6d6d6d" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">-</text>
+<text x="920" y="319" fill="#6d6d6d" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">-</text>
+<text x="830" y="350" fill="#1a1a1a" font-size="18" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">lw 1: row 1 has V = 0</text>
+<text x="830" y="374" fill="#2e7d32" font-size="19" font-weight="700" text-anchor="middle">ignore the tag: a miss, fetch from RAM</text>
+<polyline points="440,148 630,148" fill="none" stroke="#6d6d6d" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#a)"/>
+</svg>

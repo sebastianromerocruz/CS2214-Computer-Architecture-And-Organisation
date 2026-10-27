@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 330" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="330" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" text-anchor="middle">attempt two: lw 10 arrives at row 2. Compare the stored address with the requested one.</text>
+<text x="200.0" y="70" fill="#c1272d" font-size="19" font-weight="700" text-anchor="middle">lw 10: stored address 42 ≠ 10, miss</text>
+<rect x="60" y="86" width="70" height="32" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="95.0" y="108" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">row</text>
+<rect x="130" y="86" width="110" height="32" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="185.0" y="108" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">address</text>
+<rect x="240" y="86" width="100" height="32" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="290.0" y="108" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">value</text>
+<rect x="60" y="118" width="70" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="95.0" y="145" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="130" y="118" width="110" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="185.0" y="145" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+<rect x="240" y="118" width="100" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="290.0" y="145" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+<rect x="60" y="158" width="70" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="95.0" y="185" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<rect x="130" y="158" width="110" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="185.0" y="185" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+<rect x="240" y="158" width="100" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="290.0" y="185" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+<rect x="60" y="198" width="70" height="40" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="95.0" y="225" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="130" y="198" width="110" height="40" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="185.0" y="225" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">42</text>
+<rect x="240" y="198" width="100" height="40" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="290.0" y="225" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">17</text>
+<rect x="60" y="238" width="70" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="95.0" y="265" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<rect x="130" y="238" width="110" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="185.0" y="265" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+<rect x="240" y="238" width="100" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="290.0" y="265" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+<text x="200.0" y="308" fill="#c1272d" font-size="17" font-weight="700" text-anchor="middle">the 17 cannot be used</text>
+<text x="760.0" y="70" fill="#2e7d32" font-size="19" font-weight="700" text-anchor="middle">after fetching RAM[10] = 33 (eviction)</text>
+<rect x="620" y="86" width="70" height="32" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="655.0" y="108" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">row</text>
+<rect x="690" y="86" width="110" height="32" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="745.0" y="108" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">address</text>
+<rect x="800" y="86" width="100" height="32" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="850.0" y="108" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">value</text>
+<rect x="620" y="118" width="70" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="655.0" y="145" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="690" y="118" width="110" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="745.0" y="145" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+<rect x="800" y="118" width="100" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="850.0" y="145" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+<rect x="620" y="158" width="70" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="655.0" y="185" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<rect x="690" y="158" width="110" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="745.0" y="185" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+<rect x="800" y="158" width="100" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="850.0" y="185" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+<rect x="620" y="198" width="70" height="40" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="655.0" y="225" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="690" y="198" width="110" height="40" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="745.0" y="225" fill="#2e7d32" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">10</text>
+<rect x="800" y="198" width="100" height="40" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="850.0" y="225" fill="#2e7d32" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">33</text>
+<rect x="620" y="238" width="70" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="655.0" y="265" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<rect x="690" y="238" width="110" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="745.0" y="265" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+<rect x="800" y="238" width="100" height="40" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="850.0" y="265" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+<text x="760.0" y="308" fill="#6d6d6d" font-size="17" font-weight="700" text-anchor="middle">(42, 17) was thrown out</text>
+</svg>

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 330" font-family="Helvetica, Arial, sans-serif">
+<defs><marker id="a" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#57068c"/></marker></defs>
+<rect width="1150" height="330" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="32" fill="#6d6d6d" font-size="17" text-anchor="middle">the whole lookup, in the order the hardware asks the questions</text>
+<rect x="30" y="70" width="190" height="110" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="125" y="102" fill="#57068c" font-size="19" font-weight="700" text-anchor="middle">address</text>
+<text x="125" y="132" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">42</text>
+<rect x="255" y="70" width="190" height="110" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="350" y="102" fill="#57068c" font-size="19" font-weight="700" text-anchor="middle">split it</text>
+<text x="350" y="132" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">row = 42 % 4 = 2</text>
+<text x="350" y="158" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">tag = 42 // 4 = 10</text>
+<rect x="480" y="70" width="190" height="110" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="575" y="102" fill="#57068c" font-size="19" font-weight="700" text-anchor="middle">go to row 2</text>
+<text x="575" y="132" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">is V = 1?</text>
+<rect x="705" y="70" width="190" height="110" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="800" y="102" fill="#57068c" font-size="19" font-weight="700" text-anchor="middle">compare tags</text>
+<text x="800" y="132" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">stored tag = 10?</text>
+<polyline points="222,125 253,125" fill="none" stroke="#57068c" stroke-width="4" stroke-linecap="round" marker-end="url(#a)"/>
+<polyline points="447,125 478,125" fill="none" stroke="#57068c" stroke-width="4" stroke-linecap="round" marker-end="url(#a)"/>
+<polyline points="672,125 703,125" fill="none" stroke="#57068c" stroke-width="4" stroke-linecap="round" marker-end="url(#a)"/>
+<rect x="940" y="70" width="180" height="110" rx="10" fill="#e8f5e9" stroke="#2e7d32" stroke-width="4"/>
+<text x="1030" y="118" fill="#2e7d32" font-size="28" font-weight="700" text-anchor="middle">HIT</text>
+<text x="1030" y="148" fill="#2e7d32" font-size="16" font-weight="600" text-anchor="middle">return the value</text>
+<polyline points="897,125 938,125" fill="none" stroke="#57068c" stroke-width="4" stroke-linecap="round" marker-end="url(#a)"/>
+<text x="918" y="108" fill="#2e7d32" font-size="17" font-weight="700" text-anchor="middle">yes</text>
+<text x="575" y="205" fill="#c1272d" font-size="17" font-weight="700" text-anchor="middle">V = 0: miss</text>
+<text x="800" y="205" fill="#c1272d" font-size="17" font-weight="700" text-anchor="middle">tags differ: miss</text>
+<rect x="110" y="238" width="930" height="60" rx="10" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="575" y="275" fill="#c1272d" font-size="18" font-weight="700" text-anchor="middle">MISS: fetch from RAM, store tag + value, set V = 1 (evict whatever was there)</text>
+</svg>
