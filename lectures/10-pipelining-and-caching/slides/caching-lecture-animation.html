@@ -382,6 +382,87 @@
     render(s, r) { r.bars.forEach((b, i) => { b.style.transitionDelay = (s.on ? 0.25 * i : 0) + "s"; b.style.transform = s.on ? "scaleX(1)" : "scaleX(0)"; }); },
   };
 
+  // 1.3: the first lw misses, goes to RAM and the cache keeps a copy; the second lw hits
+  const hitSub = {
+    build(g) { return { mg: grp(g, 1) }; },
+    render(s, r) {
+      while (r.mg.firstChild) r.mg.removeChild(r.mg.firstChild);
+      const g = r.mg, st = s.hit || 0, GREEN = "#2e7d32";
+      const CX = 40, CW = 170, KX = 470, KW = 200, RX = 900, RW = 210;
+      const second = st >= 4;
+      txt(g, 575, 40, second ? "the second lw $1, 5($0)" : "the first lw $1, 5($0)", { size: 22, weight: 700, italic: true, fill: C.grey, anchor: "middle" });
+      rect(g, CX, 130, CW, 120, { rx: 14, fill: C.t1, stroke: C.purple, sw: 5 });
+      txt(g, CX + CW / 2, 200, "CPU", { size: 28, weight: 700, fill: C.purple, anchor: "middle" });
+      const hot = st === 4 || st === 5;
+      rect(g, KX, 130, KW, 120, { rx: 14, fill: hot ? "#e4f3e1" : C.t2, stroke: hot ? GREEN : C.red, sw: 5 });
+      txt(g, KX + KW / 2, 160, "cache", { size: 24, weight: 700, fill: hot ? GREEN : C.red, anchor: "middle" });
+      const stored = st >= 3;
+      rect(g, KX + 25, 180, KW - 50, 52, { rx: 8, fill: C.white, stroke: stored ? (hot ? GREEN : C.purple) : C.lgrey, sw: 3, dash: stored ? null : "6 4" });
+      txt(g, KX + KW / 2, 214, stored ? "5 → 42" : "empty", { size: stored ? 24 : 18, weight: 700, mono: stored, fill: stored ? C.ink : C.grey, anchor: "middle" });
+      rect(g, RX, 110, RW, 160, { rx: 14, fill: C.t1, stroke: C.purple, sw: 5 });
+      txt(g, RX + RW / 2, 160, "RAM", { size: 28, weight: 700, fill: C.purple, anchor: "middle" });
+      txt(g, RX + RW / 2, 200, "ram[5] = 42", { size: 22, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+      const line = (x1, x2, col, w) => { path(g, "M" + x1 + " 190 L" + x2 + " 190", { stroke: col, sw: w }); arrowhead(g, x2, 190, "r", col); };
+      line(CX + CW + 6, KX - 6, C.ink, 4); line(KX + KW + 6, RX - 6, C.ink, 4);
+      txt(g, (CX + CW + KX) / 2, 176, "about 1 ns", { size: 18, weight: 700, fill: C.ink, anchor: "middle" });
+      txt(g, (KX + KW + RX) / 2, 176, "about 100 ns", { size: 18, weight: 700, fill: C.red, anchor: "middle" });
+      // the request token
+      const pos = { 0: CX + CW / 2, 1: KX + KW / 2, 2: RX + RW / 2, 3: CX + CW / 2, 4: KX + KW / 2, 5: KX + KW / 2 }[st];
+      const tok = (x, y, label, col) => { rect(g, x - 52, y - 20, 104, 40, { rx: 20, fill: col, stroke: C.white, sw: 3 }); txt(g, x, y + 7, label, { size: 19, weight: 700, mono: true, fill: C.white, anchor: "middle" }); };
+      const label = { 0: "lw 5", 1: "lw 5", 2: "lw 5", 3: "42", 4: "lw 5", 5: "42" }[st];
+      tok(pos, 294, label, st === 3 || st === 5 ? GREEN : C.red);
+      const note = { 0: "the CPU asks the cache first", 1: "empty: a miss", 2: "the long trip: RAM answers 42", 3: "the CPU gets 42, and the cache keeps a copy", 4: "found it: a hit, and RAM never hears about it", 5: "found it: a hit, and RAM never hears about it" }[st];
+      txt(g, 575, 338, note, { size: 22, weight: 700, fill: st >= 4 || st === 3 ? GREEN : C.red, anchor: "middle" });
+      if (st === 5) {
+        for (let i = 0; i < 10; i++) {
+          rect(g, 335 + i * 48, 352, 42, 20, { rx: 6, fill: i === 6 ? C.t2 : "#e4f3e1", stroke: i === 6 ? C.red : GREEN, sw: 2 });
+        }
+        txt(g, 575, 394, "9 hits out of 10 accesses: hit ratio 90%", { size: 20, weight: 700, fill: C.ink, anchor: "middle" });
+      }
+    },
+  };
+  // 1.4: a cache as big as RAM would just be RAM; a real one holds a sliver; three questions follow
+  const sliverSub = {
+    build(g) { return { mg: grp(g, 1) }; },
+    render(s, r) {
+      while (r.mg.firstChild) r.mg.removeChild(r.mg.firstChild);
+      const g = r.mg, st = s.sl || 0;
+      const grid = (x, y, w, h, nx, ny, fill, stroke) => {
+        rect(g, x, y, w, h, { rx: 12, fill: fill, stroke: stroke, sw: 5 });
+        for (let i = 1; i < nx; i++) ln(g, x + i * w / nx, y + 6, x + i * w / nx, y + h - 6, { stroke: stroke, sw: 1 });
+        for (let j = 1; j < ny; j++) ln(g, x + 6, y + j * h / ny, x + w - 6, y + j * h / ny, { stroke: stroke, sw: 1 });
+      };
+      if (st === 0) {
+        txt(g, 575, 40, "what if the cache could hold everything?", { size: 22, weight: 700, italic: true, fill: C.grey, anchor: "middle" });
+        grid(60, 70, 460, 200, 12, 5, C.t2, C.red);
+        txt(g, 290, 302, "a cache as big as RAM", { size: 22, weight: 700, fill: C.red, anchor: "middle" });
+        grid(630, 70, 460, 200, 12, 5, C.t1, C.purple);
+        txt(g, 860, 302, "RAM", { size: 22, weight: 700, fill: C.purple, anchor: "middle" });
+        txt(g, 575, 180, "=", { size: 70, weight: 700, fill: C.ink, anchor: "middle" });
+        txt(g, 575, 358, "just another RAM: the same size, the same wires, the same slowness", { size: 22, weight: 700, fill: C.red, anchor: "middle" });
+      } else {
+        txt(g, 575, 40, "a real cache: a sliver of memory", { size: 22, weight: 700, italic: true, fill: C.grey, anchor: "middle" });
+        grid(630, 62, 460, 190, 12, 5, C.t1, C.purple);
+        txt(g, 860, 280, "RAM: gigabytes", { size: 22, weight: 700, fill: C.purple, anchor: "middle" });
+        grid(90, 130, 60, 44, 3, 2, C.t2, C.red);
+        txt(g, 90, 204, "the cache: hundreds of kilobytes", { size: 18, weight: 700, fill: C.red, anchor: "start" });
+        path(g, "M156 152 L620 130", { stroke: C.red, sw: 3, dash: "8 6" });
+        txt(g, 390, 122, "a sliver of RAM, kept close", { size: 17, weight: 700, fill: C.red, anchor: "middle" });
+        if (st >= 2) {
+          [["1", "where does a cell go?"], ["2", "how do we know which cell it is?"], ["3", "what do we throw out?"]].forEach(([n, q], i) => {
+            const y = 238 + i * 34;
+            circ(g, 108, y, 14, { fill: C.purple });
+            txt(g, 108, y + 6, n, { size: 16, weight: 700, fill: C.white, anchor: "middle" });
+            txt(g, 134, y + 7, q, { size: 19, weight: 700, fill: C.ink });
+          });
+        }
+        if (st >= 3) {
+          rect(g, 130, 336, 890, 50, { rx: 12, fill: C.white, stroke: C.purple, sw: 4 });
+          txt(g, 575, 369, "the simplest answer: the direct-mapped cache", { size: 24, weight: 700, fill: C.purple, anchor: "middle" });
+        }
+      }
+    },
+  };
   // 2: a cache you can watch: the CPU asks, the row answers or misses, RAM fills it
   const cacSub = {
     build(g) {
@@ -603,10 +684,18 @@
     steps: [
       { sub: "fig", img: "ca-hierarchy.svg", chip: 1, foot: "L1 about 0.5 ns, DRAM about 100 ns: roughly 200 times slower", narrate: "We have treated <code>lw</code> as one polite <code>MEM</code> stage. It isn't. A student writing a paper keeps the open book on the desk, because the library across campus is a long walk. Real numbers: an L1 cache reference is about <strong>0.5 ns</strong> and a main-memory reference is about <strong>100 ns</strong>, roughly 200 times slower. Scale both by a billion: a heartbeat against a trip that takes a minute and a half." },
       { sub: "hier", on: true, chip: 2, foot: "no technology is both fast and big", narrate: "Read the table as a trade. The fast technology is expensive and small, the slow one is cheap and enormous, and nothing is both. So machines use <strong>several layers</strong>, with a small fast <strong>cache</strong> between the processor and main memory. (The E20 lets a <code>lw</code> stall a few cycles. Real machines can pay fifty or more.)" },
-      { sub: "fig", img: "ca-hierarchy.svg", chip: 3, foot: "hit: found in the cache.  miss: not found, go to RAM", narrate: "The simplest version: a cache that remembers every value it has seen, keyed by address. The first <code>lw $1, 5($0)</code> goes on to RAM, RAM says 42, and the cache keeps a copy. The second time, the cache answers in about 1 ns and RAM never hears about it. Finding the value in the cache is a <strong>hit</strong>, not finding it is a <strong>miss</strong>, and the fraction that hit is the <strong>hit ratio</strong>." },
-      { sub: "fig", img: "ca-hierarchy.svg", chip: 4, foot: "where?   how do we know?   what do we throw out?", narrate: "The catch: a cache big enough to hold <em>everything</em> is just another RAM with the same slowness. Fast memory is expensive, so a real cache holds a few hundred kilobytes against gigabytes of RAM. It can only keep a sliver, so every cache must decide <strong>where</strong> each cell goes, <strong>how to know</strong> which cell it is looking at, and <strong>what to throw out</strong>. The simplest answer is the <strong>direct-mapped cache</strong>." },
+      { sub: "hit", hit: 0, chip: 3, foot: "hit: found in the cache.  miss: not found, go to RAM", narrate: "The simplest version: a cache that remembers every value it has seen, keyed by address. The program runs <code>lw $1, 5($0)</code> for the first time. The CPU always asks the cache first." },
+      { sub: "hit", hit: 1, chip: 3, foot: "", narrate: "The cache has never heard of address 5, so it is empty there. Not finding the value in the cache is a <strong>miss</strong>." },
+      { sub: "hit", hit: 2, chip: 3, foot: "", narrate: "So the request goes on to RAM, the long trip of about 100 ns. RAM looks up address 5 and answers 42." },
+      { sub: "hit", hit: 3, chip: 3, foot: "", narrate: "The CPU gets its 42, and on the way back the cache keeps a copy: address 5 holds 42." },
+      { sub: "hit", hit: 4, chip: 3, foot: "", narrate: "Later the program runs the same <code>lw</code> again. The CPU asks the cache first, and this time it finds address 5. That is a <strong>hit</strong>: the answer comes back in about 1 ns, and RAM never hears about it." },
+      { sub: "hit", hit: 5, chip: 3, foot: "", narrate: "The fraction of accesses that hit is the <strong>hit ratio</strong>. Nine hits out of ten accesses is a hit ratio of 90 percent, and that number is what the rest of the lecture tries to push up." },
+      { sub: "sliver", sl: 0, chip: 4, foot: "", narrate: "The catch: a cache big enough to hold <em>everything</em> is just another RAM, with the same wires and the same slowness. Fast memory is expensive, and bigger memories are slower." },
+      { sub: "sliver", sl: 1, chip: 4, foot: "", narrate: "So a real cache holds a few hundred kilobytes against gigabytes of RAM. It can only keep a sliver, close to the processor." },
+      { sub: "sliver", sl: 2, chip: 4, foot: "", narrate: "A sliver forces three questions on every cache: <strong>where</strong> does each cell go, <strong>how do we know</strong> which cell we are looking at, and <strong>what do we throw out</strong> when the cache is full?" },
+      { sub: "sliver", sl: 3, chip: 4, foot: "", narrate: "The simplest answer to all three is the <strong>direct-mapped cache</strong>. We will build the dumbest version that could work, watch it fail, and fix it, four times." },
     ],
-  }, { fig: fg(["ca-hierarchy.svg"]), tbl: tb(TECH), hier: hierSub }));
+  }, { fig: fg(["ca-hierarchy.svg"]), tbl: tb(TECH), hier: hierSub, hit: hitSub, sliver: sliverSub }));
 
   // ================= 2 Where Does a Cell Go? =================
   const mk4 = (cols, rows) => tb({ cols, rows, rh: 70, y0: 60, fs: 20 });
@@ -618,13 +707,34 @@
     num: "2", title: "Where Does a Cell Go? Rows, Tags, and the Valid Bit", subtitle: "Build the dumbest thing that works, watch it break, fix the break.",
     chips: ["Attempt 1", "Attempt 2", "Attempt 3", "Attempt 4", "The lookup"],
     steps: [
-      { sub: "cac", mode: 1, rows: [[], [], ["17"], []], hot: 2, hotcol: "purple", req: "lw 42", tok: { row: 2 }, tokt: "42", say: "42 % 4 = 2: row 2 stores 17", chip: 1, foot: "ram[42] = 17, ram[10] = 33; four rows", narrate: "<strong>Attempt one: split by remainder.</strong> Four rows, each holding one value, and the cheapest rule for which row a cell goes into: <code>row = address % 4</code>. A <code>lw</code> of address 42 lands in row <code>42 % 4 = 2</code>, and row 2 now holds 17." },
-      { sub: "cac", mode: 1, rows: [[], [], ["17"], []], hot: 2, hotcol: "red", req: "lw 10", tok: "cpu", tokt: "17", say: "10 % 4 = 2 too: it returns 17, but ram[10] = 33. WRONG", chip: 1, foot: "it breaks: address 10 also maps to row 2", narrate: "Now the program asks for address 10. <code>10 % 4 = 2</code>, so the cache goes to row 2, sees a value, and hands back <strong>17</strong>. Wrong: the real value of address 10 is 33. A quarter of all addresses fight over each row, and the cache can't tell the contestants apart. A cache that returns wrong answers is worse than no cache." },
-      { sub: "cac", mode: 2, rows: [[], [], ["42", "17"], []], hot: 2, hotcol: "purple", req: "lw 42", tok: { row: 2 }, tokt: "42", say: "row 2 remembers which address its value came from", chip: 2, foot: "attempt two: remember the address", narrate: "<strong>Attempt two: store the address too.</strong> Next to each value, remember where it came from: row 2 holds <code>(42, 17)</code>. Asking for address 10 now compares the stored address (42) with the requested one (10), sees a mismatch, and knows it can't use what's there." },
-      { sub: "cac", mode: 2, rows: [[], [], ["10", "33"], []], hot: 2, hotcol: "red", req: "lw 10", tok: "ram", tokt: "33", say: "42 is not 10: a miss. Fetch 33 and evict (42, 17)", chip: 2, foot: "a miss, and an eviction", narrate: "That is a <strong>miss</strong>. The cache fetches the real value (33) from RAM and overwrites row 2 with <code>(10, 33)</code>. Throwing out a perfectly good entry to make room is an <strong>eviction</strong>. Correct now, but storing the whole address is wasteful." },
-      { sub: "cac", mode: 3, rows: [[], [], ["10", "17"], []], hot: 2, hotcol: "purple", req: "lw 42", tok: { row: 2 }, tokt: "42", say: "row 2 + tag 42 // 4 = 10: store only the tag", chip: 3, foot: "attempt three: store only what the row doesn't already tell us", narrate: "<strong>Attempt three: store only what we don't know.</strong> The row number came from the low bits of the address, so those don't need storing again. What the row can't tell us is the rest, <code>address // 4</code>: the <strong>tag</strong>. Address 42 goes to row 2 with tag <code>42 // 4 = 10</code>; address 10 also goes to row 2 but with tag <code>10 // 4 = 2</code>. Compare the stored tag with the computed tag: equal is a <strong>hit</strong>." },
-      { sub: "cac", mode: 4, rows: [["0", "0", "0"], ["0", "0", "0"], ["0", "0", "0"], ["0", "0", "0"]], hot: 1, hotcol: "green", req: "lw 1", tok: { row: 1 }, tokt: "tag 0", say: "tag 0 = tag 0 would be a false hit. V = 0 says: ignore it, a miss", chip: 4, foot: "attempt four: the valid bit", narrate: "<strong>Attempt four: how do we know a row is empty?</strong> At power-on every row holds <em>something</em>, say all zeros. The program asks for address 1: row 1, tag <code>1 // 4 = 0</code>. The leftover tag 0 matches, the cache declares a hit and returns garbage it never loaded. So we add one bit per row, the <strong>valid bit</strong> <code>V</code>: a row only counts if <code>V = 1</code> <em>and</em> the tags match." },
-      { sub: "cac", mode: 4, rows: [["0"], ["0"], ["1", "10", "17"], ["0"]], hot: 2, hotcol: "green", req: "lw 42", tok: "cpu", tokt: "17", saycol: "green", say: "hit only if V = 1 and the tags match", chip: 5, foot: "row = address % rows, tag = address // rows", narrate: "That is the whole lookup. Compute <code>row = address % rows</code> and <code>tag = address // rows</code>. Go to the row. If <code>V = 1</code> and the stored tag equals the computed tag, it's a <strong>hit</strong>. Otherwise it's a <strong>miss</strong>: fetch from RAM, store the new tag and value, set <code>V = 1</code> (evicting whatever was there), and return the value." },
+      { sub: "cac", mode: 1, rows: [[], [], [], []], say: "four rows, one value each. ram[42] = 17, ram[10] = 33", chip: 1, foot: "ram[42] = 17, ram[10] = 33; four rows", narrate: "<strong>Attempt one: split by remainder.</strong> We build the dumbest cache that could work, watch it fail, and fix it. Four rows, each holding one value. In RAM, address 42 holds 17 and address 10 holds 33." },
+      { sub: "cac", mode: 1, rows: [[], [], [], []], req: "lw 42", tok: "cpu", tokt: "42", say: "the CPU asks for address 42", chip: 1, foot: "", narrate: "The program runs <code>lw</code> of address 42. The cache has to decide which row to look in." },
+      { sub: "cac", mode: 1, rows: [[], [], [], []], hot: 2, hotcol: "purple", req: "lw 42", tok: { row: 2 }, tokt: "42", say: "42 % 4 = 2: go to row 2", chip: 1, foot: "", narrate: "The cheapest rule is the remainder: <code>row = address % 4</code>. Divide 42 by 4: that is 10 with a remainder of 2, so the request goes to row 2." },
+      { sub: "cac", mode: 1, rows: [[], [], [], []], hot: 2, hotcol: "purple", req: "lw 42", tok: "ram", tokt: "42", say: "row 2 is empty: ask RAM", chip: 1, foot: "", narrate: "Row 2 is empty, so the cache has nothing to give. It goes on to RAM and asks for address 42." },
+      { sub: "cac", mode: 1, rows: [[], [], ["17"], []], hot: 2, hotcol: "purple", req: "lw 42", tok: { row: 2 }, tokt: "17", say: "RAM says 17: copy it into row 2", chip: 1, foot: "", narrate: "RAM answers 17. We copy it into row 2 and hand it to the processor. So far so good." },
+      { sub: "cac", mode: 1, rows: [[], [], ["17"], []], req: "lw 10", tok: "cpu", tokt: "10", say: "a few cycles later: the CPU asks for address 10", chip: 1, foot: "", narrate: "A few cycles later the program asks for address 10, whose real value is 33." },
+      { sub: "cac", mode: 1, rows: [[], [], ["17"], []], hot: 2, hotcol: "red", req: "lw 10", tok: { row: 2 }, tokt: "10", say: "10 % 4 = 2 as well: the same row", chip: 1, foot: "", narrate: "Divide 10 by 4: 2 with a remainder of 2. Address 10 also belongs in row 2, so the cache goes to row 2 and finds a value sitting there." },
+      { sub: "cac", mode: 1, rows: [[], [], ["17"], []], hot: 2, hotcol: "red", req: "lw 10", tok: "cpu", tokt: "17", say: "it returns 17, but ram[10] = 33. WRONG", chip: 1, foot: "it breaks: address 10 also maps to row 2", narrate: "The cache hands back <strong>17</strong>. Wrong: the real value is 33. The cache <em>confidently lied</em>. It is one mailbox for a whole building, with only the apartment number on the letters. Slow is annoying, but wrong at the speed of light is useless." },
+      { sub: "cac", mode: 2, rows: [[], [], [], []], say: "attempt two: write the resident's name on the letter", chip: 2, foot: "attempt two: remember the address", narrate: "<strong>Attempt two: store the address too.</strong> The fix is to write the resident's name on the letter. Next to each value we store the address it came from, so every row now has two columns: an address and a value." },
+      { sub: "cac", mode: 2, rows: [[], [], ["42", "17"], []], hot: 2, hotcol: "purple", req: "lw 42", tok: { row: 2 }, tokt: "42", say: "row 2 holds the pair (42, 17)", chip: 2, foot: "", narrate: "After <code>lw 42</code>, row 2 holds the pair <code>(42, 17)</code>: the value, and where it came from." },
+      { sub: "cac", mode: 2, rows: [[], [], ["42", "17"], []], hot: 2, hotcol: "red", req: "lw 10", tok: { row: 2 }, tokt: "10", say: "row 2: stored address 42, asked address 10", chip: 2, foot: "", narrate: "Now <code>lw 10</code> arrives at row 2 again. This time the cache does not grab blindly. It compares the address stored in the row, 42, with the address it was asked for, 10." },
+      { sub: "cac", mode: 2, rows: [[], [], ["42", "17"], []], hot: 2, hotcol: "red", req: "lw 10", tok: "ram", tokt: "10", say: "42 is not 10: a miss. Fetch from RAM", chip: 2, foot: "a miss", narrate: "They are not equal, so the 17 belongs to someone else: a <strong>miss</strong>. The cache cannot use what is there, so it goes to RAM for address 10." },
+      { sub: "cac", mode: 2, rows: [[], [], ["10", "33"], []], hot: 2, hotcol: "red", req: "lw 10", tok: { row: 2 }, tokt: "33", say: "RAM says 33: overwrite row 2. (42, 17) is evicted", chip: 2, foot: "an eviction", narrate: "RAM answers 33, and row 2 is the only place it can go, so it overwrites <code>(42, 17)</code> with <code>(10, 33)</code>. Throwing out a perfectly good entry to make room is an <strong>eviction</strong>." },
+      { sub: "cac", mode: 2, rows: [[], [], ["10", "33"], []], hot: 2, hotcol: "purple", say: "correct now, but every row stores a whole address", chip: 2, foot: "", narrate: "Now the answer is right. But every row stores a whole address, 32 or 64 bits, next to a tiny piece of data. That is a lot of wasted transistors." },
+      { sub: "cac", mode: 3, rows: [[], [], [], []], hot: 2, hotcol: "purple", req: "lw 42", tok: { row: 2 }, tokt: "42", say: "42 = 4 x 10 + 2: row 2, and the rest is 10", chip: 3, foot: "attempt three: store only what the row doesn't already tell us", narrate: "<strong>Attempt three: store only what we do not already know.</strong> Look at how 42 got to row 2: <code>42 = 4 x 10 + 2</code>. The remainder, 2, is the row. If you are standing in front of row 2, you already know the address leaves remainder 2. It is the hotel floor: on the fifth floor, a room label of just 12 is enough." },
+      { sub: "cac", mode: 3, rows: [[], [], ["10", "17"], []], hot: 2, hotcol: "purple", req: "lw 42", tok: { row: 2 }, tokt: "tag 10", say: "store the multiplier 10 as the tag, with the value 17", chip: 3, foot: "", narrate: "What the row cannot tell us is the multiplier, <code>address // 4</code>, which is 10. That is the <strong>tag</strong>. So row 2 stores tag 10 next to the value 17, instead of the whole 42." },
+      { sub: "cac", mode: 3, rows: [[], [], ["10", "17"], []], hot: 2, hotcol: "red", req: "lw 10", tok: { row: 2 }, tokt: "tag 2", say: "10 = 4 x 2 + 2: row 2, tag 2", chip: 3, foot: "", narrate: "Address 10 arrives. <code>10 = 4 x 2 + 2</code>: remainder 2 sends it to row 2, and the multiplier gives it tag 2." },
+      { sub: "cac", mode: 3, rows: [[], [], ["10", "17"], []], hot: 2, hotcol: "red", req: "lw 10", tok: "ram", tokt: "10", say: "stored tag 10 is not tag 2: a miss", chip: 3, foot: "", narrate: "The stored tag is 10, the computed tag is 2: they differ, a miss. Same row, different tags, and that is how the cache tells address 42 from address 10." },
+      { sub: "cac", mode: 3, rows: [[], [], ["2", "33"], []], hot: 2, hotcol: "red", req: "lw 10", tok: { row: 2 }, tokt: "33", say: "fetch 33 and overwrite: row 2 is now tag 2, value 33", chip: 3, foot: "", narrate: "The cache fetches 33 from RAM and overwrites row 2 with tag 2. A lookup is now: compute the row and the tag, go to the row, compare the stored tag with the computed one. The <strong>index</strong> is where, and the <strong>tag</strong> is who." },
+      { sub: "cac", mode: 3, rows: [["0", "0"], ["0", "0"], ["0", "0"], ["0", "0"]], say: "power-on: what does row 1 hold? Wires are never empty", chip: 4, foot: "attempt four: the valid bit", narrate: "<strong>Attempt four: the power-on problem.</strong> What is in row 1 the instant you press the power button? In hardware empty does not exist: a wire always holds some voltage. Say the cache powers up full of zeros, tags included." },
+      { sub: "cac", mode: 3, rows: [["0", "0"], ["0", "0"], ["0", "0"], ["0", "0"]], hot: 1, hotcol: "red", req: "lw 1", tok: { row: 1 }, tokt: "tag 0", say: "1 % 4 = 1, tag 1 // 4 = 0: row 1, tag 0", chip: 4, foot: "", narrate: "The operating system boots and the first instruction asks for address 1. <code>1 % 4 = 1</code>, so row 1, and the tag is <code>1 // 4 = 0</code>." },
+      { sub: "cac", mode: 3, rows: [["0", "0"], ["0", "0"], ["0", "0"], ["0", "0"]], hot: 1, hotcol: "red", req: "lw 1", tok: "cpu", tokt: "garbage", say: "stored tag 0 = tag 0: a false HIT on static electricity", chip: 4, foot: "", narrate: "The stored tag is a leftover 0, so the comparator says <em>match</em>. The cache declares a hit and hands the processor garbage it never loaded. It hallucinated a hit from static electricity." },
+      { sub: "cac", mode: 4, rows: [["0"], ["0"], ["0"], ["0"]], say: "add one bit per row: V = 0 means not real yet", chip: 4, foot: "", narrate: "We need a master switch for each row: <em>this row has never been written by a real program, ignore it</em>. That is one extra bit per row, the <strong>valid bit</strong> <code>V</code>, and every row starts at 0." },
+      { sub: "cac", mode: 4, rows: [["0"], ["0"], ["0"], ["0"]], hot: 1, hotcol: "green", req: "lw 1", tok: { row: 1 }, tokt: "V = 0", say: "V = 0: don't even look at the tag. A miss", chip: 4, foot: "", narrate: "Run address 1 again: row 1, but <code>V = 0</code>, so the hardware declares a miss without looking at the tag. The valid bit asks <em>is this data real?</em> The tag asks <em>which real address is it?</em>" },
+      { sub: "cac", mode: 4, rows: [["0"], ["0"], ["1", "10", "17"], ["0"]], hot: 2, hotcol: "green", req: "lw 42", tok: { row: 2 }, tokt: "42", say: "row 2: V = 1 and tag 10 = 10", chip: 5, foot: "row = address % rows, tag = address // rows", narrate: "Put the four attempts together. Every row has a valid bit, a tag and a value. Look up address 42: <code>row = 42 % 4 = 2</code>, <code>tag = 42 // 4 = 10</code>. Row 2 has <code>V = 1</code> and the stored tag is 10." },
+      { sub: "cac", mode: 4, rows: [["0"], ["0"], ["1", "10", "17"], ["0"]], hot: 2, hotcol: "green", req: "lw 42", tok: "cpu", tokt: "17", saycol: "green", say: "hit only if V = 1 and the tags match", chip: 5, foot: "", narrate: "Both conditions hold, so it is a <strong>hit</strong>, and the cache returns 17. Otherwise it is a <strong>miss</strong>: fetch from RAM, store the new tag and value, set <code>V = 1</code> (evicting whatever was there), and return the value." },
+      { sub: "cac", mode: 4, rows: [["0"], ["0"], ["1", "10", "17"], ["0"]], hot: 2, hotcol: "red", req: "lw 10", tok: "ram", tokt: "10", say: "lw 10: row 2, tag 2 is not 10: a miss", chip: 5, foot: "", narrate: "Try address 10: row 2, tag 2. The row is valid but the tags differ, a miss of the first kind: <strong>a tag mismatch</strong>." },
+      { sub: "cac", mode: 4, rows: [["0"], ["0"], ["1", "10", "17"], ["0"]], hot: 1, hotcol: "red", req: "lw 1", tok: "ram", tokt: "1", say: "lw 1: row 1, V = 0: a miss of a different kind", chip: 5, foot: "", narrate: "And address 1: row 1, <code>V = 0</code>, a miss of a second kind: <strong>not valid</strong>. Two different kinds of miss." },
     ],
   }, {
     a1: mk4(C1, [["0", "?"], ["1", "?"], ["2", "17"], ["3", "?"]]),
@@ -659,12 +769,11 @@
     rows: [["53", "53 // 8 = 6", "53 % 8 = 5", "6 % 4 = 2", "6 // 4 = 1"], ["100", "100 // 8 = 12", "100 % 8 = 4", "12 % 4 = 0", "12 // 4 = 3"], ["77", "77 // 8 = 9", "77 % 8 = 5", "9 % 4 = 1", "9 // 4 = 2"]], rh: 80, y0: 60, fs: 17 };
   scene(mixScene({
     num: "4", title: "Decoding an Address: Tag, Index, Offset", subtitle: "Three questions, three slices of the same bits.",
-    chips: ["Three slices", "The formulas", "In binary", "Three examples"],
+    chips: ["The formulas", "In binary", "Three examples"],
     steps: [
-      { sub: "slice", rows: 3, hl: [], chip: 1, foot: "least significant bits first: offset, then index, then tag", narrate: "With blocks, an address has to answer three questions: which block is this cell in, which row does that block map to, and where is the cell <em>inside</em> the block? Each is a slice of the address's bits, from least significant up. <strong>Offset</strong>: the low <code>log2(blockSize)</code> bits. <strong>Index</strong>: the next <code>log2(numberOfRows)</code> bits. <strong>Tag</strong>: everything above." },
-      { sub: "form", rows: 4, hl: [], chip: 2, foot: "the version you will use on exams", narrate: "In arithmetic form, which is the one you'll use on exams: <code>block ID = address // blockSize</code>, <code>offset = address % blockSize</code>, <code>row = blockID % numberOfRows</code>, <code>tag = blockID // numberOfRows</code>." },
-      { sub: "fig", img: "ca-split.svg", chip: 3, foot: "block size 4: 2 offset bits.  8 rows: 3 index bits.  tag: 10 - 2 - 3 = 5 bits", narrate: "Here it is in binary: a 10-bit address system, block size 4, 8 rows. Address 181 is <code>0010110101</code>. The low 2 bits (<code>01</code>) are the offset, the next 3 (<code>101</code>) are the row, and the top 5 (<code>00101</code>) are the tag. Same answer in arithmetic: <code>181 // 4 = 45</code>, <code>181 % 4 = 1</code>, <code>45 % 8 = 5</code>, <code>45 // 8 = 5</code>." },
-      { sub: "ex", rows: 3, hl: [], chip: 4, foot: "4 rows, block size 8", narrate: "Three more on the cache we'll trace next, 4 rows and block size 8: address 53 is block 6, offset 5, row 2, tag 1. Address 100 is block 12, offset 4, row 0, tag 3. And address 77 is block 9, offset 5, row 1, tag 2." },
+      { sub: "form", rows: 4, hl: [], chip: 1, foot: "the version you will use on exams", narrate: "In arithmetic form, which is the one you'll use on exams: <code>block ID = address // blockSize</code>, <code>offset = address % blockSize</code>, <code>row = blockID % numberOfRows</code>, <code>tag = blockID // numberOfRows</code>." },
+      { sub: "fig", img: "ca-split.svg", chip: 2, foot: "block size 4: 2 offset bits.  8 rows: 3 index bits.  tag: 10 - 2 - 3 = 5 bits", narrate: "Here it is in binary: a 10-bit address system, block size 4, 8 rows. Address 181 is <code>0010110101</code>. The low 2 bits (<code>01</code>) are the offset, the next 3 (<code>101</code>) are the row, and the top 5 (<code>00101</code>) are the tag. Same answer in arithmetic: <code>181 // 4 = 45</code>, <code>181 % 4 = 1</code>, <code>45 % 8 = 5</code>, <code>45 // 8 = 5</code>." },
+      { sub: "ex", rows: 3, hl: [], chip: 3, foot: "4 rows, block size 8", narrate: "Three more on the cache we'll trace next, 4 rows and block size 8: address 53 is block 6, offset 5, row 2, tag 1. Address 100 is block 12, offset 4, row 0, tag 3. And address 77 is block 9, offset 5, row 1, tag 2." },
     ],
   }, { slice: tb(SLICE), form: tb(FORM), fig: fg(["ca-split.svg"]), ex: tb(EX) }));
 
@@ -913,23 +1022,51 @@
 "T.2": "Build the cache: break it, fix it, then trace it.",
 "1.1": "<code>lw</code> isn't one polite stage. Memory is far away.",
 "1.2": "Fast is small and expensive; slow is huge and cheap.",
-"1.3": "A cache keeps a copy of what it has seen: a <strong>hit</strong> or a <strong>miss</strong>.",
-"1.4": "A cache can hold only a <strong>sliver</strong> of memory.",
-"2.1": "Attempt one: <code>row = address % 4</code>. <code>lw 42</code> goes to row 2.",
-"2.2": "<code>lw 10</code> also maps to row 2, and gets 17. <strong>Wrong.</strong>",
-"2.3": "Attempt two: store the <strong>address</strong> too.",
-"2.4": "A mismatch is a miss. The old entry is <strong>evicted</strong>.",
-"2.5": "Attempt three: store only the <strong>tag</strong>, <code>address // 4</code>.",
-"2.6": "Attempt four: a <strong>valid bit</strong> says whether a row means anything.",
-"2.7": "The lookup: hit only if <code>V = 1</code> and the tags match.",
+"1.3": "The CPU asks the cache first.",
+"1.4": "Nothing there yet: a <strong>miss</strong>.",
+"1.5": "On to RAM: the long trip.",
+"1.6": "The cache keeps a copy.",
+"1.7": "Asked again: a <strong>hit</strong>, in about 1 ns.",
+"1.8": "Nine hits in ten: a hit ratio of 90 percent.",
+"1.9": "A cache as big as RAM is just another RAM.",
+"1.10": "A real cache holds only a <strong>sliver</strong>.",
+"1.11": "The sliver forces three questions.",
+"1.12": "The simplest answer: the <strong>direct-mapped cache</strong>.",
+"2.1": "Attempt one: four rows, one value each.",
+"2.2": "The CPU asks for address 42.",
+"2.3": "<code>row = address % 4</code>: <code>42 % 4 = 2</code>.",
+"2.4": "Row 2 is empty, so ask RAM.",
+"2.5": "RAM says 17: it is copied into row 2.",
+"2.6": "Later, the CPU asks for address 10.",
+"2.7": "<code>10 % 4 = 2</code> as well: the same row.",
+"2.8": "The cache returns 17. <strong>Wrong:</strong> ram[10] = 33.",
+"2.9": "Attempt two: store the <strong>address</strong> too.",
+"2.10": "Row 2 holds the pair (42, 17).",
+"2.11": "<code>lw 10</code> compares addresses: stored 42, asked 10.",
+"2.12": "42 is not 10: a <strong>miss</strong>.",
+"2.13": "RAM says 33: it overwrites row 2. The old entry is <strong>evicted</strong>.",
+"2.14": "Correct now, but a whole address per row is wasteful.",
+"2.15": "Attempt three: <code>42 = 4 x 10 + 2</code>. The row already tells us the 2.",
+"2.16": "Store only the <strong>tag</strong>: 10.",
+"2.17": "<code>10 = 4 x 2 + 2</code>: row 2, tag 2.",
+"2.18": "Stored tag 10 is not tag 2: a miss.",
+"2.19": "Row 2 is overwritten. Index is where, tag is who.",
+"2.20": "Attempt four: power-on. Wires are never empty.",
+"2.21": "<code>lw 1</code>: row 1, tag 0.",
+"2.22": "The tags match on static: a <strong>false hit</strong>.",
+"2.23": "Add a <strong>valid bit</strong>. Every row starts at 0.",
+"2.24": "V = 0: a miss, without looking at the tag.",
+"2.25": "The lookup: row 2 has <code>V = 1</code>, tag 10.",
+"2.26": "Both match: a hit.",
+"2.27": "A tag mismatch: one kind of miss.",
+"2.28": "Not valid: another kind of miss.",
 "3.1": "Two localities: next address (spatial), same address (temporal).",
 "3.2": "Carry back the whole shelf: memory in <strong>blocks</strong>.",
 "3.3": "<code>lw 53</code> loads all of block 6 into row 2.",
 "3.4": "54 and 55 are hits: the bet paid off.",
-"4.1": "An address answers three questions: <strong>block</strong>, <strong>row</strong>, <strong>offset</strong>.",
-"4.2": "Block = <code>address // size</code>. Row = <code>block % rows</code>.",
-"4.3": "Address 181 in binary: tag | index | offset.",
-"4.4": "Three more examples, on the cache we trace next.",
+"4.1": "Block = <code>address // size</code>. Row = <code>block % rows</code>.",
+"4.2": "Address 181 in binary: tag | index | offset.",
+"4.3": "Three more examples, on the cache we trace next.",
 "5.1": "Four rows, block size 8, starting empty. Ten accesses.",
 "5.2": "52: <strong>miss</strong>. Load block 6 into row 2.",
 "5.3": "53: <strong>hit</strong>. It rode in with 52.",

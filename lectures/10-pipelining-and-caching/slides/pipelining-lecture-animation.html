@@ -562,6 +562,11 @@
     nt: { N: 7, tokens: [{ id: "a", label: "jeq", ci: 0, path: run5(1) }, { id: "b", label: "add $2,$2,$2", ci: 1, path: run5(2) }, { id: "c", label: "add $3,$3,$3", ci: 2, path: run5(3) }] },
     br: { N: 8, tokens: [{ id: "a", label: "jeq", ci: 0, path: run5(1) }, { id: "w1", label: "add $2,$2,$2", bubble: true, path: pth("2:0,3:1") }, { id: "w2", label: "add $4,$4,$4", bubble: true, path: pth("3:0") },
       { id: "t", label: "add $3,$3,$3", ci: 3, path: pth("4:0,5:1,6:2,7:3,8:4") }] },
+    wait: { N: 8, tokens: [{ id: "a", label: "jeq", ci: 0, path: run5(1) }, { id: "w1", label: "nothing", bubble: true, path: pth("2:0,3:1") }, { id: "w2", label: "nothing", bubble: true, path: pth("3:0") },
+      { id: "t", label: "add $3,$3,$3", ci: 3, path: pth("4:0,5:1,6:2,7:3,8:4") }] },
+    shared: { N: 11, tokens: [{ id: "a1", label: "add $1,$1,$1", ci: 0, path: run5(1) }, { id: "a2", label: "add $2,$2,$2", ci: 1, path: run5(2) }, { id: "a3", label: "add $3,$3,$3", ci: 2, path: run5(3) },
+      { id: "a4", label: "add $4,$4,$4", ci: 3, path: pth("4:0,5:0,6:0,7:0,8:1,9:2,10:3,11:4") },
+      { id: "n1", label: "waiting", bubble: true, path: pth("5:1,6:2,7:3,8:4") }, { id: "n2", label: "waiting", bubble: true, path: pth("6:1,7:2,8:3,9:4") }, { id: "n3", label: "waiting", bubble: true, path: pth("7:1,8:2,9:3,10:4") }] },
     st: { N: 8, tokens: [1, 2, 3, 4].map((i) => ({ id: "i" + i, label: "add $" + i + ",$" + i + ",$" + i, ci: i - 1, path: run5(i) })) },
   });
   const trn = (el, ms) => { el.style.transition = "opacity " + ms + "ms, fill " + ms + "ms, stroke " + ms + "ms"; return el; };
@@ -704,6 +709,55 @@
       r.c2.textContent = n ? "same as last time: wrong " + w2 + " of " + n : "";
     },
   };
+  // outcomes of a branch against several policies; each wrong guess (or each wait) costs 2 cycles
+  const PRED = {
+    loop: { seq: "TTTTTTTTTN", acts: "what the loop branch did", rows: [["S", "always wait"], ["N", "guess not taken"], ["T", "guess taken"]] },
+    err: { seq: "NNNNNNNNNT", acts: "what the error check did", rows: [["S", "always wait"], ["N", "guess not taken"], ["T", "guess taken"]] },
+    dyn: { seq: DYNSEQ, acts: "what the branch did", rows: [["N", "guess not taken"], ["D", "same as last time"]] },
+  };
+  const predOf = (pol, seq, i) => (pol === "S" ? null : pol === "D" ? (i === 0 ? "N" : seq[i - 1]) : pol);
+  const predSub = {
+    build(g) {
+      const r = { sets: {} };
+      const X0 = 300, CW = 62;
+      Object.keys(PRED).forEach((k) => {
+        const P = PRED[k], sg = grp(g, 0), cols = [], tot = [];
+        const ys = [70].concat(P.rows.map((_, j) => 150 + j * 80));
+        txt(sg, X0 - 20, ys[0] + 36, P.acts, { size: 17, weight: 700, fill: C.ink, anchor: "end" });
+        P.rows.forEach(([pol, lab], j) => {
+          txt(sg, X0 - 20, ys[j + 1] + 36, lab, { size: 17, weight: 700, fill: C.ink, anchor: "end" });
+          tot.push(txt(sg, X0 + P.seq.length * CW + 10, ys[j + 1] + 36, "", { size: 20, weight: 700, fill: C.red }));
+        });
+        for (let i = 0; i < P.seq.length; i++) {
+          const gg = grp(sg, 0); trn(gg, 300);
+          const act = P.seq[i];
+          rect(gg, X0 + i * CW, ys[0], CW - 6, 54, { rx: 8, fill: C.t1, stroke: C.purple, sw: 3 });
+          txt(gg, X0 + i * CW + (CW - 6) / 2, ys[0] + 36, act, { size: 24, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+          P.rows.forEach(([pol], j) => {
+            const v = predOf(pol, P.seq, i), ok = v === null ? false : v === act;
+            rect(gg, X0 + i * CW, ys[j + 1], CW - 6, 54, { rx: 8, fill: v === null ? C.t3 : (ok ? "#e4f3e1" : C.t2), stroke: v === null ? C.grey : (ok ? "#2e7d32" : C.red), sw: 3 });
+            txt(gg, X0 + i * CW + (CW - 6) / 2, ys[j + 1] + 36, v === null ? "2" : v, { size: 24, weight: 700, mono: true, fill: v === null ? C.grey : (ok ? "#2e7d32" : C.red), anchor: "middle" });
+          });
+          cols.push(gg);
+        }
+        r.sets[k] = { sg, cols, tot };
+      });
+      return r;
+    },
+    render(s, r) {
+      const n = s.n || 0;
+      Object.keys(r.sets).forEach((k) => {
+        const S = r.sets[k], P = PRED[k], on = k === s.p;
+        S.sg.style.opacity = on ? 1 : 0;
+        S.cols.forEach((gg, i) => { gg.style.opacity = on && i < n ? 1 : 0; });
+        P.rows.forEach(([pol], j) => {
+          let w = 0;
+          for (let i = 0; i < n; i++) { const v = predOf(pol, P.seq, i); if (v === null || v !== P.seq[i]) w++; }
+          S.tot[j].textContent = on && n ? (pol === "S" ? "" : "wrong ") + w + (pol === "S" ? " waits" : "") + " = " + (2 * w) + " cycles" : "";
+        });
+      });
+    },
+  };
   // a short program with a pc marker; the branch can fork into "taken" and "not taken"
   const LISTING = ["movi $1, 0", "jeq $1, $0, done", "add $2, $2, $2", "add $4, $4, $4", "done: add $3, $3, $3"];
   const listSub = {
@@ -747,8 +801,53 @@
       if (s.note) txt(r.mg, 575, 380, s.note, { size: 20, weight: 700, fill: C.red, anchor: "middle" });
     },
   };
+  // the register file and its doors: the real E20 has two read doors and a write door, a cheap one has a single shared door
+  const doorSub = {
+    build(g) { return { mg: grp(g, 1) }; },
+    render(s, r) {
+      while (r.mg.firstChild) r.mg.removeChild(r.mg.firstChild);
+      const g = r.mg, d = s.door || {}, cheap = d.mode === "cheap";
+      const FX = 560, FY = 60, FW = 430, FH = 270;
+      rect(g, FX, FY, FW, FH, { rx: 16, fill: C.white, stroke: C.purple, sw: 5 });
+      txt(g, FX + FW / 2, FY + 34, "REGISTER FILE", { size: 15, weight: 700, fill: C.purple, anchor: "middle", ls: 2 });
+      ["$0", "$1", "$2", "$3", "$4", "$5", "$6", "$7"].forEach((nm, i) => {
+        const x = FX + 160 + (i % 4) * 64, y = FY + 100 + Math.floor(i / 4) * 64;
+        rect(g, x, y, 56, 44, { rx: 8, fill: C.t1, stroke: C.purple, sw: 2 });
+        txt(g, x + 28, y + 29, nm, { size: 16, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+      });
+      const door = (y, label, col, busy) => {
+        rect(g, FX - 16, y, 32, 52, { rx: 8, fill: busy ? (busy === "bad" ? C.t2 : "#e4f3e1") : C.white, stroke: col, sw: 5 });
+        txt(g, FX + 28, y + 31, label, { size: 15, weight: 700, fill: col });
+      };
+      const chip = (x, y, label, sub, col) => {
+        rect(g, x, y, 250, 64, { rx: 12, fill: C.white, stroke: col, sw: 4 });
+        txt(g, x + 125, y + 28, label, { size: 20, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+        txt(g, x + 125, y + 52, sub, { size: 15, weight: 700, fill: col, anchor: "middle" });
+      };
+      const pt = (x1, y1, x2, y2, col) => { path(g, "M" + x1 + " " + y1 + " L" + x2 + " " + y2, { stroke: col, sw: 5 }); arrowhead(g, x2, y2, "r", col); };
+      if (!cheap) {
+        door(FY + 52, "READ A", C.purple, d.rd && "ok"); door(FY + 122, "READ B", C.purple, d.rd && "ok"); door(FY + 192, "WRITE", C.purple, d.wr && "ok");
+        txt(g, FX + FW / 2, FY + FH + 34, "the real E20: three doors", { size: 19, weight: 700, fill: C.purple, anchor: "middle" });
+        if (d.rd) { chip(120, FY + 40, d.rd, "in ID: reads two registers", "#2e7d32"); pt(372, FY + 72, FX - 20, FY + 78, "#2e7d32"); pt(372, FY + 90, FX - 20, FY + 148, "#2e7d32"); }
+        if (d.wr) { chip(120, FY + 190, d.wr, "in WB: writes a register", "#2e7d32"); pt(372, FY + 222, FX - 20, FY + 218, "#2e7d32"); }
+        if (d.rd && d.wr) txt(g, 575, 40, "both get through in the same cycle", { size: 20, weight: 700, fill: "#2e7d32", anchor: "middle" });
+      } else {
+        const busy = d.rd && d.wr ? "bad" : (d.rd || d.wr ? "ok" : null);
+        door(FY + 118, "READ + WRITE", busy === "bad" ? C.red : C.purple, busy);
+        txt(g, FX + FW / 2, FY + FH + 34, "a cheaper one: a single door", { size: 19, weight: 700, fill: C.purple, anchor: "middle" });
+        if (d.rd) { chip(120, FY + 20, d.rd, "in ID: needs to read", busy === "bad" ? C.red : "#2e7d32"); pt(372, FY + 52, FX - 20, FY + 132, busy === "bad" ? C.red : "#2e7d32"); }
+        if (d.wr) { chip(120, FY + 190, d.wr, "in WB: needs to write", busy === "bad" ? C.red : "#2e7d32"); pt(372, FY + 222, FX - 20, FY + 156, busy === "bad" ? C.red : "#2e7d32"); }
+        if (d.rd && d.wr) {
+          circ(g, FX - 70, FY + 144, 26, { fill: C.white, stroke: C.red, sw: 5 });
+          txt(g, FX - 70, FY + 154, "!", { size: 32, weight: 700, fill: C.red, anchor: "middle" });
+          txt(g, 575, 40, "one door, two instructions: only one gets through", { size: 20, weight: 700, fill: C.red, anchor: "middle" });
+        }
+      }
+      if (d.note) txt(g, 575, 390, d.note, { size: 20, weight: 700, fill: d.notecol || C.red, anchor: "middle" });
+    },
+  };
   const pipeSubs2 = () => ({ fill: pipeSub(PIPES.fill), raw: pipeSub(PIPES.raw), stall: pipeSub(PIPES.stall), ordA: pipeSub(PIPES.ordA), ordB: pipeSub(PIPES.ordB), nt: pipeSub(PIPES.nt), br: pipeSub(PIPES.br), st: pipeSub(PIPES.st), fwdex: pipeSub(PIPES.fwdex), one: pipeSub(PIPES.one), war: pipeSub(PIPES.war), waw: pipeSub(PIPES.waw), rar: pipeSub(PIPES.rar),
-    tstall: tabSub(PIPES.stall), tordA: tabSub(PIPES.ordA), tordB: tabSub(PIPES.ordB), tbr: tabSub(PIPES.br), tnt: tabSub(PIPES.nt), tst: tabSub(PIPES.st), swap: swapSub, bars: barsSub, dyn: dynSub, code: listSub });
+    tstall: tabSub(PIPES.stall), tordA: tabSub(PIPES.ordA), tordB: tabSub(PIPES.ordB), tbr: tabSub(PIPES.br), twait: tabSub(PIPES.wait), shared: pipeSub(PIPES.shared), tshared: tabSub(PIPES.shared), door: doorSub, wait: pipeSub(PIPES.wait), pred: predSub, tnt: tabSub(PIPES.nt), tst: tabSub(PIPES.st), swap: swapSub, bars: barsSub, dyn: dynSub, code: listSub });
 
   const DH = { cols: [{ h: "NAME", x: 60, w: 170, mono: true, bold: true, size: 22 }, { h: "PATTERN", x: 250, w: 380, size: 18 }, { h: "EXAMPLE", x: 650, w: 330, mono: true, size: 15 }, { h: "HAZARD?", x: 1000, w: 140, size: 18, bold: true }],
     rows: [["RAW", "2 reads what 1 writes", "movi $1,0 | add $2,$2,$1", "yes"], ["WAR", "2 writes what 1 reads", "addi $1,$2,1 | addi $2,$3,1", "no *"], ["WAW", "both write the same register", "addi $1,$2,1 | addi $1,$3,1", "no *"], ["RAR", "both read the same register", "addi $1,$2,1 | addi $3,$2,1", "never"]], rh: 70, y0: 70, fs: 18 };
@@ -822,31 +921,63 @@
 
   scene(mixScene({
     num: "5", title: "Branch Prediction: Guess, Then Check", subtitle: "Don't wait. Guess, keep going, and fix the guess if it was wrong.",
-    chips: ["Guess", "Right or wrong", "Which guess", "Remember"],
+    chips: ["Wait", "Guess not taken", "Guess taken", "Remember"],
     steps: [
-      { sub: "card", card: cd("Guess, then check", ["waiting stalls every branch", "so guess, and keep fetching", "fix it if the guess was wrong"]), chip: 1, foot: "", narrate: "Waiting for the answer would stall on every branch, which is exactly the cost a pipeline exists to avoid. So the pipeline <strong>guesses</strong>, keeps going, and fixes the mistake if the guess was wrong." },
-      { sub: "nt", cycle: 5, chip: 2, foot: "", narrate: "The simplest guess is <strong>not taken</strong>: keep fetching the line below. If the branch really is not taken, the guess was right and <em>nothing</em> was lost." },
-      { sub: "tnt", rows: 7, cur: 0, chip: 2, foot: "", narrate: "In the table, a right guess has no dashed cells at all. The instructions flow through as if nothing had been in doubt." },
-      { sub: "br", cycle: 4, marks: [[0, "2 wasted cycles"]], chip: 2, foot: "", narrate: "If the branch is taken, the guess was wrong. The two instructions behind it are flushed and the real target is fetched. That costs 2 cycles, but only when the guess is wrong." },
-      { sub: "card", card: cd("Which guess is best?", ["a loop jumps back almost every time: guess taken", "an error check almost never fires: guess not taken", "so the best guess depends on the branch"]), chip: 3, foot: "", narrate: "Which guess is best depends on the branch. A loop jumps back to the top almost every time, so <strong>taken</strong> is the better bet. An error check almost never fires, so <strong>not taken</strong> wins." },
-      { sub: "dyn", n: 0, chip: 4, foot: "", narrate: "Real processors do not pick one guess for everything. They remember what each branch did last time, and guess the same again. Here is a loop branch, run twice." },
-      { sub: "dyn", n: 5, chip: 4, foot: "", narrate: "\"Same as last time\" is only wrong when the branch changes its mind. \"Not taken\" is wrong every time the loop jumps back." },
-      { sub: "dyn", n: 10, chip: 4, foot: "", narrate: "After ten runs, \"not taken\" was wrong 8 times and \"same as last time\" only 4. One policy for every branch is always wrong for some of them." },
+      { sub: "card", card: cd("Attempt one: just wait", ["nobody knows what comes after a jeq", "so fetch nothing until its answer arrives", "always correct"]), chip: 1, foot: "", narrate: "First attempt, the safest one: do not guess at all. The pipeline has no idea which instruction follows a <code>jeq</code>, so it simply holds the fetch until the answer arrives." },
+      { sub: "wait", cycle: 2, marks: [[0, "nothing to fetch yet"]], chip: 1, foot: "", narrate: "Watch the cycles. In cycle 2 the <code>jeq</code> is in <code>ID</code>, and the fetch stage sits empty, because we do not know what to fetch." },
+      { sub: "wait", cycle: 3, marks: [[2, "the answer arrives"]], chip: 1, foot: "", narrate: "In cycle 3 the <code>jeq</code> reaches <code>EX</code>, and the answer is finally known. The fetch stage is still empty." },
+      { sub: "wait", cycle: 4, marks: [[0, "now fetch the right one"]], chip: 1, foot: "", narrate: "Only in cycle 4 does the correct next instruction enter <code>IF</code>. Two fetch slots went to waste." },
+      { sub: "twait", rows: 8, cur: 0, hl: "bubbles", chip: 1, foot: "", narrate: "As a table: the two dashed cells after the <code>jeq</code> are the wasted slots. Taken or not taken, every branch pays them." },
+      { sub: "card", card: cd("What waiting costs", ["2 wasted cycles on every branch", "a branch that runs 100 times", "100 x 2 = 200 cycles"]), chip: 1, foot: "", narrate: "Correct, but pricey: 2 cycles on every single execution. A branch that runs 100 times wastes 200 cycles, and that is the number every other attempt has to beat." },
+      { sub: "card", card: cd("Attempt two: guess not taken", ["keep fetching the line below", "if the guess is right, nothing is lost", "if it is wrong, throw the guesses away"]), chip: 2, foot: "", narrate: "Second attempt: stop waiting and <strong>guess</strong>. The simplest guess is <strong>not taken</strong>: just keep fetching the line below, as if the branch were not there." },
+      { sub: "nt", cycle: 2, marks: [[0, "fetch the line below: a guess"]], chip: 2, foot: "", narrate: "In cycle 2 the <code>jeq</code> is in <code>ID</code>, and the pipeline fetches the line below it without knowing whether that is right." },
+      { sub: "nt", cycle: 3, marks: [[2, "the answer: not taken"]], chip: 2, foot: "", narrate: "Cycle 3: the <code>jeq</code> reaches <code>EX</code> and the answer is <strong>not taken</strong>. The guess was right, and the instructions already in flight are exactly the ones we wanted." },
+      { sub: "tnt", rows: 7, cur: 0, chip: 2, foot: "", narrate: "In the table a right guess leaves no dashed cells at all. The pipeline never knew it was gambling." },
+      { sub: "br", cycle: 3, marks: [[2, "the answer: taken"]], chip: 2, foot: "", narrate: "Now the other case. The <code>jeq</code> reaches <code>EX</code> and the answer is <strong>taken</strong>. The guess was wrong: the two instructions fetched behind it came from the wrong place." },
+      { sub: "br", cycle: 4, marks: [[0, "the real target"]], chip: 2, foot: "", narrate: "They are flushed, which is safe because neither has written anything yet, and the real target is fetched in cycle 4. Two cycles lost." },
+      { sub: "tbr", rows: 8, cur: 0, hl: "bubbles", chip: 2, foot: "", narrate: "As a table: the same two dashed cells as waiting. A wrong guess costs exactly what waiting always cost." },
+      { sub: "card", card: cd("The price of a guess", ["right: 0 cycles", "wrong: 2 cycles", "waiting: 2 cycles, always"]), chip: 2, foot: "", narrate: "So a guess can never be worse than waiting. If it is right, it is free, and if it is wrong, it costs the same as waiting. The only question is how often it is right." },
+      { sub: "bars", n: 1, chip: 2, foot: "", narrate: "Try a branch that is taken only 10 times in 100. Guessing \"not taken\" is wrong 10 times, so 10 x 2 = 20 cycles, against 200 for waiting." },
+      { sub: "bars", n: 2, chip: 2, foot: "", narrate: "Now a branch taken 90 times in 100. Guessing \"not taken\" is wrong 90 times: 90 x 2 = 180 cycles, barely better than waiting. A guess only pays when it is usually right." },
+      { sub: "card", card: cd("Attempt three: guess taken", ["a loop jumps back almost every time", "so guess taken: fetch from the target", "right: 0 cycles, wrong: 2 cycles"]), chip: 3, foot: "", narrate: "Third attempt: if \"not taken\" is bad for a branch that is almost always taken, guess <strong>taken</strong> instead and start fetching from the target. A right guess costs nothing, a wrong one costs 2." },
+      { sub: "pred", p: "loop", n: 3, chip: 3, foot: "", narrate: "Take a loop's back-edge that runs 10 times, taken 9 and not taken once at the end. Here are the first three runs. Waiting costs 2 each. Guessing \"not taken\" is wrong every time. Guessing \"taken\" is right every time." },
+      { sub: "pred", p: "loop", n: 10, chip: 3, foot: "", narrate: "All ten: waiting costs 20 cycles, \"not taken\" costs 18, and \"taken\" costs 2, wrong only at the very last run, when the loop finally exits." },
+      { sub: "pred", p: "err", n: 10, chip: 3, foot: "", narrate: "Now an error check that fires once in ten. The scores flip: \"not taken\" costs 2, and \"taken\" costs 18. The right fixed guess depends on the branch." },
+      { sub: "card", card: cd("A fixed guess is not enough", ["loop back-edge: guess taken", "error check: guess not taken", "any fixed guess is wrong for the other kind"]), chip: 3, foot: "", narrate: "A loop wants \"taken\" and an error check wants \"not taken\". A processor runs both kinds of branch in the same program, so no single fixed guess is right for everything." },
+      { sub: "card", card: cd("Attempt four: remember", ["a branch tends to repeat itself", "guess what it did last time", "first time ever: guess not taken"]), chip: 4, foot: "", narrate: "Fourth attempt: let each branch speak for itself. Remember what it did the last time, and guess the same again. The very first time there is no history, so we guess \"not taken\"." },
+      { sub: "pred", p: "dyn", n: 0, chip: 4, foot: "", narrate: "Here is a loop branch that runs twice: taken four times, not taken once, then the same again. We will compare \"not taken\" with \"same as last time\", one run at a time." },
+      { sub: "pred", p: "dyn", n: 1, chip: 4, foot: "", narrate: "First run: there is no history, so \"same as last time\" guesses \"not taken\". The loop jumped, so both guesses are wrong." },
+      { sub: "pred", p: "dyn", n: 2, chip: 4, foot: "", narrate: "Second run: last time it was taken, so we guess taken, and we are right. \"Not taken\" is wrong again." },
+      { sub: "pred", p: "dyn", n: 5, chip: 4, foot: "", narrate: "The fifth run is the loop exit. Last time it was taken, so we guessed taken, and the branch changed its mind: wrong. That is the only kind of mistake this guess makes." },
+      { sub: "pred", p: "dyn", n: 6, chip: 4, foot: "", narrate: "The loop starts again. Last time it was not taken, so we guess not taken, and it jumps: wrong again. A loop costs this guess two mistakes per visit: the exit, and the first jump back." },
+      { sub: "pred", p: "dyn", n: 10, chip: 4, foot: "", narrate: "After ten runs, \"not taken\" was wrong 8 times and \"same as last time\" only 4. Real processors keep this history separately for every branch." },
+      { sub: "card", card: cd("Guess, then check", ["waiting: 2 cycles on every branch", "a guess: free if right, 2 if wrong", "remembering history makes it right more often"]), chip: 4, foot: "", narrate: "So the story in four attempts: waiting always costs 2 cycles, a fixed guess is free when right but is wrong for the opposite branch, and remembering what each branch did makes the guess right far more often." },
     ],
   }, Object.assign({ card: cardSub }, pipeSubs2())));
 
   scene(mixScene({
     num: "6", title: "Structural Hazards: When Two Instructions Want the Same Hardware", subtitle: "Not a data problem: a hardware problem.",
-    chips: ["The idea", "The collision", "The table", "All three"],
+    chips: ["The idea", "The doors", "The collision", "The cost", "All three"],
     steps: [
       { sub: "card", card: cd("A third kind of hazard", ["not about data, and not about the pc", "two instructions need the same hardware", "in the same cycle"]), chip: 1, foot: "", narrate: "The last hazard is not about data or the <code>pc</code>. It happens when two instructions need the same piece of hardware in the same cycle." },
       { sub: "st", cycle: 5, marks: [[1, "reads the registers"], [4, "writes a register"]], chip: 1, foot: "", narrate: "Take the register file. An instruction in <code>ID</code> reads it, an instruction in <code>WB</code> writes it, and in a full pipeline both happen in every single cycle." },
-      { sub: "card", card: cd("One door or three", ["the real E20: two doors for reading, one for writing", "so a read and a write can happen at once", "a cheaper register file: one door shared by both"]), chip: 2, foot: "", narrate: "The real E20 has separate doors for this: two for reading and one for writing, so both happen at once. Now imagine a cheaper register file with a single door that reads and writes have to share." },
-      { sub: "st", cycle: 5, marks: [[1, "needs the door"], [4, "needs the door"]], chip: 2, foot: "", narrate: "Look at cycle 5 of four <code>add</code> instructions. The first needs the door to write its result in <code>WB</code>, and the fourth needs the same door to read in <code>ID</code>. One door, two instructions." },
+      { sub: "door", door: { mode: "real" }, chip: 2, foot: "", narrate: "The real E20 register file has three doors: two for reading, because an instruction reads two registers at once, and one for writing. Think of each door as a wire into the register file that only one instruction can use per cycle." },
+      { sub: "door", door: { mode: "real", rd: "add $4,$4,$4", wr: "add $1,$1,$1" }, chip: 2, foot: "", narrate: "In cycle 5 the fourth <code>add</code> reads through the read doors, and the first <code>add</code> writes through the write door. Different doors, so both get through in the same cycle." },
+      { sub: "door", door: { mode: "cheap" }, chip: 2, foot: "", narrate: "Now imagine a cheaper register file, with a single door that reads and writes have to share. Fewer wires, smaller chip, and one rule: one instruction at a time." },
+      { sub: "door", door: { mode: "cheap", rd: "add $4,$4,$4" }, chip: 3, foot: "", narrate: "A read on its own is fine. The fourth <code>add</code> arrives in <code>ID</code> and uses the door to read its registers." },
+      { sub: "door", door: { mode: "cheap", rd: "add $4,$4,$4", wr: "add $1,$1,$1" }, chip: 3, foot: "", narrate: "But in cycle 5 the first <code>add</code> is in <code>WB</code> and wants the same door to write its result. Two instructions, one door. Nothing is wrong with either instruction: they simply collide." },
+      { sub: "st", cycle: 5, marks: [[1, "needs the door"], [4, "needs the door"]], chip: 3, foot: "", narrate: "In the pipeline it looks like this: the fourth <code>add</code> in <code>ID</code>, the first in <code>WB</code>, both in cycle 5. No register is shared between them. It is not a data hazard at all." },
       { sub: "tst", rows: 5, cur: 5, hlcells: [[5, 1], [5, 4]], chip: 3, foot: "", narrate: "In the table it is one row with two cells fighting over the one door. One of them has to wait." },
-      { sub: "card", card: cd("The fix", ["stall one of them, as before", "or build more doors, as the real E20 does", "and every cycle collides with the cheap one"]), chip: 3, foot: "", narrate: "With the cheap register file this would happen in every cycle, because every cycle has a write-back and a decode. The fix is the usual blunt tool, stall one of them, or build more doors, which is what the E20 does." },
-      { sub: "hz", rows: 3, chip: 4, foot: "", narrate: "So here are all three families. Data hazards: a later instruction reads too early, so stall, forward or reorder. Control hazards: the next <code>pc</code> is unknown, so guess and flush if wrong. Structural hazards: two want the same hardware, so stall one or build more." },
-      { sub: "card", card: cd("Next: caching", ["even a perfect pipeline wants an instruction per cycle", "memory takes about 200 times longer than that", "a different problem, with a very old answer"]), chip: 4, foot: "", narrate: "A pipeline in perfect health finishes one instruction per cycle. But a <code>lw</code> has to go to memory, and memory is not remotely that fast. That has nothing to do with hazards, and everything to do with a number from the first slide of this course." },
+      { sub: "card", card: cd("Someone has to wait", ["the write finishes an instruction", "so the write goes first", "the read waits in IF"]), chip: 3, foot: "", narrate: "The sensible rule: the write goes first, because it finishes an instruction. The fourth <code>add</code> has to wait before it can read. As before, it waits in <code>IF</code> while bubbles flow behind." },
+      { sub: "shared", cycle: 5, marks: [[4, "add 1 writes: door busy"], [1, "add 4 must wait"]], chip: 4, foot: "", narrate: "Cycle 5: the first <code>add</code> uses the door to write. The fourth <code>add</code> is held back, and a bubble enters <code>ID</code>." },
+      { sub: "shared", cycle: 6, marks: [[4, "add 2 writes: door busy"], [1, "add 4 still waits"]], chip: 4, foot: "", narrate: "Cycle 6: now the second <code>add</code> is in <code>WB</code> and has the door. The fourth <code>add</code> waits again." },
+      { sub: "shared", cycle: 7, marks: [[4, "add 3 writes: door busy"], [1, "add 4 still waits"]], chip: 4, foot: "", narrate: "Cycle 7: the third <code>add</code> writes. The fourth still cannot read, because the write-backs keep arriving, one per cycle, each using the door." },
+      { sub: "shared", cycle: 8, marks: [[1, "the door is free: add 4 reads"]], chip: 4, foot: "", narrate: "Only in cycle 8 is the door free, and the fourth <code>add</code> finally reads its registers." },
+      { sub: "tshared", rows: 11, cur: 0, hl: "bubbles", chip: 4, foot: "", narrate: "As a table: the fourth <code>add</code> finishes in cycle 11, not cycle 8. Three cycles lost, on four instructions that had nothing to do with each other." },
+      { sub: "card", card: cd("The cost of one door", ["every instruction needs the door twice", "once to read, once to write", "one door: one instruction every two cycles"]), chip: 4, foot: "", narrate: "It gets worse with a longer program. Every instruction needs the door twice, once to read and once to write, so a single door can serve only one instruction every two cycles. The pipeline we built to finish one per cycle would run at half speed." },
+      { sub: "card", card: cd("The fix", ["build more doors, as the real E20 does", "or stall one of them, as we just did", "hardware cost against cycles lost"]), chip: 4, foot: "", narrate: "So the real E20 pays for three doors and has no structural hazards at all. A cheaper design could save the wires and pay in stalls instead. A structural hazard is a hardware budget decision, not a mistake in the program." },
+      { sub: "hz", rows: 3, chip: 5, foot: "", narrate: "So here are all three families. Data hazards: a later instruction reads too early, so stall, forward or reorder. Control hazards: the next <code>pc</code> is unknown, so guess and flush if wrong. Structural hazards: two want the same hardware, so stall one or build more." },
+      { sub: "card", card: cd("Next: caching", ["even a perfect pipeline wants an instruction per cycle", "memory takes about 200 times longer than that", "a different problem, with a very old answer"]), chip: 5, foot: "", narrate: "A pipeline in perfect health finishes one instruction per cycle. But a <code>lw</code> has to go to memory, and memory is not remotely that fast. That has nothing to do with hazards, and everything to do with a number from the first slide of this course." },
     ],
   }, Object.assign({ card: cardSub, hz: tb(HZ) }, pipeSubs2())));
 
@@ -996,22 +1127,54 @@
 "4.7": "The same shape as RAW, with the <code>pc</code> as <code>$1</code>.",
 "4.8": "Most instructions always go to <code>pc + 1</code>: no hazard.",
 "4.9": "<code>jeq</code> and <code>jr</code> must wait. <code>j</code>, <code>jal</code> might not.",
-"5.1": "Don't wait: <strong>guess</strong>, keep going, fix it if wrong.",
-"5.2": "Guess <strong>not taken</strong>: if right, nothing is lost.",
-"5.3": "A right guess has no dashed cells.",
-"5.4": "A wrong guess flushes 2 cycles, but only when wrong.",
-"5.5": "A loop: guess <strong>taken</strong>. An error check: guess <strong>not taken</strong>.",
-"5.6": "Remember each branch: guess <strong>what it did last time</strong>.",
-"5.7": "Same as last time is wrong only when the branch changes its mind.",
-"5.8": "Ten runs: 8 wrong against 4 wrong.",
+"5.1": "Attempt one: just <strong>wait</strong>. Always correct.",
+"5.2": "Cycle 2: nothing to fetch yet.",
+"5.3": "Cycle 3: the answer arrives in EX.",
+"5.4": "Cycle 4: the right instruction finally enters IF.",
+"5.5": "Two dashed slots after every branch.",
+"5.6": "Waiting: 2 cycles per branch, 200 in 100 runs.",
+"5.7": "Attempt two: <strong>guess not taken</strong>.",
+"5.8": "Cycle 2: fetch the line below, as a guess.",
+"5.9": "Not taken: the guess was right, nothing lost.",
+"5.10": "A right guess leaves no dashed cells.",
+"5.11": "Taken: the guess was wrong.",
+"5.12": "The wrong fetches are flushed: 2 cycles.",
+"5.13": "A wrong guess costs what waiting always cost.",
+"5.14": "Right: 0. Wrong: 2. Waiting: 2.",
+"5.15": "Taken 10 in 100: 20 cycles, against 200.",
+"5.16": "Taken 90 in 100: 180, barely better.",
+"5.17": "Attempt three: <strong>guess taken</strong>.",
+"5.18": "A loop's first three runs: taken is always right.",
+"5.19": "Ten runs: wait 20, not taken 18, taken 2.",
+"5.20": "An error check flips it: not taken 2, taken 18.",
+"5.21": "No fixed guess is right for every branch.",
+"5.22": "Attempt four: <strong>remember</strong> what it did last time.",
+"5.23": "A loop branch, run twice.",
+"5.24": "Run 1: no history, guess not taken: wrong.",
+"5.25": "Run 2: last time taken, guess taken: right.",
+"5.26": "The exit: the branch changed its mind.",
+"5.27": "Next visit: two mistakes per loop.",
+"5.28": "Ten runs: 8 wrong against 4 wrong.",
+"5.29": "Waiting, fixed guesses, and history.",
 "6.1": "A third hazard: two instructions, <strong>one piece of hardware</strong>.",
 "6.2": "The register file: read in <code>ID</code>, written in <code>WB</code>, every cycle.",
-"6.3": "The E20 has separate doors. A cheap one has a single shared door.",
-"6.4": "Cycle 5: <code>WB</code> and <code>ID</code> both want the one door.",
-"6.5": "One row, two cells fighting over the door.",
-"6.6": "Fix: stall one, or build more doors.",
-"6.7": "Data, control, structural: three families, three fixes.",
-"6.8": "Next: even a perfect pipeline waits on memory."
+"6.3": "The real E20: two read doors and one write door.",
+"6.4": "Cycle 5: a read and a write, through different doors.",
+"6.5": "A cheaper register file: one shared door.",
+"6.6": "A read alone is fine.",
+"6.7": "Cycle 5: a read and a write want the same door.",
+"6.8": "Two instructions, no shared register: not a data hazard.",
+"6.9": "One row, two cells fighting over the door.",
+"6.10": "The write goes first. The read waits.",
+"6.11": "Cycle 5: <code>add 1</code> writes, <code>add 4</code> waits.",
+"6.12": "Cycle 6: <code>add 2</code> writes, <code>add 4</code> waits.",
+"6.13": "Cycle 7: <code>add 3</code> writes, <code>add 4</code> waits.",
+"6.14": "Cycle 8: the door is free: <code>add 4</code> reads.",
+"6.15": "Cycle 11, not 8: three cycles lost.",
+"6.16": "Two uses per instruction: one instruction every two cycles.",
+"6.17": "Fix: more doors, or stall. A budget decision.",
+"6.18": "Data, control, structural: three families, three fixes.",
+"6.19": "Next: even a perfect pipeline waits on memory."
 };
   let fullText = false;
   window.DECK_STEPS = scenes.map(function (sc) { return { num: sc.num, title: sc.title, front: !!sc.front, steps: sc.steps.map(function (s) { return { narrate: s.narrate, sub: s.sub, img: s.img, card: s.card, cycle: s.cycle, rows: s.rows, hl: s.hl, marks: s.marks, arrows: s.arrows, view: s.view, mark: s.mark, danger: s.danger, chip: s.chip, reg: s.reg, rlab: s.rlab, rtxt: s.rtxt, rval: s.rval, vchip: s.vchip, notes: s.notes, prog: s.prog, order: s.order, n: s.n, hlcells: s.hlcells, cur: s.cur, pc: s.pc, next: s.next, fork: s.fork, note: s.note }; }) }; });
