@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 380" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="380" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" text-anchor="middle">one bit of history per jeq: the register is the prediction</text>
+<circle cx="300" cy="190" r="86" fill="#fff" stroke="#57068c" stroke-width="6"/>
+<text x="300" y="186" fill="#57068c" font-size="54" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<text x="300" y="224" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle">Not taken</text>
+<circle cx="850" cy="190" r="86" fill="#fff" stroke="#c1272d" stroke-width="6"/>
+<text x="850" y="186" fill="#c1272d" font-size="54" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<text x="850" y="224" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle">Taken</text>
+<text x="575" y="200" fill="#6d6d6d" font-size="15" font-weight="700" text-anchor="middle">the special register</text>
+<text x="575" y="226" fill="#6d6d6d" font-size="15" font-weight="500" text-anchor="middle">1 if the jeq branched last time</text>
+<text x="575" y="248" fill="#6d6d6d" font-size="15" font-weight="500" text-anchor="middle">0 if it did not</text>
+<path d="M 360 128 C 450 60 700 60 790 128" fill="none" stroke="#c1272d" stroke-width="5" stroke-linecap="round"/>
+<polygon points="790,128,783,116,797,116" fill="#c1272d"/>
+<path d="M 790 252 C 700 320 450 320 360 252" fill="none" stroke="#c1272d" stroke-width="5" stroke-linecap="round"/>
+<polygon points="360,252,353,264,367,264" fill="#c1272d"/>
+<text x="575" y="58" fill="#c1272d" font-size="20" font-weight="700" text-anchor="middle">incorrect prediction: flip</text>
+<text x="575" y="342" fill="#c1272d" font-size="20" font-weight="700" text-anchor="middle">incorrect prediction: flip</text>
+<path d="M 232 150 C 130 80 130 300 232 230" fill="none" stroke="#2e7d32" stroke-width="5" stroke-linecap="round"/>
+<polygon points="232,230,220,223,220,237" fill="#2e7d32"/>
+<path d="M 918 150 C 1020 80 1020 300 918 230" fill="none" stroke="#2e7d32" stroke-width="5" stroke-linecap="round"/>
+<polygon points="918,230,930,223,930,237" fill="#2e7d32"/>
+<text x="118" y="196" fill="#2e7d32" font-size="17" font-weight="700" text-anchor="middle">correct:</text>
+<text x="118" y="218" fill="#2e7d32" font-size="17" font-weight="700" text-anchor="middle">stay</text>
+<text x="1032" y="196" fill="#2e7d32" font-size="17" font-weight="700" text-anchor="middle">correct:</text>
+<text x="1032" y="218" fill="#2e7d32" font-size="17" font-weight="700" text-anchor="middle">stay</text>
+</svg>

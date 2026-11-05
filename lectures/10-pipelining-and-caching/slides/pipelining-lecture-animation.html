@@ -384,7 +384,7 @@
 
   // ================= Title slide =================
   (function () {
-    const ROUTE = ["Recap: One Hazard Down", "Who Can Interfere?", "Reordering", "Control Hazards", "Branch Prediction", "Structural Hazards"];
+    const ROUTE = ["Recap: One Hazard Down", "Who Can Interfere?", "Reordering", "Control Hazards", "Branch Prediction", "Structural Hazards", "Inside the Pipeline", "E15 and Dependency Graphs"];
     scene({
       front: true, num: "", title: "Pipelining, Concluded", subtitle: "", chips: [],
       steps: [
@@ -405,8 +405,8 @@
         r.route = grp(g, 0);
         txt(r.route, 575, 40, "TODAY'S ROUTE", { size: 13, weight: 700, fill: C.purple, anchor: "middle", ls: 2 });
         ROUTE.forEach((name, i) => {
-          const col = i < 3 ? 0 : 1, row = col === 0 ? i : i - 3;
-          const x = 110 + col * 480, y = 90 + row * 74;
+          const col = i < 4 ? 0 : 1, row = col === 0 ? i : i - 4;
+          const x = 110 + col * 480, y = 76 + row * 66;
           rect(r.route, x, y, 450, 58, { rx: 12, fill: C.white, stroke: C.purple, sw: 4 });
           circ(r.route, x + 32, y + 29, 15, { fill: C.purple });
           txt(r.route, x + 32, y + 35, String(i + 1), { size: 15, weight: 700, fill: C.white, anchor: "middle" });
@@ -562,11 +562,15 @@
     nt: { N: 7, tokens: [{ id: "a", label: "jeq", ci: 0, path: run5(1) }, { id: "b", label: "add $2,$2,$2", ci: 1, path: run5(2) }, { id: "c", label: "add $3,$3,$3", ci: 2, path: run5(3) }] },
     br: { N: 8, tokens: [{ id: "a", label: "jeq", ci: 0, path: run5(1) }, { id: "w1", label: "add $2,$2,$2", bubble: true, path: pth("2:0,3:1") }, { id: "w2", label: "add $4,$4,$4", bubble: true, path: pth("3:0") },
       { id: "t", label: "add $3,$3,$3", ci: 3, path: pth("4:0,5:1,6:2,7:3,8:4") }] },
+    far: { N: 9, tokens: [{ id: "a", label: "movi $1,5", ci: 0, path: run5(1) }, { id: "b", label: "addi $3,$3,1", ci: 1, path: run5(2) }, { id: "c", label: "addi $4,$4,1", ci: 2, path: run5(3) }, { id: "d", label: "addi $5,$5,1", ci: 3, path: run5(4) }, { id: "e", label: "add $2,$2,$1", ci: 4, path: run5(5) }] },
+    memc: { N: 6, tokens: [{ id: "a", label: "sw $1,foo($0)", ci: 0, path: run5(1) }, { id: "b", label: "lw $2,foo($0)", ci: 1, path: run5(2) }] },
+    nops: { N: 9, tokens: [{ id: "a", label: "addi $1,$0,1", ci: 0, path: run5(1) }, { id: "n1", label: "nop", ci: 5, path: run5(2) }, { id: "n2", label: "nop", ci: 5, path: run5(3) }, { id: "n3", label: "nop", ci: 5, path: run5(4) }, { id: "b", label: "addi $1,$1,1", ci: 1, path: run5(5) }] },
     wait: { N: 8, tokens: [{ id: "a", label: "jeq", ci: 0, path: run5(1) }, { id: "w1", label: "nothing", bubble: true, path: pth("2:0,3:1") }, { id: "w2", label: "nothing", bubble: true, path: pth("3:0") },
       { id: "t", label: "add $3,$3,$3", ci: 3, path: pth("4:0,5:1,6:2,7:3,8:4") }] },
     shared: { N: 11, tokens: [{ id: "a1", label: "add $1,$1,$1", ci: 0, path: run5(1) }, { id: "a2", label: "add $2,$2,$2", ci: 1, path: run5(2) }, { id: "a3", label: "add $3,$3,$3", ci: 2, path: run5(3) },
       { id: "a4", label: "add $4,$4,$4", ci: 3, path: pth("4:0,5:0,6:0,7:0,8:1,9:2,10:3,11:4") },
       { id: "n1", label: "waiting", bubble: true, path: pth("5:1,6:2,7:3,8:4") }, { id: "n2", label: "waiting", bubble: true, path: pth("6:1,7:2,8:3,9:4") }, { id: "n3", label: "waiting", bubble: true, path: pth("7:1,8:2,9:3,10:4") }] },
+    lwc: { N: 8, tokens: [{ id: "l", label: "lw $1,0($0)", ci: 0, path: run5(1) }, { id: "a2", label: "add $2,$2,$2", ci: 1, path: run5(2) }, { id: "a3", label: "add $3,$3,$3", ci: 2, path: run5(3) }, { id: "a4", label: "add $4,$4,$4", ci: 3, path: run5(4) }] },
     st: { N: 8, tokens: [1, 2, 3, 4].map((i) => ({ id: "i" + i, label: "add $" + i + ",$" + i + ",$" + i, ci: i - 1, path: run5(i) })) },
   });
   const trn = (el, ms) => { el.style.transition = "opacity " + ms + "ms, fill " + ms + "ms, stroke " + ms + "ms"; return el; };
@@ -714,14 +718,16 @@
     loop: { seq: "TTTTTTTTTN", acts: "what the loop branch did", rows: [["S", "always wait"], ["N", "guess not taken"], ["T", "guess taken"]] },
     err: { seq: "NNNNNNNNNT", acts: "what the error check did", rows: [["S", "always wait"], ["N", "guess not taken"], ["T", "guess taken"]] },
     dyn: { seq: DYNSEQ, acts: "what the branch did", rows: [["N", "guess not taken"], ["D", "same as last time"]] },
+    pat: { seq: "TTNTTNTTNTTN", acts: "what the branch did", rows: [["N", "guess not taken"], ["D", "same as last time"], ["H", "remember last two"]] },
   };
-  const predOf = (pol, seq, i) => (pol === "S" ? null : pol === "D" ? (i === 0 ? "N" : seq[i - 1]) : pol);
+  const hpred = (seq) => { let h = "NN"; const t = {}, out = []; for (let i = 0; i < seq.length; i++) { out.push(t[h] || "N"); t[h] = seq[i]; h = h[1] + seq[i]; } return out; };
+  const predOf = (pol, seq, i) => (pol === "S" ? null : pol === "D" ? (i === 0 ? "N" : seq[i - 1]) : pol === "H" ? hpred(seq)[i] : pol);
   const predSub = {
     build(g) {
       const r = { sets: {} };
-      const X0 = 300, CW = 62;
+      const X0 = 300;
       Object.keys(PRED).forEach((k) => {
-        const P = PRED[k], sg = grp(g, 0), cols = [], tot = [];
+        const P = PRED[k], sg = grp(g, 0), cols = [], tot = [], CW = Math.min(62, Math.floor(680 / P.seq.length));
         const ys = [70].concat(P.rows.map((_, j) => 150 + j * 80));
         txt(sg, X0 - 20, ys[0] + 36, P.acts, { size: 17, weight: 700, fill: C.ink, anchor: "end" });
         P.rows.forEach(([pol, lab], j) => {
@@ -753,7 +759,7 @@
         P.rows.forEach(([pol], j) => {
           let w = 0;
           for (let i = 0; i < n; i++) { const v = predOf(pol, P.seq, i); if (v === null || v !== P.seq[i]) w++; }
-          S.tot[j].textContent = on && n ? (pol === "S" ? "" : "wrong ") + w + (pol === "S" ? " waits" : "") + " = " + (2 * w) + " cycles" : "";
+          S.tot[j].textContent = on && n ? (P.seq.length > 10 ? "wrong " + w : (pol === "S" ? "" : "wrong ") + w + (pol === "S" ? " waits" : "") + " = " + (2 * w) + " cycles") : "";
         });
       });
     },
@@ -846,8 +852,204 @@
       if (d.note) txt(g, 575, 390, d.note, { size: 20, weight: 700, fill: d.notecol || C.red, anchor: "middle" });
     },
   };
-  const pipeSubs2 = () => ({ fill: pipeSub(PIPES.fill), raw: pipeSub(PIPES.raw), stall: pipeSub(PIPES.stall), ordA: pipeSub(PIPES.ordA), ordB: pipeSub(PIPES.ordB), nt: pipeSub(PIPES.nt), br: pipeSub(PIPES.br), st: pipeSub(PIPES.st), fwdex: pipeSub(PIPES.fwdex), one: pipeSub(PIPES.one), war: pipeSub(PIPES.war), waw: pipeSub(PIPES.waw), rar: pipeSub(PIPES.rar),
-    tstall: tabSub(PIPES.stall), tordA: tabSub(PIPES.ordA), tordB: tabSub(PIPES.ordB), tbr: tabSub(PIPES.br), twait: tabSub(PIPES.wait), shared: pipeSub(PIPES.shared), tshared: tabSub(PIPES.shared), door: doorSub, wait: pipeSub(PIPES.wait), pred: predSub, tnt: tabSub(PIPES.nt), tst: tabSub(PIPES.st), swap: swapSub, bars: barsSub, dyn: dynSub, code: listSub });
+  // ---- the one-bit predictor as a state diagram
+  const stateSub = {
+    build(g) { return { mg: grp(g, 1) }; },
+    render(s, r) {
+      while (r.mg.firstChild) r.mg.removeChild(r.mg.firstChild);
+      const g = r.mg, st = s.sd || 0, GREEN = "#2e7d32";
+      txt(g, 575, 34, "ONE BIT OF HISTORY PER jeq", { size: 14, weight: 700, fill: C.grey, ls: 2, anchor: "middle" });
+      const node = (cx, bit, nm, col) => {
+        circ(g, cx, 200, 86, { fill: C.white, stroke: col, sw: 6 });
+        txt(g, cx, 196, bit, { size: 54, weight: 700, mono: true, fill: col, anchor: "middle" });
+        txt(g, cx, 232, nm, { size: 20, weight: 700, fill: C.ink, anchor: "middle" });
+      };
+      node(300, "0", "Not taken", C.purple); node(850, "1", "Taken", C.red);
+      txt(g, 575, 214, "the special register", { size: 15, weight: 700, fill: C.grey, anchor: "middle" });
+      txt(g, 575, 240, "1 if the jeq branched last time", { size: 15, fill: C.grey, anchor: "middle" });
+      txt(g, 575, 262, "0 if it did not", { size: 15, fill: C.grey, anchor: "middle" });
+      if (st >= 1) {
+        path(g, "M 360 138 C 450 70 700 70 790 138", { stroke: C.red, sw: 5 }); arrowhead(g, 790, 138, "d", C.red);
+        path(g, "M 790 262 C 700 330 450 330 360 262", { stroke: C.red, sw: 5 }); arrowhead(g, 360, 262, "u", C.red);
+        txt(g, 575, 66, "incorrect prediction: flip", { size: 20, weight: 700, fill: C.red, anchor: "middle" });
+        txt(g, 575, 346, "incorrect prediction: flip", { size: 20, weight: 700, fill: C.red, anchor: "middle" });
+        path(g, "M 232 160 C 130 90 130 310 232 240", { stroke: GREEN, sw: 5 }); arrowhead(g, 232, 240, "r", GREEN);
+        path(g, "M 918 160 C 1020 90 1020 310 918 240", { stroke: GREEN, sw: 5 }); arrowhead(g, 918, 240, "l", GREEN);
+        txt(g, 118, 206, "correct:", { size: 17, weight: 700, fill: GREEN, anchor: "middle" });
+        txt(g, 118, 228, "stay", { size: 17, weight: 700, fill: GREEN, anchor: "middle" });
+        txt(g, 1032, 206, "correct:", { size: 17, weight: 700, fill: GREEN, anchor: "middle" });
+        txt(g, 1032, 228, "stay", { size: 17, weight: 700, fill: GREEN, anchor: "middle" });
+      }
+      if (s.sdnote) txt(g, 575, 392, s.sdnote, { size: 20, weight: 700, fill: C.red, anchor: "middle" });
+    },
+  };
+  // ---- two-level prediction: a history register and a pattern table
+  const HSEQ = "TTNTTNTTNTTN";
+  const histState = (n) => {
+    let hist = "NN", table = {}, last = null, wrong = 0;
+    for (let i = 0; i < n; i++) {
+      const act = HSEQ[i], pred = table[hist] || "N";
+      last = { hist, pred, act, ok: pred === act, fresh: table[hist] === undefined };
+      if (!last.ok) wrong++;
+      table[hist] = act; hist = hist[1] + act;
+    }
+    return { hist, table, last, wrong };
+  };
+  const hb = (h) => h.split("").map((c) => (c === "T" ? "1" : "0")).join("");
+  const histSub = {
+    build(g) { return { mg: grp(g, 1) }; },
+    render(s, r) {
+      while (r.mg.firstChild) r.mg.removeChild(r.mg.firstChild);
+      const g = r.mg, n = s.h || 0, S = histState(n), GREEN = "#2e7d32";
+      txt(g, 575, 22, "WHAT THE BRANCH DID", { size: 13, weight: 700, fill: C.grey, ls: 2, anchor: "middle" });
+      for (let i = 0; i < HSEQ.length; i++) {
+        const on = i < n, cur = i === n - 1;
+        rect(g, 178 + i * 66, 32, 58, 44, { rx: 8, fill: on ? (cur ? C.t2 : C.t1) : C.white, stroke: on ? (cur ? C.red : C.purple) : C.lgrey, sw: cur ? 5 : 3 });
+        if (on) txt(g, 178 + i * 66 + 29, 63, HSEQ[i], { size: 24, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+      }
+      txt(g, 190, 128, "HISTORY REGISTER", { size: 13, weight: 700, fill: C.grey, ls: 2, anchor: "middle" });
+      txt(g, 190, 148, "the last two outcomes", { size: 15, fill: C.grey, anchor: "middle" });
+      const h = S.hist;
+      [0, 1].forEach((k) => {
+        rect(g, 70 + k * 88, 170, 80, 80, { rx: 10, fill: C.white, stroke: C.purple, sw: 5 });
+        txt(g, 110 + k * 88, 226, h[k] === "T" ? "1" : "0", { size: 48, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+      });
+      txt(g, 46, 218, "out", { size: 15, weight: 700, fill: C.grey, anchor: "end" });
+      txt(g, 262, 218, "in", { size: 15, weight: 700, fill: C.grey, anchor: "start" });
+      path(g, "M 330 210 L 470 210", { stroke: C.purple, sw: 4 }); arrowhead(g, 470, 210, "r", C.purple);
+      txt(g, 400, 196, "look up", { size: 16, weight: 700, fill: C.purple, anchor: "middle" });
+      txt(g, 790, 128, "PATTERN TABLE", { size: 13, weight: 700, fill: C.grey, ls: 2, anchor: "middle" });
+      txt(g, 790, 148, "what came next after each history", { size: 15, fill: C.grey, anchor: "middle" });
+      [["NN", "00"], ["NT", "01"], ["TN", "10"], ["TT", "11"]].forEach(([key, lab], i) => {
+        const y = 164 + i * 50, used = S.last && S.last.hist === key, known = S.table[key];
+        const col = used ? (S.last.ok ? GREEN : C.red) : C.purple;
+        rect(g, 490, y, 150, 44, { rx: 8, fill: used ? (S.last.ok ? "#e4f3e1" : C.t2) : C.white, stroke: col, sw: used ? 5 : 3 });
+        txt(g, 565, y + 31, lab, { size: 24, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+        rect(g, 646, y, 300, 44, { rx: 8, fill: C.white, stroke: col, sw: used ? 5 : 3 });
+        txt(g, 796, y + 31, known === undefined ? "?" : (known === "T" ? "1  (taken)" : "0  (not taken)"), { size: 22, weight: 700, mono: true, fill: known === undefined ? C.grey : C.ink, anchor: "middle" });
+      });
+      let msg = "start: history 00, and the table knows nothing yet", col = C.ink;
+      if (S.last) {
+        const L = S.last, nm = (c) => (c === "T" ? "taken" : "not taken");
+        msg = "history " + hb(L.hist) + ": " + (L.fresh ? "never seen, so guess not taken" : "the table says " + nm(L.pred)) + ". The branch did " + nm(L.act) + ": " + (L.ok ? "right" : "wrong") + ".";
+        col = L.ok ? GREEN : C.red;
+      }
+      txt(g, 575, 384, msg, { size: 21, weight: 700, fill: col, anchor: "middle" });
+      txt(g, 1100, 128, n ? "wrong so far: " + S.wrong : "", { size: 18, weight: 700, fill: C.red, anchor: "end" });
+    },
+  };
+  // ---- the pipelined datapath: stages, the four pipeline registers, what they hold, and the forwarding wires
+  const DPX = [40, 254, 468, 682, 896], DPW = 120, DRX = [185, 399, 613, 827], DRW = 44;
+  const DNAMES = ["IF", "ID", "EX", "MEM", "WB"], DUNITS = ["Memory", "Register file", "ALU", "Memory", "Register file"], RNAMES = ["IF/ID", "ID/EX", "EX/MEM", "MEM/WB"];
+  const dpathSub = {
+    build(g) { return { mg: grp(g, 1) }; },
+    render(s, r) {
+      while (r.mg.firstChild) r.mg.removeChild(r.mg.firstChild);
+      const g = r.mg, d = s.dp || {}, GREEN = "#2e7d32";
+      if (d.title) txt(g, 575, 26, d.title, { size: 20, weight: 700, italic: true, fill: C.grey, anchor: "middle" });
+      DNAMES.forEach((nm, i) => {
+        const hot = (d.hot || []).indexOf(i) >= 0;
+        rect(g, DPX[i], 130, DPW, 110, { rx: 14, fill: hot ? C.t2 : C.white, stroke: hot ? C.red : C.purple, sw: hot ? 6 : 4 });
+        txt(g, DPX[i] + DPW / 2, 178, nm, { size: 28, weight: 700, fill: hot ? C.red : C.purple, anchor: "middle" });
+        txt(g, DPX[i] + DPW / 2, 204, DUNITS[i], { size: 13, fill: C.grey, anchor: "middle" });
+        if (d.chips && d.chips[i]) {
+          rect(g, DPX[i] - 8, 44, DPW + 16, 34, { rx: 10, fill: C.t1, stroke: C.purple, sw: 3 });
+          txt(g, DPX[i] + DPW / 2, 66, d.chips[i], { size: 13, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+        }
+      });
+      if (!d.noregs) RNAMES.forEach((nm, i) => {
+        const hot = (d.hotreg || []).indexOf(i) >= 0;
+        rect(g, DRX[i], 108, DRW, 156, { rx: 8, fill: hot ? "#e4f3e1" : "#f1faf0", stroke: GREEN, sw: hot ? 6 : 3 });
+        txt(g, DRX[i] + DRW / 2, 98, nm, { size: 13, weight: 700, fill: GREEN, anchor: "middle" });
+        ((d.regs || [])[i] || []).forEach((ln, k) => txt(g, DRX[i] + DRW / 2, 292 + k * 20, ln, { size: 13, weight: 700, mono: true, fill: C.ink, anchor: "middle" }));
+      });
+      (d.fwd || []).forEach(([from, lab]) => {
+        const x1 = DRX[from] + DRW / 2, x2 = DPX[2] + (from === 2 ? 44 : 78);
+        path(g, "M " + x1 + " 270 C " + x1 + " " + (from === 2 ? 330 : 372) + " " + x2 + " " + (from === 2 ? 330 : 372) + " " + x2 + " 246", { stroke: C.red, sw: 5 });
+        arrowhead(g, x2, 244, "u", C.red);
+        txt(g, x1 + 14, 300, lab, { size: 16, weight: 700, fill: C.red, anchor: "start" });
+      });
+      if (d.note) txt(g, 575, 392, d.note, { size: 20, weight: 700, fill: d.notecol || C.red, anchor: "middle" });
+    },
+  };
+  // ---- a program, with nops inserted by the assembler
+  const nopSub = {
+    build(g) { return { mg: grp(g, 1) }; },
+    render(s, r) {
+      while (r.mg.firstChild) r.mg.removeChild(r.mg.firstChild);
+      const g = r.mg, n = s.nop || 0, lines = ["addi $1, $0, 1"].concat(new Array(n).fill("nop"), ["addi $1, $1, 1"]);
+      txt(g, 230, 36, "THE PROGRAM FILE", { size: 13, weight: 700, fill: C.grey, ls: 2, anchor: "middle" });
+      lines.forEach((l, i) => {
+        const isn = l === "nop", y = 54 + i * 56;
+        rect(g, 60, y, 340, 46, { rx: 10, fill: isn ? C.t2 : C.white, stroke: isn ? C.red : C.purple, sw: 3, dash: isn ? "6 4" : null });
+        txt(g, 230, y + 31, l, { size: 22, weight: 700, mono: true, fill: isn ? C.red : C.ink, anchor: "middle" });
+      });
+      (s.nl || []).forEach(([head, body, col], i) => {
+        rect(g, 520, 54 + i * 190, 580, 170, { rx: 14, fill: C.white, stroke: col || C.purple, sw: 4 });
+        txt(g, 540, 92 + i * 190, head, { size: 22, weight: 700, fill: col || C.purple });
+        body.forEach((b, k) => txt(g, 540, 128 + i * 190 + k * 30, b, { size: 18, fill: C.ink }));
+      });
+      if (s.nnote) txt(g, 575, 392, s.nnote, { size: 20, weight: 700, fill: C.red, anchor: "middle" });
+    },
+  };
+  // ---- an E15 program as a dependency graph
+  const DEPI = ["movi Rg0 <- 5", "lw Rg1 <- mem[Rg0]", "add Rg1 <- Rg0 + Rg1", "movi Rg2 <- 0", "lw Rg3 <- mem[Rg2]", "add Rg1 <- Rg3 + Rg1", "addi Rg1 <- Rg1 + 0", "movi Rg3 <- 8", "sw mem[Rg3] <- Rg1", "sub Rg1 <- Rg1 - Rg0"];
+  const DEPN = [[812, 40], [708, 92], [812, 144], [490, 92], [572, 146], [715, 200], [828, 253], [618, 265], [715, 310], [1000, 284]];
+  const DEPE = [[1, 2, "raw on Rg0"], [1, 3, "raw on Rg0"], [2, 3, "raw and waw on Rg1"], [3, 6, "raw, war and waw on Rg1"], [4, 5, "raw on Rg2"], [5, 6, "raw on Rg3"], [5, 8, "waw on Rg3"],
+    [6, 7, "raw, war and waw on Rg1"], [6, 8, "war on Rg3"], [7, 9, "raw on Rg1"], [8, 9, "raw on Rg3"], [7, 10, "raw, war and waw on Rg1"], [1, 10, "raw on Rg0"]];
+  const depSub = {
+    build(g) { return { mg: grp(g, 1) }; },
+    render(s, r) {
+      while (r.mg.firstChild) r.mg.removeChild(r.mg.firstChild);
+      const g = r.mg, k = s.edges || 0, hl = s.hle === undefined ? -1 : s.hle, R = 19;
+      const hi = hl >= 0 ? [DEPE[hl][0], DEPE[hl][1]] : (s.hln || []);
+      DEPI.forEach((l, i) => {
+        const on = hi.indexOf(i + 1) >= 0;
+        txt(g, 36, 40 + i * 33, String(i + 1), { size: 17, weight: 700, mono: true, fill: on ? C.red : C.grey });
+        txt(g, 70, 40 + i * 33, l, { size: 17, weight: on ? 700 : 500, mono: true, fill: on ? C.red : C.ink });
+      });
+      DEPE.forEach(([a, b, lab], i) => {
+        if (i >= k) return;
+        const [x1, y1] = DEPN[a - 1], [x2, y2] = DEPN[b - 1], dx = x2 - x1, dy = y2 - y1, L = Math.sqrt(dx * dx + dy * dy), ux = dx / L, uy = dy / L;
+        const sx = x1 + ux * R, sy = y1 + uy * R, ex = x2 - ux * (R + 2), ey = y2 - uy * (R + 2), on = i === hl, col = on ? C.red : (lab.indexOf("raw") === 0 ? C.purple : C.grey);
+        path(g, "M " + sx + " " + sy + " L " + ex + " " + ey, { stroke: col, sw: on ? 6 : 3 });
+        poly(g, [ex + ux * 2, ey + uy * 2, ex - ux * 12 - uy * 7, ey - uy * 12 + ux * 7, ex - ux * 12 + uy * 7, ey - uy * 12 - ux * 7].join(","), { fill: col });
+        if (on) txt(g, 790, 394, lab, { size: 19, weight: 700, fill: C.red, anchor: "middle" });
+      });
+      DEPN.forEach(([x, y], i) => {
+        const on = hi.indexOf(i + 1) >= 0;
+        circ(g, x, y, R, { fill: on ? C.t2 : C.t1, stroke: on ? C.red : C.purple, sw: on ? 5 : 3 });
+        txt(g, x, y + 7, String(i + 1), { size: 19, weight: 700, fill: C.ink, anchor: "middle" });
+      });
+      if (s.order) {
+        txt(g, 1040, 120, "one valid reordering", { size: 16, weight: 700, fill: C.grey, anchor: "middle" });
+        txt(g, 1040, 150, "4, 5, 1, 2, 3,", { size: 19, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+        txt(g, 1040, 176, "6, 8, 7, 9, 10", { size: 19, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+        txt(g, 1040, 210, "every arrow still", { size: 15, fill: C.grey, anchor: "middle" });
+        txt(g, 1040, 230, "points forward", { size: 15, fill: C.grey, anchor: "middle" });
+      }
+      if (s.dnote) txt(g, 790, 394, s.dnote, { size: 19, weight: 700, fill: C.red, anchor: "middle" });
+    },
+  };
+  // ---- a short program in a code box, with a note beside some lines
+  const lstSub = {
+    build(g) { return { mg: grp(g, 1) }; },
+    render(s, r) {
+      while (r.mg.firstChild) r.mg.removeChild(r.mg.firstChild);
+      const g = r.mg, L = s.lst || [];
+      if (s.ltitle) txt(g, 575, 34, s.ltitle, { size: 20, weight: 700, italic: true, fill: C.grey, anchor: "middle" });
+      rect(g, 120, 60, 910, 40 + L.length * 52, { rx: 14, fill: "#171715", stroke: "#171715", sw: 2 });
+      L.forEach(([lab, code, note], i) => {
+        const y = 98 + i * 52;
+        if (lab) txt(g, 156, y, lab, { size: 26, weight: 700, mono: true, fill: "#9a9a92" });
+        txt(g, 300, y, code, { size: 26, weight: 700, mono: true, fill: "#f7f7f4" });
+        if (note) txt(g, 1000, y, note, { size: 19, weight: 700, fill: "#f2c94c", anchor: "end" });
+      });
+      if (s.lnote) txt(g, 575, 394, s.lnote, { size: 20, weight: 700, fill: C.red, anchor: "middle" });
+    },
+  };
+  const pipeSubs2 = () => ({ fill: pipeSub(PIPES.fill), raw: pipeSub(PIPES.raw), stall: pipeSub(PIPES.stall), ordA: pipeSub(PIPES.ordA), ordB: pipeSub(PIPES.ordB), nt: pipeSub(PIPES.nt), br: pipeSub(PIPES.br), st: pipeSub(PIPES.st), lwc: pipeSub(PIPES.lwc), fwdex: pipeSub(PIPES.fwdex), one: pipeSub(PIPES.one), war: pipeSub(PIPES.war), waw: pipeSub(PIPES.waw), rar: pipeSub(PIPES.rar),
+    tstall: tabSub(PIPES.stall), tordA: tabSub(PIPES.ordA), tordB: tabSub(PIPES.ordB), tbr: tabSub(PIPES.br), twait: tabSub(PIPES.wait), lst: lstSub, far: pipeSub(PIPES.far), tfar: tabSub(PIPES.far), memc: pipeSub(PIPES.memc), tmemc: tabSub(PIPES.memc), pnops: pipeSub(PIPES.nops), tnops: tabSub(PIPES.nops), state: stateSub, hist: histSub, dp: dpathSub, nop: nopSub, dep: depSub, shared: pipeSub(PIPES.shared), tshared: tabSub(PIPES.shared), door: doorSub, wait: pipeSub(PIPES.wait), pred: predSub, tnt: tabSub(PIPES.nt), tst: tabSub(PIPES.st), swap: swapSub, bars: barsSub, dyn: dynSub, code: listSub });
 
   const DH = { cols: [{ h: "NAME", x: 60, w: 170, mono: true, bold: true, size: 22 }, { h: "PATTERN", x: 250, w: 380, size: 18 }, { h: "EXAMPLE", x: 650, w: 330, mono: true, size: 15 }, { h: "HAZARD?", x: 1000, w: 140, size: 18, bold: true }],
     rows: [["RAW", "2 reads what 1 writes", "movi $1,0 | add $2,$2,$1", "yes"], ["WAR", "2 writes what 1 reads", "addi $1,$2,1 | addi $2,$3,1", "no *"], ["WAW", "both write the same register", "addi $1,$2,1 | addi $1,$3,1", "no *"], ["RAR", "both read the same register", "addi $1,$2,1 | addi $3,$2,1", "never"]], rh: 70, y0: 70, fs: 18 };
@@ -862,6 +1064,10 @@
     steps: [
       { sub: "raw", reg: 1, cycle: 3, marks: [[1, "reads $1 now"], [4, "not written yet"]], rtxt: ["the second addi read $1 = 0, so it computes", "0 + 1 = 1", "it meant 2"], chip: 1, foot: "", narrate: "Quick reminder of last week's snag. Two <code>addi</code> instructions back to back: the second reads <code>$1</code> in <code>ID</code> in cycle 3, two cycles before the first writes it. It gets 0, so the program silently computes 1 instead of 2." },
       { sub: "tstall", rows: 9, cur: 0, hl: "bubbles", chip: 2, foot: "", narrate: "<strong>Stall</strong> is the first fix: hold the second instruction in <code>IF</code> and send bubbles behind the first. Always correct, but every dashed cell is an idle stage, and the pair finishes in cycle 9." },
+      { sub: "card", card: cd("Who inserts the bubble?", ["a processor with hazard detection stalls by itself", "one without it leaves the job to the assembler", "the assembler writes nops into the program"]), chip: 2, foot: "", narrate: "So who actually inserts the bubble? A processor with hazard-detection hardware notices the dependency and stalls by itself. A simpler processor has no such hardware, and then the job falls to the assembler." },
+      { sub: "nop", nop: 0, nl: [["The processor stalls", ["it notices the dependency", "and holds the second addi in IF", "the program has nothing extra in it"], C.purple]], chip: 2, foot: "", narrate: "With detection hardware, the program stays exactly as you wrote it. The processor holds the second <code>addi</code> back on its own, and you never see the bubbles in the file." },
+      { sub: "nop", nop: 3, nl: [["The assembler inserts nops", ["no hazard-detection hardware", "the assembler spots the dependency", "and writes three nops into the file"], C.red]], nnote: "three nops: the same three bubbles, written into the program", chip: 2, foot: "", narrate: "Without it, the assembler has to find every dependency before the program is loaded, and write enough <code>nop</code> instructions between the two <code>addi</code> that the first has finished writing <code>$1</code>. That is exactly the exercise of rewriting a program with <code>nop</code>s." },
+      { sub: "tnops", rows: 9, cur: 0, chip: 2, foot: "", narrate: "In the pipeline the <code>nop</code>s are ordinary instructions that do nothing. The second <code>addi</code> reaches <code>ID</code> in cycle 6, after the first has written <code>$1</code>, and the pair finishes in cycle 9, the same as a hardware stall." },
       { sub: "fwdex", reg: 1, cycle: 4, arrows: [[3, 2, "$1 forwarded"]], vchip: [3, "bot", "1"], rtxt: ["the register file still holds 0, but a wire carries the 1", "no bubbles"], chip: 3, foot: "", narrate: "<strong>Forward</strong> is the second: the value already exists, so a wire carries it from where it is to where it is needed, skipping the register file. No bubbles, and the pair finishes in cycle 6." },
       { sub: "card", card: cd("Three more questions", ["data hazards: what are the other patterns?", "control hazards: what if the register is the pc?", "structural hazards: what if the wire is shared?"]), chip: 4, foot: "", narrate: "But RAW has siblings, and not every hazard is about a register. Today we name the data hazards, ask whether we can dodge a stall by reordering, and then find out what happens when the thing being fought over is the <code>pc</code>." },
     ],
@@ -878,6 +1084,15 @@
       { sub: "war", cycle: 6, marks: [[1, "1st read $2: cycle 2"], [4, "2nd writes $2: cycle 6"]], chip: 2, foot: "", narrate: "<strong>Case 2:</strong> the first reads <code>$2</code>, the second overwrites it. The read is in cycle 2 and the overwrite not until cycle 6, so the read is long over. Safe. This is <strong>WAR</strong>, write after read." },
       { sub: "waw", cycle: 6, marks: [[4, "writes $1: cycle 5, then cycle 6"]], chip: 2, foot: "", narrate: "<strong>Case 3:</strong> both write <code>$1</code>. The first writes in cycle 5 and the second in cycle 6, so the later write lands last, exactly as it should. Safe. This is <strong>WAW</strong>, write after write." },
       { sub: "rar", cycle: 3, marks: [[1, "both only read $2"]], chip: 2, foot: "", narrate: "<strong>Case 4:</strong> both only read <code>$2</code>. Reading destroys nothing, so there is nothing to fight over: not even a conflict. This is <strong>RAR</strong>, read after read." },
+      { sub: "card", card: cd("Conflicts live in memory too", ["sw $1, foo($0)  then  lw $2, foo($0)", "the shared thing is a memory cell", "a RAW on a memory cell"]), chip: 2, foot: "", narrate: "The thing two instructions share does not have to be a register. Take <code>sw $1, foo($0)</code> followed by <code>lw $2, foo($0)</code>. The first writes a memory cell and the second reads the same cell: a RAW, on a memory cell instead of a register." },
+      { sub: "memc", cycle: 4, marks: [[3, "sw writes the cell"]], chip: 2, foot: "", narrate: "Where does each one touch memory? In <code>MEM</code>. In cycle 4 the <code>sw</code> is in <code>MEM</code> and writes the cell." },
+      { sub: "memc", cycle: 5, marks: [[3, "lw reads it back"]], chip: 2, foot: "", narrate: "One cycle later the <code>lw</code> is in <code>MEM</code> and reads the same cell, after the write. Memory is only touched in <code>MEM</code>, and instructions stay in order, so the read always comes second." },
+      { sub: "tmemc", rows: 6, hlcells: [[4, 3], [5, 3]], chip: 2, foot: "", narrate: "In the table: both cells are in the <code>MEM</code> column, one after the other. The write comes first." },
+      { sub: "card", card: cd("A conflict, not a hazard", ["a memory RAW is still a conflict", "on the E20 it cannot go wrong", "but never swap the sw and the lw"]), chip: 2, foot: "", narrate: "So a memory RAW is a conflict, but on the E20 it is not a hazard. It still matters the moment we reorder: swapping the <code>sw</code> and the <code>lw</code> would make the load read the old value." },
+      { sub: "far", cycle: 5, marks: [[4, "movi writes $1 now"]], chip: 3, foot: "", narrate: "Is a RAW always a hazard? Take <code>movi $1, 5</code>, then three instructions that have nothing to do with <code>$1</code>, then <code>add $2, $2, $1</code>. In cycle 5 the <code>movi</code> writes <code>$1</code>, and the <code>add</code> has only just been fetched." },
+      { sub: "far", cycle: 6, marks: [[1, "add reads $1 now"]], chip: 3, foot: "", narrate: "In cycle 6 the <code>add</code> reaches <code>ID</code> and reads <code>$1</code>. The write finished a cycle ago, so it sees the 5. No stall needed." },
+      { sub: "tfar", rows: 9, hlcells: [[5, 4], [6, 1]], chip: 3, foot: "", narrate: "In the table: the write in <code>WB</code> in cycle 5 comes before the read in <code>ID</code> in cycle 6. Same RAW conflict as before, but this time the pipeline has already cleared by the time the read happens." },
+      { sub: "card", card: cd("How far is far enough?", ["fewer than 3 instructions between: a hazard", "3 or more between: the write is already done", "same conflict, no hazard"]), chip: 3, foot: "", narrate: "So distance matters. If the reader sits fewer than three instructions behind the writer, it reads too early: a hazard. With three or more in between, the write has already landed. It is the same conflict, but no hazard, which is exactly the difference between the two words." },
       { sub: "dh", rows: 4, hl: [0], chip: 3, foot: "* only if instructions can finish out of order", narrate: "So on the E20 only RAW can go wrong, because reads are early, writes are late, and instructions finish in the order they started. The other three have names because they matter the moment we start moving instructions around, which is the next section." },
       { sub: "card", card: cd("Conflict is not hazard", ["conflict: share a register, and one of them writes it", "hazard: that can give a wrong answer", "in this pipeline"]), chip: 4, foot: "", narrate: "So keep two words apart. A <strong>conflict</strong> is two instructions sharing a register where at least one writes it: RAW, WAR or WAW. A <strong>hazard</strong> is a conflict that can actually give a wrong answer in this pipeline. Next section, the test for moving instructions is conflict, not hazard." },
     ],
@@ -937,6 +1152,7 @@
       { sub: "br", cycle: 4, marks: [[0, "the real target"]], chip: 2, foot: "", narrate: "They are flushed, which is safe because neither has written anything yet, and the real target is fetched in cycle 4. Two cycles lost." },
       { sub: "tbr", rows: 8, cur: 0, hl: "bubbles", chip: 2, foot: "", narrate: "As a table: the same two dashed cells as waiting. A wrong guess costs exactly what waiting always cost." },
       { sub: "card", card: cd("The price of a guess", ["right: 0 cycles", "wrong: 2 cycles", "waiting: 2 cycles, always"]), chip: 2, foot: "", narrate: "So a guess can never be worse than waiting. If it is right, it is free, and if it is wrong, it costs the same as waiting. The only question is how often it is right." },
+      { sub: "card", card: cd("A name for it: speculation", ["run ahead on a guess", "keep the work if the guess was right", "throw it away if it was wrong"]), chip: 2, foot: "", narrate: "Running ahead on a guess, and throwing the work away if the guess was wrong, has a name: <strong>speculative execution</strong>. It is safe here because a flushed instruction has not written anything yet." },
       { sub: "bars", n: 1, chip: 2, foot: "", narrate: "Try a branch that is taken only 10 times in 100. Guessing \"not taken\" is wrong 10 times, so 10 x 2 = 20 cycles, against 200 for waiting." },
       { sub: "bars", n: 2, chip: 2, foot: "", narrate: "Now a branch taken 90 times in 100. Guessing \"not taken\" is wrong 90 times: 90 x 2 = 180 cycles, barely better than waiting. A guess only pays when it is usually right." },
       { sub: "card", card: cd("Attempt three: guess taken", ["a loop jumps back almost every time", "so guess taken: fetch from the target", "right: 0 cycles, wrong: 2 cycles"]), chip: 3, foot: "", narrate: "Third attempt: if \"not taken\" is bad for a branch that is almost always taken, guess <strong>taken</strong> instead and start fetching from the target. A right guess costs nothing, a wrong one costs 2." },
@@ -945,19 +1161,35 @@
       { sub: "pred", p: "err", n: 10, chip: 3, foot: "", narrate: "Now an error check that fires once in ten. The scores flip: \"not taken\" costs 2, and \"taken\" costs 18. The right fixed guess depends on the branch." },
       { sub: "card", card: cd("A fixed guess is not enough", ["loop back-edge: guess taken", "error check: guess not taken", "any fixed guess is wrong for the other kind"]), chip: 3, foot: "", narrate: "A loop wants \"taken\" and an error check wants \"not taken\". A processor runs both kinds of branch in the same program, so no single fixed guess is right for everything." },
       { sub: "card", card: cd("Attempt four: remember", ["a branch tends to repeat itself", "guess what it did last time", "first time ever: guess not taken"]), chip: 4, foot: "", narrate: "Fourth attempt: let each branch speak for itself. Remember what it did the last time, and guess the same again. The very first time there is no history, so we guess \"not taken\"." },
+      { sub: "state", sd: 0, chip: 4, foot: "", narrate: "Here is the hardware behind \"same as last time\": one special register for each <code>jeq</code>, holding a single bit. It stores 1 if the branch branched last time, and 0 if it did not. Those are the two states." },
+      { sub: "state", sd: 1, sdnote: "the prediction is just the bit", chip: 4, foot: "", narrate: "As a state diagram: after every run, if the prediction was correct the bit stays, and if it was incorrect the bit flips. The prediction for the next run is simply whatever the bit says." },
       { sub: "pred", p: "dyn", n: 0, chip: 4, foot: "", narrate: "Here is a loop branch that runs twice: taken four times, not taken once, then the same again. We will compare \"not taken\" with \"same as last time\", one run at a time." },
       { sub: "pred", p: "dyn", n: 1, chip: 4, foot: "", narrate: "First run: there is no history, so \"same as last time\" guesses \"not taken\". The loop jumped, so both guesses are wrong." },
       { sub: "pred", p: "dyn", n: 2, chip: 4, foot: "", narrate: "Second run: last time it was taken, so we guess taken, and we are right. \"Not taken\" is wrong again." },
       { sub: "pred", p: "dyn", n: 5, chip: 4, foot: "", narrate: "The fifth run is the loop exit. Last time it was taken, so we guessed taken, and the branch changed its mind: wrong. That is the only kind of mistake this guess makes." },
       { sub: "pred", p: "dyn", n: 6, chip: 4, foot: "", narrate: "The loop starts again. Last time it was not taken, so we guess not taken, and it jumps: wrong again. A loop costs this guess two mistakes per visit: the exit, and the first jump back." },
       { sub: "pred", p: "dyn", n: 10, chip: 4, foot: "", narrate: "After ten runs, \"not taken\" was wrong 8 times and \"same as last time\" only 4. Real processors keep this history separately for every branch." },
+      { sub: "card", card: cd("Attempt five: remember the pattern", ["one bit forgets everything but the last time", "what if the branch repeats a pattern?", "a loop that exits every third time"]), chip: 4, foot: "", narrate: "One bit remembers only the last outcome. What if a branch follows a pattern longer than that? Take a loop that jumps back twice and then exits, over and over." },
+      { sub: "lst", ltitle: "a loop that exits every third time", lst: [["start:", "movi $1, 3", "count from 3"], ["loop:", "addi $1, $1, -1", ""], ["", "slti $2, $1, 1", "$2 = 1 only when $1 hits 0"], ["", "jeq  $2, $0, loop", "taken, taken, not taken"], ["", "j    start", "then count again"]], lnote: "the jeq is taken twice, then falls through, over and over", chip: 4, foot: "", narrate: "Here is the program. <code>$1</code> counts down from 3, and <code>jeq</code> jumps back to <code>loop</code> while <code>$1</code> is not yet zero. So it is taken, taken, not taken, and then <code>j start</code> restarts the count: taken, taken, not taken, forever." },
+      { sub: "pred", p: "pat", n: 3, chip: 4, foot: "", narrate: "The first three outcomes: taken, taken, not taken. \"Not taken\" guesses wrong at every taken. \"Same as last time\" is wrong on the first one, right on the second, and wrong again at the exit." },
+      { sub: "pred", p: "pat", n: 6, chip: 4, foot: "", narrate: "In the second round the exit has just happened, so \"same as last time\" guesses not taken for the first jump and is wrong, then wrong again at the next exit. It is wrong twice in every three runs: the exit, and the jump right after it." },
+      { sub: "hist", h: 0, chip: 4, foot: "", narrate: "A better idea: remember the <em>last two outcomes</em>, not just the last one. They go in a small shift register, the <strong>history register</strong>. Next to it, a <strong>pattern table</strong> will remember what came next after each history. Both start empty." },
+      { sub: "hist", h: 1, chip: 4, foot: "", narrate: "The first outcome is taken. The history was 00 and the table had never seen it, so the guess was not taken: wrong. Now the table writes down that after 00 came taken, and the history shifts." },
+      { sub: "hist", h: 2, chip: 4, foot: "", narrate: "History 01 is new too, so another wrong guess. The table records that after 01 came taken." },
+      { sub: "hist", h: 3, chip: 4, foot: "", narrate: "History 11 is new, and the default guess of not taken happens to be right: the loop exited. The table records that after 11 came not taken." },
+      { sub: "hist", h: 4, chip: 4, foot: "", narrate: "History 10, another new one: wrong, and the table records taken. Now all four histories have been seen once." },
+      { sub: "hist", h: 5, chip: 4, foot: "", narrate: "The pattern repeats. History 01 is in the table, and it says taken. This time the guess is right." },
+      { sub: "hist", h: 6, chip: 4, foot: "", narrate: "History 11 says not taken, and that is exactly what the loop does at its exit. Right again." },
+      { sub: "hist", h: 12, chip: 4, foot: "", narrate: "From here on the table is never wrong. The history tells the predictor where in the pattern it is, so it knows when the loop is about to exit. Three wrong guesses in twelve, all of them while it was learning." },
+      { sub: "pred", p: "pat", n: 12, chip: 4, foot: "", narrate: "Side by side over twelve runs: \"not taken\" wrong 8 times, \"same as last time\" wrong 8 times, and the two-bit history only 3. The longer the pattern repeats, the more it wins." },
+      { sub: "card", card: cd("Why two levels?", ["level one: a history register for each branch", "level two: a pattern table, history to outcome", "Yeh and Patt, 1991: most modern processors use a variant"]), chip: 4, foot: "", narrate: "That is why it is called a <strong>two-level</strong> branch predictor: the history register is the first level, and the pattern table that turns a history into a prediction is the second. It was invented by Yeh and Patt in 1991, and variants of it are in most modern processors." },
       { sub: "card", card: cd("Guess, then check", ["waiting: 2 cycles on every branch", "a guess: free if right, 2 if wrong", "remembering history makes it right more often"]), chip: 4, foot: "", narrate: "So the story in four attempts: waiting always costs 2 cycles, a fixed guess is free when right but is wrong for the opposite branch, and remembering what each branch did makes the guess right far more often." },
     ],
   }, Object.assign({ card: cardSub }, pipeSubs2())));
 
   scene(mixScene({
     num: "6", title: "Structural Hazards: When Two Instructions Want the Same Hardware", subtitle: "Not a data problem: a hardware problem.",
-    chips: ["The idea", "The doors", "The collision", "The cost", "All three"],
+    chips: ["The idea", "The doors", "The collision", "The cost", "Memory too", "All three"],
     steps: [
       { sub: "card", card: cd("A third kind of hazard", ["not about data, and not about the pc", "two instructions need the same hardware", "in the same cycle"]), chip: 1, foot: "", narrate: "The last hazard is not about data or the <code>pc</code>. It happens when two instructions need the same piece of hardware in the same cycle." },
       { sub: "st", cycle: 5, marks: [[1, "reads the registers"], [4, "writes a register"]], chip: 1, foot: "", narrate: "Take the register file. An instruction in <code>ID</code> reads it, an instruction in <code>WB</code> writes it, and in a full pipeline both happen in every single cycle." },
@@ -976,10 +1208,55 @@
       { sub: "tshared", rows: 11, cur: 0, hl: "bubbles", chip: 4, foot: "", narrate: "As a table: the fourth <code>add</code> finishes in cycle 11, not cycle 8. Three cycles lost, on four instructions that had nothing to do with each other." },
       { sub: "card", card: cd("The cost of one door", ["every instruction needs the door twice", "once to read, once to write", "one door: one instruction every two cycles"]), chip: 4, foot: "", narrate: "It gets worse with a longer program. Every instruction needs the door twice, once to read and once to write, so a single door can serve only one instruction every two cycles. The pipeline we built to finish one per cycle would run at half speed." },
       { sub: "card", card: cd("The fix", ["build more doors, as the real E20 does", "or stall one of them, as we just did", "hardware cost against cycles lost"]), chip: 4, foot: "", narrate: "So the real E20 pays for three doors and has no structural hazards at all. A cheaper design could save the wires and pay in stalls instead. A structural hazard is a hardware budget decision, not a mistake in the program." },
-      { sub: "hz", rows: 3, chip: 5, foot: "", narrate: "So here are all three families. Data hazards: a later instruction reads too early, so stall, forward or reorder. Control hazards: the next <code>pc</code> is unknown, so guess and flush if wrong. Structural hazards: two want the same hardware, so stall one or build more." },
-      { sub: "card", card: cd("Next: caching", ["even a perfect pipeline wants an instruction per cycle", "memory takes about 200 times longer than that", "a different problem, with a very old answer"]), chip: 5, foot: "", narrate: "A pipeline in perfect health finishes one instruction per cycle. But a <code>lw</code> has to go to memory, and memory is not remotely that fast. That has nothing to do with hazards, and everything to do with a number from the first slide of this course." },
+      { sub: "lwc", cycle: 4, marks: [[0, "IF: fetch reads memory"], [3, "lw MEM: data reads memory"]], chip: 5, foot: "", narrate: "The register file is not the only shared hardware. Memory holds both the instructions and the data. In cycle 4 the fourth instruction is in <code>IF</code>, which reads an instruction from memory, while the <code>lw</code> is in <code>MEM</code>, which reads data from memory. One memory, two accesses, one cycle." },
+      { sub: "card", card: cd("Two ways out", ["stall the fetch for one cycle, as with the door", "or keep instructions and data apart", "two memories, or two caches"]), chip: 5, foot: "", narrate: "Same two options as with the doors. The data access wins, and the fetch waits one cycle: a bubble for every <code>lw</code> and <code>sw</code>. Or the hardware keeps instructions and data in separate places, so <code>IF</code> and <code>MEM</code> never collide." },
+      { sub: "card", card: cd("What we have been assuming", ["IF reads instruction memory", "MEM reads and writes data memory", "no structural hazard, as in the real E20", "caching will show how this is built"]), chip: 5, foot: "", narrate: "Everything so far assumed the second option: <code>IF</code> reads instruction memory and <code>MEM</code> touches data memory, with no collision. When we get to caches, this is the split instruction and data cache." },
+      { sub: "hz", rows: 3, chip: 6, foot: "", narrate: "So here are all three families. Data hazards: a later instruction reads too early, so stall, forward or reorder. Control hazards: the next <code>pc</code> is unknown, so guess and flush if wrong. Structural hazards: two want the same hardware, so stall one or build more." },
     ],
   }, Object.assign({ card: cardSub, hz: tb(HZ) }, pipeSubs2())));
+
+  const E15T = { cols: [{ h: "INSTRUCTIONS", x: 40, w: 230, mono: true, bold: true, size: 17 }, { h: "FETCH", x: 290, w: 190, size: 16 }, { h: "DECODE", x: 500, w: 260, size: 16 }, { h: "EXEC", x: 780, w: 110, size: 16 }, { h: "STORE", x: 910, w: 230, size: 16 }],
+    rows: [["add addi sub subi", "instruction ROM", "register file, mBus, dBus", "ALU", "register file, mBus"], ["mov movi", "instruction ROM", "register file, mBus, dBus", "", "register file, mBus"], ["cmp cmpi", "instruction ROM", "register file, mBus, dBus", "ALU", ""], ["jmp", "instruction ROM", "", "", ""], ["jz jnz", "instruction ROM", "", "", ""], ["lw", "instruction ROM", "register file, mBus, dBus", "MMU", "register file, mBus"], ["sw", "instruction ROM", "register file, mBus, dBus", "MMU", ""]], rh: 46, y0: 48, fs: 16 };
+
+  scene(mixScene({
+    num: "7", title: "Inside the Pipeline: Registers and Wires", subtitle: "What a pipelined E20 actually keeps between the stages.",
+    chips: ["The registers", "One instruction", "Many at once", "Forwarding"],
+    steps: [
+      { sub: "dp", dp: { title: "five stages, four registers between them", hotreg: [0, 1, 2, 3], regs: [["instr", "pc"], ["instr", "pc", "op0 op1 op2"], ["instr", "pc", "aluout", "mdata"], ["instr", "aluout"]] }, chip: 1, foot: "", narrate: "Up to now the pipeline was boxes in a table. Here is what it is built from: five stages, with a <strong>pipeline register</strong> between each pair. Each catches what one stage produced and holds it steady for the next. That is how every stage works on a different instruction." },
+      { sub: "dp", dp: { title: "what each register carries", hotreg: [0, 1, 2, 3], regs: [["instr", "pc"], ["instr", "pc", "op0 op1 op2"], ["instr", "pc", "aluout", "mdata"], ["instr", "aluout"]], note: "each one holds only what the next stage still needs" }, chip: 1, foot: "", narrate: "<code>IF/ID</code> holds the instruction and its <code>pc</code>. <code>ID/EX</code> adds the operands read from the register file. <code>EX/MEM</code> holds the ALU result, <code>aluout</code>, and the value a <code>sw</code> would store, <code>mdata</code>. <code>MEM/WB</code> holds the instruction and the value to write back." },
+      { sub: "dp", dp: { title: "ram[5] = addi $1, $2, 3", hot: [0], chips: ["addi $1,$2,3", "", "", "", ""], hotreg: [0], regs: [["instr =", "addi $1,$2,3", "pc = 5"], [], [], []], note: "IF: read the instruction, store it in IF/ID", notecol: "#2e7d32" }, chip: 2, foot: "", narrate: "Follow an <code>addi $1, $2, 3</code> that sits at <code>ram[5]</code>. In <code>IF</code> the pipeline reads it from memory and stores it in the <code>IF/ID</code> register, together with <code>pc = 5</code>." },
+      { sub: "dp", dp: { title: "ram[5] = addi $1, $2, 3", hot: [1], chips: ["", "addi $1,$2,3", "", "", ""], hotreg: [1], regs: [[], ["pc = 5", "op0 = 3", "op1 = $2", "op2 = $0"], [], []], note: "ID: read $2, sign-extend 3, store both in ID/EX", notecol: "#2e7d32" }, chip: 2, foot: "", narrate: "In <code>ID</code> it reads the current value of <code>$2</code> from the register file, sign-extends the 3, and stores the operands in <code>ID/EX</code>." },
+      { sub: "dp", dp: { title: "ram[5] = addi $1, $2, 3", hot: [2], chips: ["", "", "addi $1,$2,3", "", ""], hotreg: [2], regs: [[], [], ["pc = 5", "aluout =", "$2 + 3", "mdata = $0"], []], note: "EX: add op0 and op1, store the sum in EX/MEM", notecol: "#2e7d32" }, chip: 2, foot: "", narrate: "In <code>EX</code> the ALU adds the two operands and the sum goes into <code>EX/MEM</code> as <code>aluout</code>. This is also where the master <code>pc</code> is updated for the next instruction." },
+      { sub: "dp", dp: { title: "ram[5] = addi $1, $2, 3", hot: [3], chips: ["", "", "", "addi $1,$2,3", ""], hotreg: [3], regs: [[], [], [], ["instr =", "addi $1,$2,3", "aluout = $2+3"]], note: "MEM: nothing to do, aluout is passed along", notecol: "#2e7d32" }, chip: 2, foot: "", narrate: "In <code>MEM</code> an <code>addi</code> has nothing to do with memory, so it just passes <code>aluout</code> along into <code>MEM/WB</code>." },
+      { sub: "dp", dp: { title: "ram[5] = addi $1, $2, 3", hot: [4], chips: ["", "", "", "", "addi $1,$2,3"], hotreg: [3], regs: [[], [], [], ["instr =", "addi $1,$2,3", "aluout = $2+3"]], note: "WB: write $2 + 3 into $1", notecol: "#2e7d32" }, chip: 2, foot: "", narrate: "In <code>WB</code> it writes <code>$2 + 3</code> into <code>$1</code>. Five stages, and each one only ever looked at its own register." },
+      { sub: "dp", dp: { title: "ram[6] = sw $1, 4($2)", hot: [1], chips: ["", "sw $1,4($2)", "", "", ""], hotreg: [1], regs: [[], ["pc = 6", "op0 = 4", "op1 = $2", "op2 = $1"], [], []], note: "ID: read $1 and $2, sign-extend 4", notecol: "#2e7d32" }, chip: 2, foot: "", narrate: "Now a <code>sw $1, 4($2)</code>. In <code>ID</code> it reads both <code>$1</code>, the value to store, and <code>$2</code>, the base address, and sign-extends the 4." },
+      { sub: "dp", dp: { title: "ram[6] = sw $1, 4($2)", hot: [2], chips: ["", "", "sw $1,4($2)", "", ""], hotreg: [2], regs: [[], [], ["pc = 6", "aluout =", "$2 + 4", "mdata = $1"], []], note: "EX: aluout is the address, mdata is the value", notecol: "#2e7d32" }, chip: 2, foot: "", narrate: "In <code>EX</code> the ALU computes the address <code>$2 + 4</code> into <code>aluout</code>, and <code>$1</code> travels along as <code>mdata</code>." },
+      { sub: "dp", dp: { title: "ram[6] = sw $1, 4($2)", hot: [3], chips: ["", "", "", "sw $1,4($2)", ""], hotreg: [2], regs: [[], [], ["pc = 6", "aluout =", "$2 + 4", "mdata = $1"], []], note: "MEM: write mdata into memory at aluout", notecol: "#2e7d32" }, chip: 2, foot: "", narrate: "In <code>MEM</code> the pipeline writes <code>mdata</code> into memory at the address in <code>aluout</code>. This is the stage a <code>sw</code> exists for. In <code>WB</code> it will have nothing to write." },
+      { sub: "dp", dp: { title: "five instructions, one register each", hot: [0, 1, 2, 3, 4], chips: ["add $5,$5,$5", "add $4,$4,$4", "add $3,$3,$3", "add $2,$2,$2", "add $1,$1,$1"], hotreg: [0, 1, 2, 3], regs: [["instr =", "add $4,$4,$4"], ["instr =", "add $3,$3,$3"], ["instr =", "add $2,$2,$2"], ["instr =", "add $1,$1,$1"]], note: "every register holds a different instruction", notecol: "#2e7d32" }, chip: 3, foot: "", narrate: "Now the whole pipeline at once. Five instructions are in flight, one in each stage, and every pipeline register holds a different one. That is what the table was showing all along: a row of the table is a snapshot of these registers." },
+      { sub: "dp", dp: { title: "forwarding: EX to EX", hot: [2], chips: ["", "", "addi $1,$1,1", "addi $1,$0,1", ""], hotreg: [2], noregs: false, fwd: [[2, "EX/MEM to EX"]], note: "the sum is already in EX/MEM: send it back", notecol: C.red }, chip: 4, foot: "", narrate: "Now forwarding, in hardware. The first <code>addi</code> has just left <code>EX</code>, and its sum is sitting in the <code>EX/MEM</code> register. A wire carries it straight back into the <code>EX</code> stage for the instruction behind it, skipping the register file." },
+      { sub: "dp", dp: { title: "forwarding: one instruction in between", hot: [2], chips: ["", "", "addi $1,$1,1", "movi $2,1", "addi $1,$0,1"], hotreg: [3], fwd: [[3, "MEM/WB to EX"]], note: "two instructions later the value is in MEM/WB", notecol: C.red }, chip: 4, foot: "", narrate: "With one instruction in between, the value has moved on one more register. Now it sits in <code>MEM/WB</code>, and a second wire brings it back to <code>EX</code>. Same value, same result, just one register later." },
+      { sub: "dp", dp: { title: "the two wires", hot: [2], hotreg: [2, 3], fwd: [[2, "EX/MEM to EX"], [3, "MEM/WB to EX"]], note: "plus comparators: which wire, if any, holds the register I need?", notecol: C.red }, chip: 4, foot: "", narrate: "So forwarding costs two wires into <code>EX</code>, a multiplexer to choose among them and the register file, and comparison logic that checks whether the register being read is the one an earlier instruction is about to write. That is the hardware price we mentioned." },
+      { sub: "dp", dp: { title: "why a lw still stalls", hot: [2], chips: ["", "", "addi $1,$1,1", "lw $1,1($0)", ""], hotreg: [3], fwd: [[3, "MEM/WB to EX"]], note: "the loaded data exists one register later than a sum", notecol: C.red }, chip: 4, foot: "", narrate: "And this is why a <code>lw</code> still costs a stall. A sum exists after <code>EX</code>, but loaded data only exists after <code>MEM</code>, so it reaches <code>MEM/WB</code> one cycle later. The wire is there, but the data is not yet, so the instruction behind has to wait one cycle." },
+    ],
+  }, Object.assign({ card: cardSub }, pipeSubs2())));
+
+  scene(mixScene({
+    num: "8", title: "E15 Pipelines and Dependency Graphs", subtitle: "The same ideas, on the machine you already know, drawn as a graph.",
+    chips: ["E15 stages", "Dependencies", "The graph", "Reordering"],
+    steps: [
+      { sub: "e15", rows: 7, chip: 1, foot: "", narrate: "The E15 pipelines too, in four stages: fetch, decode, exec and store. This table says which hardware each kind of instruction uses at each stage. The <code>jmp</code> and the branches only need the instruction ROM." },
+      { sub: "dep", edges: 0, chip: 2, foot: "", narrate: "Here is a longer program, ten E15 instructions. Before reordering anything we want to know one thing: which pairs must stay in their original order?" },
+      { sub: "dep", edges: 3, hle: 2, chip: 2, foot: "", narrate: "Instruction 1 writes <code>Rg0</code>, and both 2 and 3 read it: two RAW arrows. Instruction 2 writes <code>Rg1</code>, which 3 reads and also overwrites: a RAW and a WAW. Each arrow means: this pair must keep its order." },
+      { sub: "dep", edges: 6, hle: 3, chip: 2, foot: "", narrate: "Instruction 3 feeds 6 through <code>Rg1</code>: RAW, WAR and WAW at once. Over on the left, 4 sets up <code>Rg2</code> for the load in 5, and 5 loads into <code>Rg3</code>, which 6 reads." },
+      { sub: "dep", edges: 8, hle: 7, chip: 3, foot: "", narrate: "Instruction 5 and 8 both write <code>Rg3</code>: a WAW, so they must stay in order. And 6 feeds 7 through <code>Rg1</code>, again with all three patterns." },
+      { sub: "dep", edges: 9, hle: 8, chip: 3, foot: "", narrate: "Instruction 6 reads <code>Rg3</code> and 8 overwrites it: a WAR. No data moves along this arrow, but swapping 6 and 8 would break the program." },
+      { sub: "dep", edges: 11, hle: 10, chip: 3, foot: "", narrate: "The <code>sw</code> at 9 needs <code>Rg1</code> from 7 and <code>Rg3</code> from 8, so it must come after both." },
+      { sub: "dep", edges: 13, hle: 12, chip: 3, foot: "", narrate: "Finally 10 needs <code>Rg1</code> from 7 and <code>Rg0</code> from 1. That is the whole graph. (Arrows that follow from others, like 2 to 6, are left out.)" },
+      { sub: "dep", edges: 13, order: true, dnote: "no arrow between two nodes: free to move", chip: 4, foot: "", narrate: "Now reordering is easy to read. Any order that keeps every arrow pointing forward is valid. For example 4, 5, 1, 2, 3, 6, 8, 7, 9, 10 works, and it moves an independent load chain up to where it can fill a stall." },
+      { sub: "card", card: cd("A graph is the same rule", ["nodes are instructions", "arrows are conflicts that must keep their order", "no arrow: free to move"]), chip: 4, foot: "", narrate: "A dependency graph is just the rule from before drawn as a picture: never change the relative order of two instructions that conflict. The arrows are the conflicts, and everything else can move." },
+      { sub: "card", card: cd("Next: caching", ["even a perfect pipeline wants an instruction per cycle", "memory takes about 200 times longer than that", "a different problem, with a very old answer"]), chip: 4, foot: "", narrate: "A pipeline in perfect health finishes one instruction per cycle. But a <code>lw</code> has to go to memory, and memory is not remotely that fast. That has nothing to do with hazards, and everything to do with a number from the first slide of this course." },
+    ],
+  }, Object.assign({ card: cardSub, e15: tb(E15T) }, pipeSubs2())));
 
 
   // ---------------- engine ----------------
@@ -1092,19 +1369,6 @@
 "T.1": "Last week's pipeline worked. Overlap has a catch.",
 "T.2": "RAW, its siblings, and a hazard on the <code>pc</code>.",
 "T.3": "And a hazard that isn't about data.",
-"1.1": "The snag: the second <code>addi</code> reads <code>$1</code> too early and gets <strong>0</strong>.",
-"1.2": "<strong>Stall:</strong> hold it, send bubbles. Always right, but cycle 9.",
-"1.3": "<strong>Forward:</strong> a wire carries the value. Cycle 6.",
-"1.4": "RAW has siblings. Which are real?",
-"2.1": "Reads happen <strong>early</strong>: <code>ID</code>, cycle 2.",
-"2.2": "Writes happen <strong>late</strong>: <code>WB</code>, cycle 5.",
-"2.3": "Two instructions share a register: four cases. Check each against the timing.",
-"2.4": "<strong>Case 1:</strong> read in cycle 3, write in cycle 5. Too early: <strong>RAW</strong>.",
-"2.5": "<strong>Case 2:</strong> read in cycle 2, overwrite in cycle 6. Safe: <strong>WAR</strong>.",
-"2.6": "<strong>Case 3:</strong> writes land in order. Safe: <strong>WAW</strong>.",
-"2.7": "<strong>Case 4:</strong> two reads. Not even a conflict: <strong>RAR</strong>.",
-"2.8": "On the E20 only <strong>RAW</strong> bites. The others matter when we reorder.",
-"2.9": "<strong>Conflict:</strong> a shared register that one writes. <strong>Hazard:</strong> it can go wrong.",
 "3.1": "Reordering: put independent work into the stall's gap.",
 "3.2": "Original order: the second instruction waits for <code>$1</code>.",
 "3.3": "Three bubbles: <strong>10</strong> cycles.",
@@ -1127,6 +1391,32 @@
 "4.7": "The same shape as RAW, with the <code>pc</code> as <code>$1</code>.",
 "4.8": "Most instructions always go to <code>pc + 1</code>: no hazard.",
 "4.9": "<code>jeq</code> and <code>jr</code> must wait. <code>j</code>, <code>jal</code> might not.",
+"1.1": "The snag: the second <code>addi</code> reads <code>$1</code> too early and gets <strong>0</strong>.",
+"1.2": "<strong>Stall:</strong> hold it, send bubbles. Always right, but cycle 9.",
+"1.3": "Who inserts the bubble? Hardware, or the assembler.",
+"1.4": "With detection hardware, the processor stalls by itself.",
+"1.5": "Without it, the assembler writes the <code>nop</code>s.",
+"1.6": "The <code>nop</code>s flow through: the pair finishes in cycle 9.",
+"1.7": "<strong>Forward:</strong> a wire carries the value. Cycle 6.",
+"1.8": "RAW has siblings. Which are real?",
+"2.1": "Reads happen <strong>early</strong>: <code>ID</code>, cycle 2.",
+"2.2": "Writes happen <strong>late</strong>: <code>WB</code>, cycle 5.",
+"2.3": "Two instructions share a register: four cases. Check each against the timing.",
+"2.4": "<strong>Case 1:</strong> read in cycle 3, write in cycle 5. Too early: <strong>RAW</strong>.",
+"2.5": "<strong>Case 2:</strong> read in cycle 2, overwrite in cycle 6. Safe: <strong>WAR</strong>.",
+"2.6": "<strong>Case 3:</strong> writes land in order. Safe: <strong>WAW</strong>.",
+"2.7": "<strong>Case 4:</strong> two reads. Not even a conflict: <strong>RAR</strong>.",
+"2.8": "A conflict can be a memory cell, not a register.",
+"2.9": "Cycle 4: the <code>sw</code> writes the cell in <code>MEM</code>.",
+"2.10": "Cycle 5: the <code>lw</code> reads it back.",
+"2.11": "Both in <code>MEM</code>, in order: the write comes first.",
+"2.12": "A memory RAW: a conflict, not a hazard.",
+"2.13": "Is a RAW always a hazard? Three unrelated instructions in between.",
+"2.14": "Cycle 6: the <code>add</code> reads <code>$1</code>, a cycle after the write.",
+"2.15": "The write lands before the read: no stall.",
+"2.16": "Fewer than 3 between: a hazard. 3 or more: no hazard.",
+"2.17": "On the E20 only <strong>RAW</strong> bites. The others matter when we reorder.",
+"2.18": "<strong>Conflict:</strong> a shared register that one writes. <strong>Hazard:</strong> it can go wrong.",
 "5.1": "Attempt one: just <strong>wait</strong>. Always correct.",
 "5.2": "Cycle 2: nothing to fetch yet.",
 "5.3": "Cycle 3: the answer arrives in EX.",
@@ -1141,21 +1431,38 @@
 "5.12": "The wrong fetches are flushed: 2 cycles.",
 "5.13": "A wrong guess costs what waiting always cost.",
 "5.14": "Right: 0. Wrong: 2. Waiting: 2.",
-"5.15": "Taken 10 in 100: 20 cycles, against 200.",
-"5.16": "Taken 90 in 100: 180, barely better.",
-"5.17": "Attempt three: <strong>guess taken</strong>.",
-"5.18": "A loop's first three runs: taken is always right.",
-"5.19": "Ten runs: wait 20, not taken 18, taken 2.",
-"5.20": "An error check flips it: not taken 2, taken 18.",
-"5.21": "No fixed guess is right for every branch.",
-"5.22": "Attempt four: <strong>remember</strong> what it did last time.",
-"5.23": "A loop branch, run twice.",
-"5.24": "Run 1: no history, guess not taken: wrong.",
-"5.25": "Run 2: last time taken, guess taken: right.",
-"5.26": "The exit: the branch changed its mind.",
-"5.27": "Next visit: two mistakes per loop.",
-"5.28": "Ten runs: 8 wrong against 4 wrong.",
-"5.29": "Waiting, fixed guesses, and history.",
+"5.15": "Running ahead on a guess: <strong>speculative execution</strong>.",
+"5.16": "Taken 10 in 100: 20 cycles, against 200.",
+"5.17": "Taken 90 in 100: 180, barely better.",
+"5.18": "Attempt three: <strong>guess taken</strong>.",
+"5.19": "A loop's first three runs: taken is always right.",
+"5.20": "Ten runs: wait 20, not taken 18, taken 2.",
+"5.21": "An error check flips it: not taken 2, taken 18.",
+"5.22": "No fixed guess is right for every branch.",
+"5.23": "Attempt four: <strong>remember</strong> what it did last time.",
+"5.24": "One bit per <code>jeq</code>: 1 if it branched last time.",
+"5.25": "Correct: stay. Incorrect: flip.",
+"5.26": "A loop branch, run twice.",
+"5.27": "Run 1: no history, guess not taken: wrong.",
+"5.28": "Run 2: last time taken, guess taken: right.",
+"5.29": "The exit: the branch changed its mind.",
+"5.30": "Next visit: two mistakes per loop.",
+"5.31": "Ten runs: 8 wrong against 4 wrong.",
+"5.32": "Attempt five: remember the <strong>pattern</strong>.",
+"5.33": "A loop that exits every third time.",
+"5.34": "Taken, taken, not taken: one bit is wrong twice a round.",
+"5.35": "Wrong at the exit, and again at the jump after it.",
+"5.36": "Remember the last <strong>two</strong> outcomes: a history register.",
+"5.37": "History 00, never seen: wrong. Write it down.",
+"5.38": "History 01, never seen: wrong. Write it down.",
+"5.39": "History 11, never seen: the guess happens to be right.",
+"5.40": "History 10, never seen: wrong. All four seen once.",
+"5.41": "History 01 is in the table: taken. Right.",
+"5.42": "History 11 says not taken, at the exit. Right.",
+"5.43": "After learning, never wrong: 3 wrong in 12.",
+"5.44": "Twelve runs: 8, 8 and 3 wrong.",
+"5.45": "Two levels: a history register and a pattern table.",
+"5.46": "Waiting, fixed guesses, and history.",
 "6.1": "A third hazard: two instructions, <strong>one piece of hardware</strong>.",
 "6.2": "The register file: read in <code>ID</code>, written in <code>WB</code>, every cycle.",
 "6.3": "The real E20: two read doors and one write door.",
@@ -1173,8 +1480,36 @@
 "6.15": "Cycle 11, not 8: three cycles lost.",
 "6.16": "Two uses per instruction: one instruction every two cycles.",
 "6.17": "Fix: more doors, or stall. A budget decision.",
-"6.18": "Data, control, structural: three families, three fixes.",
-"6.19": "Next: even a perfect pipeline waits on memory."
+"6.18": "One memory, two accesses in one cycle: a structural hazard.",
+"6.19": "Stall the fetch, or split instruction and data.",
+"6.20": "The E20 assumes the split.",
+"6.21": "Data, control, structural: three families, three fixes.",
+"7.1": "Four pipeline registers sit between the five stages.",
+"7.2": "Each holds only what the next stage still needs.",
+"7.3": "<code>addi</code>: IF reads it into IF/ID.",
+"7.4": "ID reads <code>$2</code> and sign-extends the 3.",
+"7.5": "EX adds: the sum goes into EX/MEM.",
+"7.6": "MEM: nothing to do. <code>aluout</code> passes along.",
+"7.7": "WB writes <code>$2 + 3</code> into <code>$1</code>.",
+"7.8": "<code>sw</code>: ID reads <code>$1</code> and <code>$2</code>.",
+"7.9": "EX: the address in <code>aluout</code>, the value in <code>mdata</code>.",
+"7.10": "MEM writes <code>mdata</code> at <code>aluout</code>.",
+"7.11": "Five instructions in flight, one per register.",
+"7.12": "Forwarding: the EX/MEM wire back into EX.",
+"7.13": "One instruction in between: the MEM/WB wire.",
+"7.14": "Two wires, a multiplexer, and comparators.",
+"7.15": "A <code>lw</code>'s data arrives a register later: one stall.",
+"8.1": "E15 stages: which hardware each instruction uses.",
+"8.2": "Ten E15 instructions: which pairs must keep their order?",
+"8.3": "1 feeds 2 and 3; 2 and 3 share <code>Rg1</code>.",
+"8.4": "3 feeds 6; 4 and 5 set up the load.",
+"8.5": "5 and 8 both write <code>Rg3</code>; 6 feeds 7.",
+"8.6": "6 reads <code>Rg3</code>, 8 overwrites it: a WAR.",
+"8.7": "The <code>sw</code> needs 7 and 8.",
+"8.8": "10 needs 7 and 1: the whole graph.",
+"8.9": "Any order that keeps every arrow forward is valid.",
+"8.10": "A graph is the conflict rule, drawn.",
+"8.11": "Next: even a perfect pipeline waits on memory.",
 };
   let fullText = false;
   window.DECK_STEPS = scenes.map(function (sc) { return { num: sc.num, title: sc.title, front: !!sc.front, steps: sc.steps.map(function (s) { return { narrate: s.narrate, sub: s.sub, img: s.img, card: s.card, cycle: s.cycle, rows: s.rows, hl: s.hl, marks: s.marks, arrows: s.arrows, view: s.view, mark: s.mark, danger: s.danger, chip: s.chip, reg: s.reg, rlab: s.rlab, rtxt: s.rtxt, rval: s.rval, vchip: s.vchip, notes: s.notes, prog: s.prog, order: s.order, n: s.n, hlcells: s.hlcells, cur: s.cur, pc: s.pc, next: s.next, fork: s.fork, note: s.note }; }) }; });

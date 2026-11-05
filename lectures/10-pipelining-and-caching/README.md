@@ -12,19 +12,21 @@
 4. [**Control Hazards: When the Pipeline Doesn't Know What Comes Next**](#4)
 5. [**Branch Prediction: Guess, Then Check**](#5)
 6. [**Structural Hazards: When Two Instructions Want the Same Hardware**](#6)
-7. [**The Memory Wall**](#7)
-8. [**Where Does a Cell Go? Rows, Tags, and the Valid Bit**](#8)
-9. [**Blocks: Locality Is a Bet, Not a Guarantee**](#9)
-10. [**Decoding an Address: Tag, Index, Offset**](#10)
-11. [**Tracing a Cache: A Worked Example**](#11)
-12. [**Sizing a Cache**](#12)
-13. [**What a Cache Is Worth: Hit Ratio and Average Time**](#13)
+7. [**Inside the Pipeline: Registers and Wires**](#7)
+8. [**E15 Pipelines and Dependency Graphs**](#8)
+9. [**The Memory Wall**](#9)
+10. [**Where Does a Cell Go? Rows, Tags, and the Valid Bit**](#10)
+11. [**Blocks: Locality Is a Bet, Not a Guarantee**](#11)
+12. [**Decoding an Address: Tag, Index, Offset**](#12)
+13. [**Tracing a Cache: A Worked Example**](#13)
+14. [**Sizing a Cache**](#14)
+15. [**What a Cache Is Worth: Hit Ratio and Average Time**](#15)
 
 ---
 
-Week VIII ended with one hazard fully worked out, RAW, and a promise that not every hazard is a data hazard. This week keeps that promise. Sections 1 to 6 finish the hazard story: the data hazards get a rule for reordering, control hazards turn out to be a RAW on the program counter, and structural hazards show up in a deliberately cheaper variant of the E20.
+Week VIII ended with one hazard fully worked out, RAW, and a promise that not every hazard is a data hazard. This week keeps that promise. Sections 1 to 6 finish the hazard story: the data hazards get a rule for reordering, control hazards turn out to be a RAW on the program counter and a predictor can learn their patterns, and structural hazards show up in a deliberately cheaper variant of the E20. Sections 7 and 8 look inside the hardware: the registers between the stages and the wires that make forwarding work, and the E15 pipeline with a dependency graph for reordering.
 
-Then Section 7 changes subject to a number from the first slide of the course: memory is slow, and getting slower relative to the processor every year. Caching is the answer, and direct-mapped caching, its simplest version, is this week's second half.
+Then Section 9 changes subject to a number from the first slide of the course: memory is slow, and getting slower relative to the processor every year. Caching is the answer, and direct-mapped caching, its simplest version, is this week's second half.
 
 ---
 
@@ -35,6 +37,32 @@ Then Section 7 changes subject to a number from the first slide of the course: m
 Quick reminder of last week's snag. Two `addi` instructions back to back, `addi $1, $0, 1` and `addi $1, $1, 1`: the second one reads `$1` in `ID`, two cycles before the first one writes it in `WB`. The register file hands back a stale value.
 
 We found two fixes. **Stall** is always correct and always costs cycles: the second `addi` waits in IF while bubbles flow behind the first, and the pair finishes in cycle 9. **Forward** recovers most of those cycles by routing a value straight from where it is produced to where it is needed, skipping the register file. Forwarding finishes the same pair in cycle 6, with no bubbles at all. That is the RAW hazard, fully solved.
+
+Someone has to notice the dependency. A processor with hazard-detection hardware does it on its own: the program stays exactly as you wrote it, and the stall happens invisibly. A simpler processor has no such hardware, and then the job falls to the **assembler**. Before the program is loaded, it finds every dependency and writes enough `nop` instructions (instructions that do nothing) between the two that the first has finished writing:
+
+```
+addi $1, $0, 1
+nop
+nop
+nop
+addi $1, $1, 1
+```
+
+In the pipeline those `nop`s are ordinary instructions flowing through. The second `addi` reaches `ID` in cycle 6, after the first has written `$1` in cycle 5, and the pair finishes in cycle 9, exactly like a hardware stall:
+
+| Time | IF | ID | EX | MEM | WB |
+|:-:|---|---|---|---|---|
+| 1 | `addi $1,$0,1` |  |  |  |  |
+| 2 | `nop` | `addi $1,$0,1` |  |  |  |
+| 3 | `nop` | `nop` | `addi $1,$0,1` |  |  |
+| 4 | `nop` | `nop` | `nop` | `addi $1,$0,1` |  |
+| 5 | `addi $1,$1,1` | `nop` | `nop` | `nop` | `addi $1,$0,1` |
+| 6 |  | `addi $1,$1,1` | `nop` | `nop` | `nop` |
+| 7 |  |  | `addi $1,$1,1` | `nop` | `nop` |
+| 8 |  |  |  | `addi $1,$1,1` | `nop` |
+| 9 |  |  |  |  | `addi $1,$1,1` |
+
+This is the exercise of rewriting a program with `nop`s that you will meet on the homework: the stall table, written out as instructions.
 
 But RAW has siblings, and not every hazard is about a register. Today we find out which data hazards are real, ask whether we can dodge a stall by reordering, and then find out what happens when the thing being fought over is the `pc`. Last, we meet a hazard that is not about data at all.
 
@@ -101,6 +129,52 @@ The remaining two patterns follow the same recipe:
 | **WAR** (write after read) | 2 writes what 1 reads | `addi $1, $2, 1` then `addi $2, $3, 1` | yes | no |
 | **WAW** (write after write) | both write the same register | `addi $1, $2, 1` then `addi $1, $3, 1` | yes | no |
 | **RAR** (read after read) | both read the same value | `addi $1, $2, 1` then `addi $3, $2, 1` | no | never |
+
+The thing two instructions share does not have to be a register. Take
+
+```
+sw $1, foo($0)
+lw $2, foo($0)
+```
+
+The first writes a memory cell and the second reads the same cell: a RAW, on memory instead of a register. Memory is only touched in `MEM`, so the `sw` writes in cycle 4 and the `lw` reads one cycle later, in cycle 5. The read always comes after the write:
+
+| Time | IF | ID | EX | MEM | WB |
+|:-:|---|---|---|---|---|
+| 1 | `sw $1,foo($0)` |  |  |  |  |
+| 2 | `lw $2,foo($0)` | `sw $1,foo($0)` |  |  |  |
+| 3 |  | `lw $2,foo($0)` | `sw $1,foo($0)` |  |  |
+| 4 |  |  | `lw $2,foo($0)` | `sw $1,foo($0)` |  |
+| 5 |  |  |  | `lw $2,foo($0)` | `sw $1,foo($0)` |
+| 6 |  |  |  |  | `lw $2,foo($0)` |
+
+So a memory RAW is a conflict, but on the E20 it is not a hazard: instructions stay in order, and both use memory in the same stage. It still matters the moment we reorder. Swapping the `sw` and the `lw` would make the load read the old value, so the rule from the next section applies to memory cells exactly as it does to registers.
+
+One more check on RAW itself: is it always a hazard? Put some unrelated instructions between the two:
+
+```
+movi $1, 5
+addi $3, $3, 1
+addi $4, $4, 1
+addi $5, $5, 1
+add  $2, $2, $1
+```
+
+`movi` writes `$1` in cycle 5. The `add` reaches `ID` in cycle 6, a cycle after the write, so it reads the 5 and nothing needs to stall:
+
+| Time | IF | ID | EX | MEM | WB |
+|:-:|---|---|---|---|---|
+| 1 | `movi $1,5` |  |  |  |  |
+| 2 | `addi $3,$3,1` | `movi $1,5` |  |  |  |
+| 3 | `addi $4,$4,1` | `addi $3,$3,1` | `movi $1,5` |  |  |
+| 4 | `addi $5,$5,1` | `addi $4,$4,1` | `addi $3,$3,1` | `movi $1,5` |  |
+| 5 | `add $2,$2,$1` | `addi $5,$5,1` | `addi $4,$4,1` | `addi $3,$3,1` | `movi $1,5` |
+| 6 |  | `add $2,$2,$1` | `addi $5,$5,1` | `addi $4,$4,1` | `addi $3,$3,1` |
+| 7 |  |  | `add $2,$2,$1` | `addi $5,$5,1` | `addi $4,$4,1` |
+| 8 |  |  |  | `add $2,$2,$1` | `addi $5,$5,1` |
+| 9 |  |  |  |  | `add $2,$2,$1` |
+
+It is the same conflict as before, a RAW on `$1`, yet no hazard, because by the time the read happens the write has already landed. With fewer than three instructions between the writer and the reader, the read comes too early. With three or more, it is safe. That is the cleanest way to see the difference between the two words: a **conflict** depends only on which registers two instructions use, while a **hazard** also depends on how close together they sit in the pipeline.
 
 So on the E20 **only RAW can go wrong**, because reads are early, writes are late, and instructions finish in the order they started. WAR and WAW matter the moment we start *moving instructions around*, which is the next section. (A processor that lets instructions finish out of order would have to worry about them too.)
 
@@ -255,6 +329,21 @@ Not every instruction can cause this. To find out which ones can, ask the same t
 
 Waiting for a branch's answer would stall on every branch, which is exactly the cost a pipeline exists to avoid. So the pipeline **guesses**, keeps going, and fixes the mistake if the guess was wrong. Let's see what that bet costs.
 
+The first attempt is not to guess at all. The pipeline has no idea which instruction follows a `jeq`, so it fetches nothing until the answer arrives. The `jeq` is in `ID` in cycle 2, reaches `EX` and learns the answer in cycle 3, and only in cycle 4 is the right next instruction fetched. Two fetch slots are wasted, taken or not taken:
+
+| Time | IF | ID | EX | MEM | WB |
+|:-:|---|---|---|---|---|
+| 1 | `jeq` |  |  |  |  |
+| 2 | *bubble* | `jeq` |  |  |  |
+| 3 | *bubble* | *bubble* | `jeq` |  |  |
+| 4 | `add $3,$3,$3` |  |  | `jeq` |  |
+| 5 |  | `add $3,$3,$3` |  |  | `jeq` |
+| 6 |  |  | `add $3,$3,$3` |  |  |
+| 7 |  |  |  | `add $3,$3,$3` |  |
+| 8 |  |  |  |  | `add $3,$3,$3` |
+
+That costs **2 cycles on every execution** of the branch. Run it 100 times and it wastes 200 cycles: the number every better idea has to beat.
+
 The simplest guess is **not taken**: keep fetching the line below.
 
 <p align=center>
@@ -264,7 +353,9 @@ The simplest guess is **not taken**: keep fetching the line below.
 
 A right guess costs **nothing**: the instructions already in flight were the right ones, so the pipeline never stalled. A wrong guess costs **2 cycles**: the two instructions behind the `jeq` are flushed and the real target is fetched late, exactly as in the last section.
 
-**Now put numbers on it.** A branch runs 100 times and is taken 90 of them. Guessing "not taken" is wrong 90 times, so the penalty is 90 x 2 = **180 cycles**. Simply stalling on every execution would cost 100 x 2 = **200**, so guessing saved only 10%: barely worth it. For a branch taken only 10 times in 100, guessing "not taken" costs 10 x 2 = **20 cycles**, ten times better than stalling. A guess only pays when it is usually right.
+A wrong guess costs exactly what waiting always cost, so a guess can never be worse than waiting: it is free when right and the same price when wrong. Running ahead on a guess, and throwing the work away if it was wrong, has a name: **speculative execution**. It is safe here because a flushed instruction has not written anything yet, since `WB` is the last stage.
+
+A branch runs 100 times and is taken 90 of them. Guessing "not taken" is wrong 90 times, so the penalty is 90 x 2 = **180 cycles**. Simply stalling on every execution would cost 100 x 2 = **200**, so guessing saved only 10%: barely worth it. For a branch taken only 10 times in 100, guessing "not taken" costs 10 x 2 = **20 cycles**, ten times better than stalling. A guess only pays when it is usually right.
 
 <p align=center>
     <img src="assets/bp-cost.svg" width="760" alt="bar chart of total penalty cycles: for a branch taken 90 times in 100, stalling costs 200 and guessing not taken costs 180; for 10 times in 100, 200 against 20">
@@ -273,6 +364,8 @@ A right guess costs **nothing**: the instructions already in flight were the rig
 
 
 For a branch like that, **taken** would have been the better guess, and the kind of code that behaves this way is a **loop**: its back-edge jumps to the top almost every time, so "taken" is the better bet. An error check near the top of a function almost never fires, so there "not taken" wins. The best fixed guess depends on the branch.
+
+Guessing **taken** is the mirror image: the pipeline starts fetching from the branch target, a right guess costs nothing, and a wrong one costs the same 2 cycles. Take a loop's back-edge that runs 10 times, taken 9 times and not taken once at the end. Waiting costs 20 cycles, guessing "not taken" costs 18 (wrong nine times), and guessing "taken" costs 2 (wrong only at the exit). An error check that fires once in ten flips the scores: "not taken" costs 2 and "taken" costs 18. No single fixed guess is right for both kinds of branch.
 
 But a fixed guess is wrong for the opposite kind of branch, so the processor needs something smarter, using only what it has already seen. The natural thing is to remember. If a branch has just done taken, taken, taken, taken, the best guess for its next execution is **taken**, because that is its history. Guessing "the same as last time" is the simplest version of **dynamic branch prediction**, and real processors keep that history for each branch separately.
 
@@ -289,6 +382,57 @@ Guess "same as last time", starting from "not taken" for the very first one. It 
 </p>
 <p align=center><sub>A loop branch run twice. "Always not taken" is wrong 8 times out of 10; "same as last time" only 4.</sub></p>
 
+"Same as last time" is cheap to build: one special register for each `jeq`, holding a single bit, 1 if the branch branched last time and 0 if it did not. The prediction for the next run is simply the bit. As a state diagram there are two states, and after every run the bit stays if the prediction was correct and flips if it was incorrect:
+
+<p align=center>
+    <img src="assets/bp-state.svg" width="760" alt="a two-state diagram: not taken and taken, flipping on an incorrect prediction and staying on a correct one">
+</p>
+<p align=center><sub>One bit per <code>jeq</code>. A correct prediction keeps the state, an incorrect one flips it.</sub></p>
+
+One bit remembers only the last outcome, and that fails on a branch with a longer pattern. Take a loop that jumps back twice and then exits, over and over:
+
+```
+start:
+    movi $1, 3
+loop:
+    addi $1, $1, -1
+    slti $2, $1, 1
+    jeq  $2, $0, loop
+    j    start
+```
+
+`$1` counts down 3, 2, 1, and `slti` sets `$2` to 1 only when `$1` has reached 0, so the `jeq` is taken twice, then falls through, and `j start` restarts the count: taken, taken, not taken, forever. "Same as last time" is wrong at the exit, and wrong again at the first jump after it, because the last outcome was "not taken". That is two mistakes in every three runs.
+
+The information needed was there all along: after taken, taken the branch always exits, and after not taken it always jumps. One bit cannot see that, but the last **two** outcomes can.
+
+Keep the last two outcomes in a small shift register, the **history register**, and next to it a **pattern table** with one entry for each possible history (2² = 4 entries), recording what came next the last time the branch had that history. To predict, look up the current history and guess what the table says. After each outcome, write it into the table entry you just used and shift it into the register. Start with the register at 00 and the table empty, guessing "not taken" for any history never seen:
+
+| Run | History before | The table says | The branch did | Result |
+|:-:|:-:|---|---|---|
+| 1 | `00` | never seen: guess not taken | taken | **wrong** |
+| 2 | `01` | never seen: guess not taken | taken | **wrong** |
+| 3 | `11` | never seen: guess not taken | not taken | right |
+| 4 | `10` | never seen: guess not taken | taken | **wrong** |
+| 5 | `01` | taken | taken | right |
+| 6 | `11` | not taken | not taken | right |
+
+By run 4 every history has been seen once, and the table has learned the pattern:
+
+<p align=center>
+    <img src="assets/bp-twolevel-table.svg" width="760" alt="the history register and a pattern table: 00, 01 and 10 map to taken, 11 maps to not taken">
+</p>
+<p align=center><sub>The history register and the pattern table after the first few runs.</sub></p>
+
+From here on the lookup is always right. Over twelve runs, "not taken" is wrong 8 times, "same as last time" is wrong 8 times, and the two-bit predictor only 3, all of them while it was learning:
+
+<p align=center>
+    <img src="assets/bp-twolevel-compare.svg" width="760" alt="twelve outcomes of the loop branch against three predictors: not taken wrong 8, same as last time wrong 8, remember the last two wrong 3">
+</p>
+<p align=center><sub>The loop that exits every third time. The longer a pattern repeats, the more the history pays off.</sub></p>
+
+This is why it is called a **two-level** predictor: the history register is the first level, and the pattern table that turns a history into a prediction is the second. Real processors use longer histories than 2 bits and keep this structure for each branch. It was invented by T.-Y. Yeh and Yale Patt in 1991, and variants of it are in most modern processors.
+
+
 
 
 ---
@@ -303,7 +447,7 @@ Take the register file. An instruction in `ID` uses it to read, and an instructi
 
 The real E20 handles this with separate doors: its register file has **two read ports and one write port**, so a read and a write happen at once, with no problem. The E20 has no structural hazards, on purpose.
 
-**Now imagine a cheaper register file with a single door that reads and writes have to share.** Four independent `add` instructions in a row:
+Now imagine a cheaper register file with a single door that reads and writes have to share. Four independent `add` instructions in a row:
 
 ```
 add $1, $1, $1
@@ -333,6 +477,24 @@ Now look at cycle 5. The first instruction needs the door to write its result in
 
 So one of them has to wait: stall one, just as for a data hazard. With the cheap register file that would happen in *every* cycle, since every cycle has a write-back and a decode, so it would never get near one instruction per cycle.
 
+So one of them has to wait, just as for a data hazard. The sensible rule is that the write goes first, because it finishes an instruction. The fourth `add` is held in `IF` while bubbles flow behind it, and the write-backs of the first three adds arrive in cycles 5, 6 and 7, each using the door. Only in cycle 8 is the door free, and the fourth `add` finally reads. It finishes in cycle 11 instead of cycle 8:
+
+| Time | IF | ID | EX | MEM | WB |
+|:-:|---|---|---|---|---|
+| 1 | `add $1,$1,$1` |  |  |  |  |
+| 2 | `add $2,$2,$2` | `add $1,$1,$1` |  |  |  |
+| 3 | `add $3,$3,$3` | `add $2,$2,$2` | `add $1,$1,$1` |  |  |
+| 4 | `add $4,$4,$4` | `add $3,$3,$3` | `add $2,$2,$2` | `add $1,$1,$1` |  |
+| 5 | `add $4,$4,$4` | *bubble* | `add $3,$3,$3` | `add $2,$2,$2` | `add $1,$1,$1` |
+| 6 | `add $4,$4,$4` | *bubble* | *bubble* | `add $3,$3,$3` | `add $2,$2,$2` |
+| 7 | `add $4,$4,$4` | *bubble* | *bubble* | *bubble* | `add $3,$3,$3` |
+| 8 |  | `add $4,$4,$4` | *bubble* | *bubble* | *bubble* |
+| 9 |  |  | `add $4,$4,$4` | *bubble* | *bubble* |
+| 10 |  |  |  | `add $4,$4,$4` | *bubble* |
+| 11 |  |  |  |  | `add $4,$4,$4` |
+
+Three cycles lost on four instructions that have nothing to do with each other. And it only gets worse with a longer program: every instruction needs the door twice, once to read and once to write, so a single door can serve only one instruction every two cycles. The pipeline built to finish one per cycle would run at half speed.
+
 The other fix is to **build more doors**, which is what the E20 does, a *deliberate design decision* that does not come for free when you pipeline. A **structural hazard** is exactly this: two instructions wanting the same hardware in the same cycle, with no data dependency at all.
 
 So here are all three families side by side:
@@ -349,6 +511,119 @@ A pipeline in perfect health finishes one instruction per cycle. But a `lw` has 
 ---
 
 <a id="7"></a>
+
+## Inside the Pipeline: Registers and Wires
+
+Up to now the pipeline has been boxes in a table. Here is what it is built from. The five stages are separated by four **pipeline registers**, `IF/ID`, `ID/EX`, `EX/MEM` and `MEM/WB`. Each one catches what a stage produced and holds it steady for the next stage, which is what lets every stage work on a different instruction at the same time. (The multicycle machine used the same idea with `IR`, `A`, `B`, `aluOut` and `MDR`; here there is one set at every stage boundary.)
+
+<p align=center>
+    <img src="assets/pl-regs.svg" width="760" alt="five pipeline stages with four registers between them: IF/ID holds instr and pc, ID/EX adds the operands, EX/MEM holds aluout and mdata, MEM/WB holds instr and aluout">
+</p>
+<p align=center><sub>The four pipeline registers and what each carries.</sub></p>
+
+Each register carries only what the next stage still needs: `instr`, so the later stages know what to do, the `pc`, the operands read in `ID` (`op0`, `op1`, `op2`), the ALU result `aluout`, and `mdata`, the value a `sw` will store.
+
+Follow an `addi $1, $2, 3` stored at `ram[5]` through the stages:
+
+| Stage | What happens | What gets stored |
+|---|---|---|
+| `IF` | read the instruction from `ram[5]` | `IF/ID`: `instr = addi $1,$2,3`, `pc = 5` |
+| `ID` | read `$2`, sign-extend the 3 | `ID/EX`: `op0 = 3`, `op1 = $2`, `op2 = $0` |
+| `EX` | add `op0` and `op1`; update the master `pc` | `EX/MEM`: `aluout = $2 + 3`, `mdata = $0` |
+| `MEM` | nothing to do, `aluout` passes along | `MEM/WB`: `instr`, `aluout = $2 + 3` |
+| `WB` | write `$2 + 3` into `$1` | |
+
+Each stage only ever looked at its own input register.
+
+Now follow a `sw $1, 4($2)` stored at `ram[6]`:
+
+| Stage | What happens | What gets stored |
+|---|---|---|
+| `ID` | read `$1` (the value) and `$2` (the base), sign-extend 4 | `ID/EX`: `op0 = 4`, `op1 = $2`, `op2 = $1` |
+| `EX` | `aluout` is the address, `mdata` is the value | `EX/MEM`: `aluout = $2 + 4`, `mdata = $1` |
+| `MEM` | write `mdata` into memory at `aluout` | `MEM/WB`: `instr` |
+| `WB` | nothing to write | |
+
+Put five instructions in flight and every pipeline register holds a different one. That is what the pipeline table was showing all along: a row of the table is a snapshot of these registers.
+
+Now forwarding stops being magic. When the first of two dependent `addi` instructions leaves `EX`, its sum is sitting in the `EX/MEM` register. A wire carries it straight back into the `EX` stage for the instruction behind it, skipping the register file. With one instruction in between, the value has moved on one more register, to `MEM/WB`, and a second wire brings it back to `EX`:
+
+<p align=center>
+    <img src="assets/pl-fwd.svg" width="760" alt="two wires, from EX/MEM and from MEM/WB, return to the EX stage">
+</p>
+<p align=center><sub>Forwarding: two wires back into <code>EX</code>.</sub></p>
+
+Earlier we described the one-instruction-in-between case as delivering the value to `ID`. In hardware the same value is taken from `MEM/WB` into `EX` a cycle later, which costs the same number of cycles. The price of forwarding is these two wires, a multiplexer that chooses among them and the register file, and comparison logic that checks whether the register being read is the one an earlier instruction is about to write.
+
+It also explains why a `lw` still costs a stall. A sum exists after `EX`, but loaded data only exists after `MEM`, so it reaches `MEM/WB` one cycle later. The wire is there, but the data is not yet, so the instruction behind has to wait one cycle.
+
+
+---
+
+<a id="8"></a>
+
+## E15 Pipelines and Dependency Graphs
+
+Everything so far has used the E20. The same ideas apply to the E15, whose pipeline has four stages: fetch, decode, exec and store. Which hardware each kind of instruction uses at each stage:
+
+| Instructions | Fetch | Decode | Exec | Store |
+|---|---|---|---|---|
+| `add` `addi` `sub` `subi` | instruction ROM | register file, `mBus`, `dBus` | ALU | register file, `mBus` |
+| `mov` `movi` | instruction ROM | register file, `mBus`, `dBus` | | register file, `mBus` |
+| `cmp` `cmpi` | instruction ROM | register file, `mBus`, `dBus` | ALU | |
+| `jmp` | instruction ROM | | | |
+| `jz` `jnz` | instruction ROM | | | |
+| `lw` | instruction ROM | register file, `mBus`, `dBus` | MMU | register file, `mBus` |
+| `sw` | instruction ROM | register file, `mBus`, `dBus` | MMU | |
+
+For a longer program, deciding which instructions may be reordered gets tedious pair by pair. A **dependency graph** does it in one picture: every instruction is a node, and an arrow from one instruction to a later one means they conflict, so they must keep their order. Take this E15 program:
+
+```
+1  movi Rg0 <- 5
+2  lw   Rg1 <- mem[Rg0]
+3  add  Rg1 <- Rg0 + Rg1
+4  movi Rg2 <- 0
+5  lw   Rg3 <- mem[Rg2]
+6  add  Rg1 <- Rg3 + Rg1
+7  addi Rg1 <- Rg1 + 0
+8  movi Rg3 <- 8
+9  sw   mem[Rg3] <- Rg1
+10 sub  Rg1 <- Rg1 - Rg0
+```
+
+Go through it and write down each conflicting pair, with its kind:
+
+| Arrow | Kinds | Why |
+|---|---|---|
+| 1 → 2 | RAW | 2 reads `Rg0`, which 1 writes |
+| 1 → 3 | RAW | 3 reads `Rg0` |
+| 2 → 3 | RAW, WAW | 3 reads `Rg1`, and both write it |
+| 3 → 6 | RAW, WAR, WAW | 6 reads `Rg1`, 3 read it before 6 overwrites it, both write it |
+| 4 → 5 | RAW | 5 uses `Rg2` as its address |
+| 5 → 6 | RAW | 6 reads `Rg3` |
+| 5 → 8 | WAW | both write `Rg3` |
+| 6 → 7 | RAW, WAR, WAW | all three on `Rg1` |
+| 6 → 8 | WAR | 6 reads `Rg3` before 8 overwrites it |
+| 7 → 9 | RAW | the `sw` stores `Rg1` |
+| 8 → 9 | RAW | the `sw` uses `Rg3` as its address |
+| 7 → 10 | RAW, WAR, WAW | all three on `Rg1` |
+| 1 → 10 | RAW | 10 reads `Rg0` |
+
+(Pairs that follow from the others, like 2 → 6, are left out: if 2 must precede 3 and 3 must precede 6, then 2 precedes 6 already. The graph also ignores which memory cells the loads and the store touch, to keep it simple.)
+
+<p align=center>
+    <img src="assets/dep-graph.svg" width="760" alt="ten instructions as numbered nodes with arrows for each conflicting pair, and one valid order 4, 5, 1, 2, 3, 6, 8, 7, 9, 10">
+</p>
+<p align=center><sub>The dependency graph. Instruction 4 and 5 have no arrow to the instructions on the left, so they are free to move.</sub></p>
+
+Now reordering is easy to read. Any order that keeps every arrow pointing forward is valid, and an instruction with no arrow between it and another is free to move relative to it. For example, `4, 5, 1, 2, 3, 6, 8, 7, 9, 10` is valid: the load chain `4, 5` only has to come before 6 and 8, so it can sit at the front, which is where it can fill a stall in the middle of the program.
+
+A graph is the same rule as before drawn as a picture: never change the relative order of two instructions that conflict. The arrows are the conflicts, and everything else can move.
+
+
+---
+
+<a id="9"></a>
 
 ## The Memory Wall
 
@@ -393,13 +668,13 @@ The simplest answer to all three is a **direct-mapped cache**. We will not hand 
 
 ---
 
-<a id="8"></a>
+<a id="10"></a>
 
 ## Where Does a Cell Go? Rows, Tags, and the Valid Bit
 
 Keep the numbers small so you can follow them in your head. Our cache has four **rows**, which are slots that each hold one memory value. In main memory, address 42 holds the value 17, and address 10 holds the value 33.
 
-**Attempt one: split by remainder.** We need a rule that decides which row a value goes into, and the cheapest routing logic in the world is the remainder: `row = address % 4`. The processor asks for address 42. Divide by 4: 10 with a remainder of 2, so row 2. We copy 17 from main memory into row 2. So far so good.
+We need a rule that decides which row a value goes into, and the cheapest routing logic in the world is the remainder: `row = address % 4`. The processor asks for address 42. Divide by 4: 10 with a remainder of 2, so row 2. We copy 17 from main memory into row 2. So far so good.
 
 <p align=center>
     <img src="assets/ca-s1a.svg" width="760" alt="lw 42 copies 17 from RAM into row 2 of a four-row cache">
@@ -420,7 +695,7 @@ The problem is that with four rows, a quarter of all addresses (2, 6, 10, 14, 42
 </p>
 <p align=center><sub>Attempt one: <code>42 % 4</code> and <code>10 % 4</code> are both 2. The cache hands back 17 for address 10, whose real value is 33.</sub></p>
 
-**Attempt two: store the address too.** The fix is obvious once you have seen the failure: write the resident's name on the letter. Next to each value, store the address it came from, so row 2 holds the pair `(42, 17)`.
+The fix is obvious once you have seen the failure: write the resident's name on the letter. Next to each value, store the address it came from, so row 2 holds the pair `(42, 17)`.
 
 <p align=center>
     <img src="assets/ca-s2a.svg" width="760" alt="the cache table gains an address column; row 2 holds 42 and 17">
@@ -443,7 +718,7 @@ We have fixed the lying. But we have created an inefficiency: every row now stor
 </p>
 <p align=center><sub>Attempt two: the stored address (42) does not match the requested one (10), so it is a miss. The old entry is evicted and row 2 now holds <code>(10, 33)</code>.</sub></p>
 
-**Attempt three: store only what we don't already know.** Look at how address 42 got to row 2: we took `42 % 4`, the remainder. So the row number already tells us something about the address. If you are standing in front of row 2, you know with certainty that whatever is inside came from an address that leaves remainder 2 when divided by 4.
+Look at how address 42 got to row 2: we took `42 % 4`, the remainder. So the row number already tells us something about the address. If you are standing in front of row 2, you know with certainty that whatever is inside came from an address that leaves remainder 2 when divided by 4.
 
 You do not need to write that part down. It is the hotel floor: standing on the fifth floor, a room label of "12" is enough, because being on the fifth floor already tells you the first part.
 
@@ -458,14 +733,14 @@ It is called the **tag**. So row 2 stores a tag of 10 next to the value 17, inst
 
 A lookup is now: compute the row and the tag from the address, go to the row, and compare the stored tag with the computed one. A match is a hit; otherwise it is a miss, so fetch and evict.
 
-**Untangling the vocabulary.** These two are easy to mix up. The **index** is just another word for the row number: it tells you *where* the data lives, like an apartment number. The **tag** tells you *who* is currently living in that apartment. You need both. The index gets the electrical signals to the right door on the chip, and the tag checks the ID of whoever is inside. **Index is where, tag is who.**
+These two are easy to mix up. The **index** is just another word for the row number: it tells you *where* the data lives, like an apartment number. The **tag** tells you *who* is currently living in that apartment. You need both. The index gets the electrical signals to the right door on the chip, and the tag checks the ID of whoever is inside. **Index is where, tag is who.**
 
 <p align=center>
     <img src="assets/ca-attempt3.svg" width="760" alt="42 = 4 x 10 + 2 gives tag 10 and row 2; 10 = 4 x 2 + 2 gives tag 2 and row 2; row 2 stores tag 10, so a lookup of address 10 sees tag 2 and misses">
 </p>
 <p align=center><sub>Attempt three: divide by 4. The remainder is the row, the quotient is the tag. Address 42 is row 2, tag 10. Address 10 is row 2, tag 2, so the stored tag does not match and it is a miss.</sub></p>
 
-**Attempt four: the power-on problem.** What is in row 1 of the cache the instant you press the power button? The intuitive answer is "nothing", but in hardware empty does not exist. A wire always holds some voltage, which the logic reads as a 0 or a 1. When the machine powers on, the cache is full of meaningless static. Say, by chance, row 1 powers up holding all zeros, tag included.
+What is in row 1 of the cache the instant you press the power button? The intuitive answer is "nothing", but in hardware empty does not exist. A wire always holds some voltage, which the logic reads as a 0 or a 1. When the machine powers on, the cache is full of meaningless static. Say, by chance, row 1 powers up holding all zeros, tag included.
 
 The operating system boots and the first instruction asks for address 1. `1 % 4 = 1`, so row 1, and the tag is `1 // 4 = 0`. The stored tag is a leftover 0, so the comparator says *match*, the cache says *hit*, and hands the processor a handful of garbage it never loaded. It hallucinated a hit from static electricity.
 
@@ -519,7 +794,7 @@ Otherwise it is a **miss**: fetch from RAM, store the new tag and value, set `V 
 
 ---
 
-<a id="9"></a>
+<a id="11"></a>
 
 ## Blocks: Locality Is a Bet, Not a Guarantee
 
@@ -541,7 +816,7 @@ Every iteration asks for a brand new address, the one right after the last. With
 
 There are two kinds of locality, and our design only gets one. **Temporal locality** means that if you use an address once, you will probably use it again soon: the loop counter `i` is read every iteration, and after the first miss it sits in the cache for free hits.
 
-**Spatial locality** means that if you touch an address, you will very likely touch its neighbours next: the array. Our one-value-per-row cache ignores it completely.
+The other kind, **spatial locality**, means that if you touch an address, you will very likely touch its neighbours next: the array. Our one-value-per-row cache ignores it completely.
 
 <p align=center>
     <img src="assets/ca-b2.svg" width="760" alt="temporal locality is the same address again, spatial locality is the neighbours">
@@ -573,7 +848,7 @@ Now watch it pay off. The loop moves on to address 54. It is in block 6, which l
 </p>
 <p align=center><sub>After the miss, the rest of the block is already there: one miss, seven hits.</sub></p>
 
-**It is a bet.** The cache is betting that your code has spatial locality. It dragged seven extra cells across the motherboard, burning energy and bus time and taking space in the row, on the hope that you would use them. If your code jumps all over memory, say through a linked list, never touching a neighbour, the cache loses the bet: it paid to carry cells that sit unused until they are evicted.
+The cache is betting that your code has spatial locality. It dragged seven extra cells across the motherboard, burning energy and bus time and taking space in the row, on the hope that you would use them. If your code jumps all over memory, say through a linked list, never touching a neighbour, the cache loses the bet: it paid to carry cells that sit unused until they are evicted.
 
 <p align=center>
     <img src="assets/ca-b5.svg" width="760" alt="three scattered reads each fetch a whole block but use one cell of it">
@@ -585,7 +860,7 @@ With no spatial locality, big blocks do worse than no blocks at all. The hardwar
 
 ---
 
-<a id="10"></a>
+<a id="12"></a>
 
 ## Decoding an Address: Tag, Index, Offset
 
@@ -604,7 +879,7 @@ In arithmetic form, which is the form you will use on exams, write these four st
 | 3 | row (index) | `block % numberOfRows` |
 | 4 | tag | `block // numberOfRows` |
 
-**Worked example.** A system has 10-bit addresses, a block size of 4, and 8 cache rows. Decode address 181. First the widths: block size 4 needs 2 offset bits; 8 rows need 3 index bits; that leaves `10 - 2 - 3 = 5` bits for the tag. In binary, 181 is `0010110101`:
+Take a worked example: a system has 10-bit addresses, a block size of 4, and 8 cache rows. Decode address 181. First the widths: block size 4 needs 2 offset bits; 8 rows need 3 index bits; that leaves `10 - 2 - 3 = 5` bits for the tag. In binary, 181 is `0010110101`:
 
 <p align=center>
     <img src="assets/ca-split.svg" width="760" alt="address 181 in binary split into a 5-bit tag 00101, a 3-bit index 101 and a 2-bit offset 01">
@@ -626,7 +901,7 @@ On the four-row, block-size-8 cache we will trace next: address 53 is block 6, o
 
 ---
 
-<a id="11"></a>
+<a id="13"></a>
 
 ## Tracing a Cache: A Worked Example
 
@@ -649,11 +924,11 @@ For each one, say out loud the block, the row, the tag and the result.
 | 29 | 3 | 3 | 0 | MISS | row 3 holds tag 1 (block 7); evict |
 | 28 | 3 | 3 | 0 | **HIT** | same block as 29 |
 
-**52:** block 6, row 2, tag 1. Row 2 is invalid, so a miss: block 6 (cells 48 to 55) loads into row 2. **53:** block 6 again, row 2, tag 1. `V = 1` and the tags match: a hit. That is the bet paying off: 53 rode in on the coattails of 52. **92** is a miss in the empty row 3, and **55** is another hit on block 6.
+Address 52 is block 6, row 2, tag 1. Row 2 is invalid, so a miss: block 6 (cells 48 to 55) loads into row 2. Address 53 is block 6 again, row 2, tag 1. `V = 1` and the tags match: a hit. That is the bet paying off, since 53 rode in on the coattails of 52. Address 92 is a miss in the empty row 3, and 55 is another hit on block 6.
 
-**20:** block 2, row 2, tag 0. Row 2 is valid, but it holds tag 1, which is block 6, and our computed tag is 0. No match: a miss, and the hardware evicts block 6 to load block 2.
+Address 20 is block 2, row 2, tag 0. Row 2 is valid, but it holds tag 1, which is block 6, and our computed tag is 0. No match: a miss, and the hardware evicts block 6 to load block 2.
 
-**54: stop and trace this one yourself before reading on.** It is block 6, row 2, tag 1. But row 2 now holds tag 0, because we loaded block 2 a moment ago. A miss: block 2 is evicted and block 6 is hauled all the way back from memory. That is a **conflict**: two blocks that have nothing to do with each other in the software just happen to map to the same physical row, and they keep forcing each other out.
+Address 54 is block 6, row 2, tag 1. But row 2 now holds tag 0, because we loaded block 2 a moment ago. A miss: block 2 is evicted and block 6 is hauled all the way back from memory. That is a **conflict**: two blocks that have nothing to do with each other in the software just happen to map to the same physical row, and they keep forcing each other out.
 
 Rows 0 and 1 are completely empty, so why couldn't block 2 just park there? Because a direct-mapped cache is a parking lot with mathematically assigned spaces. Block 2 is permanently assigned to space 2, and is forbidden to use space 0 or 1. If block 6 is in space 2, block 6 gets towed. Conflicts come from mathematical coincidence, not from running out of room.
 
@@ -675,7 +950,7 @@ Is the cache broken? No. It did not fail because it was too small; it failed bec
 
 ---
 
-<a id="12"></a>
+<a id="14"></a>
 
 ## Sizing a Cache
 
@@ -698,7 +973,7 @@ Each row costs `1 + 5 + 8 = 14` bits, so the cache is `128 × 14 = 1792` bits to
 
 ---
 
-<a id="13"></a>
+<a id="15"></a>
 
 ## What a Cache Is Worth: Hit Ratio and Average Time
 

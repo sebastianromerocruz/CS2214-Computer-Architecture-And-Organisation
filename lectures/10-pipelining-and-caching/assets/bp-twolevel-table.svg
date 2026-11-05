@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 390" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="390" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" text-anchor="middle">a two-bit history register and the pattern table it has learned from T T N T T N T T N ...</text>
+<text x="190" y="84" fill="#57068c" font-size="19" font-weight="700" text-anchor="middle">history register</text>
+<text x="190" y="106" fill="#6d6d6d" font-size="15" font-weight="500" text-anchor="middle">the last two outcomes</text>
+<rect x="70" y="126" width="80" height="80" rx="8" fill="#fff" stroke="#57068c" stroke-width="5"/>
+<text x="110" y="184" fill="#1a1a1a" font-size="48" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="158" y="126" width="80" height="80" rx="8" fill="#fff" stroke="#57068c" stroke-width="5"/>
+<text x="198" y="184" fill="#1a1a1a" font-size="48" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<text x="46" y="174" fill="#6d6d6d" font-size="15" font-weight="700" text-anchor="middle">out</text>
+<text x="262" y="174" fill="#6d6d6d" font-size="15" font-weight="700" text-anchor="middle">in</text>
+<path d="M335 166 L470 166" fill="none" stroke="#57068c" stroke-width="4" stroke-linecap="round"/>
+<polygon points="470,166,458,159,458,173" fill="#57068c"/>
+<text x="402" y="150" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">look up</text>
+<text x="790" y="84" fill="#57068c" font-size="19" font-weight="700" text-anchor="middle">pattern table</text>
+<text x="790" y="106" fill="#6d6d6d" font-size="15" font-weight="500" text-anchor="middle">what came next after each history</text>
+<rect x="490" y="122" width="150" height="44" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="565" y="153" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">00</text>
+<rect x="646" y="122" width="300" height="44" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="796" y="153" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1  (taken)</text>
+<rect x="490" y="172" width="150" height="44" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="565" y="203" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">01</text>
+<rect x="646" y="172" width="300" height="44" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="796" y="203" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1  (taken)</text>
+<rect x="490" y="222" width="150" height="44" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="565" y="253" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">10</text>
+<rect x="646" y="222" width="300" height="44" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="796" y="253" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1  (taken)</text>
+<rect x="490" y="272" width="150" height="44" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="565" y="303" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">11</text>
+<rect x="646" y="272" width="300" height="44" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="796" y="303" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0  (not taken)</text>
+<text x="575" y="372" fill="#2e7d32" font-size="19" font-weight="700" text-anchor="middle">four histories, four entries: the table remembers what the pattern does next</text>
+</svg>

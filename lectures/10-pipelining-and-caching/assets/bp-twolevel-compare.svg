@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 400" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="400" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" text-anchor="middle">twelve runs of the loop that exits every third time: how often is each predictor wrong?</text>
+<text x="280" y="96" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="end">what the branch did</text>
+<rect x="300" y="60" width="52" height="54" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="3"/>
+<text x="326.0" y="96" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="358" y="60" width="52" height="54" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="3"/>
+<text x="384.0" y="96" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="416" y="60" width="52" height="54" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="3"/>
+<text x="442.0" y="96" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="474" y="60" width="52" height="54" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="3"/>
+<text x="500.0" y="96" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="532" y="60" width="52" height="54" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="3"/>
+<text x="558.0" y="96" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="590" y="60" width="52" height="54" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="3"/>
+<text x="616.0" y="96" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="648" y="60" width="52" height="54" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="3"/>
+<text x="674.0" y="96" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="706" y="60" width="52" height="54" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="3"/>
+<text x="732.0" y="96" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="764" y="60" width="52" height="54" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="3"/>
+<text x="790.0" y="96" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="822" y="60" width="52" height="54" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="3"/>
+<text x="848.0" y="96" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="880" y="60" width="52" height="54" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="3"/>
+<text x="906.0" y="96" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="938" y="60" width="52" height="54" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="3"/>
+<text x="964.0" y="96" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<text x="280" y="172" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="end">guess not taken</text>
+<rect x="300" y="136" width="52" height="54" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="326.0" y="172" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="358" y="136" width="52" height="54" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="384.0" y="172" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="416" y="136" width="52" height="54" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="442.0" y="172" fill="#2e7d32" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="474" y="136" width="52" height="54" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="500.0" y="172" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="532" y="136" width="52" height="54" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="558.0" y="172" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="590" y="136" width="52" height="54" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="616.0" y="172" fill="#2e7d32" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="648" y="136" width="52" height="54" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="674.0" y="172" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="706" y="136" width="52" height="54" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="732.0" y="172" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="764" y="136" width="52" height="54" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="790.0" y="172" fill="#2e7d32" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="822" y="136" width="52" height="54" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="848.0" y="172" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="880" y="136" width="52" height="54" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="906.0" y="172" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="938" y="136" width="52" height="54" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="964.0" y="172" fill="#2e7d32" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<text x="1008" y="172" fill="#c1272d" font-size="20" font-weight="700" text-anchor="start">wrong 8</text>
+<text x="280" y="248" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="end">same as last time</text>
+<rect x="300" y="212" width="52" height="54" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="326.0" y="248" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="358" y="212" width="52" height="54" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="384.0" y="248" fill="#2e7d32" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="416" y="212" width="52" height="54" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="442.0" y="248" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="474" y="212" width="52" height="54" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="500.0" y="248" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="532" y="212" width="52" height="54" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="558.0" y="248" fill="#2e7d32" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="590" y="212" width="52" height="54" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="616.0" y="248" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="648" y="212" width="52" height="54" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="674.0" y="248" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="706" y="212" width="52" height="54" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="732.0" y="248" fill="#2e7d32" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="764" y="212" width="52" height="54" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="790.0" y="248" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="822" y="212" width="52" height="54" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="848.0" y="248" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="880" y="212" width="52" height="54" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="906.0" y="248" fill="#2e7d32" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="938" y="212" width="52" height="54" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="964.0" y="248" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<text x="1008" y="248" fill="#c1272d" font-size="20" font-weight="700" text-anchor="start">wrong 8</text>
+<text x="280" y="324" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="end">remember the last two</text>
+<rect x="300" y="288" width="52" height="54" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="326.0" y="324" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="358" y="288" width="52" height="54" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="384.0" y="324" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="416" y="288" width="52" height="54" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="442.0" y="324" fill="#2e7d32" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="474" y="288" width="52" height="54" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="500.0" y="324" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="532" y="288" width="52" height="54" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="558.0" y="324" fill="#2e7d32" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="590" y="288" width="52" height="54" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="616.0" y="324" fill="#2e7d32" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="648" y="288" width="52" height="54" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="674.0" y="324" fill="#2e7d32" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="706" y="288" width="52" height="54" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="732.0" y="324" fill="#2e7d32" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="764" y="288" width="52" height="54" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="790.0" y="324" fill="#2e7d32" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<rect x="822" y="288" width="52" height="54" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="848.0" y="324" fill="#2e7d32" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="880" y="288" width="52" height="54" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="906.0" y="324" fill="#2e7d32" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">T</text>
+<rect x="938" y="288" width="52" height="54" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="964.0" y="324" fill="#2e7d32" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">N</text>
+<text x="1008" y="324" fill="#c1272d" font-size="20" font-weight="700" text-anchor="start">wrong 3</text>
+<text x="575" y="382" fill="#2e7d32" font-size="19" font-weight="700" text-anchor="middle">after the first four runs (the learning), the two-bit history is never wrong again</text>
+</svg>
