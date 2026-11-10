@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 360" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="360" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" text-anchor="middle">the same four blocks of storage, arranged two ways. Blocks 2 and 10 are both needed at once.</text>
+<text x="285" y="70" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle">direct-mapped: 4 rows × 1 way</text>
+<rect x="60" y="90" width="70" height="46" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="95" y="120" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle">row 0</text>
+<rect x="136" y="90" width="200" height="46" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="236" y="120" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">empty</text>
+<rect x="60" y="142" width="70" height="46" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="95" y="172" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle">row 1</text>
+<rect x="136" y="142" width="200" height="46" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="236" y="172" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">empty</text>
+<rect x="60" y="194" width="70" height="46" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="95" y="224" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle">row 2</text>
+<rect x="136" y="194" width="200" height="46" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="236.0" y="217.0" fill="#1a1a1a" font-size="18" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2 and 10 collide</text>
+<rect x="60" y="246" width="70" height="46" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="95" y="276" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle">row 3</text>
+<rect x="136" y="246" width="200" height="46" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="236" y="276" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">empty</text>
+<text x="285" y="320" fill="#c1272d" font-size="18" font-weight="700" text-anchor="middle">both want row 2: they tow each other</text>
+<text x="865" y="70" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle">2-way set-associative: 2 sets × 2 ways</text>
+<rect x="620" y="90" width="80" height="100" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="660" y="146" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">set 0</text>
+<rect x="706" y="90" width="200" height="46" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="806.0" y="113.0" fill="#1a1a1a" font-size="18" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">block 2</text>
+<rect x="706" y="142" width="200" height="46" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="806.0" y="165.0" fill="#1a1a1a" font-size="18" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">block 10</text>
+<rect x="620" y="200" width="80" height="100" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="660" y="256" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">set 1</text>
+<rect x="706" y="200" width="200" height="46" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="806" y="230" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">empty</text>
+<rect x="706" y="252" width="200" height="46" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="806" y="282" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">empty</text>
+<text x="865" y="320" fill="#2e7d32" font-size="18" font-weight="700" text-anchor="middle">both map to set 0, and both fit</text>
+</svg>

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 400" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="400" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" text-anchor="middle">one budget, four blocks of storage. Same block size 8, 12-bit addresses.</text>
+<text x="200" y="66" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle">direct-mapped</text>
+<text x="200" y="90" fill="#6d6d6d" font-size="16" font-weight="600" text-anchor="middle">4 sets × 1 way</text>
+<text x="58" y="136" fill="#6d6d6d" font-size="13" font-weight="600" text-anchor="middle">set 0</text>
+<rect x="90" y="108" width="120" height="42" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="58" y="186" fill="#6d6d6d" font-size="13" font-weight="600" text-anchor="middle">set 1</text>
+<rect x="90" y="158" width="120" height="42" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="58" y="236" fill="#6d6d6d" font-size="13" font-weight="600" text-anchor="middle">set 2</text>
+<rect x="90" y="208" width="120" height="42" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="58" y="286" fill="#6d6d6d" font-size="13" font-weight="600" text-anchor="middle">set 3</text>
+<rect x="90" y="258" width="120" height="42" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="200" y="330" fill="#1a1a1a" font-size="18" font-weight="700" text-anchor="middle">index bits: 2</text>
+<text x="200" y="358" fill="#b07a00" font-size="18" font-weight="700" text-anchor="middle">tag bits: 7</text>
+<text x="200" y="384" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">1 tag comparison per lookup</text>
+<text x="575" y="66" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle">2-way set-associative</text>
+<text x="575" y="90" fill="#6d6d6d" font-size="16" font-weight="600" text-anchor="middle">2 sets × 2 ways</text>
+<text x="433" y="136" fill="#6d6d6d" font-size="13" font-weight="600" text-anchor="middle">set 0</text>
+<rect x="465" y="108" width="62" height="42" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<rect x="535" y="108" width="62" height="42" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="433" y="186" fill="#6d6d6d" font-size="13" font-weight="600" text-anchor="middle">set 1</text>
+<rect x="465" y="158" width="62" height="42" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<rect x="535" y="158" width="62" height="42" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="575" y="330" fill="#1a1a1a" font-size="18" font-weight="700" text-anchor="middle">index bits: 1</text>
+<text x="575" y="358" fill="#b07a00" font-size="18" font-weight="700" text-anchor="middle">tag bits: 8</text>
+<text x="575" y="384" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">2 tag comparisons per lookup</text>
+<text x="950" y="66" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle">fully associative</text>
+<text x="950" y="90" fill="#6d6d6d" font-size="16" font-weight="600" text-anchor="middle">1 set × 4 ways</text>
+<text x="808" y="136" fill="#6d6d6d" font-size="13" font-weight="600" text-anchor="middle">set 0</text>
+<rect x="840" y="108" width="62" height="42" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<rect x="910" y="108" width="62" height="42" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<rect x="980" y="108" width="62" height="42" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<rect x="1050" y="108" width="62" height="42" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="950" y="330" fill="#1a1a1a" font-size="18" font-weight="700" text-anchor="middle">index bits: 0</text>
+<text x="950" y="358" fill="#b07a00" font-size="18" font-weight="700" text-anchor="middle">tag bits: 9</text>
+<text x="950" y="384" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">4 tag comparisons per lookup</text>
+</svg>

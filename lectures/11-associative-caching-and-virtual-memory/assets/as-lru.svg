@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 420" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="420" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" text-anchor="middle">set 0 (two ways), accesses 16, 80, 17, 144, 17. When 144 arrives, both ways are full.</text>
+<text x="290" y="72" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle">LRU: evict the least recently used</text>
+<rect x="40" y="92" width="500" height="92" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="290" y="116" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">before 144 arrives</text>
+<rect x="60" y="126" width="220" height="48" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="3"/>
+<text x="170.0" y="148.0" fill="#1a1a1a" font-size="18" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">tag 1 (block 2)</text>
+<text x="170.0" y="170.0" fill="#6d6d6d" font-size="13" font-weight="600" text-anchor="middle">used at access 3</text>
+<rect x="300" y="126" width="220" height="48" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="3"/>
+<text x="410.0" y="148.0" fill="#1a1a1a" font-size="18" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">tag 5 (block 10)</text>
+<text x="410.0" y="170.0" fill="#6d6d6d" font-size="13" font-weight="600" text-anchor="middle">used at access 2, arrived 2nd</text>
+<text x="290" y="214" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">144 → block 18, tag 9: victim is</text>
+<rect x="40" y="226" width="500" height="92" rx="8" fill="#fff" stroke="#2e7d32" stroke-width="3"/>
+<rect x="60" y="242" width="220" height="48" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="170.0" y="266.0" fill="#1a1a1a" font-size="18" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">tag 1 (block 2)</text>
+<rect x="300" y="242" width="220" height="48" rx="8" fill="#fff8e1" stroke="#57068c" stroke-width="3"/>
+<text x="410.0" y="266.0" fill="#1a1a1a" font-size="18" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">tag 9 (block 18)</text>
+<text x="290" y="350" fill="#2e7d32" font-size="24" font-weight="700" text-anchor="middle">final lw 17 (tag 1): HIT</text>
+<text x="290" y="382" fill="#6d6d6d" font-size="16" font-weight="600" text-anchor="middle">evicted tag 5</text>
+<text x="850" y="72" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle">FIFO: evict the oldest arrival</text>
+<rect x="600" y="92" width="500" height="92" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="850" y="116" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">before 144 arrives</text>
+<rect x="620" y="126" width="220" height="48" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="3"/>
+<text x="730.0" y="148.0" fill="#1a1a1a" font-size="18" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">tag 1 (block 2)</text>
+<text x="730.0" y="170.0" fill="#6d6d6d" font-size="13" font-weight="600" text-anchor="middle">used at access 3</text>
+<rect x="860" y="126" width="220" height="48" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="3"/>
+<text x="970.0" y="148.0" fill="#1a1a1a" font-size="18" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">tag 5 (block 10)</text>
+<text x="970.0" y="170.0" fill="#6d6d6d" font-size="13" font-weight="600" text-anchor="middle">used at access 2, arrived 2nd</text>
+<text x="850" y="214" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">144 → block 18, tag 9: victim is</text>
+<rect x="600" y="226" width="500" height="92" rx="8" fill="#fff" stroke="#c1272d" stroke-width="3"/>
+<rect x="620" y="242" width="220" height="48" rx="8" fill="#fff8e1" stroke="#57068c" stroke-width="3"/>
+<text x="730.0" y="266.0" fill="#1a1a1a" font-size="18" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">tag 9 (block 18)</text>
+<rect x="860" y="242" width="220" height="48" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="970.0" y="266.0" fill="#1a1a1a" font-size="18" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">tag 5 (block 10)</text>
+<text x="850" y="350" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle">final lw 17 (tag 1): MISS</text>
+<text x="850" y="382" fill="#6d6d6d" font-size="16" font-weight="600" text-anchor="middle">evicted tag 1</text>
+<text x="575" y="412" fill="#6d6d6d" font-size="1" font-weight="700" text-anchor="middle"></text>
+</svg>

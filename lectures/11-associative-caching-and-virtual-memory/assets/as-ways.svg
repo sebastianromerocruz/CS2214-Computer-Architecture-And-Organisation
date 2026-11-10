@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 330" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="330" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" text-anchor="middle">set 0 of the 2-way cache, access by access (block 2 has tag 1, block 10 has tag 5)</text>
+<text x="155" y="72" fill="#c1272d" font-size="19" font-weight="700" text-anchor="middle">lw 16: miss</text>
+<rect x="30" y="88" width="250" height="34" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="60" y="110" fill="#57068c" font-size="14" font-weight="700" text-anchor="middle">V</text>
+<text x="140" y="110" fill="#57068c" font-size="14" font-weight="700" text-anchor="middle">tag</text>
+<text x="225" y="110" fill="#57068c" font-size="14" font-weight="700" text-anchor="middle">data</text>
+<rect x="30" y="122" width="250" height="52" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="60" y="155" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<text x="140" y="155" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<text x="225" y="155" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">blk 2</text>
+<rect x="30" y="178" width="250" height="52" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="60" y="211" fill="#6d6d6d" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<text x="435" y="72" fill="#c1272d" font-size="19" font-weight="700" text-anchor="middle">lw 80: miss, free way</text>
+<rect x="310" y="88" width="250" height="34" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="340" y="110" fill="#57068c" font-size="14" font-weight="700" text-anchor="middle">V</text>
+<text x="420" y="110" fill="#57068c" font-size="14" font-weight="700" text-anchor="middle">tag</text>
+<text x="505" y="110" fill="#57068c" font-size="14" font-weight="700" text-anchor="middle">data</text>
+<rect x="310" y="122" width="250" height="52" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="340" y="155" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<text x="420" y="155" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<text x="505" y="155" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">blk 2</text>
+<rect x="310" y="178" width="250" height="52" rx="8" fill="#fdecea" stroke="#c1272d" stroke-width="3"/>
+<text x="340" y="211" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<text x="420" y="211" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">5</text>
+<text x="505" y="211" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">blk 10</text>
+<text x="715" y="72" fill="#2e7d32" font-size="19" font-weight="700" text-anchor="middle">lw 17: hit</text>
+<rect x="590" y="88" width="250" height="34" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="620" y="110" fill="#57068c" font-size="14" font-weight="700" text-anchor="middle">V</text>
+<text x="700" y="110" fill="#57068c" font-size="14" font-weight="700" text-anchor="middle">tag</text>
+<text x="785" y="110" fill="#57068c" font-size="14" font-weight="700" text-anchor="middle">data</text>
+<rect x="590" y="122" width="250" height="52" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="620" y="155" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<text x="700" y="155" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<text x="785" y="155" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">blk 2</text>
+<rect x="590" y="178" width="250" height="52" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="620" y="211" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<text x="700" y="211" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">5</text>
+<text x="785" y="211" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">blk 10</text>
+<text x="995" y="72" fill="#2e7d32" font-size="19" font-weight="700" text-anchor="middle">lw 81: hit</text>
+<rect x="870" y="88" width="250" height="34" rx="8" fill="#f3eef7" stroke="#57068c" stroke-width="2"/>
+<text x="900" y="110" fill="#57068c" font-size="14" font-weight="700" text-anchor="middle">V</text>
+<text x="980" y="110" fill="#57068c" font-size="14" font-weight="700" text-anchor="middle">tag</text>
+<text x="1065" y="110" fill="#57068c" font-size="14" font-weight="700" text-anchor="middle">data</text>
+<rect x="870" y="122" width="250" height="52" rx="8" fill="#fff" stroke="#cfc3d8" stroke-width="2"/>
+<text x="900" y="155" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<text x="980" y="155" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<text x="1065" y="155" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">blk 2</text>
+<rect x="870" y="178" width="250" height="52" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+<text x="900" y="211" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<text x="980" y="211" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">5</text>
+<text x="1065" y="211" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">blk 10</text>
+<text x="575" y="290" fill="#2e7d32" font-size="19" font-weight="700" text-anchor="middle">nothing is evicted: the second block takes the free seat, and every later access finds its tag</text>
+</svg>
