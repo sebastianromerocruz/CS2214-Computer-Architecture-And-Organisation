@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 392" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="392" rx="24" fill="#eee6f3"/>
+<text x="130" y="52" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="middle">APPLICATION</text>
+<text x="130" y="70" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">address space</text>
+<text x="410" y="52" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="middle">OPERATING SYSTEM</text>
+<text x="410" y="70" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">address space</text>
+<text x="1010" y="52" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="middle">PHYSICAL MEMORY</text>
+<line x1="212" y1="287" x2="928" y2="287" stroke="#c1272d" stroke-width="5" stroke-linecap="round"/>
+<line x1="492" y1="287" x2="928" y2="287" stroke="#c1272d" stroke-width="5" stroke-linecap="round"/>
+<line x1="212" y1="143" x2="928" y2="201" stroke="#9f9f97" stroke-width="3" stroke-linecap="round"/>
+<line x1="492" y1="201" x2="928" y2="143" stroke="#9f9f97" stroke-width="3" stroke-linecap="round"/>
+<rect x="50" y="84" width="160" height="58" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="130" y="120" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">page 3</text>
+<rect x="330" y="84" width="160" height="58" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="410" y="120" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">page 3</text>
+<rect x="50" y="142" width="160" height="58" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="130" y="178" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">page 2</text>
+<rect x="330" y="142" width="160" height="58" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="410" y="178" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">page 2</text>
+<rect x="50" y="200" width="160" height="58" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="130" y="236" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">page 1</text>
+<rect x="330" y="200" width="160" height="58" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="410" y="236" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">page 1</text>
+<rect x="50" y="258" width="160" height="58" rx="0" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<text x="130" y="294" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">page 0</text>
+<rect x="330" y="258" width="160" height="58" rx="0" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<text x="410" y="294" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">page 0</text>
+<rect x="930" y="84" width="160" height="58" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="1010" y="120" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame 3</text>
+<rect x="930" y="142" width="160" height="58" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="1010" y="178" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame 2</text>
+<rect x="930" y="200" width="160" height="58" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="1010" y="236" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame 1</text>
+<rect x="930" y="258" width="160" height="58" rx="0" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<text x="1010" y="294" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame 0</text>
+<text x="640" y="338" fill="#c1272d" font-size="17" font-weight="700" text-anchor="middle">both address spaces reach physical page 0</text>
+<text x="640" y="360" fill="#6d6d6d" font-size="15" font-weight="700" text-anchor="middle">the OS exposes its code to programs for system calls: what stops a program writing here?</text>
+<text x="640" y="382" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">the protect bit: a program may not write a page marked P = 1</text>
+</svg>

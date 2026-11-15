@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 420" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="420" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">copy-on-write: fork copies the table, not the memory</text>
+<text x="195" y="56" fill="#57068c" font-size="17" font-weight="700" text-anchor="middle">1. just after fork</text>
+<text x="62" y="92" fill="#6d6d6d" font-size="12" font-weight="700" text-anchor="middle">PARENT</text>
+<text x="327" y="92" fill="#6d6d6d" font-size="12" font-weight="700" text-anchor="middle">CHILD</text>
+<text x="195" y="92" fill="#6d6d6d" font-size="12" font-weight="700" text-anchor="middle">RAM</text>
+<rect x="145" y="104" width="100" height="46" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="195" y="133" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle">code</text>
+<rect x="145" y="162" width="100" height="46" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="195" y="191" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle">data</text>
+<rect x="145" y="220" width="100" height="46" rx="8" fill="#f4f4f0" stroke="#d9d9d3" stroke-width="3"/>
+<text x="195" y="249" fill="#9f9f97" font-size="13" font-weight="600" text-anchor="middle">free</text>
+<rect x="10" y="104" width="105" height="46" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="62" y="126" fill="#1a1a1a" font-size="14" font-weight="700" text-anchor="middle">page 0</text>
+<text x="62" y="143" fill="#c1272d" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">read-only</text>
+<line x1="117" y1="127" x2="141" y2="127" stroke="#c1272d" stroke-width="3" stroke-linecap="round"/>
+<polygon points="141.0,127.0 128.0,120.0 128.0,134.0" fill="#c1272d"/>
+<rect x="10" y="162" width="105" height="46" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="62" y="184" fill="#1a1a1a" font-size="14" font-weight="700" text-anchor="middle">page 1</text>
+<text x="62" y="201" fill="#c1272d" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">read-only</text>
+<line x1="117" y1="185" x2="141" y2="185" stroke="#c1272d" stroke-width="3" stroke-linecap="round"/>
+<polygon points="141.0,185.0 128.0,178.0 128.0,192.0" fill="#c1272d"/>
+<rect x="275" y="104" width="105" height="46" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="327" y="126" fill="#1a1a1a" font-size="14" font-weight="700" text-anchor="middle">page 0</text>
+<text x="327" y="143" fill="#c1272d" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">read-only</text>
+<line x1="273" y1="127" x2="249" y2="127" stroke="#c1272d" stroke-width="3" stroke-linecap="round"/>
+<polygon points="249.0,127.0 262.0,134.0 262.0,120.0" fill="#c1272d"/>
+<rect x="275" y="162" width="105" height="46" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="327" y="184" fill="#1a1a1a" font-size="14" font-weight="700" text-anchor="middle">page 1</text>
+<text x="327" y="201" fill="#c1272d" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">read-only</text>
+<line x1="273" y1="185" x2="249" y2="185" stroke="#c1272d" stroke-width="3" stroke-linecap="round"/>
+<polygon points="249.0,185.0 262.0,192.0 262.0,178.0" fill="#c1272d"/>
+<text x="195" y="300" fill="#1a1a1a" font-size="14" font-weight="700" text-anchor="middle">every page shared, read-only</text>
+<text x="575" y="56" fill="#57068c" font-size="17" font-weight="700" text-anchor="middle">2. the parent writes page 1</text>
+<text x="442" y="92" fill="#6d6d6d" font-size="12" font-weight="700" text-anchor="middle">PARENT</text>
+<text x="707" y="92" fill="#6d6d6d" font-size="12" font-weight="700" text-anchor="middle">CHILD</text>
+<text x="575" y="92" fill="#6d6d6d" font-size="12" font-weight="700" text-anchor="middle">RAM</text>
+<rect x="525" y="104" width="100" height="46" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="575" y="133" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle">code</text>
+<rect x="525" y="162" width="100" height="46" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<text x="575" y="191" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle">data</text>
+<rect x="525" y="220" width="100" height="46" rx="8" fill="#f4f4f0" stroke="#d9d9d3" stroke-width="3"/>
+<text x="575" y="249" fill="#9f9f97" font-size="13" font-weight="600" text-anchor="middle">free</text>
+<rect x="390" y="104" width="105" height="46" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="442" y="126" fill="#1a1a1a" font-size="14" font-weight="700" text-anchor="middle">page 0</text>
+<text x="442" y="143" fill="#c1272d" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">read-only</text>
+<line x1="497" y1="127" x2="521" y2="127" stroke="#c1272d" stroke-width="3" stroke-linecap="round"/>
+<polygon points="521.0,127.0 508.0,120.0 508.0,134.0" fill="#c1272d"/>
+<rect x="390" y="162" width="105" height="46" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="442" y="184" fill="#1a1a1a" font-size="14" font-weight="700" text-anchor="middle">page 1</text>
+<text x="442" y="201" fill="#c1272d" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">read-only</text>
+<line x1="497" y1="185" x2="521" y2="185" stroke="#c1272d" stroke-width="3" stroke-linecap="round"/>
+<polygon points="521.0,185.0 508.0,178.0 508.0,192.0" fill="#c1272d"/>
+<rect x="655" y="104" width="105" height="46" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="707" y="126" fill="#1a1a1a" font-size="14" font-weight="700" text-anchor="middle">page 0</text>
+<text x="707" y="143" fill="#c1272d" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">read-only</text>
+<line x1="653" y1="127" x2="629" y2="127" stroke="#c1272d" stroke-width="3" stroke-linecap="round"/>
+<polygon points="629.0,127.0 642.0,134.0 642.0,120.0" fill="#c1272d"/>
+<rect x="655" y="162" width="105" height="46" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="707" y="184" fill="#1a1a1a" font-size="14" font-weight="700" text-anchor="middle">page 1</text>
+<text x="707" y="201" fill="#c1272d" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">read-only</text>
+<line x1="653" y1="185" x2="629" y2="185" stroke="#c1272d" stroke-width="3" stroke-linecap="round"/>
+<polygon points="629.0,185.0 642.0,192.0 642.0,178.0" fill="#c1272d"/>
+<text x="575" y="300" fill="#1a1a1a" font-size="14" font-weight="700" text-anchor="middle">read-only: the store is refused</text>
+<text x="955" y="56" fill="#57068c" font-size="17" font-weight="700" text-anchor="middle">3. the OS copies page 1</text>
+<text x="822" y="92" fill="#6d6d6d" font-size="12" font-weight="700" text-anchor="middle">PARENT</text>
+<text x="1087" y="92" fill="#6d6d6d" font-size="12" font-weight="700" text-anchor="middle">CHILD</text>
+<text x="955" y="92" fill="#6d6d6d" font-size="12" font-weight="700" text-anchor="middle">RAM</text>
+<rect x="905" y="104" width="100" height="46" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="955" y="133" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle">code</text>
+<rect x="905" y="162" width="100" height="46" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="955" y="191" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle">data</text>
+<rect x="905" y="220" width="100" height="46" rx="8" fill="#e4f3e1" stroke="#2e7d32" stroke-width="5"/>
+<text x="955" y="249" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle">data (copy)</text>
+<rect x="770" y="104" width="105" height="46" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="822" y="126" fill="#1a1a1a" font-size="14" font-weight="700" text-anchor="middle">page 0</text>
+<text x="822" y="143" fill="#c1272d" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">read-only</text>
+<line x1="877" y1="127" x2="901" y2="127" stroke="#c1272d" stroke-width="3" stroke-linecap="round"/>
+<polygon points="901.0,127.0 888.0,120.0 888.0,134.0" fill="#c1272d"/>
+<rect x="770" y="220" width="105" height="46" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="822" y="242" fill="#1a1a1a" font-size="14" font-weight="700" text-anchor="middle">page 1</text>
+<text x="822" y="259" fill="#2e7d32" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">writable</text>
+<line x1="877" y1="243" x2="901" y2="243" stroke="#c1272d" stroke-width="3" stroke-linecap="round"/>
+<polygon points="901.0,243.0 888.0,236.0 888.0,250.0" fill="#c1272d"/>
+<rect x="1035" y="104" width="105" height="46" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="1087" y="126" fill="#1a1a1a" font-size="14" font-weight="700" text-anchor="middle">page 0</text>
+<text x="1087" y="143" fill="#c1272d" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">read-only</text>
+<line x1="1033" y1="127" x2="1009" y2="127" stroke="#c1272d" stroke-width="3" stroke-linecap="round"/>
+<polygon points="1009.0,127.0 1022.0,134.0 1022.0,120.0" fill="#c1272d"/>
+<rect x="1035" y="162" width="105" height="46" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="1087" y="184" fill="#1a1a1a" font-size="14" font-weight="700" text-anchor="middle">page 1</text>
+<text x="1087" y="201" fill="#c1272d" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">read-only</text>
+<line x1="1033" y1="185" x2="1009" y2="185" stroke="#c1272d" stroke-width="3" stroke-linecap="round"/>
+<polygon points="1009.0,185.0 1022.0,192.0 1022.0,178.0" fill="#c1272d"/>
+<text x="955" y="300" fill="#1a1a1a" font-size="14" font-weight="700" text-anchor="middle">only the written page is copied</text>
+<text x="575" y="372" fill="#c1272d" font-size="18" font-weight="700" text-anchor="middle">most pages are never written, so most of the copying never happens</text>
+</svg>

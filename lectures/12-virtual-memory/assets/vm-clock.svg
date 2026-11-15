@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 400" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="400" rx="24" fill="#eee6f3"/>
+<text x="190" y="44" fill="#57068c" font-size="17" font-weight="700" text-anchor="middle">1. a victim is needed</text>
+<ellipse cx="190" cy="206" rx="118" ry="104" fill="none" stroke="#cfc6d8" stroke-width="4" stroke-dasharray="10 8"/>
+<text x="190" y="204" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle" font-style="italic">sweeps</text>
+<text x="190" y="222" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle" font-style="italic">clockwise</text>
+<rect x="138" y="74" width="104" height="56" rx="10" fill="#fff" stroke="#c1272d" stroke-width="6"/>
+<text x="190" y="100" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">page A</text>
+<text x="190" y="120" fill="#2e7d32" font-size="14" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">R = 1</text>
+<text x="190" y="66" fill="#c1272d" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">HAND</text>
+<rect x="256" y="178" width="104" height="56" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="308" y="204" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">page B</text>
+<text x="308" y="224" fill="#c1272d" font-size="14" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">R = 0</text>
+<rect x="138" y="282" width="104" height="56" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="190" y="308" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">page C</text>
+<text x="190" y="328" fill="#2e7d32" font-size="14" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">R = 1</text>
+<rect x="20" y="178" width="104" height="56" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="72" y="204" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">page D</text>
+<text x="72" y="224" fill="#2e7d32" font-size="14" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">R = 1</text>
+<text x="190" y="364" fill="#1a1a1a" font-size="14" font-weight="700" text-anchor="middle">the hand is on A</text>
+<text x="575" y="44" fill="#57068c" font-size="17" font-weight="700" text-anchor="middle">2. sweep</text>
+<ellipse cx="575" cy="206" rx="118" ry="104" fill="none" stroke="#cfc6d8" stroke-width="4" stroke-dasharray="10 8"/>
+<text x="575" y="204" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle" font-style="italic">sweeps</text>
+<text x="575" y="222" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle" font-style="italic">clockwise</text>
+<rect x="523" y="74" width="104" height="56" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="575" y="100" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">page A</text>
+<text x="575" y="120" fill="#c1272d" font-size="14" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">R = 0</text>
+<rect x="641" y="178" width="104" height="56" rx="10" fill="#fbeceb" stroke="#c1272d" stroke-width="6"/>
+<text x="693" y="204" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">page B</text>
+<text x="693" y="224" fill="#c1272d" font-size="14" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">R = 0</text>
+<text x="693" y="170" fill="#c1272d" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">HAND</text>
+<rect x="523" y="282" width="104" height="56" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="575" y="308" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">page C</text>
+<text x="575" y="328" fill="#2e7d32" font-size="14" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">R = 1</text>
+<rect x="405" y="178" width="104" height="56" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="457" y="204" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">page D</text>
+<text x="457" y="224" fill="#2e7d32" font-size="14" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">R = 1</text>
+<text x="575" y="364" fill="#1a1a1a" font-size="14" font-weight="700" text-anchor="middle">A had R = 1: cleared. B has R = 0: victim</text>
+<text x="960" y="44" fill="#57068c" font-size="17" font-weight="700" text-anchor="middle">3. replace</text>
+<ellipse cx="960" cy="206" rx="118" ry="104" fill="none" stroke="#cfc6d8" stroke-width="4" stroke-dasharray="10 8"/>
+<text x="960" y="204" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle" font-style="italic">sweeps</text>
+<text x="960" y="222" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle" font-style="italic">clockwise</text>
+<rect x="908" y="74" width="104" height="56" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="960" y="100" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">page A</text>
+<text x="960" y="120" fill="#c1272d" font-size="14" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">R = 0</text>
+<rect x="1026" y="178" width="104" height="56" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="1078" y="204" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">page E</text>
+<text x="1078" y="224" fill="#2e7d32" font-size="14" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">R = 1</text>
+<rect x="908" y="282" width="104" height="56" rx="10" fill="#fff" stroke="#c1272d" stroke-width="6"/>
+<text x="960" y="308" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">page C</text>
+<text x="960" y="328" fill="#2e7d32" font-size="14" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">R = 1</text>
+<text x="960" y="274" fill="#c1272d" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">HAND</text>
+<rect x="790" y="178" width="104" height="56" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="842" y="204" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">page D</text>
+<text x="842" y="224" fill="#2e7d32" font-size="14" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">R = 1</text>
+<text x="960" y="364" fill="#1a1a1a" font-size="14" font-weight="700" text-anchor="middle">E takes B's frame; the hand moves on</text>
+</svg>

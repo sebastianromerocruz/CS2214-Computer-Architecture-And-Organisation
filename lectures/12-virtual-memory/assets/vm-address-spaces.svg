@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 392" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="392" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">the program sees one set of addresses. The RAM has another.</text>
+<text x="170" y="62" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="middle">VIRTUAL ADDRESS SPACE</text>
+<text x="170" y="80" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">what the program sees</text>
+<text x="980" y="62" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="middle">PHYSICAL MEMORY</text>
+<text x="980" y="80" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">what the RAM has</text>
+<rect x="90" y="96" width="160" height="46" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="170" y="126" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">...</text>
+<rect x="90" y="142" width="160" height="46" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="170" y="172" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">page 4</text>
+<rect x="90" y="188" width="160" height="46" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="170" y="218" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">page 3</text>
+<rect x="90" y="234" width="160" height="46" rx="0" fill="#e9d9f5" stroke="#c1272d" stroke-width="5"/>
+<text x="170" y="264" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">page 2</text>
+<rect x="90" y="280" width="160" height="46" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="170" y="310" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">page 1</text>
+<rect x="90" y="326" width="160" height="46" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="170" y="356" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">page 0</text>
+<rect x="900" y="142" width="160" height="46" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="980" y="172" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame 6</text>
+<rect x="900" y="188" width="160" height="46" rx="0" fill="#e9d9f5" stroke="#c1272d" stroke-width="5"/>
+<text x="980" y="218" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame 5</text>
+<rect x="900" y="234" width="160" height="46" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="980" y="264" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame 4</text>
+<rect x="900" y="280" width="160" height="46" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="980" y="310" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame 3</text>
+<line x1="250" y1="303" x2="900" y2="303" stroke="#9f9f97" stroke-width="3" stroke-linecap="round"/>
+<line x1="250" y1="211" x2="900" y2="257" stroke="#9f9f97" stroke-width="3" stroke-linecap="round"/>
+<line x1="250" y1="257" x2="900" y2="211" stroke="#c1272d" stroke-width="5" stroke-linecap="round"/>
+<polygon points="330,196 600,196 600,160 760,230 600,300 600,264 330,264" fill="#4a1d96" stroke="#57068c" stroke-width="3" opacity="0.93"/>
+<text x="460" y="236" fill="#fff" font-size="19" font-weight="700" text-anchor="middle">address</text>
+<text x="460" y="258" fill="#fff" font-size="19" font-weight="700" text-anchor="middle">translation</text>
+<text x="575" y="372" fill="#c1272d" font-size="16" font-weight="700" text-anchor="middle">more virtual pages than frames: the translation layer decides which go where</text>
+</svg>

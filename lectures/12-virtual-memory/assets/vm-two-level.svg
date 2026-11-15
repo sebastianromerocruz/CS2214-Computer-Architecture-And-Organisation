@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 430" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="430" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">a two-level page table: unused regions cost one entry, not a thousand</text>
+<rect x="75" y="44" width="300" height="50" rx="10" fill="#e2cdf2" stroke="#57068c" stroke-width="4"/>
+<rect x="375" y="44" width="300" height="50" rx="10" fill="#d9e8fb" stroke="#57068c" stroke-width="4"/>
+<rect x="675" y="44" width="400" height="50" rx="10" fill="#fbe9ea" stroke="#57068c" stroke-width="4"/>
+<text x="225" y="76" fill="#1a1a1a" font-size="18" font-weight="700" text-anchor="middle">top index: 10 bits</text>
+<text x="525" y="76" fill="#1a1a1a" font-size="18" font-weight="700" text-anchor="middle">second index: 10 bits</text>
+<text x="875" y="76" fill="#1a1a1a" font-size="18" font-weight="700" text-anchor="middle">offset: 12 bits</text>
+<text x="150" y="128" fill="#57068c" font-size="14" font-weight="700" text-anchor="middle">TOP TABLE (1,024 entries)</text>
+<rect x="40" y="140" width="230" height="40" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="80" y="167" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<text x="230" y="167" fill="#57068c" font-size="16" font-weight="700" text-anchor="end">-> table A</text>
+<rect x="40" y="186" width="230" height="40" rx="8" fill="#f4f4f0" stroke="#d9d9d3" stroke-width="3" stroke-dasharray="8 6"/>
+<text x="80" y="213" fill="#9f9f97" font-size="17" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<text x="230" y="213" fill="#9f9f97" font-size="16" font-weight="700" text-anchor="end">invalid</text>
+<rect x="40" y="232" width="230" height="40" rx="8" fill="#f4f4f0" stroke="#d9d9d3" stroke-width="3" stroke-dasharray="8 6"/>
+<text x="80" y="259" fill="#9f9f97" font-size="17" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<text x="230" y="259" fill="#9f9f97" font-size="16" font-weight="700" text-anchor="end">invalid</text>
+<rect x="40" y="278" width="230" height="40" rx="8" fill="#f4f4f0" stroke="#d9d9d3" stroke-width="3"/>
+<text x="80" y="305" fill="#9f9f97" font-size="17" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">...</text>
+<rect x="40" y="324" width="230" height="40" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="80" y="351" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1023</text>
+<text x="230" y="351" fill="#57068c" font-size="16" font-weight="700" text-anchor="end">-> table B</text>
+<text x="560" y="128" fill="#57068c" font-size="14" font-weight="700" text-anchor="middle">SECOND-LEVEL TABLES</text>
+<rect x="430" y="140" width="240" height="100" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="550" y="164" fill="#6d6d6d" font-size="15" font-weight="700" text-anchor="middle">table A</text>
+<text x="470" y="192" fill="#9f9f97" font-size="15" font-weight="600" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">0: invalid</text>
+<text x="470" y="218" fill="#1a1a1a" font-size="15" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">1: frame 12</text>
+<rect x="430" y="324" width="240" height="90" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="550" y="348" fill="#6d6d6d" font-size="15" font-weight="700" text-anchor="middle">table B</text>
+<text x="470" y="382" fill="#1a1a1a" font-size="15" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">0: frame 40</text>
+<line x1="274" y1="160" x2="426" y2="170" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="426.0,170.0 413.5,162.2 412.6,176.1" fill="#c1272d"/>
+<line x1="274" y1="324" x2="426" y2="370" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="426.0,370.0 415.6,359.5 411.5,372.9" fill="#c1272d"/>
+<rect x="850" y="196" width="200" height="52" rx="8" fill="#e4f3e1" stroke="#57068c" stroke-width="3"/>
+<text x="950" y="229" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame 12</text>
+<rect x="850" y="358" width="200" height="52" rx="8" fill="#e4f3e1" stroke="#57068c" stroke-width="3"/>
+<text x="950" y="391" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame 40</text>
+<line x1="676" y1="214" x2="846" y2="222" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="846.0,222.0 833.3,214.4 832.7,228.4" fill="#c1272d"/>
+<line x1="676" y1="382" x2="846" y2="384" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="846.0,384.0 833.1,376.8 832.9,390.8" fill="#c1272d"/>
+<text x="155" y="396" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle" font-style="italic">invalid entries: no table is built</text>
+</svg>

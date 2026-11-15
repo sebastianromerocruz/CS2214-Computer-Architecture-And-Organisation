@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 420" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="420" rx="24" fill="#eee6f3"/>
+<rect x="20" y="46" width="200" height="60" rx="10" fill="#e9d9f5" stroke="#57068c" stroke-width="4"/>
+<text x="120.0" y="73.0" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">program touches</text>
+<text x="120.0" y="95.0" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">a page</text>
+<polygon points="350,28 425,76 350,124 275,76" fill="#fff" stroke="#57068c" stroke-width="4"/>
+<text x="350" y="82" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">V = 1 ?</text>
+<rect x="500" y="46" width="220" height="60" rx="10" fill="#e4f3e1" stroke="#2e7d32" stroke-width="4"/>
+<text x="610.0" y="73.0" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">read the frame</text>
+<text x="610.0" y="95.0" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">hardware only: done</text>
+<line x1="222" y1="76" x2="274" y2="76" stroke="#6d6d6d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="274.0,76.0 261.0,69.0 261.0,83.0" fill="#6d6d6d"/>
+<line x1="426" y1="76" x2="498" y2="76" stroke="#2e7d32" stroke-width="4" stroke-linecap="round"/>
+<polygon points="498.0,76.0 485.0,69.0 485.0,83.0" fill="#2e7d32"/>
+<text x="462" y="66" fill="#2e7d32" font-size="15" font-weight="700" text-anchor="middle">yes</text>
+<line x1="350" y1="126" x2="350" y2="172" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="350.0,172.0 357.0,159.0 343.0,159.0" fill="#c1272d"/>
+<text x="372" y="152" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle">no</text>
+<rect x="250" y="176" width="200" height="60" rx="10" fill="#fbeceb" stroke="#c1272d" stroke-width="4"/>
+<text x="350.0" y="203.0" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">page fault</text>
+<text x="350.0" y="225.0" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">the OS takes over</text>
+<line x1="452" y1="206" x2="498" y2="206" stroke="#6d6d6d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="498.0,206.0 485.0,199.0 485.0,213.0" fill="#6d6d6d"/>
+<polygon points="590,156 680,206 590,256 500,206" fill="#fff" stroke="#57068c" stroke-width="4"/>
+<text x="590" y="212" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">owns the page ?</text>
+<line x1="590" y1="258" x2="590" y2="318" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="590.0,318.0 597.0,305.0 583.0,305.0" fill="#c1272d"/>
+<text x="612" y="292" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle">no</text>
+<rect x="490" y="320" width="200" height="60" rx="10" fill="#fbeceb" stroke="#c1272d" stroke-width="4"/>
+<text x="590.0" y="347.0" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">segmentation fault</text>
+<text x="590.0" y="369.0" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">the OS stops the program</text>
+<line x1="682" y1="206" x2="748" y2="206" stroke="#6d6d6d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="748.0,206.0 735.0,199.0 735.0,213.0" fill="#6d6d6d"/>
+<text x="716" y="196" fill="#2e7d32" font-size="15" font-weight="700" text-anchor="middle">yes</text>
+<polygon points="830,156 910,206 830,256 750,206" fill="#fff" stroke="#57068c" stroke-width="4"/>
+<text x="830" y="212" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">on disk ?</text>
+<line x1="830" y1="258" x2="830" y2="318" stroke="#6d6d6d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="830.0,318.0 837.0,305.0 823.0,305.0" fill="#6d6d6d"/>
+<text x="852" y="292" fill="#2e7d32" font-size="15" font-weight="700" text-anchor="middle">yes</text>
+<rect x="730" y="320" width="200" height="60" rx="10" fill="#fbeceb" stroke="#c1272d" stroke-width="4"/>
+<text x="830.0" y="347.0" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">read it from disk</text>
+<text x="830.0" y="369.0" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">slow: milliseconds</text>
+<line x1="912" y1="206" x2="968" y2="206" stroke="#6d6d6d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="968.0,206.0 955.0,199.0 955.0,213.0" fill="#6d6d6d"/>
+<text x="940" y="196" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle">no</text>
+<rect x="970" y="176" width="160" height="60" rx="10" fill="#e4f3e1" stroke="#2e7d32" stroke-width="4"/>
+<text x="1050.0" y="203.0" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">zero-fill a frame</text>
+<text x="1050.0" y="225.0" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">quick: no disk</text>
+<rect x="970" y="320" width="160" height="60" rx="10" fill="#e9d9f5" stroke="#57068c" stroke-width="4"/>
+<text x="1050.0" y="347.0" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">set V = 1</text>
+<text x="1050.0" y="369.0" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">record frame, retry</text>
+<line x1="1050" y1="238" x2="1050" y2="316" stroke="#6d6d6d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="1050.0,316.0 1057.0,303.0 1043.0,303.0" fill="#6d6d6d"/>
+<line x1="932" y1="350" x2="966" y2="350" stroke="#6d6d6d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="966.0,350.0 953.0,343.0 953.0,357.0" fill="#6d6d6d"/>
+</svg>

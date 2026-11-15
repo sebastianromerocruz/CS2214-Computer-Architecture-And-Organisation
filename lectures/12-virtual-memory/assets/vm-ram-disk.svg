@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 392" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="392" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">every virtual page lives in RAM, on disk, or nowhere yet</text>
+<text x="150" y="60" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="middle">THE PAGE TABLE</text>
+<rect x="40" y="76" width="220" height="50" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="110" y="109" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">page 0</text>
+<text x="220" y="109" fill="#6d6d6d" font-size="17" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">V = 1</text>
+<rect x="40" y="132" width="220" height="50" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="110" y="165" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">page 1</text>
+<text x="220" y="165" fill="#6d6d6d" font-size="17" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">V = 0</text>
+<rect x="40" y="188" width="220" height="50" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="110" y="221" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">page 2</text>
+<text x="220" y="221" fill="#6d6d6d" font-size="17" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">V = 1</text>
+<rect x="40" y="244" width="220" height="50" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="110" y="277" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">page 3</text>
+<text x="220" y="277" fill="#6d6d6d" font-size="17" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">V = 0</text>
+<rect x="40" y="300" width="220" height="50" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="110" y="333" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">page 4</text>
+<text x="220" y="333" fill="#6d6d6d" font-size="17" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">V = 0</text>
+<text x="930" y="60" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="middle">MAIN MEMORY (RAM)</text>
+<rect x="830" y="76" width="200" height="40" rx="0" fill="#e9d9f5" stroke="#57068c" stroke-width="3"/>
+<text x="930" y="103" fill="#6d6d6d" font-size="16" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame</text>
+<rect x="830" y="116" width="200" height="40" rx="0" fill="#e9d9f5" stroke="#57068c" stroke-width="3"/>
+<text x="930" y="143" fill="#6d6d6d" font-size="16" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame</text>
+<rect x="830" y="156" width="200" height="40" rx="0" fill="#e9d9f5" stroke="#57068c" stroke-width="3"/>
+<text x="930" y="183" fill="#6d6d6d" font-size="16" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame</text>
+<rect x="830" y="196" width="200" height="40" rx="0" fill="#e9d9f5" stroke="#57068c" stroke-width="3"/>
+<text x="930" y="223" fill="#6d6d6d" font-size="16" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame</text>
+<text x="930" y="254" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="middle">HARD DISK</text>
+<rect x="830" y="280" width="200" height="86" fill="#fff" stroke="#c1272d" stroke-width="3"/>
+<ellipse cx="930" cy="366" rx="100" ry="16" fill="#fff" stroke="#c1272d" stroke-width="3"/>
+<rect x="831" y="281" width="198" height="84" fill="#fff"/>
+<ellipse cx="930" cy="280" rx="100" ry="16" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<line x1="830" y1="280" x2="830" y2="366" stroke="#c1272d" stroke-width="3"/><line x1="1030" y1="280" x2="1030" y2="366" stroke="#c1272d" stroke-width="3"/>
+<text x="930" y="330" fill="#6d6d6d" font-size="16" font-weight="600" text-anchor="middle">swapped-out pages</text>
+<line x1="262" y1="101" x2="826" y2="96" stroke="#57068c" stroke-width="5" stroke-linecap="round"/>
+<polygon points="826.0,96.0 812.9,89.1 813.1,103.1" fill="#57068c"/>
+<line x1="262" y1="157" x2="826" y2="320" stroke="#c1272d" stroke-width="5" stroke-linecap="round"/>
+<polygon points="826.0,320.0 815.5,309.7 811.6,323.1" fill="#c1272d"/>
+<line x1="262" y1="213" x2="826" y2="176" stroke="#57068c" stroke-width="5" stroke-linecap="round"/>
+<polygon points="826.0,176.0 812.6,169.9 813.5,183.8" fill="#57068c"/>
+<text x="400" y="275" fill="#9f9f97" font-size="16" font-weight="700" text-anchor="start" font-style="italic">no arrow: never allocated</text>
+<line x1="262" y1="325" x2="826" y2="340" stroke="#c1272d" stroke-width="5" stroke-linecap="round"/>
+<polygon points="826.0,340.0 813.2,332.7 812.8,346.7" fill="#c1272d"/>
+<text x="575" y="382" fill="#57068c" font-size="16" font-weight="700" text-anchor="middle">V = 1 points into RAM. V = 0 may point to the disk, or to nothing.</text>
+</svg>

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 250" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="250" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">problem 1: 0x00403ABC with a 10 + 10 + 12 split</text>
+<rect x="75" y="60" width="300" height="70" rx="10" fill="#e2cdf2" stroke="#57068c" stroke-width="4"/>
+<rect x="375" y="60" width="300" height="70" rx="10" fill="#d9e8fb" stroke="#57068c" stroke-width="4"/>
+<rect x="675" y="60" width="400" height="70" rx="10" fill="#fbe9ea" stroke="#57068c" stroke-width="4"/>
+<text x="225" y="90" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle">top index</text>
+<text x="225" y="116" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">10 bits</text>
+<text x="525" y="90" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle">second index</text>
+<text x="525" y="116" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">10 bits</text>
+<text x="875" y="90" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle">offset</text>
+<text x="875" y="116" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">12 bits</text>
+<text x="225" y="172" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0000000001</text>
+<text x="525" y="172" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0000000011</text>
+<text x="875" y="172" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">101010111100</text>
+<text x="225" y="214" fill="#c1272d" font-size="32" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<text x="525" y="214" fill="#c1272d" font-size="32" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<text x="875" y="214" fill="#c1272d" font-size="32" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0xABC</text>
+</svg>

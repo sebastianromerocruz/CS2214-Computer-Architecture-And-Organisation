@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 330" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="330" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">tag each TLB entry with an address-space ID, and a context switch needs no flush</text>
+<rect x="40" y="80" width="260" height="120" rx="12" fill="#fff" stroke="#57068c" stroke-width="4"/>
+<text x="170" y="112" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">program B asks for</text>
+<text x="170" y="152" fill="#c1272d" font-size="30" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">page 2</text>
+<text x="170" y="184" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">(running as B)</text>
+<text x="640" y="60" fill="#57068c" font-size="14" font-weight="700" text-anchor="middle">THE TLB</text>
+<text x="470" y="88" fill="#6d6d6d" font-size="13" font-weight="700" text-anchor="middle">program</text>
+<text x="640" y="88" fill="#6d6d6d" font-size="13" font-weight="700" text-anchor="middle">virtual page</text>
+<text x="820" y="88" fill="#6d6d6d" font-size="13" font-weight="700" text-anchor="middle">frame</text>
+<text x="980" y="88" fill="#6d6d6d" font-size="13" font-weight="700" text-anchor="middle"></text>
+<rect x="390" y="98" width="430" height="42" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<text x="470" y="127" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">A</text>
+<text x="640" y="127" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<text x="800" y="127" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">5</text>
+<text x="835" y="125" fill="#c1272d" font-size="14" font-weight="700" text-anchor="start">same page, wrong program: no hit</text>
+<rect x="390" y="146" width="430" height="42" rx="8" fill="#e4f3e1" stroke="#2e7d32" stroke-width="5"/>
+<text x="470" y="175" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">B</text>
+<text x="640" y="175" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<text x="800" y="175" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">9</text>
+<text x="835" y="173" fill="#2e7d32" font-size="14" font-weight="700" text-anchor="start">match: use frame 9</text>
+<rect x="390" y="194" width="430" height="42" rx="8" fill="#fff" stroke="#9f9f97" stroke-width="3"/>
+<text x="470" y="223" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">A</text>
+<text x="640" y="223" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">7</text>
+<text x="800" y="223" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<rect x="390" y="242" width="430" height="42" rx="8" fill="#fff" stroke="#9f9f97" stroke-width="3"/>
+<text x="470" y="271" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">B</text>
+<text x="640" y="271" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<text x="800" y="271" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">6</text>
+<line x1="304" y1="140" x2="386" y2="148" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="386.0,148.0 373.7,139.8 372.4,153.7" fill="#c1272d"/>
+<text x="575" y="310" fill="#6d6d6d" font-size="17" font-weight="700" text-anchor="middle">A's entries stay, waiting for A to run again</text>
+</svg>

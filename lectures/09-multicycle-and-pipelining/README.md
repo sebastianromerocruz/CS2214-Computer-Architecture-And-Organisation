@@ -799,4 +799,4 @@ Write-enables (`WEir`, `WEa`, `WEb`, `WEalu`, `WEram`, `WEreg`, `WEpc`) are alwa
 
 ---
 
-<sub>**Previous: [Midterm Review](/lectures/08-midterm-review)** || **Next: [Pipelining (cont'd) & Caching](/lectures/10-pipelining-and-caching)**</sub>
+<sub>**Previous: [Midterm Review](/lectures/08-midterm-review)** || **Next: [Pipelining, Concluded](/lectures/10-pipelining)**</sub>

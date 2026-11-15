@@ -1,6 +1,6 @@
 <h2 align=center>Week IX</h2>
 
-<h1 align=center>Pipelining, Concluded & The Case for Caching</h1>
+<h1 align=center>Pipelining, Concluded</h1>
 
 ---
 
@@ -14,19 +14,10 @@
 6. [**Structural Hazards: When Two Instructions Want the Same Hardware**](#6)
 7. [**Inside the Pipeline: Registers and Wires**](#7)
 8. [**E15 Pipelines and Dependency Graphs**](#8)
-9. [**The Memory Wall**](#9)
-10. [**Where Does a Cell Go? Rows, Tags, and the Valid Bit**](#10)
-11. [**Blocks: Locality Is a Bet, Not a Guarantee**](#11)
-12. [**Decoding an Address: Tag, Index, Offset**](#12)
-13. [**Tracing a Cache: A Worked Example**](#13)
-14. [**Sizing a Cache**](#14)
-15. [**What a Cache Is Worth: Hit Ratio and Average Time**](#15)
 
 ---
 
 Week VIII ended with one hazard fully worked out, RAW, and a promise that not every hazard is a data hazard. This week keeps that promise. Sections 1 to 6 finish the hazard story: the data hazards get a rule for reordering, control hazards turn out to be a RAW on the program counter and a predictor can learn their patterns, and structural hazards show up in a deliberately cheaper variant of the E20. Sections 7 and 8 look inside the hardware: the registers between the stages and the wires that make forwarding work, and the E15 pipeline with a dependency graph for reordering.
-
-Then Section 9 changes subject to a number from the first slide of the course: memory is slow, and getting slower relative to the processor every year. Caching is the answer, and direct-mapped caching, its simplest version, is this week's second half.
 
 ---
 
@@ -65,7 +56,6 @@ In the pipeline those `nop`s are ordinary instructions flowing through. The seco
 This is the exercise of rewriting a program with `nop`s that you will meet on the homework: the stall table, written out as instructions.
 
 But RAW has siblings, and not every hazard is about a register. Today we find out which data hazards are real, ask whether we can dodge a stall by reordering, and then find out what happens when the thing being fought over is the `pc`. Last, we meet a hazard that is not about data at all.
-
 
 ---
 
@@ -178,7 +168,6 @@ It is the same conflict as before, a RAW on `$1`, yet no hazard, because by the 
 
 So on the E20 **only RAW can go wrong**, because reads are early, writes are late, and instructions finish in the order they started. WAR and WAW matter the moment we start *moving instructions around*, which is the next section. (A processor that lets instructions finish out of order would have to worry about them too.)
 
-
 ---
 
 <a id="3"></a>
@@ -251,7 +240,6 @@ To see the rule at work, take these three instructions:
 
 Instructions 1 and 3 conflict, twice over: a RAW on `$1` (1 writes it, 3 reads it) and a WAR on `$2` (1 reads it, 3 overwrites it). Instruction 2 touches `$3` only, so it conflicts with neither. The rule says 1 must stay before 3, and instruction 2 can go anywhere. So the valid orderings are **1, 2, 3**, **1, 3, 2** and **2, 1, 3**. (The original order always counts.)
 
-
 ---
 
 <a id="4"></a>
@@ -319,7 +307,6 @@ Not every instruction can cause this. To find out which ones can, ask the same t
 | `jr` | **yes**: the target is a register's value, and the line below is always wrong |
 | `j` | **maybe**: the target is in `imm13`; decoded in `ID` it costs 1 wrong fetch, spotted in `IF` it costs none |
 | `jal` | **maybe**: same as `j` |
-
 
 ---
 
@@ -432,9 +419,6 @@ From here on the lookup is always right. Over twelve runs, "not taken" is wrong 
 
 This is why it is called a **two-level** predictor: the history register is the first level, and the pattern table that turns a history into a prediction is the second. Real processors use longer histories than 2 bits and keep this structure for each branch. It was invented by T.-Y. Yeh and Yale Patt in 1991, and variants of it are in most modern processors.
 
-
-
-
 ---
 
 <a id="6"></a>
@@ -507,7 +491,6 @@ So here are all three families side by side:
 
 A pipeline in perfect health finishes one instruction per cycle. But a `lw` has to go to memory, and memory is not remotely that fast. That has nothing to do with hazards, and everything to do with a number from the first slide of this course. It is the other half of the lecture.
 
-
 ---
 
 <a id="7"></a>
@@ -556,7 +539,6 @@ Now forwarding stops being magic. When the first of two dependent `addi` instruc
 Earlier we described the one-instruction-in-between case as delivering the value to `ID`. In hardware the same value is taken from `MEM/WB` into `EX` a cycle later, which costs the same number of cycles. The price of forwarding is these two wires, a multiplexer that chooses among them and the register file, and comparison logic that checks whether the register being read is the one an earlier instruction is about to write.
 
 It also explains why a `lw` still costs a stall. A sum exists after `EX`, but loaded data only exists after `MEM`, so it reaches `MEM/WB` one cycle later. The wire is there, but the data is not yet, so the instruction behind has to wait one cycle.
-
 
 ---
 
@@ -620,378 +602,6 @@ Now reordering is easy to read. Any order that keeps every arrow pointing forwar
 
 A graph is the same rule as before drawn as a picture: never change the relative order of two instructions that conflict. The arrows are the conflicts, and everything else can move.
 
-
 ---
 
-<a id="9"></a>
-
-## The Memory Wall
-
-So far we have treated `lw` as one polite `MEM` box, one cycle, done. That is a polite fiction, and this is where it falls apart. A computer is fast, memory is inside the computer, therefore memory is fast: that is the story the pipeline diagrams have been telling.
-
-The physical reality is brutally different. An L1 cache reference, the fast memory built right onto the processor, takes roughly half a nanosecond. Main memory, the DRAM sitting a few inches away on the motherboard, takes about 100: **roughly 200 times slower.** A nanosecond means nothing to a human, so scale it up.
-
-Let the half-nanosecond L1 access be one heartbeat, half a second. Then a trip to main memory is 200 heartbeats: 100 seconds, a minute and a half. That is long enough for the processor to walk to the bathroom, brush its teeth and walk back, just to fetch one integer.
-
-A pipeline built to retire one instruction per cycle (last week's whole argument), stalling for that long on every `lw`, is practically paralysed. This is the **memory wall**: the processor is incredibly fast, and starving for data.
-
-| Technology | Price / GB | Access time | Bandwidth |
-|---|---|---|---|
-| SRAM (cache) | ~$10,000 | ~1 ns | 25+ GB/s |
-| DRAM (main memory) | ~$10 | 10 to 50 ns | ~10 GB/s |
-| SSD | ~$1 | ~100,000 ns | ~0.5 GB/s |
-| HDD | ~$0.1 | ~10,000,000 ns | ~0.1 GB/s |
-
-Read that table as a trade: the fast technology is expensive and small, the slow one is cheap and enormous, and none is both. (On the E20 a `lw` or `sw` may stall a few cycles. On real machines the penalty can be fifty cycles or more.)
-
-Picture a student writing a research paper. They do not walk across campus to the library for every fact, read one sentence, and walk back. They make one trip, check out a stack of books, and keep them on the desk. The desk is tiny compared with the library, but anything on it is instantly within reach. The desk is the **cache**; the library is main memory.
-
-When the processor looks for something and finds it on the desk, that is a **hit**. When it is not there and the student has to put on a coat and walk to the library, that is a **miss**. The fraction of the time you find what you need on the desk is the **hit ratio**: ask for 10 values, find 9 on the desk, and the hit ratio is 90 percent.
-
-<p align=center>
-    <img src="assets/ca-hierarchy.svg" width="760" alt="the CPU asks the cache first, about 1 nanosecond; only a miss goes on to RAM, about 50 nanoseconds">
-</p>
-<p align=center><sub>The CPU always asks the cache first. Only when the cache doesn't have the answer does the request make the long trip to RAM.</sub></p>
-
-The obvious objection: if the desk is so fast, why not build one big enough to hold everything? There are two reasons. The first is money and space: fast memory (SRAM) needs more transistors per bit, so it is expensive and takes up a lot of silicon.
-
-The second is physics. A cache as big as your RAM would be just as slow as your RAM. You can have small and blazing fast, or enormous and sluggish, but not both. So the desk stays tiny.
-
-A tiny desk creates a logistics problem, and every cache designer has to answer three questions:
-
-1. When I bring a book back from the library, *where* on the desk do I put it?
-2. When I look at the desk later, *how do I know* it is the book I want?
-3. The desk is small, so *what do I throw on the floor* to make room for a new one?
-
-The simplest answer to all three is a **direct-mapped cache**. We will not hand you the finished blueprint. We will build the dumbest thing that could possibly work, watch it fail, and fix it, four times.
-
-
----
-
-<a id="10"></a>
-
-## Where Does a Cell Go? Rows, Tags, and the Valid Bit
-
-Keep the numbers small so you can follow them in your head. Our cache has four **rows**, which are slots that each hold one memory value. In main memory, address 42 holds the value 17, and address 10 holds the value 33.
-
-We need a rule that decides which row a value goes into, and the cheapest routing logic in the world is the remainder: `row = address % 4`. The processor asks for address 42. Divide by 4: 10 with a remainder of 2, so row 2. We copy 17 from main memory into row 2. So far so good.
-
-<p align=center>
-    <img src="assets/ca-s1a.svg" width="760" alt="lw 42 copies 17 from RAM into row 2 of a four-row cache">
-</p>
-<p align=center><sub>Attempt one, step one: lw 42 puts 17 into row 2.</sub></p>
-
-A few cycles later the processor asks for address 10. `10 % 4` is also 2, so the cache goes to row 2, finds a value sitting there, and hands back 17. But the real value of address 10 is 33. The cache just *confidently lied*. A slow computer is annoying; a computer that returns the wrong answer at the speed of light is useless.
-
-<p align=center>
-    <img src="assets/ca-s1b.svg" width="760" alt="lw 10 also maps to row 2 and gets 17 back instead of 33">
-</p>
-<p align=center><sub>Attempt one, step two: lw 10 lands on row 2 and gets the wrong value.</sub></p>
-
-The problem is that with four rows, a quarter of all addresses (2, 6, 10, 14, 42, 100, and so on) are forced into row 2, and the cache has no way to tell them apart. It is a single mailbox for a whole apartment building where each letter has only the apartment number on it, not the name of the resident: whoever opens the box takes whatever is inside.
-
-<p align=center>
-    <img src="assets/ca-attempt1.svg" width="760" alt="lw 42 stores 17 in row 2, then lw 10 also lands in row 2 and gets 17 back instead of 33">
-</p>
-<p align=center><sub>Attempt one: <code>42 % 4</code> and <code>10 % 4</code> are both 2. The cache hands back 17 for address 10, whose real value is 33.</sub></p>
-
-The fix is obvious once you have seen the failure: write the resident's name on the letter. Next to each value, store the address it came from, so row 2 holds the pair `(42, 17)`.
-
-<p align=center>
-    <img src="assets/ca-s2a.svg" width="760" alt="the cache table gains an address column; row 2 holds 42 and 17">
-</p>
-<p align=center><sub>Attempt two: row 2 now holds the pair (42, 17).</sub></p>
-
-Run it again. The processor asks for address 10, the cache goes to row 2, and now it does not grab blindly. It compares the stored address (42) with the requested one (10). They are not equal, so this is not the data it is looking for: a **miss**.
-
-The cache goes to main memory, fetches the real value (33), and has to put it somewhere. Row 2 is the only place it can go, so it overwrites `(42, 17)` with `(10, 33)`. Throwing out a perfectly good entry to make room for a new one is called an **eviction**, and since the desk is tiny it is a constant, unavoidable fact of life.
-
-<p align=center>
-    <img src="assets/ca-s2b.svg" width="760" alt="lw 10 misses because 42 is not 10, then row 2 is overwritten with 10 and 33">
-</p>
-<p align=center><sub>Attempt two: the address check catches the conflict, and the new value evicts the old.</sub></p>
-
-We have fixed the lying. But we have created an inefficiency: every row now stores a whole address (32 or 64 bits) next to a tiny piece of data. That is a lot of wasted transistors.
-
-<p align=center>
-    <img src="assets/ca-attempt2.svg" width="760" alt="row 2 holds (42, 17); lw 10 finds a different stored address, misses, and overwrites the row with (10, 33)">
-</p>
-<p align=center><sub>Attempt two: the stored address (42) does not match the requested one (10), so it is a miss. The old entry is evicted and row 2 now holds <code>(10, 33)</code>.</sub></p>
-
-Look at how address 42 got to row 2: we took `42 % 4`, the remainder. So the row number already tells us something about the address. If you are standing in front of row 2, you know with certainty that whatever is inside came from an address that leaves remainder 2 when divided by 4.
-
-You do not need to write that part down. It is the hotel floor: standing on the fifth floor, a room label of "12" is enough, because being on the fifth floor already tells you the first part.
-
-What is left to store is how many times 4 went into the address before the remainder: `address // 4`. Write each address as `4 × something + remainder`: `42 = 4 × 10 + 2` and `10 = 4 × 2 + 2`. The remainder (2) is the row; the multiplier (10, or 2) is what the row cannot tell us.
-
-It is called the **tag**. So row 2 stores a tag of 10 next to the value 17, instead of the whole 42. When address 10 arrives, it computes row 2 and tag 2, compares the stored tag (10) with 2, and misses.
-
-<p align=center>
-    <img src="assets/ca-s3.svg" width="760" alt="the table stores a tag column; row 2 holds tag 10 and 17, and lw 10 mismatches">
-</p>
-<p align=center><sub>Attempt three: row 2 holds tag 10, and address 10 arrives with tag 2.</sub></p>
-
-A lookup is now: compute the row and the tag from the address, go to the row, and compare the stored tag with the computed one. A match is a hit; otherwise it is a miss, so fetch and evict.
-
-These two are easy to mix up. The **index** is just another word for the row number: it tells you *where* the data lives, like an apartment number. The **tag** tells you *who* is currently living in that apartment. You need both. The index gets the electrical signals to the right door on the chip, and the tag checks the ID of whoever is inside. **Index is where, tag is who.**
-
-<p align=center>
-    <img src="assets/ca-attempt3.svg" width="760" alt="42 = 4 x 10 + 2 gives tag 10 and row 2; 10 = 4 x 2 + 2 gives tag 2 and row 2; row 2 stores tag 10, so a lookup of address 10 sees tag 2 and misses">
-</p>
-<p align=center><sub>Attempt three: divide by 4. The remainder is the row, the quotient is the tag. Address 42 is row 2, tag 10. Address 10 is row 2, tag 2, so the stored tag does not match and it is a miss.</sub></p>
-
-What is in row 1 of the cache the instant you press the power button? The intuitive answer is "nothing", but in hardware empty does not exist. A wire always holds some voltage, which the logic reads as a 0 or a 1. When the machine powers on, the cache is full of meaningless static. Say, by chance, row 1 powers up holding all zeros, tag included.
-
-The operating system boots and the first instruction asks for address 1. `1 % 4 = 1`, so row 1, and the tag is `1 // 4 = 0`. The stored tag is a leftover 0, so the comparator says *match*, the cache says *hit*, and hands the processor a handful of garbage it never loaded. It hallucinated a hit from static electricity.
-
-<p align=center>
-    <img src="assets/ca-s4a.svg" width="760" alt="a power-on cache full of zeros gives a false hit on address 1">
-</p>
-<p align=center><sub>Attempt four, the problem: power-on static looks exactly like a real entry.</sub></p>
-
-We need a master on-off switch for each row, a way to say: this row has never been written by a real program, ignore whatever is in it. That is one extra bit per row, the **valid bit** `V`. If `V = 1`, real data lives here, so go ahead and check the tag. If `V = 0`, the hardware declares a miss without even looking at the tag.
-
-<p align=center>
-    <img src="assets/ca-s4b.svg" width="760" alt="the cache table gains a V column that is 0 everywhere at power-on; lw 1 misses">
-</p>
-<p align=center><sub>Attempt four, the fix: V = 0 forces a miss.</sub></p>
-
-A second vocabulary collision to head off: the valid bit is not the tag. The valid bit asks an existential question: *is this data real?* The tag asks an identity question: *which real address is it?* A row yields a hit only if `V = 1` **and** the tags match.
-
-<p align=center>
-    <img src="assets/ca-attempt4.svg" width="760" alt="without a valid bit a leftover tag 0 matches address 1, a false hit; with a valid bit V = 0 forces a miss">
-</p>
-<p align=center><sub>Attempt four: at power-on every row holds leftover zeros, so without a valid bit address 1 (tag 0) falsely hits. With <code>V = 0</code> it is a miss.</sub></p>
-
-<p align=center>
-    <img src="assets/ca-columns.svg" width="760" alt="one cache row across the four attempts, gaining an address, then a tag, then a valid bit column">
-</p>
-<p align=center><sub>The same row after each attempt. Each gold column was added to fix the failure before it.</sub></p>
-
-So, the journey in four steps: pure remainder lied to us; storing the whole address wasted silicon; storing just the tag fixed that; and the valid bit stopped the power-on hallucination. Put together, every row has three parts:
-
-| Row | V | Tag | Value |
-|---|---|---|---|
-| 0 | 0 | | |
-| 1 | 0 | | |
-| 2 | 1 | 10 | 17 |
-| 3 | 0 | | |
-
-<p align=center>
-    <img src="assets/ca-lookup.svg" width="760" alt="flowchart: address, split into row and tag, check V, compare tags, then hit or miss">
-</p>
-<p align=center><sub>The whole lookup in the order the hardware asks its questions.</sub></p>
-
-To look up an address, compute `row = address % numberOfRows` and `tag = address // numberOfRows`. Go to that row. It is a **hit** only if `V = 1` and the stored tag equals the computed tag.
-
-Otherwise it is a **miss**: fetch from RAM, store the new tag and value, set `V = 1` (evicting whatever was there), and return the value. On the table above: address 42 is a hit; address 10 is a miss (a tag mismatch); address 1 is a miss (`V = 0`). Two different kinds of miss.
-
-<p align=center>
-    <img src="assets/ca-lookup-trio.svg" width="760" alt="the finished cache with three lookups: address 42 hits, address 10 misses on a tag mismatch, address 1 misses because V is 0">
-</p>
-<p align=center><sub>The finished cache and three lookups: one hit, and two different kinds of miss.</sub></p>
-
-
----
-
-<a id="11"></a>
-
-## Blocks: Locality Is a Bet, Not a Guarantee
-
-That is a working cache, and in the 1970s we could stop here. But software does not behave the way our tiny cache assumes. Think like a programmer: you are almost never fetching one isolated variable. You are running a loop over a big array, summing salaries or processing an image pixel by pixel:
-
-```c
-int my_array[1024];
-int sum = 0;
-for (int i = 0; i < 1024; i++)
-    sum += my_array[i];
-```
-
-Every iteration asks for a brand new address, the one right after the last. With one value per row, every step is a guaranteed miss (100 ns each). Our cache is useless for arrays.
-
-<p align=center>
-    <img src="assets/ca-b1.svg" width="760" alt="eight array reads on the one-value-per-row cache, every one a miss">
-</p>
-<p align=center><sub>Without blocks, every read of the array loop is a miss.</sub></p>
-
-There are two kinds of locality, and our design only gets one. **Temporal locality** means that if you use an address once, you will probably use it again soon: the loop counter `i` is read every iteration, and after the first miss it sits in the cache for free hits.
-
-The other kind, **spatial locality**, means that if you touch an address, you will very likely touch its neighbours next: the array. Our one-value-per-row cache ignores it completely.
-
-<p align=center>
-    <img src="assets/ca-b2.svg" width="760" alt="temporal locality is the same address again, spatial locality is the neighbours">
-</p>
-<p align=center><sub>Temporal locality reuses an address; spatial locality uses the ones next door.</sub></p>
-
-Back to the library. If you walk across campus and find the history book you need, it is wasteful to walk back with only that book. Grab the whole shelf, because you will probably want the one next to it in five minutes. A cache does the same.
-
-Divide memory into **blocks**: fixed chunks of consecutive cells, a power of two such as 8, 16 or 64. When the processor asks for one cell and misses, the cache fetches the *entire* block containing it and loads it into a row all at once.
-
-Keep the four rows, and make the block size 8. The program asks for address 53. We have to find the block first: `53 // 8 = 6`, so address 53 is somewhere in block 6, which covers cells 48 to 55.
-
-Now the critical shift. Where does block 6 go? We use the same remainder routing as before, but **on the block number, not on the raw address**: `6 % 4 = 2`, so row 2. The tag is the block number divided by the rows, `6 // 4 = 1`. Row 2 gets tag 1, `V = 1`, and a data slot holding eight cells, 48 to 55.
-
-<p align=center>
-    <img src="assets/ca-b3.svg" width="760" alt="a cold four-row cache, then the same cache after lw 53 loads block 6 into row 2 with tag 1">
-</p>
-<p align=center><sub>A miss on 53 loads all of block 6 (cells 48 to 55) into row 2, tag 1.</sub></p>
-
-<p align=center>
-    <img src="assets/ca-blocks.svg" width="760" alt="memory cut into blocks of eight cells; address 53 is in block 6, which covers cells 48 to 55, and maps to cache row 2">
-</p>
-<p align=center><sub>A request for address 53 loads all of block 6, cells 48 to 55, into cache row 2 at once.</sub></p>
-
-Now watch it pay off. The loop moves on to address 54. It is in block 6, which lives in row 2; the tag matches; address 54 is already there: a hit. Then 55: another hit. We have turned a series of 100 ns misses into free hits just by hauling the whole shelf. Across the eight reads of addresses 48 to 55, the first is a miss and the other seven are hits, where without blocks all eight missed.
-
-<p align=center>
-    <img src="assets/ca-b4.svg" width="760" alt="54 and 55 are hits in row 2, and the loop reads 48 to 55 with one miss and seven hits">
-</p>
-<p align=center><sub>After the miss, the rest of the block is already there: one miss, seven hits.</sub></p>
-
-The cache is betting that your code has spatial locality. It dragged seven extra cells across the motherboard, burning energy and bus time and taking space in the row, on the hope that you would use them. If your code jumps all over memory, say through a linked list, never touching a neighbour, the cache loses the bet: it paid to carry cells that sit unused until they are evicted.
-
-<p align=center>
-    <img src="assets/ca-b5.svg" width="760" alt="three scattered reads each fetch a whole block but use one cell of it">
-</p>
-<p align=center><sub>When the bet loses: seven of every eight cells carried are never used.</sub></p>
-
-With no spatial locality, big blocks do worse than no blocks at all. The hardware is not magic. It makes assumptions about how you write software, and **if you want your code to be fast, you structure your data to win the bet**: array-heavy, linear code.
-
-
----
-
-<a id="12"></a>
-
-## Decoding an Address: Tag, Index, Offset
-
-Because the cache now deals in blocks, the processor's address has to be sliced into three parts, read from the right (least significant bits) to the left. Each answers one question:
-
-- **Offset**, the rightmost slice: where *inside* the block is my cell? A block of 8 cells needs `log2(8) = 3` bits to point at one of them. Think of it as the house number on a street.
-- **Index**, the middle slice: which cache row is this block assigned to? Four rows need `log2(4) = 2` bits. It is the street name.
-- **Tag**, everything left over at the top: out of all the blocks in memory that share this row, which one is parked here right now? It is the city and state.
-
-In arithmetic form, which is the form you will use on exams, write these four steps down in this order:
-
-| Step | Question | Formula |
-|---|---|---|
-| 1 | block | `address // blockSize` |
-| 2 | offset | `address % blockSize` |
-| 3 | row (index) | `block % numberOfRows` |
-| 4 | tag | `block // numberOfRows` |
-
-Take a worked example: a system has 10-bit addresses, a block size of 4, and 8 cache rows. Decode address 181. First the widths: block size 4 needs 2 offset bits; 8 rows need 3 index bits; that leaves `10 - 2 - 3 = 5` bits for the tag. In binary, 181 is `0010110101`:
-
-<p align=center>
-    <img src="assets/ca-split.svg" width="760" alt="address 181 in binary split into a 5-bit tag 00101, a 3-bit index 101 and a 2-bit offset 01">
-</p>
-<p align=center><sub>Offset <code>01</code> = 1, index <code>101</code> = 5, tag <code>00101</code> = 5. Together, tag and index make the block ID: 45.</sub></p>
-
-Now the arithmetic. Step 1: `181 // 4 = 45`, so block 45. Step 2: `181 % 4 = 1`, so offset 1.
-
-Step 3 is where nearly everyone slips: the row. The tempting move is to take the raw address, `181 % 8`, just as we did in attempt one. **Don't.** In attempt one there were no blocks. Once blocks exist, the raw address no longer decides the row; the block does.
-
-If rows came from raw addresses, then 180, 181 and 182, which are all in block 45 and have to travel together, would land in rows 4, 5 and 6: you would scatter one block across the cache and wreck the whole design. (Here the wrong rule happens to give row 5 by luck. It will not in general, and for the tag it gives `181 // 8 = 22` where the right answer is 5.)
-
-> **The golden rule: always write the block first.** Compute the block number before any other math. The row comes from the block. The tag comes from the block. Once you have the block and the offset, pretend the raw address does not exist.
-
-So: row `45 % 8 = 5`, tag `45 // 8 = 5`. Address 181 decodes to **offset 1, row 5, tag 5**. In binary it is exactly the slices: tag `00101`, index `101`, offset `01`.
-
-On the four-row, block-size-8 cache we will trace next: address 53 is block 6, offset 5, row 2, tag 1; address 100 is block 12, offset 4, row 0, tag 3 (not 25, which is `100 // 4`, the tag from the old one-value-per-row cache); address 77 is block 9, offset 5, row 1, tag 2. And a last warning: for 54, both `54 // 8` and `54 % 8` happen to be 6. The first is the block, the second the offset; 53 tells them apart.
-
-
----
-
-<a id="13"></a>
-
-## Tracing a Cache: A Worked Example
-
-This is the skill you will be tested on, so go through it in slow motion. The cache has four rows and a block size of 8, and it starts cold: every valid bit is 0. The processor makes ten `lw` accesses, in this order:
-
-`52, 53, 92, 55, 20, 54, 60, 53, 29, 28`
-
-For each one, say out loud the block, the row, the tag and the result.
-
-| Address | Block | Row | Tag | Result | Why |
-|---|---|---|---|---|---|
-| 52 | 6 | 2 | 1 | MISS | row 2 is empty (`V = 0`); load block 6 |
-| 53 | 6 | 2 | 1 | **HIT** | same block as 52: spatial locality paying off |
-| 92 | 11 | 3 | 2 | MISS | row 3 is empty; load block 11 |
-| 55 | 6 | 2 | 1 | **HIT** | block 6 is still in row 2 |
-| 20 | 2 | 2 | 0 | MISS | row 2 holds tag 1 (block 6); 0 is not 1, so **evict** block 6 |
-| 54 | 6 | 2 | 1 | MISS | row 2 now holds tag 0 (block 2); evict it, and block 6 comes back |
-| 60 | 7 | 3 | 1 | MISS | row 3 holds tag 2 (block 11); 1 is not 2, so evict |
-| 53 | 6 | 2 | 1 | **HIT** | block 6 was reloaded two steps ago |
-| 29 | 3 | 3 | 0 | MISS | row 3 holds tag 1 (block 7); evict |
-| 28 | 3 | 3 | 0 | **HIT** | same block as 29 |
-
-Address 52 is block 6, row 2, tag 1. Row 2 is invalid, so a miss: block 6 (cells 48 to 55) loads into row 2. Address 53 is block 6 again, row 2, tag 1. `V = 1` and the tags match: a hit. That is the bet paying off, since 53 rode in on the coattails of 52. Address 92 is a miss in the empty row 3, and 55 is another hit on block 6.
-
-Address 20 is block 2, row 2, tag 0. Row 2 is valid, but it holds tag 1, which is block 6, and our computed tag is 0. No match: a miss, and the hardware evicts block 6 to load block 2.
-
-Address 54 is block 6, row 2, tag 1. But row 2 now holds tag 0, because we loaded block 2 a moment ago. A miss: block 2 is evicted and block 6 is hauled all the way back from memory. That is a **conflict**: two blocks that have nothing to do with each other in the software just happen to map to the same physical row, and they keep forcing each other out.
-
-Rows 0 and 1 are completely empty, so why couldn't block 2 just park there? Because a direct-mapped cache is a parking lot with mathematically assigned spaces. Block 2 is permanently assigned to space 2, and is forbidden to use space 0 or 1. If block 6 is in space 2, block 6 gets towed. Conflicts come from mathematical coincidence, not from running out of room.
-
-The rest follows the same recipe: **60** evicts block 11 from row 3; **53** is a hit (block 6 was reloaded two accesses ago); **29** evicts block 7; and **28** is a hit on block 3. Four hits in ten accesses: a hit ratio of 40 percent. The cache ends up looking like this:
-
-<p align=center>
-    <img src="assets/ca-state.svg" width="760" alt="the final cache: rows 0 and 1 empty, row 2 holds block 6, row 3 holds block 3">
-</p>
-<p align=center><sub>Rows 0 and 1 were never touched. All the action, and all the damage, happened on rows 2 and 3.</sub></p>
-
-Rows 0 and 1 were ghost towns. Every eviction and every conflict happened on rows 2 and 3, which makes the cache feel fragile: how well it does depends on exactly where things land in memory.
-
-Make that concrete with two contrasting programs. First, a well-behaved one that walks memory in order: `50, 51, 52, ..., 69` (twenty accesses). It only misses when it crosses into a new block, at addresses 50, 56 and 64: three misses and seventeen hits, a hit ratio of **17/20**, from the very same hardware, because the access pattern matches the bet the cache makes.
-
-Then the nightmare: `16, 80, 17, 81, 18, 82`. Addresses 16 to 18 are in block 2, and 80 to 82 in block 10, and `2 % 4 = 10 % 4 = 2`, so both blocks want row 2. Every access evicts the block the next access needs: six accesses, six misses, a hit ratio of **0**, while rows 0, 1 and 3 sit idle.
-
-Is the cache broken? No. It did not fail because it was too small; it failed because of where two blocks happened to land. A program's speed can fall off a cliff just because two unrelated arrays sit a certain distance apart in RAM. Next lecture's associative caches exist to relax exactly that.
-
-
----
-
-<a id="14"></a>
-
-## Sizing a Cache
-
-When the box says "128-byte L1 cache", you assume it holds 128 bytes of your data. It does, but the hardware inside is bigger, because the cache has to store more than data. We have to separate the **data capacity** (the bytes of your program it can hold) from the **total hardware size** (every transistor needed to make it work). The tags and valid bits are not free:
-
-```
-total size (bits) = numberOfRows × (1 + tagSizeInBits + blockSizeInBits)
-                                     ↑          ↑              ↑
-                                valid bit     the tag     the data, blockSize × 8 for byte-sized cells
-```
-
-Worked example: a system with 12-bit addresses, a cache with 8 rows, and 16-byte blocks. Sixteen bytes means `log2(16) = 4` offset bits, and 8 rows means `log2(8) = 3` index bits, so the tag gets `12 - 4 - 3 = 5` bits. One row is a valid bit (1), a tag (5) and a block of `16 × 8 = 128` bits of data: **134 bits**. The whole cache is `8 × 134 = 1072` bits, or 134 bytes.
-
-But it only holds `8 × 16 = 128` bytes of data. The other 6 bytes are pure administration: about a **5 percent metadata tax** for the privilege of knowing where your data came from and whether it is valid.
-
-Why not use tiny blocks, say one byte, so you never haul useless data? Now you can show why not. To keep the same 128 bytes of data with 1-byte blocks you need 128 rows, which means 128 valid bits and 128 tags instead of 8.
-
-Each row costs `1 + 5 + 8 = 14` bits, so the cache is `128 × 14 = 1792` bits to hold 1024 bits of data: the tax jumps from about 5 percent to about 75 percent. Larger blocks let more data share the cost of one tag and one valid bit, which is one reason designers do not shrink blocks toward zero.
-
-
----
-
-<a id="15"></a>
-
-## What a Cache Is Worth: Hit Ratio and Average Time
-
-After paying the silicon tax, what is the payoff? To find out, we need the protocol between the processor, the cache and memory. The standard convention: **every access checks the cache first**, hit or miss, so every access pays the cache's short time. Only on a miss does it pay the long trip to memory, on top of that. That gives:
-
-```
-average time = cache time + (1 - hit ratio) × memory time
-```
-
-Take a cache access of 2 ns and a memory trip of 60 ns (invented numbers, with the right shape). At a 90 percent hit ratio the average is `2 + 0.1 × 60 = 8 ns`. With no cache every access would cost 60 ns, so the cache made the average access **7.5 times faster.**
-
-Now see how sensitive the formula is. Optimise your arrays to get the hit ratio up to 99 percent: `2 + 0.01 × 60 = 2.6 ns`, almost three times faster again. Or write slightly sloppy code and slip to 80 percent: `2 + 0.2 × 60 = 14 ns`.
-
-A drop of only ten points of hit ratio nearly doubled the average. The trip to memory is so punishingly slow that even a small fraction of misses acts like an anchor on the whole system: the misses dominate the average.
-
-This lands directly on the pipeline. A cache miss is a physical stall in the `MEM` stage: every `lw` that misses injects stall cycles, so a falling hit ratio makes CPI balloon, however fast the ALU is.
-
-
----
-
-<sub>**Previous: [Multicycle Implementation & The Pipelining Idea](/lectures/09-multicycle-and-pipelining)** || **Next: [Associative Caching & Virtual Memory](/lectures/11-associative-caching-and-virtual-memory)**</sub>
+<sub>**Previous: [Multicycle Implementation & The Pipelining Idea](/lectures/09-multicycle-and-pipelining)** || **Next: [Caching: Direct-Mapped, Associative & Writes](/lectures/11-caching)**</sub>

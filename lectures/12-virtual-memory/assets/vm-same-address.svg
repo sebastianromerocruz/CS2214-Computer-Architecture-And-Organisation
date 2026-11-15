@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 392" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="392" rx="24" fill="#eee6f3"/>
+<text x="40" y="34" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="start">THE PROGRAM, IN C</text>
+<rect x="40" y="46" width="540" height="300" rx="12" fill="#1a1a1a" stroke="#1a1a1a" stroke-width="3"/>
+<text x="64" y="86" font-size="18" font-weight="600" font-family="ui-monospace, Menlo, Consolas, monospace" xml:space="preserve" style="white-space:pre"><tspan fill="#ff79c6">static </tspan><tspan fill="#8be9fd">int </tspan><tspan fill="#f8f8f2">value</tspan><tspan fill="#9aa0b4">;</tspan></text>
+<text x="64" y="120" font-size="18" font-weight="600" font-family="ui-monospace, Menlo, Consolas, monospace" xml:space="preserve" style="white-space:pre"><tspan fill="#50fa7b">srand</tspan><tspan fill="#9aa0b4">(</tspan><tspan fill="#50fa7b">time</tspan><tspan fill="#9aa0b4">(</tspan><tspan fill="#ffb86c">NULL</tspan><tspan fill="#9aa0b4">));</tspan></text>
+<text x="64" y="154" font-size="18" font-weight="600" font-family="ui-monospace, Menlo, Consolas, monospace" xml:space="preserve" style="white-space:pre"><tspan fill="#f8f8f2">value </tspan><tspan fill="#ff79c6">= </tspan><tspan fill="#50fa7b">rand</tspan><tspan fill="#9aa0b4">();</tspan></text>
+<text x="64" y="188" font-size="18" font-weight="600" font-family="ui-monospace, Menlo, Consolas, monospace" xml:space="preserve" style="white-space:pre"><tspan fill="#ff79c6">while </tspan><tspan fill="#9aa0b4">(</tspan><tspan fill="#ffb86c">1</tspan><tspan fill="#9aa0b4">) {</tspan></text>
+<text x="64" y="222" font-size="18" font-weight="600" font-family="ui-monospace, Menlo, Consolas, monospace" xml:space="preserve" style="white-space:pre"><tspan fill="#50fa7b">    printf</tspan><tspan fill="#9aa0b4">(</tspan><tspan fill="#f1fa8c">"value=%d at %p\n"</tspan><tspan fill="#9aa0b4">, </tspan><tspan fill="#f8f8f2">value, &amp;value</tspan><tspan fill="#9aa0b4">);</tspan></text>
+<text x="64" y="256" font-size="18" font-weight="600" font-family="ui-monospace, Menlo, Consolas, monospace" xml:space="preserve" style="white-space:pre"><tspan fill="#50fa7b">    sleep</tspan><tspan fill="#9aa0b4">(</tspan><tspan fill="#ffb86c">2</tspan><tspan fill="#9aa0b4">);</tspan></text>
+<text x="64" y="290" font-size="18" font-weight="600" font-family="ui-monospace, Menlo, Consolas, monospace" xml:space="preserve" style="white-space:pre"><tspan fill="#9aa0b4">}</tspan></text>
+<text x="630" y="34" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="start">RUN IT TWICE, IN TWO TERMINALS</text>
+<rect x="600" y="46" width="500" height="130" rx="10" fill="#fff" stroke="#57068c" stroke-width="4"/>
+<text x="620" y="76" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="start">terminal 1</text>
+<text x="620" y="134" font-size="26" font-weight="700" font-family="ui-monospace, Menlo, Consolas, monospace" xml:space="preserve" style="white-space:pre"><tspan fill="#1a1a1a">value=</tspan><tspan fill="#57068c" font-size="34">38</tspan><tspan fill="#1a1a1a"> at 0x404080</tspan></text>
+<rect x="600" y="206" width="500" height="130" rx="10" fill="#fff" stroke="#c1272d" stroke-width="4"/>
+<text x="620" y="236" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="start">terminal 2</text>
+<text x="620" y="294" font-size="26" font-weight="700" font-family="ui-monospace, Menlo, Consolas, monospace" xml:space="preserve" style="white-space:pre"><tspan fill="#1a1a1a">value=</tspan><tspan fill="#c1272d" font-size="34">91</tspan><tspan fill="#1a1a1a"> at 0x404080</tspan></text>
+<text x="850" y="366" fill="#c1272d" font-size="16" font-weight="700" text-anchor="middle">same address, two different values: it cannot be a real memory cell</text>
+</svg>

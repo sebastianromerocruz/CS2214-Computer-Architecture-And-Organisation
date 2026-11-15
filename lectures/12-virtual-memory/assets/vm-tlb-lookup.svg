@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 392" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="392" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">one TLB lookup: the program asks for virtual address 8200</text>
+<text x="130" y="74" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="middle">8200 SPLITS INTO</text>
+<rect x="30" y="168" width="200" height="60" rx="10" fill="#fff" stroke="#57068c" stroke-width="5"/>
+<text x="130" y="208" fill="#57068c" font-size="28" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">page 2</text>
+<rect x="30" y="270" width="200" height="60" rx="10" fill="#fff" stroke="#9f9f97" stroke-width="4"/>
+<text x="130" y="310" fill="#6d6d6d" font-size="28" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">offset 8</text>
+<text x="560" y="74" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="middle">TLB: RECENT TRANSLATIONS</text>
+<text x="450" y="108" fill="#6d6d6d" font-size="15" font-weight="700" text-anchor="middle">virtual page</text>
+<text x="670" y="108" fill="#6d6d6d" font-size="15" font-weight="700" text-anchor="middle">frame</text>
+<rect x="340" y="120" width="440" height="44" rx="8" fill="#fff" stroke="#9f9f97" stroke-width="3"/>
+<text x="450" y="151" fill="#6d6d6d" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<text x="670" y="151" fill="#6d6d6d" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">7</text>
+<rect x="340" y="172" width="440" height="44" rx="8" fill="#e9d9f5" stroke="#57068c" stroke-width="5"/>
+<text x="450" y="203" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<text x="670" y="203" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">5</text>
+<rect x="340" y="224" width="440" height="44" rx="8" fill="#fff" stroke="#9f9f97" stroke-width="3"/>
+<text x="450" y="255" fill="#6d6d6d" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">6</text>
+<text x="670" y="255" fill="#6d6d6d" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<line x1="236" y1="198" x2="334" y2="198" stroke="#57068c" stroke-width="5" stroke-linecap="round"/>
+<polygon points="334.0,198.0 321.0,191.0 321.0,205.0" fill="#57068c"/>
+<text x="285" y="184" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">match</text>
+<line x1="786" y1="198" x2="878" y2="198" stroke="#2e7d32" stroke-width="5" stroke-linecap="round"/>
+<polygon points="878.0,198.0 865.0,191.0 865.0,205.0" fill="#2e7d32"/>
+<text x="832" y="184" fill="#2e7d32" font-size="16" font-weight="700" text-anchor="middle">hit</text>
+<rect x="884" y="168" width="200" height="60" rx="10" fill="#e4f3e1" stroke="#2e7d32" stroke-width="5"/>
+<text x="984" y="208" fill="#1a1a1a" font-size="28" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame 5</text>
+<line x1="984" y1="232" x2="984" y2="266" stroke="#57068c" stroke-width="5" stroke-linecap="round"/>
+<polygon points="984.0,266.0 991.0,253.0 977.0,253.0" fill="#57068c"/>
+<line x1="236" y1="300" x2="878" y2="300" stroke="#6d6d6d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="878.0,300.0 865.0,293.0 865.0,307.0" fill="#6d6d6d"/>
+<text x="560" y="326" fill="#6d6d6d" font-size="15" font-weight="700" text-anchor="middle">the offset is copied, unchanged</text>
+<rect x="884" y="270" width="200" height="60" rx="10" fill="#fff" stroke="#57068c" stroke-width="5"/>
+<text x="984" y="310" fill="#1a1a1a" font-size="28" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">20488</text>
+<text x="984" y="352" fill="#6d6d6d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">5 x 4096 + 8</text>
+<text x="984" y="374" fill="#6d6d6d" font-size="13" font-weight="700" text-anchor="middle">PHYSICAL ADDRESS</text>
+</svg>

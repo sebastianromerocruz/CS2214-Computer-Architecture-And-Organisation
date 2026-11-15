@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 340" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="340" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">one access, start to finish: the program asks for 8200 and the hardware reads 20488</text>
+<rect x="40" y="56" width="250" height="92" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="165" y="82" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">the program asks for</text>
+<text x="165" y="126" fill="#c1272d" font-size="38" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">8200</text>
+<rect x="40" y="176" width="250" height="48" rx="10" fill="#e2cdf2" stroke="#57068c" stroke-width="3"/>
+<text x="165" y="208" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">page 2</text>
+<rect x="40" y="246" width="250" height="48" rx="10" fill="#d9e8fb" stroke="#57068c" stroke-width="3"/>
+<text x="165" y="278" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">offset 8</text>
+<line x1="165" y1="148" x2="165" y2="172" stroke="#6d6d6d" stroke-width="3" stroke-linecap="round"/>
+<polygon points="165.0,172.0 172.0,159.0 158.0,159.0" fill="#6d6d6d"/>
+<text x="480" y="50" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">PAGE TABLE (in RAM)</text>
+<text x="445" y="82" fill="#6d6d6d" font-size="13" font-weight="700" text-anchor="middle">virtual page</text>
+<text x="600" y="82" fill="#6d6d6d" font-size="13" font-weight="700" text-anchor="middle">physical page</text>
+<rect x="410" y="94" width="250" height="40" rx="8" fill="#fff" stroke="#9f9f97" stroke-width="3"/>
+<text x="450" y="121" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<text x="600" y="121" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">7</text>
+<rect x="410" y="140" width="250" height="40" rx="8" fill="#fff" stroke="#9f9f97" stroke-width="3"/>
+<text x="450" y="167" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<text x="600" y="167" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<rect x="410" y="186" width="250" height="40" rx="8" fill="#e9d9f5" stroke="#57068c" stroke-width="5"/>
+<text x="450" y="213" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<text x="600" y="213" fill="#c1272d" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">5</text>
+<line x1="294" y1="200" x2="406" y2="204" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="406.0,204.0 393.3,196.5 392.8,210.5" fill="#c1272d"/>
+<text x="350" y="188" fill="#c1272d" font-size="14" font-weight="700" text-anchor="middle">look up</text>
+<line x1="664" y1="186" x2="776" y2="186" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="776.0,186.0 763.0,179.0 763.0,193.0" fill="#c1272d"/>
+<rect x="780" y="116" width="330" height="124" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="945" y="140" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">physical address</text>
+<rect x="796" y="152" width="140" height="52" rx="10" fill="#e2cdf2" stroke="#57068c" stroke-width="3"/>
+<text x="866" y="187" fill="#1a1a1a" font-size="21" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame 5</text>
+<rect x="950" y="152" width="144" height="52" rx="10" fill="#d9e8fb" stroke="#57068c" stroke-width="3"/>
+<text x="1022" y="187" fill="#1a1a1a" font-size="21" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">offset 8</text>
+<text x="945" y="226" fill="#c1272d" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">5 x 4096 + 8 = 20488</text>
+<line x1="294" y1="270" x2="1022" y2="270" stroke="#6d6d6d" stroke-width="3" stroke-linecap="round"/>
+<line x1="1022" y1="270" x2="1022" y2="244" stroke="#6d6d6d" stroke-width="3" stroke-linecap="round"/>
+<polygon points="1022.0,244.0 1015.0,257.0 1029.0,257.0" fill="#6d6d6d"/>
+<text x="660" y="292" fill="#6d6d6d" font-size="16" font-weight="700" text-anchor="middle">the offset is copied, not translated</text>
+</svg>

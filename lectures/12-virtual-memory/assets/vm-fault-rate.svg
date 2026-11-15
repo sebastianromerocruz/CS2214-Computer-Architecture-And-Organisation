@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 300" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="300" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">how rare must faults be? average access time, against a 100 ns baseline</text>
+<text x="250" y="88" fill="#57068c" font-size="19" font-weight="700" text-anchor="end">no faults</text>
+<rect x="270" y="60" width="10" height="40" rx="8" fill="#d9e8fb" stroke="#57068c" stroke-width="3"/>
+<text x="294" y="88" fill="#1a1a1a" font-size="18" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">100 ns: baseline</text>
+<text x="250" y="140" fill="#57068c" font-size="19" font-weight="700" text-anchor="end">1 in 1,000</text>
+<rect x="270" y="112" width="567" height="40" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="851" y="140" fill="#1a1a1a" font-size="18" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">8,100 ns: 81x slower</text>
+<text x="250" y="192" fill="#57068c" font-size="19" font-weight="700" text-anchor="end">1 in 10,000</text>
+<rect x="270" y="164" width="63" height="40" rx="8" fill="#d9e8fb" stroke="#57068c" stroke-width="3"/>
+<text x="347" y="192" fill="#1a1a1a" font-size="18" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">900 ns: 9x slower</text>
+<text x="250" y="244" fill="#57068c" font-size="19" font-weight="700" text-anchor="end">1 in 1,000,000</text>
+<rect x="270" y="216" width="10" height="40" rx="8" fill="#d9e8fb" stroke="#57068c" stroke-width="3"/>
+<text x="294" y="244" fill="#1a1a1a" font-size="18" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">108 ns: 1.08x slower</text>
+<text x="575" y="284" fill="#c1272d" font-size="18" font-weight="700" text-anchor="middle">one fault in a thousand accesses makes memory 81 times slower</text>
+</svg>

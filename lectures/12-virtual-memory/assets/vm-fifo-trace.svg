@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 310" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="310" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">FIFO, 3 frames: every fault that finds RAM full throws out the oldest arrival</text>
+<text x="136" y="74" fill="#57068c" font-size="18" font-weight="700" text-anchor="end">FIFO</text>
+<rect x="153" y="46" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="187.0" y="74" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">7</text>
+<rect x="153" y="92" width="68" height="38" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<text x="187.0" y="120" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">7</text>
+<rect x="153" y="136" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="153" y="180" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="187.0" y="244" fill="#c1272d" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">FAULT</text>
+<rect x="229" y="46" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="263.0" y="74" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="229" y="92" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="263.0" y="120" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">7</text>
+<rect x="229" y="136" width="68" height="38" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<text x="263.0" y="164" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="229" y="180" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="263.0" y="244" fill="#c1272d" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">FAULT</text>
+<rect x="305" y="46" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="339.0" y="74" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<rect x="305" y="92" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="339.0" y="120" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">7</text>
+<rect x="305" y="136" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="339.0" y="164" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="305" y="180" width="68" height="38" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<text x="339.0" y="208" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<text x="339.0" y="244" fill="#c1272d" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">FAULT</text>
+<rect x="381" y="46" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="415.0" y="74" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="381" y="92" width="68" height="38" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<text x="415.0" y="120" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="381" y="136" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="415.0" y="164" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="381" y="180" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="415.0" y="208" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<text x="415.0" y="244" fill="#c1272d" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">FAULT</text>
+<text x="415.0" y="261" fill="#6d6d6d" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">out 7</text>
+<rect x="457" y="46" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="491.0" y="74" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="457" y="92" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="491.0" y="120" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="457" y="136" width="68" height="38" rx="8" fill="#e4f3e1" stroke="#2e7d32" stroke-width="5"/>
+<text x="491.0" y="164" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="457" y="180" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="491.0" y="208" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<text x="491.0" y="244" fill="#2e7d32" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">hit</text>
+<rect x="533" y="46" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="567.0" y="74" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<rect x="533" y="92" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="567.0" y="120" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="533" y="136" width="68" height="38" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<text x="567.0" y="164" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<rect x="533" y="180" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="567.0" y="208" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<text x="567.0" y="244" fill="#c1272d" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">FAULT</text>
+<text x="567.0" y="261" fill="#6d6d6d" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">out 0</text>
+<rect x="609" y="46" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="643.0" y="74" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="609" y="92" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="643.0" y="120" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="609" y="136" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="643.0" y="164" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<rect x="609" y="180" width="68" height="38" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<text x="643.0" y="208" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<text x="643.0" y="244" fill="#c1272d" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">FAULT</text>
+<text x="643.0" y="261" fill="#6d6d6d" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">out 1</text>
+<rect x="685" y="46" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="719.0" y="74" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">4</text>
+<rect x="685" y="92" width="68" height="38" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<text x="719.0" y="120" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">4</text>
+<rect x="685" y="136" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="719.0" y="164" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<rect x="685" y="180" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="719.0" y="208" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<text x="719.0" y="244" fill="#c1272d" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">FAULT</text>
+<text x="719.0" y="261" fill="#6d6d6d" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">out 2</text>
+<rect x="761" y="46" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="795.0" y="74" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="761" y="92" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="795.0" y="120" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">4</text>
+<rect x="761" y="136" width="68" height="38" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<text x="795.0" y="164" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="761" y="180" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="795.0" y="208" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<text x="795.0" y="244" fill="#c1272d" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">FAULT</text>
+<text x="795.0" y="261" fill="#6d6d6d" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">out 3</text>
+<rect x="837" y="46" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="871.0" y="74" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<rect x="837" y="92" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="871.0" y="120" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">4</text>
+<rect x="837" y="136" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="871.0" y="164" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="837" y="180" width="68" height="38" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<text x="871.0" y="208" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<text x="871.0" y="244" fill="#c1272d" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">FAULT</text>
+<text x="871.0" y="261" fill="#6d6d6d" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">out 0</text>
+<rect x="913" y="46" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="947.0" y="74" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="913" y="92" width="68" height="38" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<text x="947.0" y="120" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="913" y="136" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="947.0" y="164" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="913" y="180" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="947.0" y="208" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<text x="947.0" y="244" fill="#c1272d" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">FAULT</text>
+<text x="947.0" y="261" fill="#6d6d6d" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">out 4</text>
+<rect x="989" y="46" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="1023.0" y="74" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<rect x="989" y="92" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="1023.0" y="120" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="989" y="136" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="1023.0" y="164" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="989" y="180" width="68" height="38" rx="8" fill="#e4f3e1" stroke="#2e7d32" stroke-width="5"/>
+<text x="1023.0" y="208" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<text x="1023.0" y="244" fill="#2e7d32" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">hit</text>
+<rect x="1065" y="46" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="1099.0" y="74" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="1065" y="92" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="1099.0" y="120" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="1065" y="136" width="68" height="38" rx="8" fill="#e4f3e1" stroke="#2e7d32" stroke-width="5"/>
+<text x="1099.0" y="164" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="1065" y="180" width="68" height="38" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="1099.0" y="208" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<text x="1099.0" y="244" fill="#2e7d32" font-size="13" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">hit</text>
+<text x="575" y="296" fill="#c1272d" font-size="18" font-weight="700" text-anchor="middle">10 faults in 13 references</text>
+</svg>

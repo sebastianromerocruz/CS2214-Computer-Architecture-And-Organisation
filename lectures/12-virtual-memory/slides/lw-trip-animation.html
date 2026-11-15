@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CS-UY 2214 | One lw, Start to Finish | Animated</title>
+<style>
+  :root { --ink:#171715; --red:#c1272d; --cream:#f7f7f4; --mute:#6d6d6d; --faint:#9f9f97; --rule:#d9d9d3;
+          --tag:#c1272d; --set:#57068c; --off:#0b7a75; --ok:#1b7f3b; }
+  html, body { margin:0; height:100%; background:var(--cream); overflow:hidden; }
+  .slide { position:absolute; left:50%; margin-left:-666.5px; width:1333px; height:750px; padding:26px 56px 0; box-sizing:border-box;
+           font-family:"Helvetica Neue",Helvetica,Arial,sans-serif; color:var(--ink); transform-origin:top center; }
+  .eyebrow { font-size:15px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); font-weight:600; }
+  h1 { margin:4px 0 0; font-size:34px; letter-spacing:-.01em; }
+  h1 span { color:var(--red); }
+  .count { position:absolute; right:56px; top:30px; font-size:16px; color:var(--faint); font-weight:600; }
+  svg { display:block; margin-top:6px; }
+  .cap { position:absolute; left:56px; right:56px; bottom:20px; border-top:2px solid var(--ink); padding-top:12px;
+         font-size:24px; line-height:1.3; min-height:78px; }
+  .cap b { color:var(--red); }
+  .cap .t { color:var(--tag); font-weight:700 }
+  .cap .s { color:var(--set); font-weight:700 }
+  .cap .o { color:var(--off); font-weight:700 }
+  .notes { position:absolute; left:56px; right:56px; top:96px; background:var(--ink); color:#fff; border-radius:10px; padding:14px 20px;
+           font-size:22px; line-height:1.3; display:none; z-index:5; }
+  .notes b { color:#ffb3b6; font-size:13px; letter-spacing:.14em; text-transform:uppercase; display:block; margin-bottom:4px; }
+  body.show-notes .notes { display:block; }
+  .hint { position:absolute; right:56px; bottom:4px; font-size:12px; color:var(--faint); }
+  /* things that appear only after a packet has arrived (late) or after a check has been made (late2) */
+  .late  { opacity:0; animation:fade .5s ease forwards; animation-delay:1.5s; }
+  .late2 { opacity:0; animation:fade .5s ease forwards; animation-delay:.6s; }
+  @keyframes fade { to { opacity:1 } }
+  text { font-family:"Helvetica Neue",Helvetica,Arial,sans-serif; }
+  .mono { font-family:Menlo,Consolas,monospace; }
+</style>
+</head>
+<body>
+<div class="slide" id="slide">
+  <div class="eyebrow">CS-UY 2214 | Associative caches</div>
+  <h1>One <span>lw</span>, start to finish</h1>
+  <div class="count" id="count"></div>
+  <svg id="svg" viewBox="0 0 1220 540" width="1220" height="540"></svg>
+  <div class="notes" id="notes"></div>
+  <div class="cap" id="cap"></div>
+  <div class="hint">← → step | n speaker note | Home restart | click right / left half</div>
+</div>
+<script>
+(function () {
+  "use strict";
+
+  // ---------- palette and geometry (SVG units)
+  const NS = "http://www.w3.org/2000/svg";
+  const INK = "#171715", RED = "#c1272d", SET = "#57068c", OFF = "#0b7a75", OK = "#1b7f3b";
+  const MUTE = "#6d6d6d", FAINT = "#9f9f97", RULE = "#d9d9d3", GOLD = "#e0a100";
+  const CX0 = 330, ROW0 = 226, RH = 50;            // cache left edge, first row y, row height
+  const DX = 542, DW = 29;                         // data cells: x of first, pitch
+  const RAMX = 1000;
+  const rowY = r => ROW0 + r * RH;
+  const regY = n => 196 + (n - 1) * 36;
+  const ADDR_FROM = [250, 160], ADDR_TO = [CX0 - 36, 100];   // where an address packet travels
+  const REG_X = 250;                                          // where a word packet lands
+
+  // ---------- the data: two RAM blocks, three lw's, the cache contents after each fill
+  const BLOCKS = [
+    { id: 2,  y: 214, addr: 16, d: [7, 42, 9, 13, 5, 88, 21, 3] },
+    { id: 10, y: 334, addr: 80, d: [64, 15, 27, 90, 4, 36, 71, 18] },
+  ];
+  const LW = [
+    { text: "lw $1, 0($2)", addr: "16 + 0 = 16", n: 16 },
+    { text: "lw $3, 0($4)", addr: "80 + 0 = 80", n: 80 },
+    { text: "lw $5, 1($2)", addr: "16 + 1 = 17", n: 17 },
+  ];
+  const EMPTY = { v: 0, tag: null, d: null };
+  const WAY0 = { v: 1, tag: 1, d: BLOCKS[0].d }, WAY1 = { v: 1, tag: 5, d: BLOCKS[1].d };
+  const C0 = [EMPTY, EMPTY, EMPTY, EMPTY];
+  const C1 = [WAY0, EMPTY, EMPTY, EMPTY];
+  const C2 = [WAY0, WAY1, EMPTY, EMPTY];
+  const R0 = { 2: 16, 4: 80 }, R1 = { 1: 7, ...R0 }, R2 = { 1: 7, 3: 64, ...R0 }, R3 = { 1: 7, 3: 64, 5: 42, ...R0 };
+
+  // Step fields:
+  //   stage    highlighted box in the roadmap (-1 none, 5 recap)     cache / regs   state before this step's animation ends
+  //   lw       index into LW: shows the instruction in the CPU       addr: true     show "address = ..." under it
+  //   chop     true: draw the address split for this lw              set            highlight a set (0 or 1)
+  //   marks    per-way tag comparison results                        verdict        "HIT" or "MISS" badge
+  //   ram      highlight a RAM block                                 fill {r, w}    way r is being filled with w (appears late)
+  //   cell     {r, k}: highlight the word that is delivered          regsLate       register values that appear late
+  //   pk       packets {t, from, to, c, wide}                        cap            caption (HTML)
+  //   say      terse speaker note, shown with the n key (the full script is lw-trip-script.md)
+  const word = (r, k, v, reg) => ({ t: String(v), from: [DX + k * DW + 15, rowY(r) + 25], to: [REG_X, regY(reg) + 14], c: OFF });
+  const addrPacket = t => ({ t, from: ADDR_FROM, to: ADDR_TO, c: INK });
+  const blockPacket = (b, r) => ({ t: "8 words", from: [RAMX - 40, BLOCKS[b].y + 14], to: [CX0 + 520, rowY(r) + 25], c: INK, wide: true });
+
+  const S = [
+    { stage: -1, cache: C0, regs: {}, say: `Why this feels artificial: the CPU only talks to memory; the cache is a hidden shortcut.`, cap: `The processor never talks to the cache directly. It talks to <b>memory</b>, and the <b>cache</b> is a small, fast shortcut that the hardware slips in between. Today: three <b>lw</b> instructions, followed from the CPU to the cache and back.` },
+    { stage: -1, cache: C0, regs: R0, prog: true, say: `Setup: empty cache (valid = 0), 2 sets x 2 ways, 8 words per block; $2 = 16, $4 = 80.`, cap: `The cache starts <b>empty</b>: every valid bit is 0. Our cache has 2 sets with 2 ways each, and each block holds 8 words. Registers <b>$2 = 16</b> and <b>$4 = 80</b> are already set.` },
+
+    // ---- lw 1: address 16, cold miss
+    { stage: 0, cache: C0, regs: R0, lw: 0, say: `lw $1, 0($2) reaches its memory stage. All the CPU has is an address to look up.`, cap: `<b>lw $1, 0($2)</b> reaches its memory stage. The CPU needs the word at address <b>$2 + 0</b>. It has no idea whether a cache exists. It only has an address.` },
+    { stage: 0, cache: C0, regs: R0, lw: 0, addr: true, pk: [addrPacket("16")], say: `Address = $2 + 0 = 16. It leaves the CPU and meets the cache first. Stage 1.`, cap: `The CPU computes the address, <b>16</b>, and sends it toward memory. The cache is the first thing it passes.` },
+    { stage: 1, cache: C0, regs: R0, lw: 0, addr: true, chop: true, say: `Chop 16 = 0001 0000: offset = last 3 bits (which of 8 words), set = next bit, tag = the rest.`, cap: `The cache cannot use 16 as a whole. It cuts the address into three pieces. The last 3 bits are the <span class="o">offset</span> (which of the 8 words in a block), the next bit is the <span class="s">set</span> (which row to look in), and the rest is the <span class="t">tag</span> (which block it is).` },
+    { stage: 2, cache: C0, regs: R0, lw: 0, addr: true, chop: true, set: 0, say: `Set bit = 0, so look in set 0 and nowhere else. Stage 3.`, cap: `The <span class="s">set</span> number is <b>0</b>, so the cache looks in set 0, and only there. This block could be in either of the two ways of that set. Nowhere else.` },
+    { stage: 3, cache: C0, regs: R0, lw: 0, addr: true, chop: true, set: 0, marks: [{ r: 0, ok: 0, t: "valid = 0" }, { r: 1, ok: 0, t: "valid = 0" }], verdict: "MISS", say: `Compare tag 1 with each way, but only if valid = 1. Both are 0: MISS. Stage 4.`, cap: `Compare the <span class="t">tag</span> (1) against each way in set 0, but only trust a way whose <b>valid bit</b> is 1. Both ways are empty, so neither can match: a <b>miss</b>.` },
+    { stage: 4, cache: C0, regs: R0, lw: 0, addr: true, chop: true, set: 0, verdict: "MISS", ram: 2, pk: [{ t: "need block 2", from: [CX0 + 520, 280], to: [RAMX - 36, BLOCKS[0].y + 14], c: RED }], say: `Miss: ask RAM for the whole block containing 16, i.e. addresses 16 to 23 (block 2). Stage 5.`, cap: `On a miss the cache asks RAM, but not just for address 16. It asks for the <b>whole block</b> that contains it: addresses 16 to 23, which is block number 2.` },
+    { stage: 4, cache: C0, regs: R0, lw: 0, addr: true, chop: true, set: 0, verdict: "MISS", ram: 2, pk: [blockPacket(0, 0)], fill: { r: 0, w: WAY0 }, say: `Block arrives; first free way (way 0) gets valid = 1, tag = 1 and the 8 words.`, cap: `RAM sends all 8 words back. The cache needs a place to put them. Set 0 has two empty ways; it uses <b>way 0</b>, sets valid to 1, and stores the <span class="t">tag</span> 1 beside the data.` },
+    { stage: 4, cache: C1, regs: R0, lw: 0, addr: true, chop: true, set: 0, verdict: "MISS", cell: { r: 0, k: 0 }, pk: [word(0, 0, 7, 1)], regsLate: { 1: 7 }, say: `Offset 0 picks word 7 from the block; it goes to $1. Slow, but the block is now nearby.`, cap: `Now the data is in the cache, and the <span class="o">offset</span> (0) picks one word out of the block: <b>7</b>. That word travels back to the CPU and lands in <b>$1</b>. The lw is finished, and it was slow.` },
+
+    // ---- lw 2: address 80, second block in the same set
+    { stage: 1, cache: C1, regs: R1, lw: 1, addr: true, chop: true, pk: [addrPacket("80")], say: `lw $3, 0($4): address 80 = 0101 0000. Offset 0, set 0 again, tag 5.`, cap: `Second instruction: <b>lw $3, 0($4)</b>, address <b>80</b>. Same route. The offset is 0, the <span class="s">set</span> is <b>0</b> again, and the <span class="t">tag</span> is 5 this time.` },
+    { stage: 3, cache: C1, regs: R1, lw: 1, addr: true, chop: true, set: 0, marks: [{ r: 0, ok: 0, t: "1 ≠ 5" }, { r: 1, ok: 0, t: "valid = 0" }], verdict: "MISS", say: `Way 0: valid but tag 1 is not 5. Way 1: empty. MISS, but there is a free seat.`, cap: `Set 0 again. Way 0 is valid but holds <span class="t">tag</span> 1, not 5. Way 1 is empty. No match: another <b>miss</b>. In a direct-mapped cache these two blocks would have fought over one row. Here there is a second seat.` },
+    { stage: 4, cache: C1, regs: R1, lw: 1, addr: true, chop: true, set: 0, verdict: "MISS", ram: 10, pk: [blockPacket(1, 1)], fill: { r: 1, w: WAY1 }, say: `Fetch block 10 (80 to 87) into the empty way 1. Block 2 stays. No eviction.`, cap: `The cache fetches block 10 (addresses 80 to 87) from RAM and puts it in the <b>empty way</b>, way 1. Block 2 stays where it is. Nothing had to be evicted.` },
+    { stage: 4, cache: C2, regs: R1, lw: 1, addr: true, chop: true, set: 0, verdict: "MISS", cell: { r: 1, k: 0 }, pk: [word(1, 0, 64, 3)], regsLate: { 3: 64 }, say: `Offset 0 picks 64, which goes to $3. Two lw's, two misses; set 0 is full.`, cap: `Offset 0 picks <b>64</b> from the block, and it goes into <b>$3</b>. Two instructions, two misses. Set 0 is now full.` },
+
+    // ---- lw 3: address 17, hit
+    { stage: 0, cache: C2, regs: R2, lw: 2, addr: true, pk: [addrPacket("17")], say: `lw $5, 1($2): address = 16 + 1 = 17, the next word after the first.`, cap: `Third instruction: <b>lw $5, 1($2)</b>. The address is <b>$2 + 1 = 17</b>, the very next word after the first one we loaded.` },
+    { stage: 1, cache: C2, regs: R2, lw: 2, addr: true, chop: true, set: 0, say: `Chop 17: same tag and set as 16; only the offset changed, to 1. Same block.`, cap: `Chop 17: the <span class="t">tag</span> is 1 and the <span class="s">set</span> is 0, same as address 16. Only the <span class="o">offset</span> changed, to <b>1</b>. Addresses 16 and 17 live in the same block.` },
+    { stage: 3, cache: C2, regs: R2, lw: 2, addr: true, chop: true, set: 0, marks: [{ r: 0, ok: 1, t: "valid, 1 = 1" }, { r: 1, ok: 0, t: "5 ≠ 1" }], verdict: "HIT", say: `Way 0: valid, tag 1 = 1. HIT. Way 1: 5 is not 1. Both compared at once in hardware.`, cap: `Compare in set 0: way 0 is valid and its <span class="t">tag</span> is 1. It matches. A <b>hit</b>: the block we need is already here.` },
+    { stage: 4, cache: C2, regs: R2, lw: 2, addr: true, chop: true, set: 0, marks: [{ r: 0, ok: 1, t: "valid, 1 = 1" }, { r: 1, ok: 0, t: "5 ≠ 1" }], verdict: "HIT", cell: { r: 0, k: 1 }, pk: [word(0, 1, 42, 5)], regsLate: { 5: 42 }, say: `Offset 1 picks 42, straight to $5. RAM was never asked.`, cap: `The <span class="o">offset</span> (1) picks the second word, <b>42</b>, and it goes straight to <b>$5</b>. RAM was never asked. This is the whole reason the cache exists.` },
+
+    { stage: 5, cache: C2, regs: R3, recap: true, say: `Five stages every time; only stage 5 differs: hit reads, miss fetches first.`, cap: `Every lw follows the same five stages. Only stage 5 differs: a <b>hit</b> reads the word at once, a <b>miss</b> first fetches the block. Two misses filled set 0; the third access was nearly free.` },
+  ];
+
+  // ---------- SVG helpers
+  const svg = document.getElementById("svg"), capEl = document.getElementById("cap"), countEl = document.getElementById("count"), notesEl = document.getElementById("notes"), slide = document.getElementById("slide");
+  const el = (name, attrs, parent) => {
+    const e = document.createElementNS(NS, name);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  };
+  const rect = (p, x, y, w, h, o = {}) =>
+    el("rect", { x, y, width: w, height: h, rx: o.rx ?? 8, fill: o.fill ?? "#fff", stroke: o.stroke ?? RULE, "stroke-width": o.sw ?? 2 }, p);
+  const txt = (p, x, y, s, o = {}) => {
+    const e = el("text", { x, y, fill: o.fill ?? INK, "font-size": o.size ?? 18, "font-weight": o.wt ?? 600, "text-anchor": o.anc ?? "middle" }, p);
+    if (o.mono) e.setAttribute("class", "mono");
+    e.textContent = s;
+    return e;
+  };
+
+  // ---------- drawing, one function per region
+  function drawCpu(g, s, late) {
+    const lw = s.lw != null ? LW[s.lw] : null;
+    rect(g, 20, 20, 250, 452, { stroke: INK, sw: 2.5, rx: 12 });
+    txt(g, 145, 52, "CPU", { size: 24, wt: 800 });
+    rect(g, 36, 70, 218, 46, { fill: lw ? "#fff6e0" : "#f1f1ec", stroke: lw ? RED : RULE });
+    txt(g, 145, 100, lw ? lw.text : (s.prog ? "three lw's below" : "instruction"), { size: 19, wt: 700, mono: !!lw, fill: lw ? INK : FAINT });
+    if (lw && s.addr) txt(g, 145, 143, "address = " + lw.addr, { size: 16, mono: true, fill: RED });
+
+    for (let n = 1; n <= 5; n++) {
+      const y = regY(n), val = s.regs[n];
+      rect(g, 36, y, 218, 30, { fill: "#fafaf7", rx: 6 });
+      txt(g, 62, y + 21, "$" + n, { size: 17, mono: true, wt: 700, fill: MUTE });
+      txt(g, 190, y + 21, val != null ? String(val) : "?", { size: 19, mono: true, wt: 700, fill: val != null ? INK : FAINT });
+      if (s.regsLate && s.regsLate[n] != null) {            // the new value replaces the old one once the packet lands
+        const lg = late("late");
+        rect(lg, 36, y, 218, 30, { fill: "#e3f3f1", stroke: OFF, rx: 6 });
+        txt(lg, 62, y + 21, "$" + n, { size: 17, mono: true, wt: 700, fill: MUTE });
+        txt(lg, 190, y + 21, String(s.regsLate[n]), { size: 19, mono: true, wt: 800, fill: OFF });
+      }
+    }
+
+    if (!s.recap) {                                         // the program, with an arrow at the current line
+      txt(g, 36, 384, "the program", { size: 14, anc: "start", fill: FAINT, wt: 700 });
+      LW.forEach((l, k) => {
+        const now = k === s.lw;
+        txt(g, 44, 410 + k * 26, (now ? "▶ " : "  ") + l.text, { size: 18, mono: true, anc: "start", fill: now ? RED : (s.prog ? INK : MUTE), wt: 700 });
+      });
+    }
+  }
+
+  // one way (row) of the cache: valid bit, tag, 8 data cells
+  function drawWay(p, w, r) {
+    const y = rowY(r), bg = w.v ? "#fff" : "#f1f1ec";
+    rect(p, CX0 + 100, y + 2, 38, RH - 8, { fill: bg, rx: 6 });
+    txt(p, CX0 + 119, y + 29, String(w.v), { size: 18, mono: true, fill: w.v ? INK : FAINT, wt: 700 });
+    rect(p, CX0 + 146, y + 2, 54, RH - 8, { fill: bg, stroke: w.v ? RED : RULE, rx: 6 });
+    txt(p, CX0 + 173, y + 29, w.tag != null ? String(w.tag) : "", { size: 19, mono: true, fill: RED, wt: 800 });
+    for (let k = 0; k < 8; k++) {
+      rect(p, DX + k * DW, y + 2, DW - 3, RH - 8, { fill: bg, rx: 4 });
+      if (w.v) txt(p, DX + k * DW + (DW - 3) / 2, y + 29, String(w.d[k]), { size: 15, mono: true, wt: 700 });
+    }
+  }
+
+  function drawCache(g, s, late) {
+    rect(g, CX0 - 10, 166, 640, 282, { stroke: INK, sw: 2.5, rx: 12 });
+    txt(g, CX0 + 310, 192, "CACHE: 2 sets × 2 ways, 8 words per block", { size: 20, wt: 800 });
+    [["set", CX0 + 20], ["way", CX0 + 78], ["V", CX0 + 128], ["tag", CX0 + 172], ["data (8 words)", DX + 4 * DW], ["match?", DX + 8 * DW + 70]]
+      .forEach(([t, x]) => txt(g, x, 216, t, { size: 14, fill: FAINT, wt: 700 }));
+    if (s.set != null) rect(g, CX0 - 4, rowY(s.set * 2) - 4, 628, RH * 2 + 2, { fill: "#f3ecf8", stroke: SET, sw: 3, rx: 10 });
+    for (let r = 0; r < 4; r++) {
+      if (r % 2 === 0) txt(g, CX0 + 20, rowY(r) + 54, String(r / 2), { size: 22, wt: 800, fill: SET });
+      txt(g, CX0 + 78, rowY(r) + 29, String(r % 2), { size: 17, mono: true, fill: MUTE, wt: 700 });
+      drawWay(g, s.fill && s.fill.r === r ? EMPTY : s.cache[r], r);   // a way being filled shows empty until the block arrives
+    }
+    if (s.fill) {
+      const lg = late("late");
+      drawWay(lg, s.fill.w, s.fill.r);
+      rect(lg, CX0 + 96, rowY(s.fill.r) - 1, 560, RH - 2, { fill: "none", stroke: GOLD, sw: 3 });
+    }
+    if (s.cell) rect(late("late2"), DX + s.cell.k * DW - 2, rowY(s.cell.r) - 1, DW + 1, RH - 4, { fill: "none", stroke: OFF, sw: 4, rx: 5 });
+    (s.marks || []).forEach(m => {
+      const lg = late("late2"), x = DX + 8 * DW + 14, y = rowY(m.r), col = m.ok ? OK : RED;
+      txt(lg, x + 4, y + 33, m.ok ? "✔" : "✘", { size: 24, fill: col, anc: "start", wt: 800 });
+      txt(lg, x + 30, y + 31, m.t, { size: 15, fill: col, anc: "start", wt: 700, mono: true });
+    });
+    if (s.verdict) {
+      const lg = late("late2");
+      rect(lg, CX0 + 484, 62, 130, 40, { fill: s.verdict === "HIT" ? OK : RED, stroke: "none" });
+      txt(lg, CX0 + 549, 90, s.verdict, { size: 24, fill: "#fff", wt: 800 });
+    }
+  }
+
+  // the address as 8 bits, split into tag | set | offset
+  function drawChop(g, n) {
+    const bits = n.toString(2).padStart(8, "0");
+    const x0 = CX0 + 10, cw = 40, y = 66;
+    txt(g, x0 - 4, y - 8, "address " + n + " in binary", { size: 14, anc: "start", fill: FAINT, wt: 700 });
+    for (let k = 0; k < 8; k++) {
+      const col = k < 4 ? RED : (k === 4 ? SET : OFF);
+      rect(g, x0 + k * cw, y, cw - 3, 40, { stroke: col, sw: 2.5, rx: 6 });
+      txt(g, x0 + k * cw + (cw - 3) / 2, y + 28, bits[k], { size: 22, mono: true, wt: 800, fill: col });
+    }
+    const label = (k0, k1, name, col, v) => {
+      const xa = x0 + k0 * cw, xb = x0 + k1 * cw - 3;
+      el("line", { x1: xa, y1: y + 48, x2: xb, y2: y + 48, stroke: col, "stroke-width": 3 }, g);
+      txt(g, (xa + xb) / 2, y + 68, name + " = " + v, { size: 16, fill: col, wt: 800 });
+    };
+    label(0, 4, "tag", RED, n >> 4);
+    label(4, 5, "set", SET, (n >> 3) & 1);
+    label(5, 8, "offset", OFF, n & 7);
+  }
+
+  function drawRam(g, s) {
+    rect(g, RAMX - 10, 20, 230, 452, { stroke: INK, sw: 2.5, rx: 12 });
+    txt(g, RAMX + 105, 52, "RAM", { size: 24, wt: 800 });
+    [118, 198, 316, 440].forEach(y => txt(g, RAMX + 105, y, "⋮", { size: 24, fill: FAINT }));
+    BLOCKS.forEach(b => {
+      const on = s.ram === b.id;
+      rect(g, RAMX - 2, b.y - 24, 214, 84, { fill: on ? "#fff6e0" : "#fafaf7", stroke: on ? GOLD : RULE, sw: on ? 3 : 2 });
+      txt(g, RAMX + 6, b.y - 5, "block " + b.id + ": addresses " + b.addr + " to " + (b.addr + 7), { size: 14, anc: "start", fill: MUTE, wt: 700 });
+      b.d.forEach((v, k) => {
+        rect(g, RAMX + 4 + k * 25, b.y + 6, 23, 36, { rx: 4 });
+        txt(g, RAMX + 15.5 + k * 25, b.y + 29, String(v), { size: 13, mono: true, wt: 700 });
+      });
+    });
+  }
+
+  const STAGES = [["1 Address", 140], ["2 Chop it", 150], ["3 Find the set", 180], ["4 Compare tags", 190], ["5 Hit: read word  |  Miss: fetch block, fill, read word", 490]];
+  function drawRoadmap(g, s) {
+    let x = 20;
+    STAGES.forEach(([t, w], k) => {
+      const now = !s.recap && (k === s.stage || (k === 4 && s.stage === 5));
+      const done = s.recap || s.stage > k;
+      rect(g, x, 484, w, 40, { fill: now ? INK : (done ? "#ece9e2" : "#fff"), stroke: now ? INK : RULE });
+      txt(g, x + w / 2, 510, t, { size: 17, wt: 700, fill: now ? "#fff" : (done ? INK : FAINT) });
+      x += w + 12;
+    });
+  }
+
+  // packets fly from -> to, then fade; in static mode (stepping back) they are skipped
+  function drawPackets(g, s, animate) {
+    if (!animate) return;
+    const T = p => `translate(${p[0]}px, ${p[1]}px)`;
+    (s.pk || []).forEach(p => {
+      const w = p.wide ? 150 : Math.max(46, p.t.length * 12 + 20);
+      const pg = el("g", {}, g);
+      rect(pg, -w / 2, -17, w, 34, { fill: p.c === INK ? "#fff" : (p.c === OFF ? "#e3f3f1" : "#fdeaea"), stroke: p.c, sw: 3, rx: 9 });
+      txt(pg, 0, 6, p.t, { size: 18, wt: 800, mono: true, fill: p.c });
+      pg.style.transform = T(p.to);
+      pg.animate([
+        { transform: T(p.from), opacity: 1, offset: 0 },
+        { transform: T(p.to), opacity: 1, offset: 0.72 },
+        { transform: T(p.to), opacity: 1, offset: 0.9 },
+        { transform: T(p.to), opacity: 0, offset: 1 },
+      ], { duration: 1800, easing: "ease-in-out", fill: "forwards" });
+    });
+  }
+
+  function draw(i, animate) {
+    const s = S[i];
+    svg.innerHTML = "";
+    const g = el("g", {}, svg);
+    const late = cls => animate ? el("g", { class: cls }, g) : g;   // fades in after the packets arrive; immediate when stepping back
+
+    drawCpu(g, s, late);
+    drawCache(g, s, late);
+    if (s.chop) drawChop(g, LW[s.lw].n);
+    drawRam(g, s);
+    [[270, CX0 - 10, 160], [CX0 + 630, RAMX - 10, 300]].forEach(([x1, x2, y]) =>   // faint bus guides
+      el("line", { x1, y1: y, x2, y2: y, stroke: RULE, "stroke-width": 3, "stroke-dasharray": "6 6" }, g));
+    drawRoadmap(g, s);
+    drawPackets(g, s, animate);
+
+    capEl.innerHTML = s.cap;
+    notesEl.innerHTML = "<b>Say</b>" + s.say;
+    countEl.textContent = (i + 1) + " / " + S.length;
+    try { history.replaceState(null, "", "#" + (i + 1)); } catch (e) { /* file:// in some browsers */ }
+  }
+
+  // ---------- navigation
+  let cur = 0;
+  function go(i, animate = true) {
+    cur = Math.max(0, Math.min(S.length - 1, i));
+    draw(cur, animate);
+  }
+  window.addEventListener("keydown", e => {
+    if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") go(cur + 1);
+    else if (e.key === "ArrowLeft" || e.key === "PageUp") go(cur - 1, false);
+    else if (e.key === "Home") go(0, false);
+    else if (e.key === "End") go(S.length - 1, false);
+    else if (e.key === "n") document.body.classList.toggle("show-notes");
+    else return;
+    e.preventDefault();
+  });
+  window.addEventListener("click", e => {
+    const forward = e.clientX > window.innerWidth / 2;
+    go(cur + (forward ? 1 : -1), forward);
+  });
+  const fit = () => { slide.style.transform = `scale(${Math.min(window.innerWidth / 1333, window.innerHeight / 750)})`; };
+  window.addEventListener("resize", fit);
+  fit();
+
+  const hash = parseInt(location.hash.slice(1), 10);
+  if (isNaN(hash)) go(0); else go(hash - 1, false);
+})();
+</script>
+</body>
+</html>

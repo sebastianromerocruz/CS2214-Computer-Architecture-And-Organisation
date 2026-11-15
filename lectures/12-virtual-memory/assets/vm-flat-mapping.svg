@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 392" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="392" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">without virtual memory: address 5 is physical cell 5</text>
+<text x="170" y="62" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="middle">APPLICATION ADDRESS SPACE</text>
+<text x="980" y="62" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="middle">PHYSICAL MEMORY</text>
+<rect x="90" y="76" width="160" height="44" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="170" y="105" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">...</text>
+<rect x="900" y="76" width="160" height="44" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="980" y="105" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">...</text>
+<rect x="90" y="120" width="160" height="44" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="170" y="149" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0x0004</text>
+<rect x="900" y="120" width="160" height="44" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="980" y="149" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0x0004</text>
+<line x1="252" y1="142" x2="898" y2="142" stroke="#9f9f97" stroke-width="3" stroke-linecap="round"/>
+<rect x="90" y="164" width="160" height="44" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="170" y="193" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0x0003</text>
+<rect x="900" y="164" width="160" height="44" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="980" y="193" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0x0003</text>
+<line x1="252" y1="186" x2="898" y2="186" stroke="#9f9f97" stroke-width="3" stroke-linecap="round"/>
+<rect x="90" y="208" width="160" height="44" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="170" y="237" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0x0002</text>
+<rect x="900" y="208" width="160" height="44" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="980" y="237" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0x0002</text>
+<line x1="252" y1="230" x2="898" y2="230" stroke="#9f9f97" stroke-width="3" stroke-linecap="round"/>
+<rect x="90" y="252" width="160" height="44" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="170" y="281" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0x0001</text>
+<rect x="900" y="252" width="160" height="44" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="980" y="281" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0x0001</text>
+<line x1="252" y1="274" x2="898" y2="274" stroke="#9f9f97" stroke-width="3" stroke-linecap="round"/>
+<rect x="90" y="296" width="160" height="44" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="170" y="325" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0x0000</text>
+<rect x="900" y="296" width="160" height="44" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="980" y="325" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0x0000</text>
+<line x1="252" y1="318" x2="898" y2="318" stroke="#9f9f97" stroke-width="3" stroke-linecap="round"/>
+<polygon points="360,165 590,165 590,135 740,185 590,235 590,205 360,205" fill="#4a1d96" opacity="0.93"/>
+<text x="470" y="191" fill="#fff" font-size="19" font-weight="700" text-anchor="middle">flat mapping</text>
+<text x="575" y="372" fill="#c1272d" font-size="16" font-weight="700" text-anchor="middle">whatever address the program names, the RAM must have that cell</text>
+</svg>

@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 310" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="310" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">the same string, three policies, three frames</text>
+<text x="136" y="92" fill="#6d6d6d" font-size="16" font-weight="700" text-anchor="end">reference</text>
+<rect x="153" y="70" width="58" height="36" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="182.0" y="96" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">7</text>
+<rect x="219" y="70" width="58" height="36" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="248.0" y="96" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="285" y="70" width="58" height="36" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="314.0" y="96" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<rect x="351" y="70" width="58" height="36" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="380.0" y="96" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="417" y="70" width="58" height="36" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="446.0" y="96" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="483" y="70" width="58" height="36" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="512.0" y="96" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<rect x="549" y="70" width="58" height="36" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="578.0" y="96" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="615" y="70" width="58" height="36" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="644.0" y="96" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">4</text>
+<rect x="681" y="70" width="58" height="36" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="710.0" y="96" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="747" y="70" width="58" height="36" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="776.0" y="96" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<rect x="813" y="70" width="58" height="36" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="842.0" y="96" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<rect x="879" y="70" width="58" height="36" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="908.0" y="96" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<rect x="945" y="70" width="58" height="36" rx="8" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="974.0" y="96" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<text x="136" y="151" fill="#57068c" font-size="19" font-weight="700" text-anchor="end">FIFO</text>
+<rect x="153" y="124" width="58" height="40" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="182.0" y="150" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">F</text>
+<rect x="219" y="124" width="58" height="40" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="248.0" y="150" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">F</text>
+<rect x="285" y="124" width="58" height="40" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="314.0" y="150" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">F</text>
+<rect x="351" y="124" width="58" height="40" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="380.0" y="150" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">F</text>
+<rect x="417" y="124" width="58" height="40" rx="8" fill="#e4f3e1" stroke="#2e7d32" stroke-width="3"/>
+<text x="446.0" y="150" fill="#2e7d32" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">hit</text>
+<rect x="483" y="124" width="58" height="40" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="512.0" y="150" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">F</text>
+<rect x="549" y="124" width="58" height="40" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="578.0" y="150" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">F</text>
+<rect x="615" y="124" width="58" height="40" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="644.0" y="150" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">F</text>
+<rect x="681" y="124" width="58" height="40" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="710.0" y="150" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">F</text>
+<rect x="747" y="124" width="58" height="40" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="776.0" y="150" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">F</text>
+<rect x="813" y="124" width="58" height="40" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="842.0" y="150" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">F</text>
+<rect x="879" y="124" width="58" height="40" rx="8" fill="#e4f3e1" stroke="#2e7d32" stroke-width="3"/>
+<text x="908.0" y="150" fill="#2e7d32" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">hit</text>
+<rect x="945" y="124" width="58" height="40" rx="8" fill="#e4f3e1" stroke="#2e7d32" stroke-width="3"/>
+<text x="974.0" y="150" fill="#2e7d32" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">hit</text>
+<text x="1026" y="151" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">10 faults</text>
+<text x="136" y="205" fill="#57068c" font-size="19" font-weight="700" text-anchor="end">LRU</text>
+<rect x="153" y="178" width="58" height="40" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="182.0" y="204" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">F</text>
+<rect x="219" y="178" width="58" height="40" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="248.0" y="204" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">F</text>
+<rect x="285" y="178" width="58" height="40" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="314.0" y="204" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">F</text>
+<rect x="351" y="178" width="58" height="40" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="380.0" y="204" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">F</text>
+<rect x="417" y="178" width="58" height="40" rx="8" fill="#e4f3e1" stroke="#2e7d32" stroke-width="3"/>
+<text x="446.0" y="204" fill="#2e7d32" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">hit</text>
+<rect x="483" y="178" width="58" height="40" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="512.0" y="204" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">F</text>
+<rect x="549" y="178" width="58" height="40" rx="8" fill="#e4f3e1" stroke="#2e7d32" stroke-width="3"/>
+<text x="578.0" y="204" fill="#2e7d32" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">hit</text>
+<rect x="615" y="178" width="58" height="40" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="644.0" y="204" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">F</text>
+<rect x="681" y="178" width="58" height="40" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="710.0" y="204" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">F</text>
+<rect x="747" y="178" width="58" height="40" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="776.0" y="204" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">F</text>
+<rect x="813" y="178" width="58" height="40" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="842.0" y="204" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">F</text>
+<rect x="879" y="178" width="58" height="40" rx="8" fill="#e4f3e1" stroke="#2e7d32" stroke-width="3"/>
+<text x="908.0" y="204" fill="#2e7d32" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">hit</text>
+<rect x="945" y="178" width="58" height="40" rx="8" fill="#e4f3e1" stroke="#2e7d32" stroke-width="3"/>
+<text x="974.0" y="204" fill="#2e7d32" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">hit</text>
+<text x="1026" y="205" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">9 faults</text>
+<text x="136" y="259" fill="#57068c" font-size="19" font-weight="700" text-anchor="end">OPT</text>
+<rect x="153" y="232" width="58" height="40" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="182.0" y="258" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">F</text>
+<rect x="219" y="232" width="58" height="40" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="248.0" y="258" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">F</text>
+<rect x="285" y="232" width="58" height="40" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="314.0" y="258" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">F</text>
+<rect x="351" y="232" width="58" height="40" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="380.0" y="258" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">F</text>
+<rect x="417" y="232" width="58" height="40" rx="8" fill="#e4f3e1" stroke="#2e7d32" stroke-width="3"/>
+<text x="446.0" y="258" fill="#2e7d32" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">hit</text>
+<rect x="483" y="232" width="58" height="40" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="512.0" y="258" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">F</text>
+<rect x="549" y="232" width="58" height="40" rx="8" fill="#e4f3e1" stroke="#2e7d32" stroke-width="3"/>
+<text x="578.0" y="258" fill="#2e7d32" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">hit</text>
+<rect x="615" y="232" width="58" height="40" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="644.0" y="258" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">F</text>
+<rect x="681" y="232" width="58" height="40" rx="8" fill="#e4f3e1" stroke="#2e7d32" stroke-width="3"/>
+<text x="710.0" y="258" fill="#2e7d32" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">hit</text>
+<rect x="747" y="232" width="58" height="40" rx="8" fill="#e4f3e1" stroke="#2e7d32" stroke-width="3"/>
+<text x="776.0" y="258" fill="#2e7d32" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">hit</text>
+<rect x="813" y="232" width="58" height="40" rx="8" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="842.0" y="258" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">F</text>
+<rect x="879" y="232" width="58" height="40" rx="8" fill="#e4f3e1" stroke="#2e7d32" stroke-width="3"/>
+<text x="908.0" y="258" fill="#2e7d32" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">hit</text>
+<rect x="945" y="232" width="58" height="40" rx="8" fill="#e4f3e1" stroke="#2e7d32" stroke-width="3"/>
+<text x="974.0" y="258" fill="#2e7d32" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">hit</text>
+<text x="1026" y="259" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">7 faults</text>
+<text x="575" y="296" fill="#6d6d6d" font-size="17" font-weight="700" text-anchor="middle">OPT looks into the future, so nobody can build it, but it is the yardstick</text>
+</svg>

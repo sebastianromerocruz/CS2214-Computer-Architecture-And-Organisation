@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 260" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="260" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">without a TLB, every access makes two trips to RAM</text>
+<rect x="40" y="96" width="170" height="80" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="125.0" y="132.0" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle">CPU</text>
+<text x="125.0" y="156.0" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">wants byte 8200</text>
+<rect x="400" y="96" width="260" height="80" rx="10" fill="#e9d9f5" stroke="#57068c" stroke-width="5"/>
+<text x="530.0" y="132.0" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle">page table</text>
+<text x="530.0" y="156.0" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">in RAM</text>
+<rect x="850" y="96" width="260" height="80" rx="10" fill="#e9d9f5" stroke="#57068c" stroke-width="5"/>
+<text x="980.0" y="132.0" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle">the data</text>
+<text x="980.0" y="156.0" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">in RAM</text>
+<line x1="214" y1="136" x2="396" y2="136" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="396.0,136.0 383.0,129.0 383.0,143.0" fill="#c1272d"/>
+<text x="305" y="120" fill="#c1272d" font-size="16" font-weight="700" text-anchor="middle">trip 1</text>
+<text x="305" y="162" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">page 2 -> frame 5</text>
+<line x1="664" y1="136" x2="846" y2="136" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="846.0,136.0 833.0,129.0 833.0,143.0" fill="#c1272d"/>
+<text x="755" y="120" fill="#c1272d" font-size="16" font-weight="700" text-anchor="middle">trip 2</text>
+<text x="755" y="162" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">read 20488</text>
+<text x="575" y="226" fill="#c1272d" font-size="19" font-weight="700" text-anchor="middle">every access is twice as slow: that cannot stand</text>
+</svg>

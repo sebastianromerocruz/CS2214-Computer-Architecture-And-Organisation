@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 420" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="420" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">two programs, the same virtual address 8200, two different places in RAM</text>
+<text x="210" y="58" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">PROGRAM 1'S TABLE</text>
+<text x="210" y="84" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">asks for 8200</text>
+<text x="130" y="108" fill="#6d6d6d" font-size="12" font-weight="700" text-anchor="middle">virtual page</text>
+<text x="290" y="108" fill="#6d6d6d" font-size="12" font-weight="700" text-anchor="middle">physical page</text>
+<rect x="60" y="116" width="300" height="38" rx="8" fill="#fff" stroke="#9f9f97" stroke-width="3"/>
+<text x="130" y="142" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<text x="290" y="142" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">7</text>
+<rect x="60" y="160" width="300" height="38" rx="8" fill="#fff" stroke="#9f9f97" stroke-width="3"/>
+<text x="130" y="186" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<text x="290" y="186" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<rect x="60" y="204" width="300" height="38" rx="8" fill="#e9d9f5" stroke="#57068c" stroke-width="5"/>
+<text x="130" y="230" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<text x="290" y="230" fill="#c1272d" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">5</text>
+<text x="940" y="58" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">PROGRAM 2'S TABLE</text>
+<text x="940" y="84" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">asks for 8200</text>
+<text x="860" y="108" fill="#6d6d6d" font-size="12" font-weight="700" text-anchor="middle">virtual page</text>
+<text x="1020" y="108" fill="#6d6d6d" font-size="12" font-weight="700" text-anchor="middle">physical page</text>
+<rect x="790" y="116" width="300" height="38" rx="8" fill="#fff" stroke="#9f9f97" stroke-width="3"/>
+<text x="860" y="142" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<text x="1020" y="142" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="790" y="160" width="300" height="38" rx="8" fill="#fff" stroke="#9f9f97" stroke-width="3"/>
+<text x="860" y="186" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<text x="1020" y="186" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">6</text>
+<rect x="790" y="204" width="300" height="38" rx="8" fill="#e9d9f5" stroke="#57068c" stroke-width="5"/>
+<text x="860" y="230" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<text x="1020" y="230" fill="#c1272d" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">9</text>
+<rect x="60" y="300" width="80" height="60" rx="8" fill="#fff" stroke="#9f9f97" stroke-width="3"/>
+<text x="100" y="336" fill="#9f9f97" font-size="13" font-weight="600" text-anchor="middle">free</text>
+<text x="100" y="382" fill="#6d6d6d" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame 0</text>
+<rect x="146" y="300" width="80" height="60" rx="8" fill="#fff" stroke="#9f9f97" stroke-width="3"/>
+<text x="186" y="336" fill="#9f9f97" font-size="13" font-weight="600" text-anchor="middle">free</text>
+<text x="186" y="382" fill="#6d6d6d" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame 1</text>
+<rect x="232" y="300" width="80" height="60" rx="8" fill="#fff1cf" stroke="#57068c" stroke-width="3"/>
+<text x="272" y="336" fill="#1a1a1a" font-size="15" font-weight="700" text-anchor="middle">P2 p0</text>
+<text x="272" y="382" fill="#6d6d6d" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame 2</text>
+<rect x="318" y="300" width="80" height="60" rx="8" fill="#d9e8fb" stroke="#57068c" stroke-width="3"/>
+<text x="358" y="336" fill="#1a1a1a" font-size="15" font-weight="700" text-anchor="middle">P1 p1</text>
+<text x="358" y="382" fill="#6d6d6d" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame 3</text>
+<rect x="404" y="300" width="80" height="60" rx="8" fill="#fff" stroke="#9f9f97" stroke-width="3"/>
+<text x="444" y="336" fill="#9f9f97" font-size="13" font-weight="600" text-anchor="middle">free</text>
+<text x="444" y="382" fill="#6d6d6d" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame 4</text>
+<rect x="490" y="300" width="80" height="60" rx="8" fill="#d9e8fb" stroke="#c1272d" stroke-width="5"/>
+<text x="530" y="336" fill="#1a1a1a" font-size="15" font-weight="700" text-anchor="middle">P1 p2</text>
+<text x="530" y="382" fill="#6d6d6d" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame 5</text>
+<rect x="576" y="300" width="80" height="60" rx="8" fill="#fff1cf" stroke="#57068c" stroke-width="3"/>
+<text x="616" y="336" fill="#1a1a1a" font-size="15" font-weight="700" text-anchor="middle">P2 p1</text>
+<text x="616" y="382" fill="#6d6d6d" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame 6</text>
+<rect x="662" y="300" width="80" height="60" rx="8" fill="#d9e8fb" stroke="#57068c" stroke-width="3"/>
+<text x="702" y="336" fill="#1a1a1a" font-size="15" font-weight="700" text-anchor="middle">P1 p0</text>
+<text x="702" y="382" fill="#6d6d6d" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame 7</text>
+<rect x="748" y="300" width="80" height="60" rx="8" fill="#fff" stroke="#9f9f97" stroke-width="3"/>
+<text x="788" y="336" fill="#9f9f97" font-size="13" font-weight="600" text-anchor="middle">free</text>
+<text x="788" y="382" fill="#6d6d6d" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame 8</text>
+<rect x="834" y="300" width="80" height="60" rx="8" fill="#fff1cf" stroke="#c1272d" stroke-width="5"/>
+<text x="874" y="336" fill="#1a1a1a" font-size="15" font-weight="700" text-anchor="middle">P2 p2</text>
+<text x="874" y="382" fill="#6d6d6d" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame 9</text>
+<rect x="920" y="300" width="80" height="60" rx="8" fill="#fff" stroke="#9f9f97" stroke-width="3"/>
+<text x="960" y="336" fill="#9f9f97" font-size="13" font-weight="600" text-anchor="middle">free</text>
+<text x="960" y="382" fill="#6d6d6d" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame 10</text>
+<rect x="1006" y="300" width="80" height="60" rx="8" fill="#fff" stroke="#9f9f97" stroke-width="3"/>
+<text x="1046" y="336" fill="#9f9f97" font-size="13" font-weight="600" text-anchor="middle">free</text>
+<text x="1046" y="382" fill="#6d6d6d" font-size="12" font-weight="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame 11</text>
+<line x1="360" y1="236" x2="530" y2="298" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="530.0,298.0 520.2,287.0 515.4,300.1" fill="#c1272d"/>
+<text x="445" y="250" fill="#c1272d" font-size="18" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">20488</text>
+<line x1="790" y1="236" x2="874" y2="298" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="874.0,298.0 867.7,284.6 859.4,295.9" fill="#c1272d"/>
+<text x="950" y="282" fill="#c1272d" font-size="18" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">36872</text>
+<text x="575" y="408" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">RAM: twelve frames. Different frames, so the two programs never collide.</text>
+</svg>

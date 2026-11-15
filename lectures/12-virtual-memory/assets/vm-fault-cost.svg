@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 330" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="330" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">time per access, on a log scale: each step to the right is 10 times slower</text>
+<text x="340" y="100" fill="#57068c" font-size="19" font-weight="700" text-anchor="end">a RAM access</text>
+<rect x="360" y="66" width="110.0" height="52" rx="10" fill="#e2cdf2" stroke="#57068c" stroke-width="3"/>
+<text x="484.0" y="100" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">100 ns</text>
+<text x="340" y="176" fill="#57068c" font-size="19" font-weight="700" text-anchor="end">a fault served from an SSD</text>
+<rect x="360" y="142" width="395.8482133150113" height="52" rx="10" fill="#d9e8fb" stroke="#57068c" stroke-width="3"/>
+<text x="769.8482133150113" y="176" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">150,000 ns</text>
+<text x="340" y="252" fill="#57068c" font-size="19" font-weight="700" text-anchor="end">a fault served from a hard disk</text>
+<rect x="360" y="218" width="551.278098829275" height="52" rx="10" fill="#fbe9ea" stroke="#57068c" stroke-width="3"/>
+<text x="925.278098829275" y="252" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">8,000,000 ns</text>
+<text x="575" y="312" fill="#c1272d" font-size="19" font-weight="700" text-anchor="middle">a hard-disk fault costs 80,000 RAM accesses</text>
+</svg>

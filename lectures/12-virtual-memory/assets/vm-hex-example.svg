@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 392" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="392" rx="24" fill="#eee6f3"/>
+<rect x="30" y="40" width="300" height="300" rx="12" fill="#fff" stroke="#9f9f97" stroke-width="3"/>
+<text x="180" y="70" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="middle">MACHINE CODE</text>
+<text x="60" y="128" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">sw $3, 0x814020</text>
+<text x="60" y="176" fill="#6d6d6d" font-size="15" font-weight="700" text-anchor="start">virtual address</text>
+<text x="60" y="212" fill="#57068c" font-size="30" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">0x814020</text>
+<rect x="60" y="232" width="110" height="40" rx="0" fill="#e9d9f5" stroke="#57068c" stroke-width="3"/>
+<rect x="170" y="232" width="100" height="40" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="115" y="259" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0x814</text>
+<text x="220" y="259" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0x020</text>
+<text x="115" y="294" fill="#6d6d6d" font-size="15" font-weight="700" text-anchor="middle">page</text>
+<text x="220" y="294" fill="#6d6d6d" font-size="15" font-weight="700" text-anchor="middle">offset</text>
+<text x="180" y="324" fill="#6d6d6d" font-size="13" font-weight="600" text-anchor="middle">4096-byte pages: 3 hex digits of offset</text>
+<rect x="400" y="40" width="330" height="300" rx="12" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="565" y="70" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="middle">THE PAGE TABLE</text>
+<text x="430" y="100" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="start">page</text>
+<text x="560" y="100" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="start">V</text>
+<text x="610" y="100" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="start">physical page</text>
+<rect x="414" y="116" width="302" height="48" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="430" y="148" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">0x813</text>
+<text x="570" y="148" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<text x="630" y="148" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+<rect x="414" y="170" width="302" height="48" rx="0" fill="#e9d9f5" stroke="#c1272d" stroke-width="5"/>
+<text x="430" y="202" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">0x814</text>
+<text x="570" y="202" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<text x="630" y="202" fill="#c1272d" font-size="19" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">0x99</text>
+<rect x="414" y="224" width="302" height="48" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="430" y="256" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">0x815</text>
+<text x="570" y="256" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<text x="630" y="256" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace"></text>
+<text x="565" y="318" fill="#6d6d6d" font-size="13" font-weight="600" text-anchor="middle">the OS fills this in when the program loads</text>
+<rect x="800" y="40" width="320" height="300" rx="12" fill="#fff" stroke="#2e7d32" stroke-width="3"/>
+<text x="960" y="70" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="middle">PHYSICAL ADDRESS</text>
+<text x="830" y="128" fill="#2e7d32" font-size="19" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">frame 0x99</text>
+<text x="830" y="160" fill="#6d6d6d" font-size="19" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">+ offset 0x020</text>
+<text x="830" y="236" fill="#1a1a1a" font-size="34" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">0x99020</text>
+<text x="830" y="266" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="start">the CPU puts this on the RAM</text>
+<line x1="332" y1="190" x2="396" y2="190" stroke="#57068c" stroke-width="5" stroke-linecap="round"/>
+<polygon points="396.0,190.0 383.0,183.0 383.0,197.0" fill="#57068c"/>
+<line x1="732" y1="190" x2="796" y2="190" stroke="#57068c" stroke-width="5" stroke-linecap="round"/>
+<polygon points="796.0,190.0 783.0,183.0 783.0,197.0" fill="#57068c"/>
+<text x="365" y="176" fill="#57068c" font-size="13" font-weight="700" text-anchor="middle">look up</text>
+<text x="765" y="176" fill="#57068c" font-size="13" font-weight="700" text-anchor="middle">frame</text>
+<text x="575" y="372" fill="#c1272d" font-size="16" font-weight="700" text-anchor="middle">page 0x814 is in frame 0x99, so 0x814020 becomes 0x99020</text>
+</svg>

@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 350" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="350" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">the whole trip: the numbers match the list above</text>
+<rect x="30" y="56" width="200" height="90" rx="12" fill="#fff" stroke="#57068c" stroke-width="4"/>
+<circle cx="52" cy="78" r="15" fill="#57068c"/>
+<text x="52" y="84" fill="#fff" font-size="16" font-weight="700" text-anchor="middle">1</text>
+<text x="138.0" y="100" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle">CPU asks for</text>
+<text x="138.0" y="122" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">virtual address 8200</text>
+<rect x="290" y="56" width="200" height="90" rx="12" fill="#e9d9f5" stroke="#57068c" stroke-width="4"/>
+<circle cx="312" cy="78" r="15" fill="#57068c"/>
+<text x="312" y="84" fill="#fff" font-size="16" font-weight="700" text-anchor="middle">2</text>
+<text x="398.0" y="100" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle">TLB: is page 2</text>
+<text x="398.0" y="122" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">in here?</text>
+<rect x="550" y="56" width="260" height="90" rx="12" fill="#fff" stroke="#57068c" stroke-width="4"/>
+<circle cx="572" cy="78" r="15" fill="#57068c"/>
+<text x="572" y="84" fill="#fff" font-size="16" font-weight="700" text-anchor="middle">6</text>
+<text x="688.0" y="100" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle">physical address</text>
+<text x="688.0" y="122" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">= frame x 4096 + offset</text>
+<rect x="870" y="56" width="240" height="90" rx="12" fill="#e9d9f5" stroke="#57068c" stroke-width="4"/>
+<circle cx="892" cy="78" r="15" fill="#57068c"/>
+<text x="892" y="84" fill="#fff" font-size="16" font-weight="700" text-anchor="middle">7</text>
+<text x="998.0" y="100" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle">read the byte</text>
+<text x="998.0" y="122" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">from RAM</text>
+<rect x="290" y="210" width="200" height="90" rx="12" fill="#e9d9f5" stroke="#57068c" stroke-width="4"/>
+<circle cx="312" cy="232" r="15" fill="#57068c"/>
+<text x="312" y="238" fill="#fff" font-size="16" font-weight="700" text-anchor="middle">3</text>
+<text x="398.0" y="254" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle">read the page</text>
+<text x="398.0" y="276" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">table in RAM</text>
+<rect x="550" y="210" width="260" height="90" rx="12" fill="#e9d9f5" stroke="#57068c" stroke-width="4"/>
+<circle cx="572" cy="232" r="15" fill="#57068c"/>
+<text x="572" y="238" fill="#fff" font-size="16" font-weight="700" text-anchor="middle">5</text>
+<text x="688.0" y="254" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle">save the entry</text>
+<text x="688.0" y="276" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">in the TLB</text>
+<rect x="20" y="210" width="210" height="110" rx="12" fill="#fff" stroke="#57068c" stroke-width="4"/>
+<circle cx="42" cy="232" r="15" fill="#57068c"/>
+<text x="42" y="238" fill="#fff" font-size="16" font-weight="700" text-anchor="middle">4</text>
+<text x="133.0" y="254" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle">page fault:</text>
+<text x="133.0" y="276" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">evict, write back,</text>
+<text x="125" y="290" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">load, update</text>
+<line x1="234" y1="101" x2="286" y2="101" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="286.0,101.0 273.0,94.0 273.0,108.0" fill="#c1272d"/>
+<line x1="494" y1="101" x2="546" y2="101" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="546.0,101.0 533.0,94.0 533.0,108.0" fill="#c1272d"/>
+<line x1="814" y1="101" x2="866" y2="101" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="866.0,101.0 853.0,94.0 853.0,108.0" fill="#c1272d"/>
+<text x="520" y="88" fill="#2e7d32" font-size="15" font-weight="700" text-anchor="middle">hit</text>
+<line x1="390" y1="150" x2="390" y2="206" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="390.0,206.0 397.0,193.0 383.0,193.0" fill="#c1272d"/>
+<text x="404" y="184" fill="#c1272d" font-size="15" font-weight="700" text-anchor="start">miss</text>
+<line x1="494" y1="255" x2="546" y2="255" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="546.0,255.0 533.0,248.0 533.0,262.0" fill="#c1272d"/>
+<text x="520" y="242" fill="#57068c" font-size="15" font-weight="700" text-anchor="middle">V = 1</text>
+<line x1="680" y1="206" x2="680" y2="150" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="680.0,150.0 673.0,163.0 687.0,163.0" fill="#c1272d"/>
+<text x="694" y="184" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="start">use the frame</text>
+<line x1="286" y1="255" x2="234" y2="255" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="234.0,255.0 247.0,262.0 247.0,248.0" fill="#c1272d"/>
+<text x="260" y="240" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle">V = 0</text>
+<line x1="125" y1="206" x2="125" y2="150" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="125.0,150.0 118.0,163.0 132.0,163.0" fill="#c1272d"/>
+<text x="138" y="180" fill="#c1272d" font-size="15" font-weight="700" text-anchor="start">retry</text>
+</svg>

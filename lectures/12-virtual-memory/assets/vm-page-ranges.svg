@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 392" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="392" rx="24" fill="#eee6f3"/>
+<text x="40" y="36" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="start">MEMORY IS CUT INTO PAGES OF 4096 = 0x1000 BYTES</text>
+<rect x="40" y="50" width="420" height="34" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="60" y="73" fill="#6d6d6d" font-size="16" font-weight="700" text-anchor="start">address range</text>
+<text x="380" y="73" fill="#6d6d6d" font-size="16" font-weight="700" text-anchor="start">page</text>
+<rect x="40" y="84" width="420" height="46" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="60" y="114" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">0x5000..0x5fff</text>
+<text x="400" y="114" fill="#57068c" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">5</text>
+<rect x="40" y="130" width="420" height="46" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="60" y="160" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">0x4000..0x4fff</text>
+<text x="400" y="160" fill="#57068c" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">4</text>
+<rect x="40" y="176" width="420" height="46" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="60" y="206" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">0x3000..0x3fff</text>
+<text x="400" y="206" fill="#57068c" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<rect x="40" y="222" width="420" height="46" rx="0" fill="#e9d9f5" stroke="#c1272d" stroke-width="5"/>
+<text x="60" y="252" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">0x2000..0x2fff</text>
+<text x="400" y="252" fill="#c1272d" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<rect x="40" y="268" width="420" height="46" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="60" y="298" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">0x1000..0x1fff</text>
+<text x="400" y="298" fill="#57068c" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<rect x="40" y="314" width="420" height="46" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="60" y="344" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">0x0000..0x0fff</text>
+<text x="400" y="344" fill="#57068c" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<path d="M 540 108 Q 540 98 552 98 L 808.0 98 Q 820.0 98 820.0 88 Q 820.0 98 832.0 98 L 1088 98 Q 1100 98 1100 108" fill="none" stroke="#6d6d6d" stroke-width="2.5"/>
+<text x="820" y="76" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle">a 32-bit address</text>
+<path d="M 540 160 Q 540 150 552 150 L 698.0 150 Q 710.0 150 710.0 140 Q 710.0 150 722.0 150 L 868 150 Q 880 150 880 160" fill="none" stroke="#6d6d6d" stroke-width="2.5"/>
+<text x="710" y="128" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">20-bit page number</text>
+<path d="M 890 160 Q 890 150 902 150 L 983.0 150 Q 995.0 150 995.0 140 Q 995.0 150 1007.0 150 L 1088 150 Q 1100 150 1100 160" fill="none" stroke="#6d6d6d" stroke-width="2.5"/>
+<text x="995" y="128" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">12-bit page offset</text>
+<rect x="540" y="166" width="340" height="56" rx="0" fill="#e9d9f5" stroke="#57068c" stroke-width="4"/>
+<rect x="890" y="166" width="210" height="56" rx="0" fill="#fff" stroke="#57068c" stroke-width="4"/>
+<text x="710" y="200" fill="#6d6d6d" font-size="18" font-weight="700" text-anchor="middle">which page</text>
+<text x="995" y="200" fill="#6d6d6d" font-size="18" font-weight="700" text-anchor="middle">which byte in the page</text>
+<text x="540" y="248" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="start">MSB</text>
+<text x="1100" y="248" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="end">LSB</text>
+<text x="1100" y="248" fill="#1a1a1a" font-size="1" font-weight="700" text-anchor="middle"></text>
+<text x="540" y="276" fill="#c1272d" font-size="16" font-weight="700" text-anchor="start">example: 8200 = 0x2008, so it is in page 2</text>
+<text x="540" y="306" fill="#6d6d6d" font-size="17" font-weight="700" text-anchor="start">in other words:</text>
+<text x="560" y="334" fill="#1a1a1a" font-size="21" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">page   = address // 4096</text>
+<text x="560" y="366" fill="#1a1a1a" font-size="21" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">offset = address %  4096</text>
+</svg>

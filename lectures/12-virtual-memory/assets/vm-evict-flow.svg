@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 392" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="392" rx="24" fill="#eee6f3"/>
+<rect x="20" y="150" width="210" height="64" rx="10" fill="#e9d9f5" stroke="#57068c" stroke-width="4"/>
+<text x="125.0" y="179.0" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">program asks for</text>
+<text x="125.0" y="201.0" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">a page of memory</text>
+<polygon points="370,127 470,182 370,237 270,182" fill="#fff" stroke="#57068c" stroke-width="4"/>
+<text x="370" y="188" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">memory pressure?</text>
+<rect x="30" y="300" width="230" height="60" rx="10" fill="#e4f3e1" stroke="#2e7d32" stroke-width="4"/>
+<text x="145.0" y="327.0" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">allocate the page</text>
+<text x="145.0" y="349.0" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">no eviction needed</text>
+<line x1="232" y1="182" x2="266" y2="182" stroke="#6d6d6d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="266.0,182.0 253.0,175.0 253.0,189.0" fill="#6d6d6d"/>
+<line x1="370" y1="238" x2="370" y2="330" stroke="#2e7d32" stroke-width="4" stroke-linecap="round"/>
+<line x1="370" y1="330" x2="262" y2="330" stroke="#2e7d32" stroke-width="4" stroke-linecap="round"/>
+<polygon points="262.0,330.0 275.0,337.0 275.0,323.0" fill="#2e7d32"/>
+<text x="392" y="270" fill="#2e7d32" font-size="15" font-weight="700" text-anchor="middle">no</text>
+<line x1="472" y1="182" x2="520" y2="182" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="520.0,182.0 507.0,175.0 507.0,189.0" fill="#c1272d"/>
+<text x="496" y="172" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle">yes</text>
+<rect x="522" y="150" width="220" height="64" rx="10" fill="#fbeceb" stroke="#c1272d" stroke-width="4"/>
+<text x="632.0" y="179.0" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">choose a seldom-</text>
+<text x="632.0" y="201.0" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">used page to evict</text>
+<line x1="744" y1="182" x2="806" y2="182" stroke="#6d6d6d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="806.0,182.0 793.0,175.0 793.0,189.0" fill="#6d6d6d"/>
+<polygon points="890,127 975,182 890,237 805,182" fill="#fff" stroke="#57068c" stroke-width="4"/>
+<text x="890" y="188" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">is it dirty ?</text>
+<line x1="975" y1="182" x2="1030" y2="182" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="1030.0,182.0 1017.0,175.0 1017.0,189.0" fill="#c1272d"/>
+<text x="1002" y="172" fill="#c1272d" font-size="15" font-weight="700" text-anchor="middle">yes</text>
+<rect x="1032" y="150" width="110" height="64" rx="10" fill="#fbeceb" stroke="#c1272d" stroke-width="4"/>
+<text x="1087.0" y="179.0" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">copy it to</text>
+<text x="1087.0" y="201.0" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">disk</text>
+<line x1="890" y1="238" x2="890" y2="296" stroke="#2e7d32" stroke-width="4" stroke-linecap="round"/>
+<polygon points="890.0,296.0 897.0,283.0 883.0,283.0" fill="#2e7d32"/>
+<text x="912" y="270" fill="#2e7d32" font-size="15" font-weight="700" text-anchor="middle">no</text>
+<rect x="790" y="298" width="200" height="60" rx="10" fill="#e4f3e1" stroke="#2e7d32" stroke-width="4"/>
+<text x="890.0" y="325.0" fill="#1a1a1a" font-size="17" font-weight="700" text-anchor="middle">just discard it</text>
+<text x="890.0" y="347.0" fill="#6d6d6d" font-size="15" font-weight="600" text-anchor="middle">a copy is on disk</text>
+<line x1="1087" y1="216" x2="1087" y2="328" stroke="#6d6d6d" stroke-width="4" stroke-linecap="round"/>
+<line x1="1087" y1="328" x2="992" y2="328" stroke="#6d6d6d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="992.0,328.0 1005.0,335.0 1005.0,321.0" fill="#6d6d6d"/>
+<text x="940" y="380" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="middle">then mark the page invalid</text>
+</svg>

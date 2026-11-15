@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 420" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="420" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">one entry per virtual page: V, D, P, and where the page is</text>
+<text x="70" y="64" fill="#6d6d6d" font-size="13" font-weight="700" text-anchor="middle">virtual page</text>
+<text x="215" y="64" fill="#6d6d6d" font-size="13" font-weight="700" text-anchor="middle">V valid</text>
+<text x="320" y="64" fill="#6d6d6d" font-size="13" font-weight="700" text-anchor="middle">D dirty</text>
+<text x="425" y="64" fill="#6d6d6d" font-size="13" font-weight="700" text-anchor="middle">P protect</text>
+<text x="560" y="64" fill="#6d6d6d" font-size="13" font-weight="700" text-anchor="middle">frame or disk</text>
+<text x="760" y="64" fill="#6d6d6d" font-size="13" font-weight="700" text-anchor="start">what it means</text>
+<rect x="40" y="76" width="1070" height="50" rx="10" fill="#fff" stroke="#9f9f97" stroke-width="3"/>
+<text x="70" y="109" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<text x="215" y="109" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<text x="320" y="109" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<text x="425" y="109" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<text x="560" y="109" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame 7</text>
+<text x="700" y="108" fill="#1a1a1a" font-size="17" font-weight="600" text-anchor="start">in RAM: the hardware just reads it</text>
+<rect x="40" y="134" width="1070" height="50" rx="10" fill="#fbeceb" stroke="#c1272d" stroke-width="4"/>
+<text x="70" y="167" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<text x="215" y="167" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<text x="320" y="167" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">-</text>
+<text x="425" y="167" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">-</text>
+<text x="560" y="167" fill="#c1272d" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">on disk</text>
+<text x="700" y="166" fill="#c1272d" font-size="17" font-weight="600" text-anchor="start">fault: the OS fetches it from disk</text>
+<rect x="40" y="192" width="1070" height="50" rx="10" fill="#fff" stroke="#9f9f97" stroke-width="3"/>
+<text x="70" y="225" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<text x="215" y="225" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<text x="320" y="225" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<text x="425" y="225" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<text x="560" y="225" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">frame 5</text>
+<text x="700" y="224" fill="#1a1a1a" font-size="17" font-weight="600" text-anchor="start">in RAM, not written to yet</text>
+<rect x="40" y="250" width="1070" height="50" rx="10" fill="#fbeceb" stroke="#c1272d" stroke-width="4"/>
+<text x="70" y="283" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<text x="215" y="283" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<text x="320" y="283" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">-</text>
+<text x="425" y="283" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">-</text>
+<text x="560" y="283" fill="#c1272d" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">none</text>
+<text x="700" y="282" fill="#c1272d" font-size="17" font-weight="600" text-anchor="start">never allocated: the OS stops the program</text>
+<rect x="40" y="308" width="1070" height="50" rx="10" fill="#e9d9f5" stroke="#57068c" stroke-width="4"/>
+<text x="70" y="341" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">4</text>
+<text x="215" y="341" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">0</text>
+<text x="320" y="341" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">-</text>
+<text x="425" y="341" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">-</text>
+<text x="560" y="341" fill="#c1272d" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">none</text>
+<text x="700" y="340" fill="#1a1a1a" font-size="17" font-weight="600" text-anchor="start">allocated, untouched: a zeroed frame</text>
+<text x="575" y="398" fill="#c1272d" font-size="17" font-weight="700" text-anchor="middle">V = 0 only says: not in RAM. The OS's own records say which kind.</text>
+</svg>

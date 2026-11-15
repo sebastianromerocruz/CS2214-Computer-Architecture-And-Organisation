@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 392" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="392" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">a 32-bit address, and how many 4 KB pages it can reach</text>
+<text x="60" y="66" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="start">ONE 32-BIT ADDRESS</text>
+<rect x="60" y="76" width="690" height="52" rx="8" fill="#e9d9f5" stroke="#57068c" stroke-width="4"/>
+<text x="405" y="111" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle">20 bits: which page</text>
+<rect x="750" y="76" width="340" height="52" rx="8" fill="#fff" stroke="#9f9f97" stroke-width="4"/>
+<text x="920" y="111" fill="#6d6d6d" font-size="19" font-weight="700" text-anchor="middle">12 bits: which byte in the page</text>
+<text x="60" y="152" fill="#6d6d6d" font-size="17" font-weight="700" text-anchor="start">2^32 different addresses, and each one names a single byte: 2^32 bytes in all</text>
+<text x="60" y="196" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="start">THE ADDRESS SPACE, CUT INTO PAGES</text>
+<rect x="60" y="206" width="140" height="52" rx="8" fill="#fff" stroke="#57068c" stroke-width="4"/>
+<text x="130" y="238" fill="#57068c" font-size="18" font-weight="700" text-anchor="middle">page 0</text>
+<rect x="220" y="206" width="140" height="52" rx="8" fill="#fff" stroke="#57068c" stroke-width="4"/>
+<text x="290" y="238" fill="#57068c" font-size="18" font-weight="700" text-anchor="middle">page 1</text>
+<rect x="380" y="206" width="140" height="52" rx="8" fill="#fff" stroke="#57068c" stroke-width="4"/>
+<text x="450" y="238" fill="#57068c" font-size="18" font-weight="700" text-anchor="middle">page 2</text>
+<rect x="540" y="206" width="140" height="52" rx="8" fill="#fff" stroke="#57068c" stroke-width="4"/>
+<text x="610" y="238" fill="#57068c" font-size="18" font-weight="700" text-anchor="middle">page 3</text>
+<text x="760" y="238" fill="#6d6d6d" font-size="30" font-weight="700" text-anchor="middle">...</text>
+<rect x="940" y="206" width="150" height="52" rx="8" fill="#fff" stroke="#57068c" stroke-width="4"/>
+<text x="1015" y="238" fill="#57068c" font-size="18" font-weight="700" text-anchor="middle">last page</text>
+<line x1="60" y1="276" x2="1090" y2="276" stroke="#9f9f97" stroke-width="3" stroke-linecap="round"/>
+<text x="575" y="300" fill="#6d6d6d" font-size="17" font-weight="700" text-anchor="middle">every page is 2^12 = 4,096 bytes</text>
+<text x="575" y="350" fill="#1a1a1a" font-size="28" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2^32 bytes  /  2^12 bytes per page  =  2^20 pages</text>
+<text x="575" y="378" fill="#c1272d" font-size="17" font-weight="700" text-anchor="middle">= 1,048,576 pages, so a flat table needs 1,048,576 entries</text>
+</svg>
