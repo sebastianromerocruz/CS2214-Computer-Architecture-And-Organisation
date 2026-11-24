@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 392" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="392" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">next week</text>
+<rect x="45" y="150" width="180" height="100" rx="10" fill="#e9d9f5" stroke="#57068c" stroke-width="5"/>
+<text x="135.0" y="196.0" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle">arithmetic</text>
+<text x="135.0" y="220.0" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">and logic</text>
+<line x1="229" y1="200" x2="265" y2="200" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="265.0,200.0 252.0,193.0 252.0,207.0" fill="#c1272d"/>
+<rect x="269" y="150" width="180" height="100" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="359.0" y="196.0" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle">cmp and</text>
+<text x="359.0" y="220.0" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">conditional jumps</text>
+<line x1="453" y1="200" x2="489" y2="200" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="489.0,200.0 476.0,193.0 476.0,207.0" fill="#c1272d"/>
+<rect x="493" y="150" width="180" height="100" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="583.0" y="196.0" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle">C's if and for</text>
+<text x="583.0" y="220.0" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">in x86</text>
+<line x1="677" y1="200" x2="713" y2="200" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="713.0,200.0 700.0,193.0 700.0,207.0" fill="#c1272d"/>
+<rect x="717" y="150" width="180" height="100" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="807.0" y="207.0" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle">the stack</text>
+<line x1="901" y1="200" x2="937" y2="200" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="937.0,200.0 924.0,193.0 924.0,207.0" fill="#c1272d"/>
+<rect x="941" y="150" width="180" height="100" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="1031.0" y="207.0" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle">call and ret</text>
+<text x="575" y="118" fill="#6d6d6d" font-size="19" font-weight="700" text-anchor="middle">what you will be able to write</text>
+<text x="575" y="310" fill="#6d6d6d" font-size="17" font-weight="700" text-anchor="middle">each step builds on the last</text>
+</svg>

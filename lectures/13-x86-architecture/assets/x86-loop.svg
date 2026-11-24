@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 392" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="392" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">the same loop in E15, E20 and x86</text>
+<rect x="95" y="130" width="190" height="84" rx="10" fill="#e9d9f5" stroke="#57068c" stroke-width="4"><animate attributeName="fill" values="#e9d9f5;#ffffff;#ffffff;#ffffff;#e9d9f5" keyTimes="0;0.25;0.5;0.75;1" calcMode="discrete" dur="6s" repeatCount="indefinite"/></rect>
+<text x="190" y="166" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle">fetch</text>
+<text x="190" y="192" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">read the instruction</text>
+<text x="190" y="118" fill="#c1272d" font-size="16" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">1</text>
+<line x1="289" y1="172" x2="346" y2="172" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="346.0,172.0 333.0,165.0 333.0,179.0" fill="#c1272d"/>
+<rect x="350" y="130" width="190" height="84" rx="10" fill="#fff" stroke="#57068c" stroke-width="4"><animate attributeName="fill" values="#ffffff;#e9d9f5;#ffffff;#ffffff;#ffffff" keyTimes="0;0.25;0.5;0.75;1" calcMode="discrete" dur="6s" repeatCount="indefinite"/></rect>
+<text x="445" y="166" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle">decode</text>
+<text x="445" y="192" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">work out what it is</text>
+<text x="445" y="118" fill="#c1272d" font-size="16" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2</text>
+<line x1="544" y1="172" x2="601" y2="172" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="601.0,172.0 588.0,165.0 588.0,179.0" fill="#c1272d"/>
+<rect x="605" y="130" width="190" height="84" rx="10" fill="#fff" stroke="#57068c" stroke-width="4"><animate attributeName="fill" values="#ffffff;#ffffff;#e9d9f5;#ffffff;#ffffff" keyTimes="0;0.25;0.5;0.75;1" calcMode="discrete" dur="6s" repeatCount="indefinite"/></rect>
+<text x="700" y="166" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle">execute</text>
+<text x="700" y="192" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">do it</text>
+<text x="700" y="118" fill="#c1272d" font-size="16" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">3</text>
+<line x1="799" y1="172" x2="856" y2="172" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="856.0,172.0 843.0,165.0 843.0,179.0" fill="#c1272d"/>
+<rect x="860" y="130" width="190" height="84" rx="10" fill="#fff" stroke="#57068c" stroke-width="4"><animate attributeName="fill" values="#ffffff;#ffffff;#ffffff;#e9d9f5;#ffffff" keyTimes="0;0.25;0.5;0.75;1" calcMode="discrete" dur="6s" repeatCount="indefinite"/></rect>
+<text x="955" y="166" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle">next</text>
+<text x="955" y="192" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">move to the one after</text>
+<text x="955" y="118" fill="#c1272d" font-size="16" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">4</text>
+<path d="M 950 220 L 950 300 L 190 300 L 190 230" fill="none" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="190,220 182,236 198,236" fill="#c1272d"/>
+<text x="570" y="334" fill="#6d6d6d" font-size="18" font-weight="700" text-anchor="middle">and around again, forever</text>
+</svg>

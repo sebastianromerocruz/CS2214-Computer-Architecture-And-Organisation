@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 392" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="392" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">a 32-bit address is a 32-bit number, and each one names one byte</text>
+<text x="75" y="66" fill="#6d6d6d" font-size="16" font-weight="700" text-anchor="start">a register or an address</text>
+<rect x="75.0" y="80" width="29" height="46" rx="4" fill="#e9d9f5" stroke="#57068c" stroke-width="2"/>
+<rect x="106.25" y="80" width="29" height="46" rx="4" fill="#e9d9f5" stroke="#57068c" stroke-width="2"/>
+<rect x="137.5" y="80" width="29" height="46" rx="4" fill="#e9d9f5" stroke="#57068c" stroke-width="2"/>
+<rect x="168.75" y="80" width="29" height="46" rx="4" fill="#e9d9f5" stroke="#57068c" stroke-width="2"/>
+<rect x="200.0" y="80" width="29" height="46" rx="4" fill="#fff" stroke="#57068c" stroke-width="2"/>
+<rect x="231.25" y="80" width="29" height="46" rx="4" fill="#fff" stroke="#57068c" stroke-width="2"/>
+<rect x="262.5" y="80" width="29" height="46" rx="4" fill="#fff" stroke="#57068c" stroke-width="2"/>
+<rect x="293.75" y="80" width="29" height="46" rx="4" fill="#fff" stroke="#57068c" stroke-width="2"/>
+<rect x="325.0" y="80" width="29" height="46" rx="4" fill="#e9d9f5" stroke="#57068c" stroke-width="2"/>
+<rect x="356.25" y="80" width="29" height="46" rx="4" fill="#e9d9f5" stroke="#57068c" stroke-width="2"/>
+<rect x="387.5" y="80" width="29" height="46" rx="4" fill="#e9d9f5" stroke="#57068c" stroke-width="2"/>
+<rect x="418.75" y="80" width="29" height="46" rx="4" fill="#e9d9f5" stroke="#57068c" stroke-width="2"/>
+<rect x="450.0" y="80" width="29" height="46" rx="4" fill="#fff" stroke="#57068c" stroke-width="2"/>
+<rect x="481.25" y="80" width="29" height="46" rx="4" fill="#fff" stroke="#57068c" stroke-width="2"/>
+<rect x="512.5" y="80" width="29" height="46" rx="4" fill="#fff" stroke="#57068c" stroke-width="2"/>
+<rect x="543.75" y="80" width="29" height="46" rx="4" fill="#fff" stroke="#57068c" stroke-width="2"/>
+<rect x="575.0" y="80" width="29" height="46" rx="4" fill="#e9d9f5" stroke="#57068c" stroke-width="2"/>
+<rect x="606.25" y="80" width="29" height="46" rx="4" fill="#e9d9f5" stroke="#57068c" stroke-width="2"/>
+<rect x="637.5" y="80" width="29" height="46" rx="4" fill="#e9d9f5" stroke="#57068c" stroke-width="2"/>
+<rect x="668.75" y="80" width="29" height="46" rx="4" fill="#e9d9f5" stroke="#57068c" stroke-width="2"/>
+<rect x="700.0" y="80" width="29" height="46" rx="4" fill="#fff" stroke="#57068c" stroke-width="2"/>
+<rect x="731.25" y="80" width="29" height="46" rx="4" fill="#fff" stroke="#57068c" stroke-width="2"/>
+<rect x="762.5" y="80" width="29" height="46" rx="4" fill="#fff" stroke="#57068c" stroke-width="2"/>
+<rect x="793.75" y="80" width="29" height="46" rx="4" fill="#fff" stroke="#57068c" stroke-width="2"/>
+<rect x="825.0" y="80" width="29" height="46" rx="4" fill="#e9d9f5" stroke="#57068c" stroke-width="2"/>
+<rect x="856.25" y="80" width="29" height="46" rx="4" fill="#e9d9f5" stroke="#57068c" stroke-width="2"/>
+<rect x="887.5" y="80" width="29" height="46" rx="4" fill="#e9d9f5" stroke="#57068c" stroke-width="2"/>
+<rect x="918.75" y="80" width="29" height="46" rx="4" fill="#e9d9f5" stroke="#57068c" stroke-width="2"/>
+<rect x="950.0" y="80" width="29" height="46" rx="4" fill="#fff" stroke="#57068c" stroke-width="2"/>
+<rect x="981.25" y="80" width="29" height="46" rx="4" fill="#fff" stroke="#57068c" stroke-width="2"/>
+<rect x="1012.5" y="80" width="29" height="46" rx="4" fill="#fff" stroke="#57068c" stroke-width="2"/>
+<rect x="1043.75" y="80" width="29" height="46" rx="4" fill="#fff" stroke="#57068c" stroke-width="2"/>
+<text x="75" y="150" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="start">bit 31</text>
+<text x="1075" y="150" fill="#6d6d6d" font-size="14" font-weight="700" text-anchor="end">bit 0</text>
+<line x1="575" y1="170" x2="575" y2="222" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="575.0,222.0 582.0,209.0 568.0,209.0" fill="#c1272d"/>
+<text x="600" y="204" fill="#c1272d" font-size="17" font-weight="700" text-anchor="start">picks one byte of memory</text>
+<rect x="75" y="236" width="1000" height="70" rx="0" fill="#fff" stroke="#57068c" stroke-width="4"/>
+<line x1="137.5" y1="236" x2="137.5" y2="306" stroke="#d9cfe3" stroke-width="1.5"/>
+<line x1="200.0" y1="236" x2="200.0" y2="306" stroke="#d9cfe3" stroke-width="1.5"/>
+<line x1="262.5" y1="236" x2="262.5" y2="306" stroke="#d9cfe3" stroke-width="1.5"/>
+<line x1="325.0" y1="236" x2="325.0" y2="306" stroke="#d9cfe3" stroke-width="1.5"/>
+<line x1="387.5" y1="236" x2="387.5" y2="306" stroke="#d9cfe3" stroke-width="1.5"/>
+<line x1="450.0" y1="236" x2="450.0" y2="306" stroke="#d9cfe3" stroke-width="1.5"/>
+<line x1="512.5" y1="236" x2="512.5" y2="306" stroke="#d9cfe3" stroke-width="1.5"/>
+<line x1="575.0" y1="236" x2="575.0" y2="306" stroke="#d9cfe3" stroke-width="1.5"/>
+<line x1="637.5" y1="236" x2="637.5" y2="306" stroke="#d9cfe3" stroke-width="1.5"/>
+<line x1="700.0" y1="236" x2="700.0" y2="306" stroke="#d9cfe3" stroke-width="1.5"/>
+<line x1="762.5" y1="236" x2="762.5" y2="306" stroke="#d9cfe3" stroke-width="1.5"/>
+<line x1="825.0" y1="236" x2="825.0" y2="306" stroke="#d9cfe3" stroke-width="1.5"/>
+<line x1="887.5" y1="236" x2="887.5" y2="306" stroke="#d9cfe3" stroke-width="1.5"/>
+<line x1="950.0" y1="236" x2="950.0" y2="306" stroke="#d9cfe3" stroke-width="1.5"/>
+<line x1="1012.5" y1="236" x2="1012.5" y2="306" stroke="#d9cfe3" stroke-width="1.5"/>
+<text x="575" y="278" fill="#57068c" font-size="28" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">2^32 bytes = 4 GB</text>
+<text x="75" y="332" fill="#6d6d6d" font-size="18" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">0x00000000</text>
+<text x="1075" y="332" fill="#6d6d6d" font-size="18" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">0xffffffff</text>
+<text x="575" y="366" fill="#6d6d6d" font-size="17" font-weight="700" text-anchor="middle">the most a 32-bit program can name</text>
+</svg>

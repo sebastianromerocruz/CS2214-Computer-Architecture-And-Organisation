@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 392" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="392" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">eight general-purpose registers, each 32 bits wide</text>
+<rect x="105" y="64" width="200" height="90" rx="10" fill="#e9d9f5" stroke="#57068c" stroke-width="5"/>
+<text x="205.0" y="105.0" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">eax</text>
+<text x="205.0" y="129.0" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">32 bits</text>
+<rect x="355" y="64" width="200" height="90" rx="10" fill="#e9d9f5" stroke="#57068c" stroke-width="5"/>
+<text x="455.0" y="105.0" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">ebx</text>
+<text x="455.0" y="129.0" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">32 bits</text>
+<rect x="605" y="64" width="200" height="90" rx="10" fill="#e9d9f5" stroke="#57068c" stroke-width="5"/>
+<text x="705.0" y="105.0" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">ecx</text>
+<text x="705.0" y="129.0" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">32 bits</text>
+<rect x="855" y="64" width="200" height="90" rx="10" fill="#e9d9f5" stroke="#57068c" stroke-width="5"/>
+<text x="955.0" y="105.0" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">edx</text>
+<text x="955.0" y="129.0" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">32 bits</text>
+<rect x="105" y="184" width="200" height="90" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="205.0" y="225.0" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">ebp</text>
+<text x="205.0" y="249.0" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">32 bits</text>
+<rect x="355" y="184" width="200" height="90" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="455.0" y="225.0" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">esp</text>
+<text x="455.0" y="249.0" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">32 bits</text>
+<rect x="605" y="184" width="200" height="90" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="705.0" y="225.0" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">esi</text>
+<text x="705.0" y="249.0" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">32 bits</text>
+<rect x="855" y="184" width="200" height="90" rx="10" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="955.0" y="225.0" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">edi</text>
+<text x="955.0" y="249.0" fill="#6d6d6d" font-size="14" font-weight="600" text-anchor="middle">32 bits</text>
+<text x="575" y="326" fill="#c1272d" font-size="19" font-weight="700" text-anchor="middle">the e is for extended: these were 16 bits wide before the 80386</text>
+<text x="575" y="358" fill="#6d6d6d" font-size="17" font-weight="700" text-anchor="middle">two more you cannot name like the rest: eip and eflags</text>
+</svg>

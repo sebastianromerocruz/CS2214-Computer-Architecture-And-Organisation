@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 392" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="392" rx="24" fill="#eee6f3"/>
+<text x="290" y="44" fill="#57068c" font-size="19" font-weight="700" text-anchor="middle">eax ebx ecx edx: down to the bytes</text>
+<text x="850" y="44" fill="#c1272d" font-size="19" font-weight="700" text-anchor="middle">ebp esp esi edi: only to 16 bits</text>
+<rect x="30" y="66" width="250" height="56" rx="6" fill="#e9d9f5" stroke="#57068c" stroke-width="3"/>
+<text x="155" y="103" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">eax</text>
+<rect x="280" y="66" width="125" height="56" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="342" y="103" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">ax</text>
+<rect x="405" y="66" width="62" height="56" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="436" y="103" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">ah</text>
+<rect x="467" y="66" width="62" height="56" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="498" y="103" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">al</text>
+<rect x="30" y="142" width="250" height="56" rx="6" fill="#e9d9f5" stroke="#57068c" stroke-width="3"/>
+<text x="155" y="179" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">ebx</text>
+<rect x="280" y="142" width="125" height="56" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="342" y="179" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">bx</text>
+<rect x="405" y="142" width="62" height="56" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="436" y="179" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">bh</text>
+<rect x="467" y="142" width="62" height="56" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="498" y="179" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">bl</text>
+<rect x="30" y="218" width="250" height="56" rx="6" fill="#e9d9f5" stroke="#57068c" stroke-width="3"/>
+<text x="155" y="255" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">ecx</text>
+<rect x="280" y="218" width="125" height="56" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="342" y="255" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">cx</text>
+<rect x="405" y="218" width="62" height="56" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="436" y="255" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">ch</text>
+<rect x="467" y="218" width="62" height="56" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="498" y="255" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">cl</text>
+<rect x="30" y="294" width="250" height="56" rx="6" fill="#e9d9f5" stroke="#57068c" stroke-width="3"/>
+<text x="155" y="331" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">edx</text>
+<rect x="280" y="294" width="125" height="56" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="342" y="331" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">dx</text>
+<rect x="405" y="294" width="62" height="56" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="436" y="331" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">dh</text>
+<rect x="467" y="294" width="62" height="56" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="498" y="331" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">dl</text>
+<rect x="600" y="66" width="250" height="56" rx="6" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="725" y="103" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">ebp</text>
+<rect x="850" y="66" width="125" height="56" rx="0" fill="#fff" stroke="#c1272d" stroke-width="3"/>
+<text x="912" y="103" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">bp</text>
+<rect x="975" y="66" width="125" height="56" rx="0" fill="#f3f3f0" stroke="#c8c8c0" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="1037" y="100" fill="#9f9f97" font-size="16" font-weight="600" text-anchor="middle">no bytes</text>
+<rect x="600" y="142" width="250" height="56" rx="6" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="725" y="179" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">esp</text>
+<rect x="850" y="142" width="125" height="56" rx="0" fill="#fff" stroke="#c1272d" stroke-width="3"/>
+<text x="912" y="179" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">sp</text>
+<rect x="975" y="142" width="125" height="56" rx="0" fill="#f3f3f0" stroke="#c8c8c0" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="1037" y="176" fill="#9f9f97" font-size="16" font-weight="600" text-anchor="middle">no bytes</text>
+<rect x="600" y="218" width="250" height="56" rx="6" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="725" y="255" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">esi</text>
+<rect x="850" y="218" width="125" height="56" rx="0" fill="#fff" stroke="#c1272d" stroke-width="3"/>
+<text x="912" y="255" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">si</text>
+<rect x="975" y="218" width="125" height="56" rx="0" fill="#f3f3f0" stroke="#c8c8c0" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="1037" y="252" fill="#9f9f97" font-size="16" font-weight="600" text-anchor="middle">no bytes</text>
+<rect x="600" y="294" width="250" height="56" rx="6" fill="#fbeceb" stroke="#c1272d" stroke-width="3"/>
+<text x="725" y="331" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">edi</text>
+<rect x="850" y="294" width="125" height="56" rx="0" fill="#fff" stroke="#c1272d" stroke-width="3"/>
+<text x="912" y="331" fill="#1a1a1a" font-size="22" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">di</text>
+<rect x="975" y="294" width="125" height="56" rx="0" fill="#f3f3f0" stroke="#c8c8c0" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="1037" y="328" fill="#9f9f97" font-size="16" font-weight="600" text-anchor="middle">no bytes</text>
+</svg>

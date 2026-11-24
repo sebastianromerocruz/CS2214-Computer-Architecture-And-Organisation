@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 392" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="392" rx="24" fill="#eee6f3"/>
+<text x="575" y="64" fill="#1a1a1a" font-size="36" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">mov [ptr], 5</text>
+<text x="575" y="96" fill="#c1272d" font-size="18" font-weight="700" text-anchor="middle">1 byte? 2 bytes? 4 bytes? nothing in the line says</text>
+<rect x="380" y="118" width="84" height="54" rx="0" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<rect x="468" y="118" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="556" y="118" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="644" y="118" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="732" y="118" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="820" y="118" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="908" y="118" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="996" y="118" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="340" y="152" fill="#6d6d6d" font-size="19" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">byte</text>
+<rect x="380" y="184" width="84" height="54" rx="0" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<rect x="468" y="184" width="84" height="54" rx="0" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<rect x="556" y="184" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="644" y="184" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="732" y="184" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="820" y="184" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="908" y="184" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="996" y="184" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="340" y="218" fill="#6d6d6d" font-size="19" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">word</text>
+<rect x="380" y="250" width="84" height="54" rx="0" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<rect x="468" y="250" width="84" height="54" rx="0" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<rect x="556" y="250" width="84" height="54" rx="0" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<rect x="644" y="250" width="84" height="54" rx="0" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<rect x="732" y="250" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="820" y="250" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="908" y="250" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="996" y="250" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="340" y="284" fill="#6d6d6d" font-size="19" font-weight="700" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace">dword</text>
+<circle cx="170" cy="216" r="46" fill="#fff" stroke="#c1272d" stroke-width="5"/>
+<text x="170" y="236" fill="#c1272d" font-size="60" font-weight="700" text-anchor="middle">?</text>
+<text x="575" y="350" fill="#57068c" font-size="20" font-weight="700" text-anchor="middle">so the assembler refuses, and you write:  mov dword [ptr], 5</text>
+</svg>

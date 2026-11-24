@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 392" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="392" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">two kinds of line in an x86 source file</text>
+<text x="300" y="62" fill="#57068c" font-size="22" font-weight="700" text-anchor="middle">instructions</text>
+<text x="850" y="62" fill="#c1272d" font-size="22" font-weight="700" text-anchor="middle">directives</text>
+<rect x="80" y="80" width="440" height="110" rx="10" fill="#fff" stroke="#57068c" stroke-width="4"/>
+<text x="120" y="126" fill="#1a1a1a" font-size="23" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">mov eax, 5</text>
+<text x="120" y="164" fill="#1a1a1a" font-size="23" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">add eax, ebx</text>
+<line x1="300" y1="196" x2="300" y2="250" stroke="#57068c" stroke-width="4" stroke-linecap="round"/>
+<polygon points="300.0,250.0 307.0,237.0 293.0,237.0" fill="#57068c"/>
+<rect x="80" y="256" width="440" height="110" rx="10" fill="#e9d9f5" stroke="#57068c" stroke-width="4"/>
+<text x="120" y="302" fill="#1a1a1a" font-size="23" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">b8 05 00 00 00</text>
+<text x="120" y="340" fill="#1a1a1a" font-size="23" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">01 d8</text>
+<text x="540" y="226" fill="#1a1a1a" font-size="1" font-weight="700" text-anchor="middle"></text>
+<rect x="630" y="80" width="440" height="110" rx="10" fill="#fff" stroke="#c1272d" stroke-width="4"/>
+<text x="670" y="126" fill="#1a1a1a" font-size="23" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">section .text</text>
+<text x="670" y="164" fill="#1a1a1a" font-size="23" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">global _start</text>
+<line x1="850" y1="196" x2="850" y2="250" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="850.0,250.0 857.0,237.0 843.0,237.0" fill="#c1272d"/>
+<rect x="630" y="256" width="440" height="110" rx="10" fill="#fbeceb" stroke="#c1272d" stroke-width="4"/>
+<text x="850" y="306" fill="#1a1a1a" font-size="21" font-weight="700" text-anchor="middle">orders to the assembler</text>
+<text x="850" y="338" fill="#6d6d6d" font-size="19" font-weight="700" text-anchor="middle">nothing runs</text>
+<text x="300" y="382" fill="#6d6d6d" font-size="15" font-weight="700" text-anchor="middle">become machine code</text>
+<text x="850" y="382" fill="#6d6d6d" font-size="15" font-weight="700" text-anchor="middle">are never executed</text>
+</svg>

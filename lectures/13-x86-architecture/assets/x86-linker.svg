@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 392" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="392" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">main.asm calls a function that lives in another file</text>
+<text x="40" y="100" fill="#6d6d6d" font-size="16" font-weight="700" text-anchor="start">after nasm</text>
+<rect x="190" y="56" width="300" height="110" rx="10" fill="#fff" stroke="#57068c" stroke-width="4"/>
+<text x="340" y="86" fill="#57068c" font-size="19" font-weight="700" text-anchor="middle">main.asm</text>
+<text x="340" y="128" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">call helper_function</text>
+<rect x="700" y="56" width="300" height="110" rx="10" fill="#fff" stroke="#57068c" stroke-width="4"/>
+<text x="850" y="86" fill="#57068c" font-size="19" font-weight="700" text-anchor="middle">helper.asm</text>
+<text x="850" y="128" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">helper_function:</text>
+<line x1="496" y1="111" x2="694" y2="111" stroke="#c1272d" stroke-width="5" stroke-dasharray="14 10" stroke-linecap="round"><animate attributeName="stroke-dashoffset" from="48" to="0" dur="1.6s" repeatCount="indefinite"/></line>
+<circle cx="595" cy="111" r="19" fill="#fff" stroke="#c1272d" stroke-width="4"/>
+<text x="595" y="119" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle">?</text>
+<text x="595" y="154" fill="#c1272d" font-size="16" font-weight="700" text-anchor="middle">address unknown</text>
+<text x="40" y="266" fill="#6d6d6d" font-size="16" font-weight="700" text-anchor="start">after ld</text>
+<rect x="190" y="222" width="300" height="110" rx="10" fill="#fff" stroke="#57068c" stroke-width="4"/>
+<text x="340" y="252" fill="#57068c" font-size="19" font-weight="700" text-anchor="middle">main.asm</text>
+<text x="340" y="294" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">call helper_function</text>
+<rect x="700" y="222" width="300" height="110" rx="10" fill="#fff" stroke="#57068c" stroke-width="4"/>
+<text x="850" y="252" fill="#57068c" font-size="19" font-weight="700" text-anchor="middle">helper.asm</text>
+<text x="850" y="294" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">helper_function:</text>
+<line x1="496" y1="277" x2="694" y2="277" stroke="#2e7d32" stroke-width="5" stroke-linecap="round"/>
+<polygon points="694.0,277.0 681.0,270.0 681.0,284.0" fill="#2e7d32"/>
+<text x="595" y="262" fill="#2e7d32" font-size="16" font-weight="700" text-anchor="middle">address filled in</text>
+<text x="1075" y="372" fill="#6d6d6d" font-size="16" font-weight="700" text-anchor="end">the linker decides where each piece lives</text>
+</svg>

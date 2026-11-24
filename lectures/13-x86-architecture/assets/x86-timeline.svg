@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 392" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="392" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">one architecture, and a promise that old programs keep running</text>
+<line x1="70" y1="170" x2="1085" y2="170" stroke="#57068c" stroke-width="5" stroke-linecap="round"/>
+<polygon points="1085.0,170.0 1072.0,163.0 1072.0,177.0" fill="#57068c"/>
+<circle cx="170" cy="170" r="11" fill="#fff" stroke="#57068c" stroke-width="5"/>
+<text x="170" y="126" fill="#6d6d6d" font-size="22" font-weight="700" text-anchor="middle">1978</text>
+<text x="170" y="218" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">8086</text>
+<text x="170" y="246" fill="#6d6d6d" font-size="17" font-weight="700" text-anchor="middle">16-bit</text>
+<circle cx="430" cy="170" r="16" fill="#c1272d" stroke="#c1272d" stroke-width="5"/>
+<text x="430" y="126" fill="#c1272d" font-size="22" font-weight="700" text-anchor="middle">1985</text>
+<text x="430" y="218" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">80386</text>
+<text x="430" y="246" fill="#c1272d" font-size="17" font-weight="700" text-anchor="middle">32-bit: IA-32</text>
+<circle cx="700" cy="170" r="11" fill="#fff" stroke="#57068c" stroke-width="5"/>
+<text x="700" y="126" fill="#6d6d6d" font-size="22" font-weight="700" text-anchor="middle">2003</text>
+<text x="700" y="218" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">x86-64</text>
+<text x="700" y="246" fill="#6d6d6d" font-size="17" font-weight="700" text-anchor="middle">64-bit</text>
+<circle cx="970" cy="170" r="11" fill="#fff" stroke="#57068c" stroke-width="5"/>
+<text x="970" y="126" fill="#6d6d6d" font-size="22" font-weight="700" text-anchor="middle">today</text>
+<text x="970" y="218" fill="#1a1a1a" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">your laptop</text>
+<text x="970" y="246" fill="#6d6d6d" font-size="17" font-weight="700" text-anchor="middle">runs the 64-bit one</text>
+<line x1="970" y1="276" x2="970" y2="322" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<line x1="970" y1="322" x2="170" y2="322" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<line x1="170" y1="322" x2="170" y2="282" stroke="#c1272d" stroke-width="4" stroke-linecap="round"/>
+<polygon points="170.0,282.0 163.0,295.0 177.0,295.0" fill="#c1272d"/>
+<text x="570" y="352" fill="#c1272d" font-size="19" font-weight="700" text-anchor="middle">backward compatibility: a program from 1978 still runs</text>
+</svg>

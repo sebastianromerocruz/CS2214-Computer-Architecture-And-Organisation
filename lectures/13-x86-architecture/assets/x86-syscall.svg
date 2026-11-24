@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 392" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="392" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">how a program asks the operating system for something</text>
+<rect x="60" y="120" width="270" height="150" rx="10" fill="#fff" stroke="#57068c" stroke-width="5"/>
+<text x="195" y="172" fill="#57068c" font-size="23" font-weight="700" text-anchor="middle">your program</text>
+<text x="195" y="220" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">in its sandbox</text>
+<rect x="820" y="120" width="270" height="150" rx="10" fill="#e9d9f5" stroke="#57068c" stroke-width="5"/>
+<text x="955" y="172" fill="#57068c" font-size="26" font-weight="700" text-anchor="middle">Linux</text>
+<text x="955" y="220" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">the kernel</text>
+<line x1="336" y1="175" x2="814" y2="175" stroke="#c1272d" stroke-width="5" stroke-linecap="round"/>
+<polygon points="814.0,175.0 801.0,168.0 801.0,182.0" fill="#c1272d"/>
+<rect x="470" y="148" width="210" height="54" rx="10" fill="#fff" stroke="#c1272d" stroke-width="4"/>
+<text x="575" y="185" fill="#c1272d" font-size="24" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">int 0x80</text>
+<line x1="814" y1="235" x2="336" y2="235" stroke="#2e7d32" stroke-width="4" stroke-linecap="round"/>
+<polygon points="336.0,235.0 349.0,242.0 349.0,228.0" fill="#2e7d32"/>
+<text x="575" y="262" fill="#2e7d32" font-size="16" font-weight="700" text-anchor="middle">it does the job, then returns</text>
+<text x="575" y="120" fill="#6d6d6d" font-size="16" font-weight="700" text-anchor="middle">eax says what you want</text>
+<text x="575" y="340" fill="#1a1a1a" font-size="19" font-weight="700" text-anchor="middle">the one way out of the sandbox</text>
+</svg>

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 392" font-family="Helvetica, Arial, sans-serif">
+<rect width="1150" height="392" rx="24" fill="#eee6f3"/>
+<text x="575.0" y="30" fill="#6d6d6d" font-size="17" font-weight="600" text-anchor="middle">how many bytes it moves: the other operand says</text>
+<text x="424" y="64" fill="#6d6d6d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">ptr</text>
+<text x="510" y="64" fill="#6d6d6d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">ptr+1</text>
+<text x="598" y="64" fill="#6d6d6d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">ptr+2</text>
+<text x="686" y="64" fill="#6d6d6d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">ptr+3</text>
+<text x="774" y="64" fill="#6d6d6d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">ptr+4</text>
+<text x="862" y="64" fill="#6d6d6d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">ptr+5</text>
+<text x="950" y="64" fill="#6d6d6d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">ptr+6</text>
+<text x="1038" y="64" fill="#6d6d6d" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace">ptr+7</text>
+<text x="40" y="116" fill="#1a1a1a" font-size="23" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">mov eax, [ptr]</text>
+<rect x="380" y="80" width="84" height="54" rx="0" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<rect x="468" y="80" width="84" height="54" rx="0" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<rect x="556" y="80" width="84" height="54" rx="0" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<rect x="644" y="80" width="84" height="54" rx="0" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<rect x="732" y="80" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="820" y="80" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="908" y="80" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="996" y="80" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="746" y="116" fill="#c1272d" font-size="18" font-weight="700" text-anchor="start">4 bytes</text>
+<text x="40" y="200" fill="#1a1a1a" font-size="23" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">mov ax, [ptr]</text>
+<rect x="380" y="164" width="84" height="54" rx="0" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<rect x="468" y="164" width="84" height="54" rx="0" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<rect x="556" y="164" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="644" y="164" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="732" y="164" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="820" y="164" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="908" y="164" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="996" y="164" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="570" y="200" fill="#c1272d" font-size="18" font-weight="700" text-anchor="start">2 bytes</text>
+<text x="40" y="284" fill="#1a1a1a" font-size="23" font-weight="700" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace">mov al, [ptr]</text>
+<rect x="380" y="248" width="84" height="54" rx="0" fill="#fbeceb" stroke="#c1272d" stroke-width="5"/>
+<rect x="468" y="248" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="556" y="248" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="644" y="248" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="732" y="248" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="820" y="248" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="908" y="248" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<rect x="996" y="248" width="84" height="54" rx="0" fill="#fff" stroke="#57068c" stroke-width="3"/>
+<text x="482" y="284" fill="#c1272d" font-size="18" font-weight="700" text-anchor="start">1 byte</text>
+<text x="575" y="356" fill="#6d6d6d" font-size="18" font-weight="700" text-anchor="middle">the pointer itself is always 32 bits, because it is an address</text>
+</svg>

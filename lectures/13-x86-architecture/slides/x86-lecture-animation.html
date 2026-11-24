@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CS-UY 2214 | Intel x86 Architecture | Animated</title>
+<link rel="stylesheet" href="../../_shared/theme/house.css">
+<style>
+  /* Lecture 12 on the lecture 10 deck engine. Arrow keys step, shift + arrow jumps a section, n shows the full narration. Open with #4.3. */
+
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: var(--cream);
+    overflow: hidden;
+  }
+
+  .slide {
+    position: relative;
+    width: 1333px;
+    height: 750px;
+    margin: 0 auto;
+    padding: 40px 64px 76px;
+    box-sizing: border-box;
+    overflow: hidden;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: var(--ink);
+  }
+
+  .stage {
+    position: relative;
+    margin-top: 18px;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 10px;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+
+  .stage .num { color: var(--red); font-weight: 700; font-size: 15px; letter-spacing: 0.04em; }
+  .stage h1 { margin: 0; font-size: 30px; font-weight: 700; }
+
+  .subtitle {
+    margin: 8px 0 0;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--mute);
+  }
+
+  .diagram-wrap {
+    margin-top: 10px;
+    background: #eee6f3;
+    border-radius: 24px;
+    padding: 10px 20px;
+    position: relative;
+  }
+
+  .diagram-wrap .mark { position: absolute; top: 20px; left: 20px; width: 14px; height: 14px; background: #8900e1; }
+
+  svg text { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+  svg * { transition: opacity 0.35s ease, fill 0.3s ease, stroke 0.3s ease; }
+
+  svg .mv { transition: transform 0.6s ease; }
+
+  .stps {
+    margin-top: 8px;
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    min-height: 38px;
+  }
+
+  .stp {
+    min-width: 120px;
+    text-align: center;
+    padding: 6px 14px;
+    border: 2px solid #d9d9d3;
+    color: var(--mute);
+    font-size: 15px;
+    font-weight: 600;
+    transition: border-color 0.3s ease, color 0.3s ease, background 0.3s ease;
+  }
+
+  .stp.active { border-color: var(--red); color: var(--ink); background: #fbeceb; }
+  .stp.done { border-color: var(--ink); color: var(--ink); }
+
+  .narration {
+    margin-top: 12px;
+    font-size: 27px;
+    line-height: 1.3;
+    min-height: 44px;
+  }
+
+  .narration strong { color: var(--red); }
+  .narration code {
+    background: #171715;
+    color: #f7f7f4;
+    padding: 1px 7px;
+    border-radius: 4px;
+    font-size: 23px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  .q { font-weight: 700; color: var(--ink); }
+  .q .qm {
+    display: inline-block;
+    background: var(--red);
+    color: #fff;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    padding: 2px 9px;
+    margin-right: 12px;
+    vertical-align: middle;
+  }
+  .q.big { font-size: 26px; line-height: 1.3; }
+  .q.small { font-size: 15px; color: var(--mute); margin-bottom: 8px; font-weight: 600; }
+  .q.small .qm { font-size: 11px; padding: 1px 7px; margin-right: 9px; }
+  .q code { font-size: 0.85em; }
+  .q.small code { background: #e2ded0; color: var(--ink); }
+
+  .slide-footer {
+    position: absolute;
+    bottom: 24px;
+    left: 64px;
+    right: 64px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--faint);
+    border-top: 1px solid var(--rule);
+    padding-top: 10px;
+  }
+
+  .step-indicator {
+    position: absolute;
+    top: 20px;
+    right: 64px;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: var(--mute);
+  }
+
+  .step-indicator .n { color: var(--red); font-weight: 700; }
+
+  .hint {
+    position: absolute;
+    top: 20px;
+    left: 64px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: var(--mute);
+  }
+
+  .hint::before {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: var(--red);
+  }
+</style>
+</head>
+<body>
+
+<div class="slide">
+  <div class="hint">&larr; / &rarr; step &nbsp;&middot;&nbsp; shift + &larr; / &rarr; section</div>
+  <div class="step-indicator"><span id="sec-wrap">SECTION <span class="n" id="sec-n">1</span> / <span id="sec-total">10</span> &nbsp;&middot;&nbsp; </span>STEP <span class="n" id="step-n">1</span> / <span id="step-total">2</span></div>
+
+  <div class="stage">
+    <span class="num" id="num"></span>
+    <h1 id="title">Intel x86 Architecture</h1>
+  </div>
+  <p class="subtitle" id="subtitle"></p>
+
+  <div class="diagram-wrap">
+    <div class="mark"></div>
+    <svg id="stage" viewBox="0 0 1150 400" width="100%" height="372"></svg>
+  </div>
+
+  <div class="stps" id="chips"></div>
+
+  <div class="narration" id="narration"></div>
+
+  <div class="slide-footer"><span id="foot-left">Intel x86 Architecture</span><span>NYU Tandon | Fall 2026</span></div>
+</div>
+
+<script>
+(function () {
+  const NS = "http://www.w3.org/2000/svg";
+  const MONO = "'SF Mono', Menlo, Consolas, monospace";
+  const C = {
+    purple: "#57068c", accent: "#8900e1", dot: "#7b5aa6", ink: "#404040", grey: "#6d6d6d",
+    lgrey: "#9f9f97", red: "#c1272d", bg: "#eee6f3", white: "#ffffff",
+    t1: "#e9d9f5", t2: "#fbeceb", t3: "#e4e3db", t4: "#f3e9ff", t5: "#e2cdf2", t6: "#f7f0ff", t7: "#efe9dc",
+  };
+
+  function E(tag, attrs, parent, text) {
+    const e = document.createElementNS(NS, tag);
+    if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (text !== undefined) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function grp(p, op) { const g = E("g", {}, p); g.style.opacity = op === undefined ? 1 : op; return g; }
+  function rect(p, x, y, w, h, o) {
+    o = o || {};
+    const e = E("rect", { x, y, width: w, height: h, rx: o.rx || 0, fill: o.fill || "none", stroke: o.stroke || "none", "stroke-width": o.sw || 0 }, p);
+    if (o.dash) e.setAttribute("stroke-dasharray", o.dash);
+    return e;
+  }
+  function txt(p, x, y, s, o) {
+    o = o || {};
+    const t = E("text", { x, y, fill: o.fill || C.ink, "font-size": o.size || 16, "font-weight": o.weight || 400, "text-anchor": o.anchor || "start" }, p, s);
+    if (o.mono) t.style.fontFamily = MONO;
+    if (o.italic) t.setAttribute("font-style", "italic");
+    if (o.ls) t.setAttribute("letter-spacing", o.ls);
+    if (o.pre) t.style.whiteSpace = "pre";
+    return t;
+  }
+  function ln(p, x1, y1, x2, y2, o) {
+    o = o || {};
+    const e = E("line", { x1, y1, x2, y2, stroke: o.stroke || C.ink, "stroke-width": o.sw || 4, "stroke-linecap": "round" }, p);
+    if (o.dash) e.setAttribute("stroke-dasharray", o.dash);
+    return e;
+  }
+  function path(p, d, o) {
+    o = o || {};
+    return E("path", { d, fill: o.fill || "none", stroke: o.stroke || "none", "stroke-width": o.sw || 0, "stroke-linecap": "round", "stroke-linejoin": "round" }, p);
+  }
+  function circ(p, cx, cy, r, o) {
+    o = o || {};
+    return E("circle", { cx, cy, r, fill: o.fill || "none", stroke: o.stroke || "none", "stroke-width": o.sw || 0 }, p);
+  }
+  function poly(p, pts, o) {
+    o = o || {};
+    return E("polygon", { points: pts, fill: o.fill || "none", stroke: o.stroke || "none", "stroke-width": o.sw || 0, "stroke-linejoin": "round" }, p);
+  }
+  function vis(el, on) { el.style.opacity = on ? 1 : 0; }
+  function arrowhead(p, x, y, dir, fill) {
+    // dir: "r","l","d","u"
+    const pts = { r: [x, y, x - 12, y - 7, x - 12, y + 7], l: [x, y, x + 12, y - 7, x + 12, y + 7],
+                  d: [x, y, x - 7, y - 12, x + 7, y - 12], u: [x, y, x - 7, y + 12, x + 7, y + 12] }[dir];
+    return poly(p, pts.join(","), { fill: fill || C.ink });
+  }
+
+  const scenes = [];
+  function scene(def) { scenes.push(def); }
+
+  // ================= 10 caching deck =================
+  // ---------- helpers for this deck ----------
+  const ASSET = "fig/";
+  function figScene(cfg) {
+    return {
+      num: cfg.num, title: cfg.title, subtitle: cfg.subtitle, chips: cfg.chips || [], steps: cfg.steps,
+      build(g) {
+        const r = { imgs: {} };
+        cfg.steps.forEach((s) => {
+          if (!s.img || r.imgs[s.img]) return;
+          const im = E("image", { x: 0, y: 0, width: 1150, height: 400, preserveAspectRatio: "xMidYMid meet" }, g);
+          im.setAttributeNS("http://www.w3.org/1999/xlink", "href", ASSET + s.img);
+          im.setAttribute("href", ASSET + s.img);
+          im.style.opacity = 0;
+          r.imgs[s.img] = im;
+        });
+        return r;
+      },
+      render(s, r) { for (const k in r.imgs) vis(r.imgs[k], k === s.img); },
+    };
+  }
+  // table scene: cols = [{h, x, anchor, mono, w}], rows = arrays of strings; step: rows = how many rows are showing, hl = highlighted row indices
+  function tableScene(cfg) {
+    const RH = cfg.rh || 34, Y0 = cfg.y0 || 26, FS = cfg.fs || 15;
+    return {
+      num: cfg.num, title: cfg.title, subtitle: cfg.subtitle, chips: cfg.chips || [], steps: cfg.steps,
+      build(g) {
+        const r = { rows: [], bgs: [] };
+        const W = cfg.cols[cfg.cols.length - 1].x + cfg.cols[cfg.cols.length - 1].w + 20 - cfg.cols[0].x;
+        cfg.cols.forEach((c) => txt(g, c.x, Y0 - 8, c.h, { size: 12, weight: 700, fill: C.purple, ls: 1.5, anchor: c.anchor || "start" }));
+        ln(g, cfg.cols[0].x - 10, Y0, cfg.cols[0].x - 10 + W, Y0, { stroke: C.purple, sw: 2 });
+        cfg.rows.forEach((row, i) => {
+          const gg = grp(g, 0); r.rows.push(gg);
+          const y = Y0 + i * RH;
+          r.bgs.push(rect(gg, cfg.cols[0].x - 10, y + 3, W, RH - 4, { rx: 6, fill: "none" }));
+          row.forEach((cell, ci) => {
+            const c = cfg.cols[ci];
+            txt(gg, c.x, y + RH / 2 + 5, cell, { pre: true, size: c.size || FS, mono: !!c.mono, weight: c.bold ? 700 : 400, fill: c.bold ? C.purple : C.ink, anchor: c.anchor || "start" });
+          });
+        });
+        return r;
+      },
+      render(s, r) {
+        const n = s.rows === undefined ? cfg.rows.length : s.rows, hl = s.hl || [];
+        r.rows.forEach((gg, i) => vis(gg, i < n));
+        r.bgs.forEach((b, i) => b.setAttribute("fill", hl.indexOf(i) >= 0 ? C.t2 : "none"));
+      },
+    };
+  }
+
+
+  function mixScene(cfg, subs) {
+    return {
+      num: cfg.num, title: cfg.title, subtitle: cfg.subtitle, chips: cfg.chips || [], steps: cfg.steps,
+      build(g) {
+        const r = { subs: {}, gs: {} };
+        for (const k in subs) { const gg = grp(g, 0); r.gs[k] = gg; r.subs[k] = subs[k].build(gg); }
+        return r;
+      },
+      render(s, r) {
+        for (const k in subs) { vis(r.gs[k], s.sub === k); if (s.sub === k) subs[k].render(s, r.subs[k]); }
+      },
+    };
+  }
+  const tb = (c) => tableScene(Object.assign({ steps: [{}] }, c));
+  const fg = (imgs) => figScene({ steps: imgs.map((i) => ({ img: i })) });
+
+  const trn = (el, ms) => { el.style.transition = "opacity " + ms + "ms, fill " + ms + "ms, stroke " + ms + "ms"; return el; };
+  const growX = (el, ms) => { el.style.transformBox = "fill-box"; el.style.transformOrigin = "0% 50%"; el.style.transform = "scaleX(0)"; el.style.transition = "transform " + ms + "ms ease, opacity 0.3s"; return el; };
+  const PC5 = ["#e2cdf2", "#d9e8fb", "#fbe9ea", "#e4f3e1", "#fff1cf"];
+
+  // ---- cards, for short lists of points
+  const cd = (head, lines, mono) => ({ head, lines: lines || [], mono: !!mono });
+  const cardSub = {
+    build(g) {
+      const r = {};
+      rect(g, 130, 40, 890, 300, { rx: 24, fill: C.white, stroke: C.purple, sw: 7 });
+      r.head = txt(g, 575, 135, "", { size: 42, weight: 700, fill: "#171715", anchor: "middle" });
+      rect(g, 505, 160, 140, 6, { rx: 3, fill: C.accent });
+      r.lines = [0, 1, 2, 3].map((i) => txt(g, 575, 218 + i * 34, "", { size: 21, fill: C.grey, anchor: "middle" }));
+      return r;
+    },
+    render(s, r) {
+      const c = s.card || {};
+      r.head.textContent = c.head || "";
+      r.head.setAttribute("font-size", (c.head || "").length > 30 ? 30 : 40);
+      r.lines.forEach((t, i) => { t.textContent = (c.lines || [])[i] || ""; });
+    },
+  };
+
+  const flowSub = {
+    build(g) { return { g: grp(g, 1) }; },
+    render(s, r) {
+      const g = r.g; while (g.firstChild) g.removeChild(g.firstChild);
+      const B = s.boxes || [], hot = s.hot || [], lab = s.lab || {}, dim = s.dim || [];
+      const n = B.length, W = Math.min(n <= 3 ? 280 : 170, Math.floor((1100 - 40 * (n - 1)) / n)), gap = (1100 - W * n) / Math.max(1, n - 1), x0 = 25, y = 130, H = 78;
+      B.forEach((name, i) => {
+        const x = x0 + i * (W + gap), on = hot.indexOf(i) >= 0, dm = dim.indexOf(i) >= 0;
+        rect(g, x, y, W, H, { rx: 14, fill: on ? C.t1 : C.white, stroke: on ? C.purple : (dm ? "#d9d9d3" : C.lgrey), sw: on ? 6 : 3 });
+        txt(g, x + W / 2, y + H / 2 + 7, name, { size: Math.min(20, Math.floor((W - 16) / (name.length * 0.6))), weight: 700, fill: dm ? C.lgrey : C.ink, anchor: "middle" });
+        if (lab[i]) lab[i].split("|").forEach((l, k) => txt(g, x + W / 2, y + H + 28 + k * 24, l, { size: 17, weight: 700, mono: true, fill: on ? C.red : C.grey, anchor: "middle" }));
+        if (i < n - 1) {
+          const lit = hot.indexOf(i) >= 0 && hot.indexOf(i + 1) >= 0, col = lit ? C.red : "#c9c9c1";
+          ln(g, x + W + 6, y + H / 2, x + W + gap - 10, y + H / 2, { stroke: col, sw: lit ? 5 : 3 }); arrowhead(g, x + W + gap - 4, y + H / 2, "r", col);
+        }
+      });
+      if (s.note) txt(g, 575, 80, s.note, { size: 22, weight: 700, fill: C.purple, anchor: "middle" });
+      if (s.say) txt(g, 575, 372, s.say, { size: 21, weight: 700, fill: C.red, anchor: "middle" });
+    },
+  };
+
+  // an address cut into labelled fields. step: bar = [[name, bits, note]], bar2 likewise; hot = lit field indices
+  const barSub = {
+    build(g) { return { g: grp(g, 1) }; },
+    render(s, r) {
+      const g = r.g; while (g.firstChild) g.removeChild(g.firstChild);
+      const draw = (bar, y, title, hot) => {
+        if (!bar) return;
+        const tot = bar.reduce((a, b) => a + b[1], 0), X0 = 90, W = 970; let x = X0;
+        txt(g, 90, y - 10, title, { size: 15, weight: 700, fill: C.purple, ls: 1 });
+        bar.forEach((f, i) => {
+          const w = W * f[1] / tot, on = !hot || hot.indexOf(i) >= 0;
+          rect(g, x, y, w - 4, 60, { rx: 10, fill: on ? PC5[i % 5] : "#f4f4f0", stroke: C.purple, sw: on ? 4 : 2 });
+          txt(g, x + w / 2 - 2, y + 28, f[0], { size: w < 120 ? 15 : 20, weight: 700, fill: on ? C.ink : C.lgrey, anchor: "middle" });
+          txt(g, x + w / 2 - 2, y + 49, f[1] + (f[1] === 1 ? " bit" : " bits"), { size: 14, mono: true, fill: C.grey, anchor: "middle" });
+          if (f[2]) txt(g, x + w / 2 - 2, y + 86, f[2], { size: 16, weight: 700, mono: true, fill: on ? C.red : C.lgrey, anchor: "middle" });
+          x += w;
+        });
+      };
+      if (s.bar3) { draw(s.bar, 50, s.t1, s.hot); draw(s.bar2, 160, s.t2, s.hot2); draw(s.bar3, 270, s.t3, s.hot3); }
+      else { draw(s.bar, 70, s.t1 || "virtual address", s.hot); draw(s.bar2, 230, s.t2 || "physical address", s.hot2); }
+      if (s.bar2 && s.link) { ln(g, 600, 170, 600, 224, { stroke: C.red, sw: 4 }); arrowhead(g, 600, 226, "d", C.red); txt(g, 620, 205, s.link, { size: 17, weight: 700, fill: C.red }); }
+      if (s.say) txt(g, 575, 372, s.say, { size: 21, weight: 700, fill: C.red, anchor: "middle" });
+    },
+  };
+
+  // ---- x86 visuals ----
+
+  // ---- syntax highlighting for the code panels ----
+  const SYN = { mn: "#57068c", reg: "#0b6fb8", num: "#b45f06", dir: "#c1272d", str: "#2e7d32", cmt: "#8a8a82", lab: "#00796b", addr: "#9f9f97", flag: "#6d6d6d" };
+  const MN = "mov add sub inc dec imul cmp jmp jge je jne call ret int push pop lea";
+  const SYNRE = new RegExp([
+    "(;.*$)",                                                   // 1 comment
+    "(\"[^\"]*\")",                                              // 2 string
+    "(<[A-Za-z_0-9]+>)",                                        // 3 <label> reference
+    "(\\b0x[0-9a-fA-F]+\\b|\\b[0-9][0-9a-fA-F]*h\\b|\\b[0-9]+\\b|\\$)", // 4 number
+    "(\\b(?:e?[abcd]x|[abcd][hl]|e?[sb]p|e?[sd]i|eip|eflags)\\b)", // 5 register
+    "(\\b(?:byte|word|dword|qword|section|global|extern|equ|db|dw|dd|dq|resb|resw|resd|resq)\\b)", // 6 directive or size
+    "(\\b[A-Za-z_][A-Za-z_0-9]*\\b)",                           // 7 other word
+  ].join("|"), "g");
+  function synLine(p, x, y, line, o) {
+    const t = E("text", { x, y, "font-size": o.size, "font-weight": 400, fill: C.ink }, p);
+    t.style.fontFamily = MONO; t.style.whiteSpace = "pre"; if (o.op !== undefined) t.setAttribute("opacity", o.op);
+    const add = (str, col, bold, ital) => { if (!str) return; const sp = E("tspan", { fill: col }, t, str); if (bold || o.bold) sp.setAttribute("font-weight", 700); if (ital) sp.setAttribute("font-style", "italic"); };
+    const mnSet = MN.split(" ");
+    const dis = /^\s*[0-9a-f]+:\s+(?:[0-9a-f]{2}\s)+/.exec(line);          // a disassembly line: address, bytes, then the instruction
+    let rest = line;
+    if (dis) { const m = /^(\s*[0-9a-f]+:)(\s+(?:[0-9a-f]{2}\s?)+)/.exec(line); add(m[1], SYN.addr); add(m[2], SYN.flag); rest = line.slice(m[0].length); }
+    else if (/^\s*(nasm|ld|gcc)\b/.test(line)) { rest.split(/(\s+)/).forEach((w, i) => add(w, i === 0 ? SYN.mn : (/^-/.test(w) ? SYN.flag : (/\.(asm|o|c)$/.test(w) ? SYN.str : C.ink)), i === 0)); return t; }
+    else if (/^\s*[A-Za-z_][A-Za-z_0-9]*:/.test(line) && !/^\s*(\w+):\s*(db|dw|dd|dq|resb|resw|resd|resq|equ)\b/.test(line) || /^\s*[0-9a-f]+ <\w+>:/.test(line)) {
+      const m = /^(\s*[0-9a-f]+ )?(<?\w+>?:)/.exec(line); if (m) { if (m[1]) add(m[1], SYN.addr); add(m[2], SYN.lab, true); rest = line.slice(m[0].length); }
+    } else { const m = /^(\s*)([A-Za-z_][A-Za-z_0-9]*:)(?=\s*(?:db|dw|dd|dq|resb|resw|resd|resq|equ))/.exec(line) || /^(\s*)([A-Za-z_][A-Za-z_0-9]*)(?=\s+equ\b)/.exec(line); if (m) { add(m[1], C.ink); add(m[2], SYN.lab, true); rest = line.slice(m[0].length); } }
+    let first = true, last = 0, m; SYNRE.lastIndex = 0;
+    while ((m = SYNRE.exec(rest))) {
+      add(rest.slice(last, m.index), C.ink); last = m.index + m[0].length;
+      if (m[1]) add(m[0], SYN.cmt, false, true);
+      else if (m[2]) add(m[0], SYN.str);
+      else if (m[3]) add(m[0], SYN.lab);
+      else if (m[4]) add(m[0], SYN.num);
+      else if (m[5]) add(m[0], SYN.reg);
+      else if (m[6]) add(m[0], SYN.dir, true);
+      else add(m[0], first && mnSet.indexOf(m[0]) >= 0 ? SYN.mn : C.ink, first && mnSet.indexOf(m[0]) >= 0);
+      if (m[7] || m[4] || m[5] || m[6]) first = false;
+    }
+    add(rest.slice(last), C.ink);
+    return t;
+  }
+
+  // code panel. step: t (small title), code (lines), hl (lit line indices), ann ({line: text}), annx, cmt (shown in grey), say
+  const codeSub = {
+    build(g) { return { g: grp(g, 1) }; },
+    render(s, r) {
+      const g = r.g; while (g.firstChild) g.removeChild(g.firstChild);
+      const L = s.code || [], big = L.length <= 9, rh = big ? 34 : 27, fs = big ? 22 : 18, y0 = s.t ? 62 : 46, hl = s.hl || [], ann = s.ann || {};
+      rect(g, 20, y0 - 26, 1110, rh * L.length + 22, { rx: 14, fill: C.white, stroke: C.purple, sw: 3 });
+      if (s.t) txt(g, 30, 30, s.t, { size: 13, weight: 700, mono: true, fill: C.grey, ls: 1 });
+      L.forEach((l, i) => {
+        const y = y0 + i * rh, on = hl.indexOf(i) >= 0;
+        if (on) rect(g, 28, y - rh + 10, 1094, rh - 2, { rx: 6, fill: C.t1 });
+        synLine(g, 44, y, l, { size: fs, bold: on, op: (hl.length && !on) ? 0.45 : undefined });
+        if (ann[i]) txt(g, s.annx || 600, y, ann[i], { size: big ? 18 : 16, weight: 700, fill: C.red });
+      });
+      if (s.say) txt(g, 575, 376, s.say, { size: 21, weight: 700, fill: C.red, anchor: "middle" });
+    },
+  };
+
+  // one 32-bit register as four bytes with nested names. step: reg (name), val (8 hex digits), code, say,
+  // hot ("eax" | "ax" | "ah" | "al"), chg (byte indices 0..3, 0 = most significant, tinted), names (show brackets)
+  const regSub = {
+    build(g) { return { g: grp(g, 1) }; },
+    render(s, r) {
+      const g = r.g; while (g.firstChild) g.removeChild(g.firstChild);
+      const nm = s.reg || "eax", v = (s.val || "00000000"), hot = s.hot, chg = s.chg || [];
+      const bx = (i) => 100 + i * 245, BW = 235, y = 120, H = 80;
+      const cover = { eax: [0, 1, 2, 3], ax: [2, 3], ah: [2], al: [3] }, cov = hot ? cover[hot] : [];
+      if (s.code) txt(g, 575, 56, s.code, { size: 30, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+      if (s.code2) txt(g, 575, 90, s.code2, { size: 18, fill: C.grey, anchor: "middle", italic: true });
+      for (let i = 0; i < 4; i++) {
+        const c = chg.indexOf(i) >= 0, on = cov.indexOf(i) >= 0;
+        rect(g, bx(i), y, BW, H, { rx: 12, fill: c ? C.t2 : (on ? C.t1 : C.white), stroke: c ? C.red : C.purple, sw: c ? 6 : 3 });
+        txt(g, bx(i) + BW / 2, y + 54, v.substr(i * 2, 2), { size: 40, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+        txt(g, bx(i) + BW / 2, y - 8, "byte " + (3 - i), { size: 13, mono: true, fill: C.lgrey, anchor: "middle" });
+      }
+      if (s.names !== false) {
+        const br = (a, b, yy, label, key) => {
+          const on = hot === key, col = on ? C.red : C.grey, x1 = bx(a) + 4, x2 = bx(b) + BW - 4;
+          ln(g, x1, yy, x2, yy, { stroke: col, sw: on ? 5 : 3 });
+          ln(g, x1, yy - 8, x1, yy, { stroke: col, sw: on ? 5 : 3 }); ln(g, x2, yy - 8, x2, yy, { stroke: col, sw: on ? 5 : 3 });
+          txt(g, (x1 + x2) / 2, yy + 26, label, { size: 22, weight: 700, mono: true, fill: col, anchor: "middle" });
+        };
+        const p = nm.slice(1);
+        br(0, 3, 232, nm + " (32 bits)", "eax");
+        br(2, 3, 290, p + " (16)", "ax");
+        if (/^e[abcd]x$/.test(nm)) { br(2, 2, 340, p[0] + "h (8)", "ah"); br(3, 3, 340, p[0] + "l (8)", "al"); }
+      }
+      if (s.say) txt(g, 575, 376, s.say, { size: 21, weight: 700, fill: C.red, anchor: "middle" });
+    },
+  };
+
+  // bytes in memory. step: reg {name, val}, cells (hex strings), chars (strings under the cells), pre (label prefix), map ([[regByte(0=MSB), cell]]),
+  // hot (cell indices lit), chg, first (index of first cell label), say, code
+  const memSub = {
+    build(g) { return { g: grp(g, 1) }; },
+    render(s, r) {
+      const g = r.g; while (g.firstChild) g.removeChild(g.firstChild);
+      const cells = s.cells || [], n = Math.max(cells.length, 4), CW = Math.min(150, Math.floor(1000 / n) - 10), x0 = 575 - (n * (CW + 10) - 10) / 2, hot = s.hot || [], chg = s.chg || [];
+      const cx = (i) => x0 + i * (CW + 10);
+      if (s.code) txt(g, 575, 34, s.code, { size: 24, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+      let rx = null;
+      if (s.reg) {
+        const nb = s.reg.val.length / 2, RW = 120, rx0 = 575 - (nb * (RW + 10) - 10) / 2; rx = (i) => rx0 + i * (RW + 10) + RW / 2;
+        txt(g, rx0 - 14, 106, s.reg.name, { size: 24, weight: 700, mono: true, fill: C.purple, anchor: "end" });
+        for (let i = 0; i < nb; i++) {
+          rect(g, rx0 + i * (RW + 10), 70, RW, 56, { rx: 10, fill: C.white, stroke: C.purple, sw: 3 });
+          txt(g, rx(i), 108, s.reg.val.substr(i * 2, 2), { size: 28, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+        }
+        (s.map || []).forEach((m) => {
+          const a = [rx(m[0]), 132], b = [cx(m[1]) + CW / 2, 222];
+          ln(g, a[0], a[1], b[0], b[1], { stroke: C.red, sw: 3 });
+          if (s.up) arrowhead(g, a[0], a[1], "u", C.red); else arrowhead(g, b[0], b[1], "d", C.red);
+        });
+      }
+      for (let i = 0; i < n; i++) {
+        const c = cells[i], on = hot.indexOf(i) >= 0, ch = chg.indexOf(i) >= 0;
+        rect(g, cx(i), 226, CW, 62, { rx: 10, fill: ch ? C.t2 : (on ? C.t1 : (c === undefined ? "#f4f4f0" : C.white)), stroke: ch ? C.red : (c === undefined ? "#d9d9d3" : C.purple), sw: ch ? 6 : 3 });
+        if (c !== undefined) txt(g, cx(i) + CW / 2, 268, c, { size: 30, weight: 700, mono: true, fill: C.ink, anchor: "middle" });
+        txt(g, cx(i) + CW / 2, 314, (s.pre || "foobar") + "+" + i, { size: 15, mono: true, fill: C.grey, anchor: "middle" });
+        if (s.chars && s.chars[i] !== undefined) txt(g, cx(i) + CW / 2, 338, s.chars[i], { size: 20, mono: true, weight: 700, fill: C.purple, anchor: "middle" });
+      }
+      if (s.say) txt(g, 575, 376, s.say, { size: 21, weight: 700, fill: C.red, anchor: "middle" });
+    },
+  };
+
+  // an instruction cut into labelled parts. step: parts [[text, label]], hot (indices), say, note
+  const anaSub = {
+    build(g) { return { g: grp(g, 1) }; },
+    render(s, r) {
+      const g = r.g; while (g.firstChild) g.removeChild(g.firstChild);
+      const P = s.parts || [], hot = s.hot, n = P.length, W = 250, gap = 36, x0 = 575 - (n * W + (n - 1) * gap) / 2;
+      if (s.note) txt(g, 575, 70, s.note, { size: 22, weight: 700, fill: C.purple, anchor: "middle" });
+      P.forEach((p, i) => {
+        const x = x0 + i * (W + gap), on = !hot || hot.indexOf(i) >= 0;
+        rect(g, x, 110, W, 90, { rx: 14, fill: on ? PC5[i % 5] : "#f4f4f0", stroke: C.purple, sw: on ? 5 : 3 });
+        txt(g, x + W / 2, 168, p[0], { size: Math.min(40, Math.floor((W - 20) / (p[0].length * 0.62))), weight: 700, mono: true, fill: on ? C.ink : C.lgrey, anchor: "middle" });
+        txt(g, x + W / 2, 236, p[1], { size: 19, weight: 700, fill: on ? C.red : C.lgrey, anchor: "middle" });
+        if (p[2]) txt(g, x + W / 2, 262, p[2], { size: 15, fill: C.grey, anchor: "middle" });
+      });
+      if (s.say) txt(g, 575, 372, s.say, { size: 21, weight: 700, fill: C.red, anchor: "middle" });
+    },
+  };
+  // ---- lean slides: little text, large type ----
+  // a short card: head, up to 4 short lines. step.card = { head, lines, mono }
+  const leanSub = {
+    // Bauhaus grid: a narrow left column for the head, a ruled right column for the points.
+    // Flush left, one accent, no frame. Reads top to bottom, left to right.
+    build(g) {
+      const r = {};
+      rect(g, 70, 56, 96, 10, { fill: C.red });
+      r.head = [0, 1, 2, 3].map(() => txt(g, 70, 120, "", { size: 46, weight: 700, fill: "#171715", anchor: "start" }));
+      r.vl = rect(g, 456, 56, 2, 296, { fill: C.lgrey });
+      r.endr = rect(g, 490, 352, 600, 2, { fill: C.lgrey });
+      r.rules = [0, 1, 2, 3].map(() => rect(g, 490, 56, 600, 2, { fill: C.lgrey }));
+      r.nums = [0, 1, 2, 3].map(() => txt(g, 490, 100, "", { size: 20, weight: 700, mono: true, fill: C.red, anchor: "start" }));
+      r.lines = [0, 1, 2, 3].map(() => txt(g, 544, 100, "", { size: 32, fill: "#171715", anchor: "start" }));
+      return r;
+    },
+    render(s, r) {
+      const c = s.card || {}, L = c.lines || [], n = Math.max(L.length, 1);
+      const head = c.head || "", hs = 44, maxc = 15;
+      const hl = [];
+      head.split(/(?<=:) /).forEach((seg) => { let cur = ""; seg.split(" ").forEach((w) => { if (cur && (cur + " " + w).length > maxc) { hl.push(cur); cur = w; } else cur = cur ? cur + " " + w : w; }); if (cur) hl.push(cur); });
+      r.head.forEach((t, i) => { t.textContent = hl[i] || ""; t.setAttribute("y", 128 + i * (hs + 8)); t.setAttribute("font-size", hs); });
+      const h = Math.min(92, 296 / n);
+      r.vl.setAttribute("height", n * h); r.endr.setAttribute("y", 56 + n * h - 2);
+      r.lines.forEach((t, i) => {
+        const on = i < L.length, top = 56 + i * h;
+        r.rules[i].setAttribute("y", top); r.rules[i].setAttribute("opacity", on ? 1 : 0);
+        r.nums[i].textContent = on ? String(i + 1) : ""; r.nums[i].setAttribute("y", top + h / 2 + 7);
+        const sz = 28;
+        t.textContent = L[i] || ""; t.setAttribute("y", top + h / 2 + 11); t.setAttribute("font-size", sz);
+        t.style.fontFamily = c.mono ? MONO : "";
+      });
+    },
+  };
+  const ASSETS = "../assets/";
+  // ready-made diagrams from ../assets. step.img = file name
+  const VFIGS = ["x86-loop", "x86-timeline", "x86-address-space", "x86-linker", "x86-reg-grid", "x86-reg-nest", "x86-size", "x86-ambiguous", "x86-two-lines", "x86-array", "x86-roadmap", "x86-syscall"];
+  const vfigSub = {
+    build(g) {
+      const r = {};
+      VFIGS.forEach((n) => {
+        const im = E("image", { x: 0, y: 0, width: 1150, height: 392, preserveAspectRatio: "xMidYMid meet" }, g);
+        im.setAttributeNS("http://www.w3.org/1999/xlink", "href", ASSETS + n + ".svg"); im.setAttribute("href", ASSETS + n + ".svg");
+        im.style.opacity = 0; r[n] = im;
+      });
+      return r;
+    },
+    render(s, r) { for (const k in r) vis(r[k], k === s.img); },
+  };
+  const xs = (extra) => Object.assign({ vfig: vfigSub, lean: leanSub, card: cardSub, code: codeSub, reg: regSub, mem: memSub, ana: anaSub, flow: flowSub, bar: barSub }, extra || {});
+
+  // ================= lecture 12: Intel x86 =================
+  const T1 = { cols: [{ h: "MACHINE", x: 60, w: 300, bold: true, size: 22 }, { h: "WHAT IT GAVE US", x: 400, w: 700, size: 21 }],
+    rows: [["E15", "the fetch, decode, execute loop"], ["E20", "registers, memory and branches"], ["pipelined E20", "overlapping instructions"]], rh: 70, y0: 70, fs: 21 };
+  scene(mixScene({
+    num: "1", title: "Recap: Three Machines, One Idea", subtitle: "Same loop, forty years of additions.",
+    chips: ["The loop", "Three machines", "Why x86 looks odd"],
+    steps: [
+      { sub: "vfig", img: "x86-loop", chip: 1, cap: "Fetch, decode, execute, move on. Every processor we have met does this.", narrate: "Every processor we have met does the same loop: fetch an instruction, decode it, execute it, move on. What changes from machine to machine is how much is packed into each step." },
+      { sub: "tb1", rows: 1, hl: [0], chip: 2, cap: "E15: just the loop, with four registers and no data memory.", narrate: "E15 gave us the loop itself: four registers, a little instruction ROM, no data memory." },
+      { sub: "tb1", rows: 2, hl: [1], chip: 2, cap: "E20: registers, memory and branches.", narrate: "E20 added what makes a computer useful: registers you can name, a real memory, and branches." },
+      { sub: "tb1", rows: 3, hl: [2], chip: 2, cap: "Pipelined E20: the same instructions, overlapped.", narrate: "The pipelined E20 kept the same instructions but overlapped them, so that more got done per unit of time." },
+      { sub: "lean", card: cd("Intel x86 is the same loop", ["with forty-odd years of additions", "most of what looks strange has a reason", "ask: what was it compatible with?"]), chip: 3, cap: "When something looks strange, ask what it had to stay compatible with.", narrate: "Intel x86 is the same loop with forty-odd years of additions. Almost everything that looks strange about it has a historical reason, and when something looks strange today, the useful question is usually: what was it compatible with?" },
+      { sub: "lean", card: cd("Today is about reading", ["we read x86 this week", "we write it next week", "by the end, this will make sense:", "mov ah, [some_string+ebx]"], true), chip: 3, cap: "Today we read x86. Next week we write it.", narrate: "This lecture is deliberately about reading x86. Next week we write it. By the end of today you should be able to look at a line and say what it does." },
+    ],
+  }, xs({ tb1: tb(T1) })));
+
+  const T2 = { cols: [{ h: "", x: 40, w: 150, bold: true, size: 20 }, { h: "E15", x: 200, w: 230, size: 17 }, { h: "E20", x: 450, w: 260, size: 17 }, { h: "IA-32", x: 730, w: 400, size: 17 }],
+    rows: [["Memory", "16 cells of ROM", "8192 16-bit cells", "up to 4 GB"], ["Registers", "four 4-bit", "seven 16-bit", "eight 32-bit, plus float, segment, vector"], ["Instructions", "11 mnemonics", "13 plus 3 pseudo", "about 981 mnemonics"], ["Used in", "nothing", "nothing", "probably your computer, right now"]], rh: 84, y0: 70, fs: 17 };
+  scene(mixScene({
+    num: "2", title: "E15, E20, and the Real Thing", subtitle: "IA-32: the 32-bit Intel architecture.",
+    chips: ["The name", "Side by side", "What we use", "32-bit"],
+    steps: [
+      { sub: "vfig", img: "x86-timeline", chip: 1, cap: "IA-32, x86 or x86-32: one architecture, and a promise of backward compatibility.", narrate: "The architecture we will use is called <strong>IA-32</strong>: Intel Architecture, 32-bit. You will also see it called x86 or x86-32. Programs written for the 8086 in 1978 still run on a modern x86 chip, and that promise of backward compatibility is the reason the instruction set is so large." },
+      { sub: "tb2", rows: 1, hl: [0], chip: 2, cap: "Memory: from sixteen cells to four gigabytes.", narrate: "Side by side with what you know. Memory: E15 had sixteen cells of instruction ROM and no data memory. E20 had 8192 cells. IA-32 can address up to 4 GB, code and data mixed." },
+      { sub: "tb2", rows: 2, hl: [1], chip: 2, cap: "Registers: from four to eight general ones, and a lot more besides.", narrate: "Registers: four, then seven, then eight 32-bit general-purpose registers, plus floating point, segment, vector, debug and system registers that we will never touch." },
+      { sub: "tb2", rows: 3, hl: [2], chip: 2, cap: "Instructions: eleven, thirteen, and about 981.", narrate: "Instructions: eleven, thirteen, and roughly nine hundred and eighty-one mnemonics, and more once you count operand variants." },
+      { sub: "tb2", rows: 4, hl: [3], chip: 2, cap: "And only one of the three is probably in your computer right now.", narrate: "And only one of the three is probably running in your computer at this moment." },
+      { sub: "lean", card: cd("We use a small slice", ["eight general-purpose registers", "a few dozen instructions", "no floating point, no vector", "segment registers: left to the OS"]), chip: 3, cap: "A small slice: eight registers and a few dozen instructions.", narrate: "We will use a small fraction of all this: eight general-purpose registers and a few dozen instructions. The segment registers, CS, SS, DS, ES, FS and GS, are set up by the operating system and we leave them alone." },
+      { sub: "vfig", img: "x86-address-space", chip: 4, cap: "32-bit: registers and addresses are 32 bits, so 2^32 bytes = 4 GB.", narrate: "One thing worth saying out loud. 32-bit means the registers are 32 bits wide and an address is 32 bits, so two to the thirty-second bytes, 4 GB, is the most memory a program can name." },
+      { sub: "lean", card: cd("Your laptop is x86-64", ["the 64-bit descendant", "widens everything", "the 32-bit instructions still work", "we learn 32-bit: it is the smaller one"]), chip: 4, cap: "Your laptop runs the 64-bit descendant. We learn the smaller one first.", narrate: "Your laptop is almost certainly running the 64-bit descendant, x86-64. It widens everything but keeps the 32-bit instructions working. We learn the 32-bit version because it is the smaller of the two." },
+    ],
+  }, xs({ tb2: tb(T2) })));
+
+  // ================= 3 Toolchain =================
+  const LOOP = ["mov eax, 2", "L1:", "cmp eax, 100", "jge L2", "imul eax, 2", "jmp L1", "L2:"];
+  const OBJ = ["0:  b8 02 00 00 00    mov  eax,0x2", "5:  83 f8 64          cmp  eax,0x64", "8:  7d 05             jge  0xf", "a:  6b c0 02          imul eax,0x2", "d:  eb f6             jmp  0x5"];
+  const EXE = ["48060:  b8 02 00 00 00    mov  eax, 2", "48065 <L1>:", "48065:  83 f8 64          cmp  eax, 100", "48068:  7d 05             jge  4806f <L2>", "4806a:  6b c0 02          imul eax, 2", "4806d:  eb f6             jmp  48065 <L1>", "4806f <L2>:"];
+  const TCH = ["foo.asm", "nasm", "foo.o", "ld", "foo"];
+  scene(mixScene({
+    num: "3", title: "From Text to a Running Program", subtitle: "Two tools, three files.",
+    chips: ["The toolchain", "Object versus executable", "Why a linker"],
+    steps: [
+      { sub: "lean", card: cd("E20 had a simulator", ["write assembly, run the simulator, done", "x86 has a real toolchain in between", "every stage has a file type"]), chip: 1, cap: "In E20 we wrote assembly and ran it. With x86, a real toolchain sits between text and process.", narrate: "In E20 you wrote assembly, handed it to a simulator, and that was the whole story. x86 is a real processor, so there is a real <strong>toolchain</strong> between your text file and a running process. And <em>every</em> stage of it produces its own kind of file. Let us follow one program all the way through." },
+      { sub: "flow", boxes: TCH, hot: [0, 1, 2], lab: { 0: "your text", 1: "assembler", 2: "object file" }, chip: 1, cap: "nasm, the assembler, turns each instruction into its machine-code bytes.", narrate: "We start with your source file, <code>foo.asm</code>. The first tool is <code>nasm</code>, the <strong>assembler</strong>. It reads each instruction, turns it into its machine-language bytes, and writes the result to an <strong>object file</strong>, <code>foo.o</code>." },
+      { sub: "flow", boxes: TCH, hot: [2, 3, 4], lab: { 2: "object file", 3: "linker", 4: "executable" }, chip: 1, cap: "ld, the linker, decides where everything lives and produces the executable.", narrate: "The second tool is <code>ld</code>, the <strong>linker</strong>. It takes one or more object files, decides where everything is going to live in memory, and produces the <strong>executable</strong>. Keep one distinction in mind from here on: the object file the assembler produces and the executable the linker produces are <em>not</em> the same thing. The next few slides are about exactly how they differ." },
+      { sub: "code", t: "THE TWO COMMANDS", code: ["nasm -f elf -gstabs foo.asm", "ld -o foo -m elf_i386 foo.o"], ann: { 0: "assemble: foo.asm -> foo.o", 1: "link: foo.o -> foo" }, annx: 560, chip: 1, cap: "Two commands: assemble, then link.", narrate: "In practice that is two commands. The first, <code>nasm</code>, assembles <code>foo.asm</code> into <code>foo.o</code>. The second, <code>ld</code>, links <code>foo.o</code> into the executable <code>foo</code>. Now we need a program to run them on." },
+      { sub: "code", t: "A LOOP THAT DOUBLES eax UNTIL IT REACHES 100", code: LOOP, chip: 2, cap: "A tiny program: double eax until it reaches 100.", narrate: "Here is a tiny one: a loop that doubles <code>eax</code> until it reaches 100. It starts at 2, compares with 100, leaves the loop if it is there, and otherwise doubles and goes round again. Nothing clever. What matters is what the two tools do to it." },
+      { sub: "code", t: "DISASSEMBLY OF foo.o (AFTER NASM)", code: OBJ, hl: [], chip: 2, cap: "After nasm: no labels, and the addresses start at zero.", narrate: "First, the object file, straight out of <code>nasm</code>. A disassembler shows us what is inside, and two things stand out. There are <em>no labels</em>: <code>L1</code> and <code>L2</code> are gone. And the addresses start at zero, because the assembler has no idea where this program will end up in memory." },
+      { sub: "code", t: "DISASSEMBLY OF foo (AFTER LD)", code: EXE, chip: 2, cap: "After ld: the addresses are real, and the labels are back.", narrate: "Now the same program after <code>ld</code>. The addresses are real: the code starts at <code>48060</code>, in hex. And the labels are back, so <code>L1</code> and <code>L2</code> appear again. So the linker has clearly changed <em>something</em>. The question is what." },
+      { sub: "code", t: "SAME BYTES: jge IS 7d 05 IN BOTH", code: ["object:   8:  7d 05    jge 0xf", "linked:   48068:  7d 05    jge 4806f <L2>"], hl: [0, 1], ann: { 0: "jump 5 bytes ahead", 1: "jump 5 bytes ahead" }, annx: 700, chip: 2, cap: "The machine-code bytes are identical. jge is 7d 05 in both: a relative jump.", narrate: "Here is the surprise. Put the two jumps side by side, and the machine-code bytes are <em>identical</em>: <code>jge</code> is <code>7d 05</code> in both. That is because it is a <strong>relative</strong> jump. It says 'skip ahead 5 bytes', not 'go to address 0xf'. Relative jumps survive being moved around, which is why the linker can place the program anywhere without rewriting them. That is the trick." },
+      { sub: "vfig", img: "x86-linker", chip: 3, cap: "Programs come in pieces. Whoever assembles main.asm cannot know where helper.asm put the function.", narrate: "So what does the linker actually have to fix? Not jumps like that one, but calls between files. Programs come in pieces. If <code>main.asm</code> says <code>call helper_function</code>, and that function is defined in <code>helper.asm</code>, then the assembler, which only ever sees <code>main.asm</code>, has no idea where the function is. So it emits the call with a <em>blank</em> target and leaves a note: someone fill this in. That someone is the linker, and the picture shows the before and the after." },
+      { sub: "code", t: "TWO DIRECTIVES LET THE PIECES FIND EACH OTHER", code: ["; helper.asm", "global helper_function", "", "; main.asm", "extern helper_function", "call helper_function"], hl: [1, 4], ann: { 1: "visible to other files", 4: "defined somewhere else" }, annx: 560, chip: 3, cap: "global says this symbol is visible. extern says it is defined somewhere else.", narrate: "But how does the linker know which pieces belong together? You tell it, with two directives. In <code>helper.asm</code>, <code>global</code> says this symbol is visible to other files. In <code>main.asm</code>, <code>extern</code> says this symbol is defined somewhere else. Those two lines are the handshake." },
+    ],
+  }, xs({})));
+
+  // ================= 4 Registers =================
+  scene(mixScene({
+    num: "4", title: "Registers: Eight Boxes with Nested Names", subtitle: "Writing one name can change another.",
+    chips: ["The eight", "Nested names", "Write a half", "One letter apart"],
+    steps: [
+      { sub: "vfig", img: "x86-reg-grid", chip: 1, cap: "Eight 32-bit registers. The e stands for extended, from 16 to 32 bits.", narrate: "The eight general-purpose 32-bit registers are <code>eax</code>, <code>ebx</code>, <code>ecx</code>, <code>edx</code>, <code>ebp</code>, <code>esp</code>, <code>esi</code> and <code>edi</code>. The <code>e</code> stands for extended, as in extended from 16 to 32 bits." },
+      { sub: "lean", card: cd("Two you cannot name like the rest", ["eip: the program counter", "it changes only through jumps", "eflags: the flags register", "cmp sets the zero flag in here"], true), chip: 1, cap: "eip is the program counter. eflags holds the flags that cmp sets.", narrate: "Two others exist but you cannot name them like the rest. <code>eip</code> is the program counter, which only changes through jumps. <code>eflags</code> is the flags register, which holds things like the zero flag that <code>cmp</code> sets." },
+      { sub: "reg", val: "f0f0f0f0", hot: "eax", chip: 2, cap: "One register, four bytes. This is eax.", narrate: "Here is the part that has no counterpart in E20: the registers have <strong>nested names</strong>. This is <code>eax</code>: 32 bits, which is four bytes." },
+      { sub: "reg", val: "f0f0f0f0", hot: "ax", chip: 2, cap: "The low half of eax is its own 16-bit register: ax.", narrate: "The lower half of <code>eax</code> is its own 16-bit register, called <code>ax</code>." },
+      { sub: "reg", val: "f0f0f0f0", hot: "ah", chip: 2, cap: "ax splits again. The high byte of ax is ah.", narrate: "And <code>ax</code> splits further into two 8-bit halves. <code>ah</code> is the high half." },
+      { sub: "reg", val: "f0f0f0f0", hot: "al", chip: 2, cap: "And al is the low byte.", narrate: "And <code>al</code> is the low half. Notice that <code>ah</code> and <code>al</code> are halves of <code>ax</code>, not of <code>eax</code>: there is no name for the top two bytes on their own." },
+      { sub: "vfig", img: "x86-reg-nest", chip: 2, cap: "Only eax, ebx, ecx and edx go all the way down to bytes.", narrate: "<code>ebx</code>, <code>ecx</code> and <code>edx</code> work the same way: <code>bx</code>, <code>bh</code>, <code>bl</code> and so on. <code>ebp</code>, <code>esp</code>, <code>esi</code> and <code>edi</code> have 16-bit versions but no 8-bit ones." },
+      { sub: "lean", card: cd("These are windows, not separate registers", ["they are windows onto the same bits", "writing one changes the others", "predict before the next step"]), chip: 3, cap: "These are not separate registers. Writing one changes the others.", narrate: "These are not separate registers. They are windows onto the same bits, so writing one changes the others. Let us watch it happen." },
+      { sub: "reg", val: "f0f0f0f0", code: "mov eax, 0xf0f0f0f0", hot: "eax", chip: 3, cap: "Start: eax = 0xf0f0f0f0.", narrate: "First, put <code>0xf0f0f0f0</code> in <code>eax</code>." },
+      { sub: "reg", val: "f0f0abab", code: "mov ax, 0xabab", hot: "ax", chg: [2, 3], chip: 3, cap: "Write ax: only the low 16 bits change.", narrate: "Now write <code>0xabab</code> into <code>ax</code>. Only the low 16 bits change. The top half is untouched." },
+      { sub: "reg", val: "f0f0abac", code: "add eax, 1", hot: "eax", chg: [3], chip: 3, cap: "add eax, 1: a normal 32-bit addition.", narrate: "Then <code>add eax, 1</code>. A normal addition on all 32 bits: <code>0xf0f0abab</code> plus one is <code>0xf0f0abac</code>." },
+      { sub: "reg", val: "abababab", code: "mov eax, 0xabababab", hot: "eax", chip: 4, cap: "A second experiment. eax = 0xabababab.", narrate: "A second experiment, nearly identical. Put <code>0xabababab</code> in <code>eax</code>." },
+      { sub: "reg", val: "abababff", code: "mov al, 0xff", hot: "al", chg: [3], chip: 4, cap: "mov al, 0xff: just the lowest byte.", narrate: "Write <code>0xff</code> into <code>al</code>. Only the lowest byte changes." },
+      { sub: "reg", val: "ababac00", code: "add eax, 1", code2: "32-bit addition: the carry ripples up", hot: "eax", chg: [2, 3], chip: 4, cap: "add eax, 1: ff + 1 = 00, and the carry lands in the next byte.", narrate: "Now <code>add eax, 1</code>. This is a 32-bit addition, so <code>0xff</code> plus one is <code>0x00</code> with a carry, and the carry ripples into the next byte: <code>0xababac00</code>." },
+      { sub: "reg", val: "ababab00", code: "add al, 1   (instead)", code2: "8-bit addition: the carry has nowhere to go", hot: "al", chg: [3], chip: 4, cap: "add al, 1 instead: ff + 1 = 00, and the carry is simply dropped.", narrate: "Now the same experiment, but finish with <code>add al, 1</code>. That is an 8-bit addition, so <code>0xff</code> plus one is <code>0x00</code> and the carry is simply dropped. The result is <code>0xababab00</code>. The two programs differ by one letter and give different answers." },
+    ],
+  }, xs({})));
+  // ================= 5 Reading an instruction =================
+  const T5 = { cols: [{ h: "E20", x: 60, w: 400, mono: true, size: 19 }, { h: "IA-32", x: 520, w: 580, mono: true, size: 19 }],
+    rows: [["movi $1, 20", "mov eax, 20"], ["addi $1, $1, 1", "inc eax    (or add eax, 1)"], ["add $1, $1, $2", "add eax, ebx"], ["jeq $1, $2, foobar", "cmp eax, ebx  then  je foobar"], ["lw $1, 20($0)", "mov eax, [20]"], ["lw $1, 0($2)", "mov eax, [ebx]"], ["lw $1, 20($2)", "mov eax, [ebx+20]"], ["sw $1, 20($0)", "mov [20], eax"], ["lw, addi, sw on one cell", "inc dword [20]"]], rh: 38, y0: 52, fs: 19 };
+  scene(mixScene({
+    num: "5", title: "Reading an Instruction", subtitle: "Opcode, then operands. Destination on the left.",
+    chips: ["Shape", "Syntax traps", "E20 against IA-32"],
+    steps: [
+      { sub: "ana", parts: [["mov", "opcode", "what to do"], ["eax", "destination", "written to"], ["53", "source", "read from"]], note: "mov eax, 53", say: "eax = 53", chip: 1, cap: "An opcode, then operands. The destination is on the left.", narrate: "The shape of an x86 instruction is an opcode, then operands separated by commas, with the <strong>destination on the left</strong>. <code>mov eax, 53</code> puts 53 in <code>eax</code>." },
+      { sub: "ana", parts: [["mov", "opcode", "what to do"], ["eax", "destination", "written to"], ["ebx", "source", "read from"]], note: "mov eax, ebx", say: "eax = ebx", chip: 1, cap: "The source can be a register.", narrate: "The source can be a register. <code>mov eax, ebx</code> copies <code>ebx</code> into <code>eax</code>." },
+      { sub: "ana", parts: [["add", "opcode", "what to do"], ["eax", "destination", "also a source"], ["ebx", "source", "read from"]], note: "add eax, ebx", say: "eax = eax + ebx", chip: 1, cap: "For add, the destination is also the first operand.", narrate: "For arithmetic, the destination is also the first thing read. <code>add eax, ebx</code> means <code>eax = eax + ebx</code>." },
+      { sub: "lean", card: cd("Syntax rules that catch people", ["comments start with ; and run on", "numbers must begin with a digit", "decimal 53, hex 0x53, binary 010101b", "hex starting with a letter needs a 0"]), chip: 2, cap: "Comments use a semicolon. Numbers must begin with a digit.", narrate: "A few syntax rules catch people the first time. Comments start with a semicolon and run to the end of the line. Numeric literals must begin with a digit: decimal is <code>53</code>, hex is <code>0x53</code> or <code>53h</code>, binary is <code>010101b</code>." },
+      { sub: "code", t: "A HEX NUMBER THAT STARTS WITH A LETTER", code: ["mov bl, 0ffh     ; fine: leading zero", "mov bl, 0xff     ; fine", "mov bl, ffh      ; a label named ffh!"], hl: [2], ann: { 2: "the assembler reads a label" }, annx: 600, chip: 2, cap: "ffh is read as a label. Write 0ffh or 0xff.", narrate: "A hex number that starts with a letter needs a leading zero: <code>0ffh</code> or <code>0xff</code>, never <code>ffh</code>, which the assembler reads as a label." },
+      { sub: "ana", parts: [["mov", "opcode"], ["bh", "destination"], ["ah", "a register"]], note: "mov bh, ah", say: "copy the register ah into bh", chip: 2, cap: "mov bh, ah copies a register.", narrate: "Compare these two. <code>mov bh, ah</code> copies the register <code>ah</code> into <code>bh</code>." },
+      { sub: "ana", parts: [["mov", "opcode"], ["bh", "destination"], ["0ah", "a number"]], note: "mov bh, 0ah", say: "put the number ten into bh", chip: 2, cap: "mov bh, 0ah puts the number ten into bh. One letter again.", narrate: "And <code>mov bh, 0ah</code> puts the number ten into <code>bh</code>. One letter of difference, completely different meaning." },
+      { sub: "lean", card: cd("One opcode, several kinds of operand", ["mov alone covers what E20 split in four", "movi, lw, sw, and a register copy", "the operand decides which one it is"]), chip: 3, cap: "Unlike E20, one x86 opcode takes several kinds of operand.", narrate: "Unlike E20, one x86 opcode accepts several kinds of operand. <code>mov</code> alone covers what E20 split across <code>movi</code>, <code>lw</code>, <code>sw</code> and a register copy. Here is the same idea in both languages." },
+      { sub: "tb5", rows: 3, hl: [0], chip: 3, cap: "Immediates, increments and adds look alike.", narrate: "The first three rows are easy. <code>movi</code> becomes <code>mov</code>, <code>addi</code> becomes <code>inc</code> or <code>add</code>, and the three-register <code>add</code> becomes a two-operand one." },
+      { sub: "tb5", rows: 4, hl: [3], chip: 3, cap: "E20 compared and jumped in one instruction. x86 splits it in two.", narrate: "The branch is different. E20's <code>jeq</code> compared and jumped in one instruction. x86 splits it: <code>cmp</code> sets flags, and a separate conditional jump reads them." },
+      { sub: "tb5", rows: 8, hl: [4, 5, 6, 7], chip: 3, cap: "Loads and stores are all mov. Brackets mean memory.", narrate: "Loads and stores are all <code>mov</code>. <code>lw</code> becomes <code>mov</code> into a register with a bracket on the source, and <code>sw</code> becomes <code>mov</code> with the bracket on the destination. The brackets mean memory: we come to that next." },
+      { sub: "tb5", rows: 9, hl: [8], chip: 3, cap: "And x86 can do arithmetic straight on memory: three instructions become one.", narrate: "And the last row is something E20 could not do. x86 can do arithmetic straight on memory, so a three-instruction load, modify, store becomes one: <code>inc dword [20]</code>." },
+    ],
+  }, xs({ tb5: tb(T5) })));
+
+  // ================= 6 Memory operands =================
+  const T6 = { cols: [{ h: "WRITTEN", x: 50, w: 420, mono: true, size: 21 }, { h: "WHAT IT MEANS", x: 500, w: 620, size: 19 }],
+    rows: [["mov eax, 5", "immediate: eax = 5"], ["mov eax, ebx", "register: eax = ebx"], ["mov eax, [5]", "memory: eax = the 32-bit value starting at address 5"], ["mov eax, [some_label]", "memory, with a name for the address"], ["mov eax, [ebx]", "memory: the value at the address held in ebx"]], rh: 58, y0: 60, fs: 19 };
+  const T6B = { cols: [{ h: "THE OTHER OPERAND", x: 60, w: 360, mono: true, size: 21 }, { h: "BYTES MOVED", x: 470, w: 200, size: 21, bold: true }, { h: "NAME", x: 720, w: 400, size: 21 }],
+    rows: [["eax", "4", "dword"], ["ax", "2", "word"], ["ah, al", "1", "byte"]], rh: 70, y0: 70, fs: 21 };
+  scene(mixScene({
+    num: "6", title: "Memory Operands: What the Brackets Mean", subtitle: "Brackets always mean: go to memory.",
+    chips: ["Brackets", "The two rules", "How big is it"],
+    steps: [
+      { sub: "tb6", rows: 2, hl: [], chip: 1, cap: "No brackets: the value itself. A number, or a register.", narrate: "Square brackets always mean go to memory. No brackets means the value itself. <code>mov eax, 5</code> puts the number 5 in <code>eax</code>. <code>mov eax, ebx</code> copies a register." },
+      { sub: "tb6", rows: 3, hl: [2], chip: 1, cap: "Brackets: go to address 5 and read four bytes.", narrate: "But <code>mov eax, [5]</code> goes to memory. It reads the 32-bit value that starts at address 5." },
+      { sub: "tb6", rows: 4, hl: [3], chip: 1, cap: "A label is just a name for an address.", narrate: "The same thing with a name: <code>[some_label]</code> is the value at the address the label stands for." },
+      { sub: "tb6", rows: 5, hl: [4], chip: 1, cap: "[ebx] is a pointer dereference: ebx holds an address, the brackets follow it.", narrate: "That last form is a pointer dereference. <code>ebx</code> holds an address, and the brackets follow it." },
+      { sub: "code", t: "A MEMORY OPERAND CAN DO SOME ARITHMETIC", code: ["mov eax, [ebx+20]          ; base plus offset", "mov ah,  [some_string+ebx] ; label plus register", "mov eax, [some_array+ebx*4] ; label plus scaled register"], chip: 1, cap: "A memory operand can add an offset or a scaled register.", narrate: "A memory operand can also add an offset or a scaled register: <code>[ebx+20]</code>, <code>[some_string+ebx]</code>, <code>[some_array+ebx*4]</code>." },
+      { sub: "lean", card: cd("Rule 1", ["you cannot move into an immediate", "mov 53, eax is meaningless", "the destination must hold a value"]), chip: 2, cap: "Rule one: you cannot move into a number.", narrate: "Two rules follow from the hardware. First: you cannot move into an immediate. <code>mov 53, eax</code> is meaningless, because 53 is not a place." },
+      { sub: "code", t: "RULE 2: AT MOST ONE MEMORY OPERAND", code: ["mov [eax], [ebx]", "", "mov ecx, [ebx]       ; legal: go through a register", "mov [eax], ecx"], hl: [0], ann: { 0: "illegal: two memory operands" }, annx: 500, chip: 2, cap: "Rule two: at most one memory operand. Go through a register.", narrate: "Second: at most one memory operand per instruction. <code>mov [eax], [ebx]</code> is illegal. Go through a register: load into <code>ecx</code> first, then store from <code>ecx</code>." },
+      { sub: "vfig", img: "x86-size", chip: 3, cap: "The size of a memory access comes from the other operand.", narrate: "How big is the access? The size of a memory access comes from the other operand." },
+      { sub: "tb6b", rows: 3, hl: [], chip: 3, cap: "eax is four bytes, ax is two, ah or al is one.", narrate: "If the other operand is <code>eax</code>, the access is 4 bytes, a dword. If it is <code>ax</code>, 2 bytes, a word. If it is <code>ah</code> or <code>al</code>, 1 byte." },
+      { sub: "code", t: "THE REGISTER SETS THE SIZE", code: ["mov eax, [ebx]   ; read a DWORD", "mov ax,  [ebx]   ; read a WORD", "mov ah,  [ebx]   ; read a BYTE"], ann: { 0: "4 bytes", 1: "2 bytes", 2: "1 byte" }, annx: 720, say: "whichever size, ebx is always a 32-bit register: it holds an address", chip: 3, cap: "Same pointer, three sizes. The pointer is always 32 bits, because it is an address.", narrate: "Same pointer, three sizes. Whichever size, the pointer itself is always a 32-bit register, because it is an address." },
+      { sub: "code", t: "NO REGISTER: NOTHING SAYS HOW MUCH YOU MEAN", code: ["mov [my_data], 53h", "mov dword [my_data], 53h", "mov word  [my_data], 53h", "mov byte  [my_data], 53h"], hl: [0], ann: { 0: "error: operation size not specified", 1: "four bytes: 00 00 00 53", 2: "two bytes: 00 53", 3: "one byte: 53" }, annx: 480, chip: 3, cap: "With no register, you must say the size.", narrate: "When no register is involved, nothing says how much you mean. The first line is an error: operation size not specified. Write <code>dword</code> for four bytes, <code>word</code> for two, <code>byte</code> for one." },
+      { sub: "vfig", img: "x86-ambiguous", chip: 3, cap: "The assembler refuses to guess, which is a kindness.", narrate: "The assembler refuses to guess, which is a kindness. A wrong guess here would silently overwrite neighbouring bytes." },
+    ],
+  }, xs({ tb6: tb(T6), tb6b: tb(T6B) })));
+
+  // ================= 7 Endianness =================
+  scene(mixScene({
+    num: "7", title: "Bytes, Words, and Which End Comes First", subtitle: "Little-endian: the least significant byte goes first.",
+    chips: ["Bytes", "Little-endian", "Mixing sizes", "Try this one"],
+    steps: [
+      { sub: "lean", card: cd("E20 had 16-bit cells", ["one address, one value", "x86 memory is made of bytes", "every address holds 8 bits", "a 32-bit register takes four addresses"]), chip: 1, cap: "x86 memory is bytes: a 32-bit register takes four consecutive addresses.", narrate: "E20 had 16-bit cells: one address, one value. x86 memory is made of <strong>bytes</strong>: every address holds 8 bits. A 32-bit register therefore occupies four consecutive addresses, and we have to decide in what order the four bytes go." },
+      { sub: "mem", reg: { name: "eax", val: "abcdef12" }, cells: [], code: "mov [foobar], eax", say: "eax = 0xabcdef12: where do the four bytes go?", chip: 2, cap: "eax = 0xabcdef12, and four empty cells. In what order?", narrate: "Say <code>eax</code> holds <code>0xabcdef12</code>, and we run <code>mov [foobar], eax</code>. The four bytes are <code>ab</code>, <code>cd</code>, <code>ef</code>, <code>12</code>. Which goes at the lowest address?" },
+      { sub: "mem", reg: { name: "eax", val: "abcdef12" }, cells: ["12", "ef", "cd", "ab"], map: [[0, 3], [1, 2], [2, 1], [3, 0]], hot: [0], code: "mov [foobar], eax", say: "least significant byte at the lowest address: little-endian", chip: 2, cap: "Intel's answer: the least significant byte at the lowest address.", narrate: "Intel's answer is <strong>little-endian</strong>: the least-significant byte goes at the lowest address. So <code>12</code> lands at <code>foobar</code>, then <code>ef</code>, then <code>cd</code>, and <code>ab</code> at the end." },
+      { sub: "lean", card: cd("It looks backwards, but it is consistent", ["mov ebx, [foobar] reads them back", "and gives back 0xabcdef12", "reversed in, reversed out"], true), chip: 2, cap: "Reading back reverses it again, so nothing is lost.", narrate: "It looks backwards on the page, but it is consistent. Reading with <code>mov ebx, [foobar]</code> collects the four bytes in the same order and gives back <code>0xabcdef12</code>." },
+      { sub: "mem", reg: { name: "ax", val: "abcd" }, cells: ["cd", "ab"], map: [[0, 1], [1, 0]], code: "mov [foobar], ax", say: "ax = 0xabcd: cd at foobar+0, ab at foobar+1", chip: 2, cap: "The same rule at 16 bits: cd first, then ab.", narrate: "The same rule holds for smaller sizes. With <code>ax</code> equal to <code>0xabcd</code>, <code>mov [foobar], ax</code> writes <code>cd</code> at <code>foobar+0</code> and <code>ab</code> at <code>foobar+1</code>." },
+      { sub: "mem", reg: { name: "ah", val: "cd" }, cells: ["cd"], map: [[0, 0]], code: "mov [foobar], ah", say: "one byte: there is nothing to reorder", chip: 2, cap: "A single byte has nothing to reorder.", narrate: "With <code>ah</code> or <code>al</code> it is one byte, so there is nothing to reorder." },
+      { sub: "mem", reg: { name: "eax", val: "12345678" }, cells: ["78", "56", "34", "12"], map: [[0, 3], [1, 2], [2, 1], [3, 0]], code: "mov eax, 0x12345678 / mov [foobar], eax", say: "foobar+0..3 = 78 56 34 12", chip: 3, cap: "Little-endian becomes visible when you read back with a different size.", narrate: "Little-endian becomes visible when you read back with a different size from what you wrote. Put <code>0x12345678</code> in <code>eax</code> and store it: the bytes are <code>78 56 34 12</code>." },
+      { sub: "mem", reg: { name: "bx", val: "5678" }, cells: ["78", "56", "34", "12"], map: [[0, 1], [1, 0]], up: true, hot: [0, 1], code: "mov bx, [foobar]", say: "bx = 0x5678", chip: 3, cap: "Read two bytes: the two lowest addresses, which are the least significant.", narrate: "Now <code>mov bx, [foobar]</code>. A word read starts at <code>foobar</code> and takes the two lowest-addressed bytes, <code>78</code> and <code>56</code>, which are the least significant ones. So <code>bx</code> is <code>0x5678</code>, not <code>0x1234</code>." },
+      { sub: "mem", reg: { name: "ch", val: "78" }, cells: ["78", "56", "34", "12"], map: [[0, 0]], up: true, hot: [0], code: "mov ch, [foobar]", say: "ch = 0x78", chip: 3, cap: "Read one byte: the lowest address, 78.", narrate: "And <code>mov ch, [foobar]</code> reads one byte, the lowest-addressed one: <code>0x78</code>." },
+      { sub: "code", t: "TRY THIS ONE", code: ["mov eax, 0xabcdef       ; eax = 0x00abcdef", "mov [foobar], eax", "mov [foobar+2], eax", "mov [foobar+4], ah"], say: "what do the six bytes starting at foobar look like at the end?", chip: 4, cap: "Try this one. What do the six bytes starting at foobar look like at the end?", narrate: "Try this one yourself. After these four instructions, what do the six bytes starting at <code>foobar</code> look like? Work out each store in turn, and write down the bytes after each one before the next step." },
+      { sub: "mem", reg: { name: "eax", val: "00abcdef" }, cells: ["ef", "cd", "ab", "00"], map: [[0, 3], [1, 2], [2, 1], [3, 0]], code: "mov [foobar], eax", say: "the first store: ef cd ab 00", chip: 4, cap: "First store: ef cd ab 00.", narrate: "The first store writes the four bytes starting at <code>foobar</code>: <code>ef cd ab 00</code>, least significant first." },
+      { sub: "mem", reg: { name: "eax", val: "00abcdef" }, cells: ["ef", "cd", "ef", "cd", "ab", "00"], map: [[0, 5], [1, 4], [2, 3], [3, 2]], chg: [2, 3, 4, 5], code: "mov [foobar+2], eax", say: "starts two bytes later: overwrites foobar+2 and +3, extends to +5", chip: 4, cap: "Second store starts at foobar+2: it overwrites two bytes and extends the array.", narrate: "The second store starts two bytes later. It overwrites <code>foobar+2</code> and <code>foobar+3</code> and extends the array to <code>foobar+5</code>: <code>ef cd ef cd ab 00</code>." },
+      { sub: "mem", reg: { name: "ah", val: "cd" }, cells: ["ef", "cd", "ef", "cd", "cd", "00"], map: [[0, 4]], chg: [4], code: "mov [foobar+4], ah", say: "ah = 0xcd replaces ab:  ef cd ef cd cd 00", chip: 4, cap: "Third store: ah = 0xcd goes to foobar+4, replacing ab.", narrate: "The third store writes <code>ah</code>, which is <code>0xcd</code>, to <code>foobar+4</code>, replacing <code>ab</code>. Final answer: <code>ef cd ef cd cd 00</code>." },
+    ],
+  }, xs({})));
+
+  // ================= 8 Sections and directives =================
+  const T8 = { cols: [{ h: "SECTION", x: 60, w: 220, mono: true, bold: true, size: 24 }, { h: "WHAT GOES THERE", x: 320, w: 780, size: 22 }],
+    rows: [[".text", "your code"], [".data", "global data that starts with a value"], [".bss", "global data that starts uninitialised: just reserved space"]], rh: 70, y0: 70, fs: 22 };
+  const T8D = { cols: [{ h: "DIRECTIVE", x: 40, w: 300, mono: true, bold: true, size: 22 }, { h: "MEANING", x: 380, w: 740, size: 20 }],
+    rows: [["section", "the following lines go into this section"], ["db  dw  dd  dq", "put initialised bytes, words, dwords, qwords into memory"], ["resb resw resd resq", "reserve space, with no initial value"], ["global", "make this symbol visible to the linker"], ["equ", "define a constant at assembly time"]], rh: 58, y0: 60, fs: 20 };
+  const T8S = { cols: [{ h: "NAME", x: 60, w: 220, bold: true, size: 22 }, { h: "SIZE", x: 300, w: 220, size: 22 }, { h: "DIRECTIVE", x: 540, w: 200, mono: true, size: 22 }, { h: "REGISTER EXAMPLE", x: 780, w: 340, mono: true, size: 20 }],
+    rows: [["byte", "8 bits", "db", "ah, al"], ["word", "16 bits", "dw", "ax, bx"], ["dword", "32 bits", "dd", "eax, ebx"], ["qword", "64 bits", "dq", "rax (x86-64 only)"]], rh: 64, y0: 64, fs: 21 };
+  scene(mixScene({
+    num: "8", title: "Sections and Directives: Laying Out Data", subtitle: "Some lines are for the CPU. Some are for the assembler.",
+    chips: ["Sections", "Directives", "Sizes", "Labels"],
+    steps: [
+      { sub: "tb8", rows: 3, chip: 1, cap: "An x86 program is divided into sections: text for code, data and bss for data.", narrate: "An x86 program is divided into <strong>sections</strong>, and you tell the assembler which one you are writing into. <code>.text</code> is your code. <code>.data</code> is global data that starts with a value. <code>.bss</code> is global data that starts uninitialised: it is just reserved space." },
+      { sub: "code", t: "ONE PROGRAM, THREE SECTIONS", code: ["section .data", "my_favorite_string: db \"Here is an initialized value.\"", "some_number: dd 42", "section .bss", "uninitialized_32byte_buffer: resb 32", "section .text", "global _start", "_start:                  ; the first instruction to run", "    mov [uninitialized_32byte_buffer], ah"], chip: 1, cap: "The three sections in one program.", narrate: "Here they are in one program. Initialised data first, then the reserved buffer, then the code. <code>_start</code> is where execution begins." },
+      { sub: "vfig", img: "x86-two-lines", chip: 2, cap: "Instructions become machine code. Directives instruct the assembler and are not executed.", narrate: "Two kinds of line appear in there, and the difference matters. <strong>Instructions</strong> like <code>mov</code>, <code>add</code> and <code>jmp</code> are translated by the assembler into machine-code bytes. <strong>Directives</strong> like <code>section</code>, <code>db</code>, <code>global</code> and <code>equ</code> are instructions to the assembler. They shape the output but are not themselves executed." },
+      { sub: "tb8d", rows: 5, chip: 2, cap: "The five directives you will see most.", narrate: "The directives you will see most. <code>section</code> switches section. <code>db</code>, <code>dw</code>, <code>dd</code> and <code>dq</code> put initialised data in memory. <code>resb</code> and friends reserve space. <code>global</code> makes a symbol visible to the linker, and <code>equ</code> defines a constant at assembly time." },
+      { sub: "tb8s", rows: 4, chip: 3, cap: "The size names, which you will see everywhere.", narrate: "The size names, which you will see everywhere: byte is 8 bits, word is 16, dword is 32, qword is 64. Each has a data directive and a matching register." },
+      { sub: "code", t: "A LABEL'S VALUE IS AN ADDRESS", code: ["age: dd 0", "mov ebx, age       ; ebx = the ADDRESS of age", "mov eax, [age]     ; eax = the VALUE stored there"], hl: [1], ann: { 1: "no brackets: the address", 2: "brackets: the value" }, annx: 800, chip: 4, cap: "mov ebx, age puts the address in ebx. mov eax, [age] puts the value in eax.", narrate: "A label's value is the address of the line it names. So after <code>age: dd 0</code>, writing <code>mov ebx, age</code> puts the <strong>address</strong> in <code>ebx</code>, and <code>mov eax, [age]</code> puts the <strong>value stored there</strong> in <code>eax</code>. The brackets are the entire difference again." },
+      { sub: "code", t: "SEVERAL VALUES IN ONE DIRECTIVE: BACK TO BACK", code: ["morestuff:  dd 96, 42, 99     ; at morestuff, +4, +8", "stuffstuff: dw 96, 42, 99     ; at +0, +2, +4", "bytestuff:  db 96, 42, 99     ; at +0, +1, +2"], chip: 4, cap: "Several values in one directive sit back to back, spaced by the size.", narrate: "Several values in one directive are laid out back to back. With <code>dd</code> they are four bytes apart, with <code>dw</code> two apart, with <code>db</code> one apart." },
+    ],
+  }, xs({ tb8: tb(T8), tb8d: tb(T8D), tb8s: tb(T8S) })));
+
+  // ================= 9 Arrays and strings =================
+  scene(mixScene({
+    num: "9", title: "Arrays and Strings", subtitle: "Base plus index times size. And two ways to end a string.",
+    chips: ["Arrays", "C-style strings", "Pascal-style strings", "Encodings"],
+    steps: [
+      { sub: "vfig", img: "x86-array", chip: 1, cap: "Element n of an array of s-byte elements lives at base + n times s.", narrate: "An array is consecutive elements of equal size, so element <em>n</em> of an array of <em>s</em>-byte elements lives at base plus <em>n</em> times <em>s</em>." },
+      { sub: "code", t: "x86 COMPUTES THAT IN ONE OPERAND", code: ["mov eax, [arr + ebx*4]     ; eax = arr[ebx], an array of dwords"], ann: { 0: "" }, chip: 1, cap: "arr is the base, ebx the index, and 4 the element size.", narrate: "x86 has an operand form that computes that in one go. Here <code>arr</code> is the base address, <code>ebx</code> is the index, and the <code>*4</code> is the element size. Compare with E20, where you would shift or add in a loop to build that address by hand." },
+      { sub: "lean", card: cd("The scale factor", ["1, 2, 4 or 8", "bytes, words, dwords or qwords", "the hardware allows nothing else"]), chip: 1, cap: "The scale is 1, 2, 4 or 8: the sizes of the elements.", narrate: "The hardware allows scale factors of 1, 2, 4 or 8. Those are exactly the sizes of a byte, word, dword and qword." },
+      { sub: "lean", card: cd("Strings", ["there is no single way to store one", "how are characters encoded?", "how do we know where it ends?", "two separate questions"]), chip: 2, cap: "Every string representation answers two questions: the encoding, and where it ends.", narrate: "There is no single way to store a string. Every representation has to answer two questions: how are characters encoded, and how do we know where the string ends?" },
+      { sub: "mem", pre: "mystring", cells: ["48", "65", "6c", "6c", "6f", "00"], chars: ["H", "e", "l", "l", "o", "\\0"], hot: [5], code: "mystring: db \"Hello\", 0", chip: 2, cap: "C-style: a zero byte marks the end.", narrate: "<strong>C-style</strong> strings end with a zero byte. <code>db \"Hello\", 0</code> stores <code>48 65 6c 6c 6f 00</code>." },
+      { sub: "lean", card: cd("C-style: the trade", ["easy to write, any length allowed", "the length means walking the string", "the body cannot contain a zero byte"]), chip: 2, cap: "Easy and unlimited, but the length costs a walk, and the body cannot hold a zero.", narrate: "Easy to write, and any length is allowed. But finding the length means walking the whole string, and the body cannot contain a zero byte." },
+      { sub: "mem", pre: "mystring", cells: ["05", "48", "65", "6c", "6c", "6f"], chars: ["5", "H", "e", "l", "l", "o"], hot: [0], code: "mystring: db 5, \"Hello\"", chip: 3, cap: "Pascal-style: the length comes first.", narrate: "<strong>Pascal-style</strong> strings carry their length in front. <code>db 5, \"Hello\"</code> stores <code>05 48 65 6c 6c 6f</code>." },
+      { sub: "lean", card: cd("Pascal-style: the trade", ["the length is instant", "the body can hold any byte", "a one-byte length caps it at 255"]), chip: 3, cap: "Instant length and any byte allowed, but capped at 255 characters.", narrate: "Length is instant and the body can hold any byte, but a one-byte length caps the string at 255 characters." },
+      { sub: "lean", card: cd("Multi-byte encodings", ["UTF-16: two or more bytes a character", "other alphabets, emoji", "indexing and length are harder", "encoding and end-marking are separate"]), chip: 4, cap: "How a string is encoded and how its length is marked are independent choices.", narrate: "Multi-byte encodings such as UTF-16 use two or more bytes per character, so they can hold other alphabets and emoji, but indexing and length are harder. How the string is <em>encoded</em> and how its length is <em>marked</em> are independent choices." },
+    ],
+  }, xs({})));
+
+  // ================= 10 Where this is going =================
+  scene(mixScene({
+    num: "10", title: "Where This Is Going", subtitle: "Reading today. Writing next week. A first program to run.",
+    chips: ["What you can read", "Next week", "Hello, world"],
+    steps: [
+      { sub: "ana", parts: [["mov", "opcode"], ["ah", "writes 1 byte"], ["[some_string+ebx]", "reads 1 byte from base + index"]], note: "mov ah, [some_string+ebx]", say: "which register, how many bytes, from where", chip: 1, cap: "You can now say which register is written, how many bytes, and from where.", narrate: "You can now read a line like <code>mov ah, [some_string+ebx]</code> and say which register is written, how many bytes are read, from where, and in what order they are combined. That is most of what an x86 <em>architecture</em> is." },
+      { sub: "vfig", img: "x86-roadmap", chip: 2, cap: "Next week is the instruction set, then the stack, call and ret.", narrate: "Next week is the instruction set: arithmetic and logic, <code>cmp</code> and the conditional jumps, and how a <code>for</code> loop or an <code>if</code> in C turns into x86. After that, the stack, <code>call</code> and <code>ret</code>." },
+      { sub: "vfig", img: "x86-syscall", chip: 2, cap: "And the one instruction that gets a program out of its sandbox: int 0x80.", narrate: "And the one instruction that gets a program out of its own sandbox: <code>int 0x80</code>, which asks Linux to do something on its behalf. Here is a preview, since it is the first program you will actually run." },
+      { sub: "code", t: "HELLO, WORLD: THE DATA", code: ["section .data", "hello_text: db \"Hello, world\", 10", "hello_text_len equ $-hello_text", "", "section .text", "global _start", "_start:"], hl: [1, 2], ann: { 1: "12 characters and a newline (10)", 2: "$ is here: length = 13" }, annx: 560, chip: 3, cap: "The text, and its length: the assembler subtracts the label from here.", narrate: "The data section holds the text and a newline. <code>$-hello_text</code> is the assembler subtracting the label's address from here, which gives the string length: 13 bytes, 12 characters plus the newline." },
+      { sub: "code", t: "HELLO, WORLD: THE SYSTEM CALLS", code: ["mov eax, 4              ; system call number 4: write", "mov ebx, 1              ; file descriptor 1: standard output", "mov ecx, hello_text     ; address of the bytes to write", "mov edx, hello_text_len ; how many bytes", "int 80h                 ; ask the kernel", "mov eax, 1              ; system call number 1: exit", "mov ebx, 0              ; exit code 0", "int 80h"], hl: [2], ann: {}, chip: 3, cap: "Every line is readable. Note ecx holds an address: no brackets.", narrate: "Every line should now be readable, even if you cannot yet write it from scratch. Notice <code>ecx</code> holds an <strong>address</strong>, with no brackets, because <code>write</code> wants a pointer to the bytes. <code>edx</code> says how many. Then <code>int 80h</code> asks the kernel. The second system call, number 1, exits." },
+    ],
+  }, xs({})));
+
+  // ---------------- engine ----------------
+  const NARR_OVR = {};
+  scenes.forEach((sc) => { const p = sc.num === "" ? "0" : sc.num; sc.steps.forEach((s, i) => { const o = NARR_OVR[p + "." + (i + 1)]; if (o) s.narrate = o; }); });
+  const SEC_INTRO = {};
+  const $ = (id) => document.getElementById(id);
+  const svg = $("stage");
+  const foot = txt(svg, 575, 392, "", { size: 13, italic: true, fill: C.grey, anchor: "middle" });
+
+  scenes.forEach((sc) => {
+    sc.g = E("g", {}, svg);
+    sc.g.style.display = "none";
+    sc.r = sc.build(sc.g) || {};
+    foot.parentNode.appendChild(foot);
+  });
+  $("sec-total").textContent = scenes.length - scenes.filter((x) => x.front).length;
+
+  // si: section, ti: step, ph: 0 = question showing (diagram as before), 1 = answered
+  const off = scenes.filter((x) => x.front).length;   // title slides don't count as sections
+  let si = 0, ti = 0, ph = 1, shownScene = -1;
+  const asks = (i, k) => !!scenes[i].steps[k].q;
+  const startPh = (i, k) => (asks(i, k) && k > 0 ? 0 : 1);
+
+  function readHash() {
+    const m = location.hash.match(/^#(\d+)\.(\d+)(q?)$/);
+    if (!m) { ph = startPh(si, ti); return; }
+    const a = Number(m[1]) - 1 + off, b = Number(m[2]) - 1;
+    if (a >= 0 && a < scenes.length) { si = a; ti = Math.max(0, Math.min(scenes[a].steps.length - 1, b)); }
+    ph = m[3] && asks(si, ti) && ti > 0 ? 0 : 1;
+  }
+
+  function buildChips(sc) {
+    const box = $("chips");
+    box.innerHTML = "";
+    sc.chips.forEach((label) => {
+      const d = document.createElement("div");
+      d.className = "stp";
+      d.textContent = label;
+      box.appendChild(d);
+    });
+  }
+
+
+  const secOvl = grp(svg, 1); secOvl.style.display = "none";
+  function drawSecTitle(sc) {
+    while (secOvl.firstChild) secOvl.removeChild(secOvl.firstChild);
+    secOvl.style.display = "inline";
+    circ(secOvl, 150, 150, 84, { fill: C.purple });
+    txt(secOvl, 150, 182, sc.num, { size: 90, weight: 700, fill: C.white, anchor: "middle" });
+    txt(secOvl, 150, 276, "SECTION " + sc.num + " OF " + (scenes.length - scenes.filter((x) => x.front).length), { size: 13, weight: 700, mono: true, fill: C.grey, anchor: "middle", ls: 2 });
+    const parts = sc.title.indexOf(": ") > 0 ? [sc.title.slice(0, sc.title.indexOf(": ")), sc.title.slice(sc.title.indexOf(": ") + 2)] : [sc.title, ""];
+    txt(secOvl, 290, parts[1] ? 120 : 140, parts[0], { size: Math.min(46, Math.floor(840 / (parts[0].length * 0.56))), weight: 700, fill: "#171715" });
+    if (parts[1]) txt(secOvl, 290, 170, parts[1], { size: 28, weight: 700, fill: C.purple });
+    rect(secOvl, 290, parts[1] ? 190 : 162, 120, 6, { rx: 3, fill: C.accent });
+    txt(secOvl, 290, parts[1] ? 232 : 206, sc.subtitle || "", { size: 21, italic: true, fill: C.grey });
+    txt(secOvl, 290, 288, "IN THIS SECTION", { size: 13, weight: 700, mono: true, fill: C.grey, ls: 2 });
+    let x = 290, y = 324;
+    sc.chips.forEach((c, i) => { const w = c.length * 10.5 + 34; if (x + w > 1120) { x = 290; y += 40; } rect(secOvl, x, y - 22, w, 32, { rx: 16, fill: C.white, stroke: C.purple, sw: 3 }); txt(secOvl, x + w / 2, y, c, { size: 16, weight: 700, fill: C.ink, anchor: "middle" }); x += w + 12; });
+  }
+  function render() {
+    const sc = scenes[si], s = sc.steps[ti];
+    if (shownScene !== si) {
+      scenes.forEach((x, k) => { x.g.style.display = k === si ? "inline" : "none"; });
+      $("num").textContent = sc.num;
+      $("title").textContent = sc.title;
+      $("subtitle").textContent = sc.subtitle;
+      document.querySelector(".stage").style.visibility = sc.front ? "hidden" : "";
+      $("subtitle").style.visibility = sc.front ? "hidden" : "";
+      $("sec-wrap").style.display = sc.front ? "none" : "";
+      $("foot-left").textContent = sc.title;
+      buildChips(sc);
+      shownScene = si;
+    }
+    const asking = ph === 0 && !!s.q && ti > 0;
+    // while a question is showing, the diagram stays exactly as the previous step left it
+    if (s.sectitle) { sc.g.style.display = "none"; drawSecTitle(sc); } else { sc.g.style.display = "inline"; secOvl.style.display = "none"; sc.render(asking ? sc.steps[ti - 1] : s, sc.r, ti); }
+    foot.textContent = asking ? "" : (s.foot || "");
+    const qm = '<span class="qm">Q</span>';
+    $("narration").innerHTML = asking ? '<div class="q big">' + qm + s.q + '</div>'
+      : (s.q ? '<div class="q small">' + qm + s.q + '</div>' : "") + ((!fullText && s.cap) || s.narrate);
+    $("sec-n").textContent = si - off + 1;
+    $("step-n").textContent = ti + 1;
+    $("step-total").textContent = sc.steps.length;
+    document.querySelectorAll(".stp").forEach((chip, k) => {
+      const n = k + 1;
+      chip.classList.remove("active", "done");
+      if (!s.chip) return;
+      if (s.chip === n) chip.classList.add("active");
+      else if (n < s.chip) chip.classList.add("done");
+    });
+    history.replaceState(null, "", "#" + (si - off + 1) + "." + (ti + 1) + (asking ? "q" : ""));
+  }
+
+  function go(d) {
+    const sc = scenes[si];
+    if (d > 0) {
+      if (ph === 0) ph = 1;
+      else if (ti < sc.steps.length - 1) { ti++; ph = startPh(si, ti); }
+      else if (si < scenes.length - 1) { si++; ti = 0; ph = startPh(si, 0); }
+    } else {
+      if (ph === 1 && asks(si, ti) && ti > 0) ph = 0;
+      else if (ti > 0) { ti--; ph = 1; }
+      else if (si > 0) { si--; ti = scenes[si].steps.length - 1; ph = 1; }
+    }
+    render();
+  }
+
+  function jumpScene(d) {
+    if (d < 0 && ti > 0) ti = 0;
+    else si = Math.max(0, Math.min(scenes.length - 1, si + d)), ti = 0;
+    ph = startPh(si, 0);
+    render();
+  }
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "n" || e.key === "N") { fullText = !fullText; render(); return; }
+    const fwd = ["ArrowRight", "ArrowDown", " ", "PageDown"].includes(e.key);
+    const back = ["ArrowLeft", "ArrowUp", "PageUp"].includes(e.key);
+    if (!fwd && !back) return;
+    e.preventDefault();
+    if (e.shiftKey) jumpScene(fwd ? 1 : -1);
+    else go(fwd ? 1 : -1);
+  });
+
+  window.addEventListener("hashchange", () => { readHash(); render(); });
+
+  let fullText = false;
+  window.DECK_STEPS = scenes.map(function (sc) { return { num: sc.num, title: sc.title, front: !!sc.front, steps: sc.steps.map(function (s) { return Object.assign({}, s); }) }; });
+  if (location.search.indexOf('dump') >= 0) { var pre = document.createElement('pre'); pre.id = 'dump'; pre.textContent = JSON.stringify(window.DECK_STEPS); document.body.innerHTML = ''; document.body.appendChild(pre); return; }
+  readHash();
+  render();
+})();
+</script>
+
+</body>
+</html>
